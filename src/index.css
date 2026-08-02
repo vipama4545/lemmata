@@ -455,6 +455,182 @@ a {
   color: var(--primary);
 }
 
+/* ===== Word of the Day ===== */
+.daily {
+  margin-bottom: 32px;
+}
+
+.daily-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-bottom: 14px;
+}
+
+.daily-head h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  color: var(--text);
+}
+
+.daily-head h1 .icon {
+  color: var(--primary);
+}
+
+.daily-date {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* One column by default; the picture takes a fixed column beside the text once there is
+   room for both. */
+.daily-card {
+  display: grid;
+  gap: 24px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+}
+
+.daily-card.has-image {
+  grid-template-columns: 240px minmax(0, 1fr);
+  align-items: start;
+}
+
+.daily-image img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  display: block;
+  background: var(--surface-hover);
+}
+
+.daily-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.daily-tags {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.daily-georgian {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.daily-english {
+  font-size: 20px;
+  color: var(--text-secondary);
+}
+
+.daily-definition {
+  font-size: 15px;
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+.daily-more {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.daily-more span {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.daily-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary);
+  background: var(--primary-glow);
+  transition: all 0.2s ease;
+}
+
+.daily-category:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.daily-note {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-light);
+  text-align: center;
+}
+
+.section-heading {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.daily-earlier {
+  margin-bottom: 32px;
+}
+
+.earlier-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.earlier-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.earlier-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.earlier-date {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+}
+
+.earlier-georgian {
+  font-size: 17px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.earlier-english {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
 /* ===== Category Grid ===== */
 .category-grid {
   display: grid;
@@ -582,6 +758,11 @@ a {
   font-size: 15px;
   font-weight: 500;
   transition: all 0.2s ease;
+}
+
+.categories-link {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: white;
 }
 
 .flashcard-link {
@@ -1816,8 +1997,7 @@ a {
   --mo-version: #b45309;
   --mo-root: #be123c;
   --mo-pfsf: #15803d;
-  --mo-stem: #a21caf;
-  --mo-screeve: #0f766e;
+  --mo-screeve: #a21caf;
   --mo-ending: #475569;
 }
 
@@ -1827,8 +2007,7 @@ a {
   --mo-version: #fbbf24;
   --mo-root: #fb7185;
   --mo-pfsf: #4ade80;
-  --mo-stem: #e879f9;
-  --mo-screeve: #2dd4bf;
+  --mo-screeve: #e879f9;
   --mo-ending: #94a3b8;
 }
 
@@ -1836,7 +2015,6 @@ a {
 .mo-person { color: var(--mo-person); }
 .mo-version { color: var(--mo-version); }
 .mo-pfsf { color: var(--mo-pfsf); }
-.mo-stem { color: var(--mo-stem); }
 .mo-screeve { color: var(--mo-screeve); }
 .mo-ending { color: var(--mo-ending); }
 
@@ -1914,21 +2092,24 @@ a {
   color: var(--primary);
 }
 
+/* Each slot gets its name in its own colour and a plain-language gloss beside it — the
+   labels are jargon ("PFSF", "screeve") and the colour alone does not teach them. */
 .morph-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 8px 24px;
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--border);
   list-style: none;
   font-size: 12px;
-  font-weight: 600;
 }
 
-/* The dot repeats the colour at the size it appears in the tables, so the key is read
-   by hue rather than by position in the list. */
-.morph-legend-item::before {
+.morph-legend-name {
+  font-weight: 700;
+}
+
+.morph-legend-name::before {
   content: '';
   display: inline-block;
   width: 8px;
@@ -1937,6 +2118,14 @@ a {
   border-radius: 50%;
   background: currentColor;
   vertical-align: middle;
+}
+
+.morph-legend-hint {
+  color: var(--text-secondary);
+}
+
+.morph-legend-hint::before {
+  content: ' — ';
 }
 
 .morph-warning {
@@ -2385,6 +2574,26 @@ a {
   .category-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 12px;
+  }
+
+  /* The picture goes back above the word once the two columns would be too narrow. */
+  .daily-card,
+  .daily-card.has-image {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 18px;
+  }
+
+  .daily-georgian {
+    font-size: 34px;
+  }
+
+  .daily-english {
+    font-size: 18px;
+  }
+
+  .earlier-list {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
 
   .category-card-body {

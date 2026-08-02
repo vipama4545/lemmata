@@ -8,14 +8,33 @@
 //   preverb · person marker · version vowel · ROOT · PFSF · stem marker · screeve marker · ending
 
 export const MORPHEME_PARTS = [
-  { key: 'preverb', label: 'Preverb', hint: 'direction, and perfective aspect in Series II/III' },
-  { key: 'person', label: 'Person marker', hint: 'subject or object agreement prefix' },
-  { key: 'version', label: 'Version vowel', hint: 'ა · ე · ი · უ · ო' },
-  { key: 'root', label: 'Root', hint: 'the lexical core of the verb' },
-  { key: 'pfsf', label: 'PFSF', hint: 'present / future stem formant' },
-  { key: 'stem', label: 'Stem marker', hint: '-ინ- / -ევინ- causative and Series III stems' },
-  { key: 'screeve', label: 'Screeve marker', hint: '-დ- / -ოდ- imperfect and subjunctive' },
-  { key: 'ending', label: 'Ending', hint: 'person and number suffix' },
+  {
+    key: 'preverb',
+    label: 'Preverb',
+    hint: 'direction, and completedness from the future tense onward — მი- მო- გა- და-',
+  },
+  {
+    key: 'person',
+    label: 'Person marker',
+    hint: 'who is doing it, or who it is done to — ვ- მ- გ- გვ-',
+  },
+  {
+    key: 'version',
+    label: 'Version vowel',
+    hint: 'who the action is aimed at or belongs to — ა- ე- ი- უ-',
+  },
+  { key: 'root', label: 'Root', hint: 'the part that carries the meaning' },
+  {
+    key: 'pfsf',
+    label: 'PFSF',
+    hint: 'builds the present/future stem and picks the pattern; gone in the aorist — -ებ -ავ -ამ -ობ -ი, and -დებ in doniani verbs',
+  },
+  {
+    key: 'screeve',
+    label: 'Tense marker',
+    hint: 'what the tense itself adds — -დ- -ოდ- in the imperfect and subjunctives, -ინ- in the pluperfect',
+  },
+  { key: 'ending', label: 'Ending', hint: 'person and number of the subject' },
 ];
 
 // Fallback preverb inventory. A verb's own preverb list from the lexicon is used instead
@@ -31,9 +50,10 @@ export const VERSION_VOWELS = ['ა', 'ე', 'ი', 'უ', 'ო'];
 
 // Suffix inventories.
 export const PFSFS = ['ებ', 'ავ', 'ამ', 'ობ', 'ოფ', 'ულ', 'ენ', 'ინ', 'ევ', 'ომ', 'ი'];
-// -ულ-/-ილ- build the Series III participle that the compound perfect is made of
-// (და-ბრმავ-ებ-ულ-იყო); -ინ-/-ევინ- are the causative and Series III stem markers.
-const STEM_MARKERS = ['ევინ', 'ინ', 'ევ', 'ულ', 'ილ'];
+// Everything a tense adds between the stem and the ending: -ინ-/-ევინ- in the pluperfect
+// and perfect subjunctive, -ულ-/-ილ- in the compound perfect (და-ბრმავ-ებ-ულ-იყო), and
+// -დ-/-ოდ- in the imperfect and the subjunctives.
+const TENSE_MARKERS = ['ევინ', 'ინ', 'ევ', 'ულ', 'ილ'];
 const SCREEVE_MARKERS = ['ოდ', 'დ'];
 // The copula fused onto a participle in the compound Series III forms.
 const AUXILIARIES = [
@@ -51,13 +71,13 @@ const PARTICLES = ['ნუ', 'ნურ', 'არ', 'ვერ', 'მუ'];
 // The suffix has to be fully consumed by this slot list, each slot optional, so a bare
 // aorist (-ე) and a pluperfect (-ებ-ინ-ა-თ) both fall out of the same grammar.
 //
-// The leading -დ- slot is the doniani marker of 2nd-conjugation verbs, which sits before
-// the PFSF (ვ-ჩერ-დ-ებ-ი); the -დ-/-ოდ- further down is the imperfect screeve marker
-// that sits after it (ჩერ-დებ-ოდი). Same consonant, different slot, different colour.
+// The leading -დ- is the doniani marker of 2nd-conjugation verbs. It sits before the PFSF
+// and belongs to it — ვ-ჩერ-დ-ებ-ი is a present tense, so this -დ- marks no tense at all,
+// unlike the -დ-/-ოდ- further down that builds the imperfect (ჩერ-დებ-ოდი).
 const SUFFIX_SLOTS = [
-  { part: 'stem', options: ['დ'] },
-  { part: 'pfsf', options: PFSFS },
-  { part: 'stem', options: STEM_MARKERS },
+  { part: 'pfsf', options: ['დ'] },
+  { part: 'pfsf', options: PFSFS, prefersLexPfsf: true },
+  { part: 'screeve', options: TENSE_MARKERS },
   { part: 'screeve', options: SCREEVE_MARKERS },
   { part: 'ending', options: AUXILIARIES },
   { part: 'ending', options: ENDINGS },
@@ -67,7 +87,7 @@ const SUFFIX_SLOTS = [
 // True when a string is nothing but affix material — used when deriving roots, to stop a
 // candidate like -ებდ- being mistaken for one.
 export function isAffixString(text) {
-  return text !== '' && bestParse(text, SUFFIX_SLOTS, {}) !== null;
+  return text !== '' && bestParse(text, SUFFIX_SLOTS, EMPTY_PREFERENCE) !== null;
 }
 
 // Screeves that carry the preverb are recorded per verb; without that list we fall back
@@ -92,14 +112,23 @@ function prefixSlots(lex, screeve) {
   return [
     { part: 'preverb', options: preverbs },
     { part: 'person', options: PERSON_PREFIXES },
-    { part: 'version', options: lex?.version ? [lex.version, ...VERSION_VOWELS] : VERSION_VOWELS },
+    { part: 'version', options: VERSION_VOWELS, prefer: lex?.version ? [lex.version] : null },
   ];
+}
+
+// The PFSF slot proper is the only suffix slot with a per-verb preference; the doniani -დ-
+// slot shares its colour but must keep its own single option.
+function suffixSlots(lex) {
+  if (!lex?.pfsf) return SUFFIX_SLOTS;
+  return SUFFIX_SLOTS.map(slot =>
+    slot.prefersLexPfsf ? { ...slot, prefer: [lex.pfsf] } : slot,
+  );
 }
 
 // Walks the slot list left to right, trying each option and backtracking, and returns
 // every parse that swallows the whole string. Slot lists are five deep at most, so the
 // search space stays trivial.
-function parseSlots(text, slots, preferred) {
+function parseSlots(text, slots, preference) {
   const results = [];
   const walk = (rest, slotIndex, acc) => {
     if (rest === '') {
@@ -109,9 +138,9 @@ function parseSlots(text, slots, preferred) {
     if (slotIndex >= slots.length) return;
     walk(rest, slotIndex + 1, acc); // skipping a slot is always allowed
     const slot = slots[slotIndex];
-    const options = preferred[slot.part]
-      ? [...preferred[slot.part], ...slot.options]
-      : slot.options;
+    // Preference is per slot, not per part name: two slots can share a colour (the
+    // doniani -დ- and the PFSF proper) without sharing an option list.
+    const options = slot.prefer ? [...slot.prefer, ...slot.options] : slot.options;
     const seen = new Set();
     for (const option of options) {
       if (!option || seen.has(option)) continue;
@@ -127,21 +156,23 @@ function parseSlots(text, slots, preferred) {
 
 // Between two complete parses, prefer the one built from the verb's own known morphemes,
 // then the one with fewer pieces (a single -ით ending beats -ი plus a plural -თ).
-function scoreParse(parse, preferred) {
+function scoreParse(parse, known) {
   let score = 0;
   for (const seg of parse) {
-    if (preferred[seg.part]?.includes(seg.text)) score += 10;
+    if (known.has(seg.text)) score += 10;
     score += seg.text.length;
   }
   return score - parse.length * 2;
 }
 
-function bestParse(text, slots, preferred) {
+function bestParse(text, slots, known) {
   if (text === '') return [];
-  const parses = parseSlots(text, slots, preferred);
+  const parses = parseSlots(text, slots);
   if (parses.length === 0) return null;
-  return parses.reduce((a, b) => (scoreParse(b, preferred) > scoreParse(a, preferred) ? b : a));
+  return parses.reduce((a, b) => (scoreParse(b, known) > scoreParse(a, known) ? b : a));
 }
+
+const EMPTY_PREFERENCE = new Set();
 
 function rootCandidates(lex) {
   return [...new Set([lex?.root, ...(lex?.roots || [])].filter(Boolean))].sort(
@@ -152,20 +183,18 @@ function rootCandidates(lex) {
 // Segments one whitespace-free token: tries every root variant at every position it
 // occurs and keeps the split whose prefix and suffix both parse cleanly.
 function segmentToken(token, lex, screeve) {
-  const preferredPrefix = {
-    preverb: lex?.preverbs || [],
-    version: lex?.version ? [lex.version] : [],
-  };
-  const preferredSuffix = { pfsf: lex?.pfsf ? [lex.pfsf] : [] };
-  const slots = prefixSlots(lex, screeve);
+  // The verb's own morphemes, used to break ties between two otherwise valid parses.
+  const known = new Set([...(lex?.preverbs || []), lex?.version, lex?.pfsf].filter(Boolean));
+  const prefixSlotList = prefixSlots(lex, screeve);
+  const suffixSlotList = suffixSlots(lex);
 
   let best = null;
   for (const root of rootCandidates(lex)) {
     for (let index = token.indexOf(root); index !== -1; index = token.indexOf(root, index + 1)) {
       const prefix = token.slice(0, index);
       const suffix = token.slice(index + root.length);
-      const prefixParse = bestParse(prefix, slots, preferredPrefix);
-      const suffixParse = bestParse(suffix, SUFFIX_SLOTS, preferredSuffix);
+      const prefixParse = bestParse(prefix, prefixSlotList, known);
+      const suffixParse = bestParse(suffix, suffixSlotList, known);
       const candidate = {
         complete: prefixParse !== null && suffixParse !== null,
         index,

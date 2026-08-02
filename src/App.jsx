@@ -9,6 +9,7 @@ import VerbList from './components/VerbList';
 import VerbDetail from './components/VerbDetail';
 import GrammarIndex from './components/GrammarIndex';
 import GrammarTopic from './components/GrammarTopic';
+import WordOfTheDay from './components/WordOfTheDay';
 import Sidebar from './components/Sidebar';
 import Icon from './components/Icon';
 import { categoryImageCredits } from './utils/categoryImages';
@@ -130,10 +131,11 @@ function App() {
 
           <main className="app-main">
             <Routes>
+              <Route path="/" element={<WordOfTheDay />} />
               <Route
-                path="/"
+                path="/categories"
                 element={
-                  <HomePage
+                  <CategoryBrowser
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                     selectedLevel={selectedLevel}
@@ -163,8 +165,9 @@ function App() {
 }
 
 // The category grid, with the search box and level filter that narrow it. The filtering
-// itself stays in App, since the header counts and the verb card depend on the same state.
-function HomePage({
+// state stays in App so that it survives a trip into a category and back — this component
+// is remounted by the router on every such return.
+function CategoryBrowser({
   searchTerm,
   setSearchTerm,
   selectedLevel,
@@ -174,6 +177,12 @@ function HomePage({
 }) {
   return (
     <div className="main-content">
+      <div className="breadcrumb">
+        <Link to="/">← Word of the day</Link>
+        <span className="breadcrumb-sep">/</span>
+        <span>Categories</span>
+      </div>
+
       <div className="toolbar">
         <div className="search-field">
           <Icon name="search" />
@@ -233,21 +242,6 @@ function HomePage({
             </div>
           </Link>
         ))}
-      </div>
-
-      <div className="quick-links">
-        <Link to="/flashcards" className="quick-link flashcard-link">
-          <Icon name="cards" /> Flashcard Mode
-        </Link>
-        <Link to="/search" className="quick-link search-link">
-          <Icon name="search" /> Word Search
-        </Link>
-        <Link to="/export" className="quick-link export-link">
-          <Icon name="download" /> Export Anki Deck
-        </Link>
-        <Link to="/grammar" className="quick-link grammar-link">
-          <Icon name="book" /> Grammar Reference
-        </Link>
       </div>
 
       <ImageCredits categories={categories} />

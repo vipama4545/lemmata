@@ -113,6 +113,13 @@ const PATHS = {
     </>
   ),
   layers: <path d="M12 3 3 8l9 5 9-5-9-5ZM3.5 13 12 17.6 20.5 13" />,
+  calendar: (
+    <>
+      <rect x="3.5" y="5" width="17" height="15" rx="2" />
+      <path d="M3.5 9.5h17M8 3v4M16 3v4" />
+      <circle cx="12" cy="14.5" r="1.4" fill="currentColor" stroke="none" />
+    </>
+  ),
 };
 
 function Icon({ name, size = 18, className = '' }) {

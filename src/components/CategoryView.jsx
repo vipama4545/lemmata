@@ -34,7 +34,7 @@ function CategoryView() {
       <div className="main-content">
         <div className="not-found">
           <h2>Category not found</h2>
-          <Link to="/">← Back to categories</Link>
+          <Link to="/categories">← Back to categories</Link>
         </div>
       </div>
     );
@@ -43,7 +43,7 @@ function CategoryView() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/">← Categories</Link>
+        <Link to="/categories">← Categories</Link>
         <span className="breadcrumb-sep">/</span>
         <span>{category.name}</span>
       </div>

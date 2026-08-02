@@ -27,7 +27,7 @@ function GrammarTopic() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/">← Categories</Link>
+        <Link to="/">← Home</Link>
         <span className="breadcrumb-sep">/</span>
         <Link to="/grammar">Grammar</Link>
         <span className="breadcrumb-sep">/</span>

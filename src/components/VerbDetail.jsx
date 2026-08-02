@@ -45,7 +45,7 @@ function VerbDetail() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/">← Categories</Link>
+        <Link to="/categories">← Categories</Link>
         <span className="breadcrumb-sep">/</span>
         <Link to="/verbs">Verbs</Link>
         <span className="breadcrumb-sep">/</span>
@@ -190,8 +190,9 @@ function MorphemeKey({ lex, highlight, onToggle }) {
       {highlight && (
         <ul className="morph-legend">
           {MORPHEME_PARTS.map(part => (
-            <li key={part.key} className={`morph-legend-item mo-${part.key}`} title={part.hint}>
-              {part.label}
+            <li key={part.key} className="morph-legend-item">
+              <span className={`morph-legend-name mo-${part.key}`}>{part.label}</span>
+              <span className="morph-legend-hint">{part.hint}</span>
             </li>
           ))}
         </ul>

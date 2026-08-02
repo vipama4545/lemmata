@@ -29,7 +29,7 @@ function VerbList() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/">← Categories</Link>
+        <Link to="/categories">← Categories</Link>
         <span className="breadcrumb-sep">/</span>
         <span>Verbs</span>
       </div>

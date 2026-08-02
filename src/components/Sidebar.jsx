@@ -43,7 +43,8 @@ function Sidebar({ open, onClose }) {
 
         <div className="sidebar-section">
           <p className="sidebar-heading">Dictionary</p>
-          <SidebarLink to="/" icon="grid" label="Categories" end />
+          <SidebarLink to="/" icon="calendar" label="Word of the day" end />
+          <SidebarLink to="/categories" icon="grid" label="Categories" />
           <SidebarLink to="/verbs" icon="list" label="Verbs" />
           <SidebarLink to="/search" icon="search" label="Word search" />
           <SidebarLink to="/flashcards" icon="cards" label="Flashcards" />

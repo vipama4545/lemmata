@@ -155,6 +155,7 @@
   },
   "affect-vt": {
    "root": "ზემოქმე",
+   "pfsf": "ებ",
    "preverbs": [
     "ი"
    ],
@@ -174,7 +175,7 @@
    "parsed": 100
   },
   "agree": {
-   "root": "რ",
+   "root": "არ",
    "roots": [
     "ქნ",
     "ყ",
@@ -268,7 +269,7 @@
   "amuse-vt": {
    "root": "რთ",
    "roots": [
-    "რ"
+    "არ"
    ],
    "pfsf": "ობ",
    "preverbs": [
@@ -290,6 +291,7 @@
   },
   "announce-vt": {
    "root": "ცხა",
+   "pfsf": "ებ",
    "preverbs": [
     "გამო"
    ],
@@ -349,11 +351,12 @@
    "parsed": 100
   },
   "appear-vi": {
-   "root": "დ",
+   "root": "ნდ",
    "roots": [
-    "ჩნ",
+    "ჩნდ",
     "ჩენილ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "გამო"
    ],
@@ -415,6 +418,7 @@
    "roots": [
     "ხლოებ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "მი"
    ],
@@ -437,6 +441,7 @@
    "roots": [
     "ხლოებ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "მი"
    ],
@@ -502,10 +507,10 @@
    "parsed": 100
   },
   "arrive-vi": {
-   "root": "ო",
+   "root": "მო",
    "roots": [
-    "ვი",
-    "ვ",
+    "ვიდ",
+    "ოვ",
     "ლ",
     "სულ"
    ],
@@ -599,6 +604,7 @@
   },
   "avoid-vt": {
    "root": "რი",
+   "pfsf": "ებ",
    "preverbs": [
     "ა"
    ],
@@ -782,9 +788,10 @@
   "be-born": {
    "root": "ჩნ",
    "roots": [
-    "ჩ",
-    "ნ"
+    "უჩ",
+    "ჩენ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "გა"
    ],
@@ -804,6 +811,7 @@
   },
   "be-called": {
    "root": "წო",
+   "pfsf": "ებ",
    "preverbs": [],
    "version": "ე",
    "parsed": 100
@@ -833,6 +841,7 @@
    "roots": [
     "შიებ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "მო"
    ],
@@ -969,6 +978,7 @@
   },
   "be-thirsty-2": {
    "root": "წყურ",
+   "pfsf": "ებ",
    "preverbs": [
     "მო"
    ],
@@ -1003,7 +1013,7 @@
    "parsed": 100
   },
   "be-vi": {
-   "root": "რ",
+   "root": "არ",
    "roots": [
     "ქნ",
     "ყ",
@@ -1024,6 +1034,7 @@
    "roots": [
     "ბრამავ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -1041,11 +1052,12 @@
    "parsed": 100
   },
   "become-vi": {
-   "root": "ხ",
+   "root": "ხდ",
    "roots": [
     "მხდარ",
     "ხარიყ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "გა"
    ],
@@ -1063,11 +1075,12 @@
    "parsed": 100
   },
   "become-vt": {
-   "root": "ხ",
+   "root": "ხდ",
    "roots": [
     "მხდარ",
     "მხარიყ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "გა"
    ],
@@ -1376,11 +1389,10 @@
    "parsed": 100
   },
   "bring-in-vt": {
-   "root": "ყ",
+   "root": "ყავ",
    "roots": [
     "ყვან"
    ],
-   "pfsf": "ავ",
    "preverbs": [
     "შემო"
    ],
@@ -1430,7 +1442,7 @@
    "parsed": 100
   },
   "bring-vt-2": {
-   "root": "ყ",
+   "root": "ყავ",
    "roots": [
     "ყვან",
     "მოგყავ"
@@ -1475,7 +1487,8 @@
     "prohibitive"
    ],
    "version": "ა",
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "1-to-build-2-plants-cultivates-3-breeds": {
    "root": "შენ",
@@ -1578,6 +1591,7 @@
   },
   "calm-vti": {
    "root": "მშვიდ",
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -1839,10 +1853,10 @@
    "parsed": 100
   },
   "come-in": {
-   "root": "ო",
+   "root": "მო",
    "roots": [
-    "ვი",
-    "ვ",
+    "ვიდ",
+    "ოვ",
     "ლ",
     "სულ"
    ],
@@ -1870,10 +1884,10 @@
    "check": true
   },
   "come-out": {
-   "root": "ო",
+   "root": "მო",
    "roots": [
-    "ვი",
-    "ვ",
+    "ვიდ",
+    "ოვ",
     "ლ",
     "სულ"
    ],
@@ -1904,9 +1918,9 @@
    "root": "დ",
    "roots": [
     "ვი",
-    "ლ",
     "სულ",
-    "ვალ"
+    "ვალ",
+    "ვე"
    ],
    "pfsf": "ი",
    "preverbs": [
@@ -1927,8 +1941,8 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ე",
-   "parsed": 95
+   "parsed": 95,
+   "check": true
   },
   "compare-vt": {
    "root": "დარ",
@@ -1991,7 +2005,7 @@
    "parsed": 100
   },
   "complain-vi": {
-   "root": "ჩ",
+   "root": "ჩი",
    "roots": [
     "ჩივ",
     "ჩივლ"
@@ -2147,7 +2161,8 @@
     "prohibitive"
    ],
    "version": "ი",
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "continue-vt": {
    "root": "გრძელ",
@@ -2451,11 +2466,10 @@
    "parsed": 100
   },
   "cultivate-vt": {
-   "root": "ყ",
+   "root": "ყავ",
    "roots": [
     "ყვან"
    ],
-   "pfsf": "ავ",
    "preverbs": [
     "მო"
    ],
@@ -2630,12 +2644,11 @@
    "parsed": 100
   },
   "defend-vti": {
-   "root": "ც",
+   "root": "ცავ",
    "roots": [
     "ცვ",
     "ცავა"
    ],
-   "pfsf": "ავ",
    "preverbs": [
     "და"
    ],
@@ -2675,15 +2688,16 @@
   "demolish-vt": {
    "root": "ნგრ",
    "roots": [
-    "დაანგრ"
+    "დაანგრევ"
    ],
    "pfsf": "ევ",
    "preverbs": [
-    "გა",
-    "და"
+    "და",
+    "გა"
    ],
    "preverbScreeves": [
     "future",
+    "aorist",
     "optative"
    ],
    "version": "ა",
@@ -2861,8 +2875,8 @@
   "die-vi-2": {
    "root": "კვ",
    "roots": [
-    "დ",
-    "ც",
+    "ვდ",
+    "ოც",
     "ხოც",
     "ეხოცებ"
    ],
@@ -2954,7 +2968,7 @@
   "disappear-vi": {
    "root": "ქრ",
    "roots": [
-    "ქ"
+    "აქ"
    ],
    "pfsf": "ობ",
    "preverbs": [
@@ -2998,9 +3012,9 @@
    "parsed": 100
   },
   "discover-vt": {
-   "root": "ჩ",
+   "root": "ეჩ",
    "roots": [
-    "ო"
+    "აჩ"
    ],
    "preverbs": [
     "აღმო"
@@ -3019,7 +3033,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ა",
+   "version": "ე",
    "parsed": 100
   },
   "discuss-vt": {
@@ -3151,7 +3165,7 @@
   "divide-vt": {
    "root": "ყ",
    "roots": [
-    "ა",
+    "ყა",
     "ყვ"
    ],
    "pfsf": "ოფ",
@@ -3170,10 +3184,12 @@
     "prohibitive"
    ],
    "version": "ე",
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "divorce-vt": {
    "root": "ქორწინ",
+   "pfsf": "ებ",
    "preverbs": [
     "გან"
    ],
@@ -3197,26 +3213,12 @@
   "do-vt": {
    "root": "შვრ",
    "roots": [
-    "ზ",
+    "იზ",
     "ქენ",
     "ქნ"
    ],
    "pfsf": "ებ",
-   "preverbs": [
-    "ი"
-   ],
-   "preverbScreeves": [
-    "future",
-    "conditional",
-    "futureSubjunctive",
-    "aorist",
-    "optative",
-    "perfect",
-    "pluperfect",
-    "perfectSubjunctive",
-    "imperative",
-    "prohibitive"
-   ],
+   "preverbs": [],
    "version": "ე",
    "parsed": 100
   },
@@ -3345,7 +3347,7 @@
   "drink-vt": {
    "root": "სვ",
    "roots": [
-    "ს",
+    "ვს",
     "სხვამ",
     "შვსვამ"
    ],
@@ -3395,8 +3397,8 @@
   "drop-vi": {
    "root": "ცემ",
    "roots": [
-    "ე",
-    "ც"
+    "ცე",
+    "ეც"
    ],
    "preverbs": [
     "და"
@@ -3486,7 +3488,7 @@
   "dry-vt": {
    "root": "შრ",
    "roots": [
-    "შ"
+    "აშ"
    ],
    "pfsf": "ობ",
    "preverbs": [
@@ -3530,8 +3532,7 @@
    "parsed": 100
   },
   "eat-vt": {
-   "root": "ჭ",
-   "pfsf": "ამ",
+   "root": "ჭამ",
    "preverbs": [
     "შე"
    ],
@@ -3552,7 +3553,7 @@
   "emit-vt": {
    "root": "ყ",
    "roots": [
-    "ა",
+    "ყა",
     "ყვ"
    ],
    "pfsf": "ოფ",
@@ -3575,7 +3576,8 @@
     "prohibitive"
    ],
    "version": "ე",
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "encourage-vt": {
    "root": "ქეზ",
@@ -3641,16 +3643,15 @@
    "parsed": 100
   },
   "enter-vt": {
-   "root": "დ",
+   "root": "დი",
    "roots": [
     "ლ",
-    "ვი",
+    "ვიდ",
     "ვ",
     "სულ",
     "ვალ",
     "ვე"
    ],
-   "pfsf": "ი",
    "preverbs": [
     "შე"
    ],
@@ -3856,17 +3857,17 @@
    "parsed": 100
   },
   "expect-vt": {
-   "root": "ლ",
+   "root": "ელ",
    "pfsf": "ი",
    "preverbs": [],
-   "version": "ე",
    "parsed": 100
   },
   "experience-vt": {
-   "root": "ც",
+   "root": "იც",
    "roots": [
     "ცა"
    ],
+   "pfsf": "ი",
    "preverbs": [
     "გან"
    ],
@@ -3885,7 +3886,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "explain-vt": {
@@ -3937,10 +3938,10 @@
    "parsed": 100
   },
   "extract-vt": {
-   "root": "ღ",
+   "root": "იღ",
    "roots": [
-    "ი",
-    "ო"
+    "ღე",
+    "ღო"
    ],
    "pfsf": "ებ",
    "preverbs": [
@@ -3957,7 +3958,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "fall-in-love": {
@@ -3988,6 +3989,7 @@
    "roots": [
     "წყვეტ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "მო"
    ],
@@ -4223,26 +4225,13 @@
   "flow-vi": {
    "root": "დ",
    "roots": [
-    "ი"
+    "იდ"
    ],
    "pfsf": "ი",
-   "preverbs": [
-    "ი"
-   ],
-   "preverbScreeves": [
-    "future",
-    "conditional",
-    "futureSubjunctive",
-    "aorist",
-    "optative",
-    "perfect",
-    "pluperfect",
-    "perfectSubjunctive",
-    "imperative",
-    "prohibitive"
-   ],
-   "version": "ი",
-   "parsed": 100
+   "preverbs": [],
+   "version": "ე",
+   "parsed": 100,
+   "check": true
   },
   "fly-vi": {
    "root": "ფრინ",
@@ -4359,6 +4348,7 @@
    "roots": [
     "ხლოებ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -4377,11 +4367,10 @@
    "parsed": 100
   },
   "get-dressed": {
-   "root": "ც",
+   "root": "იც",
    "roots": [
     "ცვ"
    ],
-   "pfsf": "ამ",
    "preverbs": [
     "ჩა"
    ],
@@ -4396,11 +4385,12 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "get-inffected": {
    "root": "ნფიცირ",
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -4463,10 +4453,10 @@
    "parsed": 100
   },
   "get-vt": {
-   "root": "ღ",
+   "root": "იღ",
    "roots": [
-    "ი",
-    "ო"
+    "ღე",
+    "ღო"
    ],
    "pfsf": "ებ",
    "preverbs": [
@@ -4483,12 +4473,13 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "give-birth": {
-   "root": "ჩ",
+   "root": "აჩ",
    "roots": [
+    "ეჩ",
     "ჩინო"
    ],
    "pfsf": "ენ",
@@ -4510,9 +4501,9 @@
    "parsed": 100
   },
   "give-birth-2": {
-   "root": "ჩ",
+   "root": "უჩ",
    "roots": [
-    "ი"
+    "ეჩ"
    ],
    "pfsf": "ენ",
    "preverbs": [
@@ -4529,13 +4520,13 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "უ",
+   "version": "ე",
    "parsed": 100
   },
   "give-in": {
    "root": "თმ",
    "roots": [
-    "თ"
+    "ათ"
    ],
    "pfsf": "ობ",
    "preverbs": [
@@ -4558,7 +4549,7 @@
   "give-vt": {
    "root": "ძლ",
    "roots": [
-    "ძ",
+    "აძ",
     "ვცემ",
     "იეც"
    ],
@@ -4577,9 +4568,11 @@
   "go-down": {
    "root": "არ",
    "roots": [
-    "დი",
+    "დიო",
     "ვლ",
-    "რ",
+    "ჩა",
+    "ირ",
+    "ჩავდივარ",
     "ევლ"
    ],
    "preverbs": [
@@ -4589,6 +4582,7 @@
     "imperfect",
     "presentSubjunctive",
     "future",
+    "conditional",
     "futureSubjunctive",
     "aorist",
     "optative",
@@ -4605,9 +4599,9 @@
    "root": "დ",
    "roots": [
     "ვი",
-    "ლ",
     "სულ",
-    "ვალ"
+    "ვალ",
+    "ვე"
    ],
    "pfsf": "ი",
    "preverbs": [
@@ -4628,16 +4622,16 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ე",
-   "parsed": 95
+   "parsed": 95,
+   "check": true
   },
   "go-out": {
    "root": "დ",
    "roots": [
     "ვი",
-    "ლ",
     "სულ",
-    "ვალ"
+    "ვალ",
+    "ვე"
    ],
    "pfsf": "ი",
    "preverbs": [
@@ -4658,14 +4652,14 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ე",
-   "parsed": 95
+   "parsed": 95,
+   "check": true
   },
   "go-to-bed": {
    "root": "წვ",
    "roots": [
     "წექ",
-    "ვ",
+    "ვწ",
     "წოლილ"
    ],
    "pfsf": "ებ",
@@ -4715,7 +4709,8 @@
     "imperative",
     "prohibitive"
    ],
-   "parsed": 97
+   "parsed": 97,
+   "check": true
   },
   "grow-vi": {
    "root": "ზრ",
@@ -4724,6 +4719,7 @@
     "ზარად",
     "ზრიდილ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "გა"
    ],
@@ -4746,6 +4742,7 @@
    "roots": [
     "ზარ"
    ],
+   "pfsf": "ი",
    "preverbs": [
     "გა"
    ],
@@ -4764,7 +4761,7 @@
    "parsed": 100
   },
   "guard-vt": {
-   "root": "ც",
+   "root": "იც",
    "roots": [
     "ცვ"
    ],
@@ -4783,7 +4780,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "guess-vti": {
@@ -4818,6 +4815,7 @@
    "roots": [
     "კჰიდებ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -4836,14 +4834,13 @@
    "parsed": 100
   },
   "have": {
-   "root": "ყ",
+   "root": "ყავ",
    "roots": [
-    "ა",
+    "ყა",
     "ყოლ",
     "ყვ",
     "ყავდაღ"
    ],
-   "pfsf": "ავ",
    "preverbs": [],
    "version": "ე",
    "parsed": 100
@@ -4975,7 +4972,7 @@
   "heat-vt": {
    "root": "თბ",
    "roots": [
-    "თ"
+    "ათ"
    ],
    "pfsf": "ობ",
    "preverbs": [
@@ -5185,7 +5182,7 @@
    "parsed": 100
   },
   "hold-vt": {
-   "root": "რ",
+   "root": "ირ",
    "roots": [
     "ჭერ",
     "ჭირ"
@@ -5259,6 +5256,7 @@
   },
   "hurt-vi": {
    "root": "ტკივ",
+   "pfsf": "ებ",
    "preverbs": [
     "ა"
    ],
@@ -5361,6 +5359,7 @@
    "roots": [
     "ზარ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "გა"
    ],
@@ -5383,6 +5382,7 @@
    "roots": [
     "ზარ"
    ],
+   "pfsf": "ი",
    "preverbs": [
     "გა"
    ],
@@ -5406,6 +5406,7 @@
     "ზემოქმ",
     "ზემომქე"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "ი"
    ],
@@ -5473,10 +5474,9 @@
   "insert-vt": {
    "root": "დ",
    "roots": [
-    "ე",
-    "ვ"
+    "დე",
+    "ვდ"
    ],
-   "pfsf": "ებ",
    "preverbs": [
     "ჩა"
    ],
@@ -5492,7 +5492,8 @@
     "prohibitive"
    ],
    "version": "ე",
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "insist-vti": {
    "root": "ჟინ",
@@ -5615,7 +5616,7 @@
    "root": "რე",
    "roots": [
     "ულ",
-    "რ",
+    "ერ",
     "რივნ"
    ],
    "preverbs": [
@@ -5638,7 +5639,7 @@
   "introduce-vt": {
    "root": "ცნ",
    "roots": [
-    "ა",
+    "აც",
     "ცან"
    ],
    "pfsf": "ობ",
@@ -5773,6 +5774,7 @@
   },
   "isolate": {
    "root": "ზოლირ",
+   "pfsf": "ებ",
    "preverbs": [],
    "version": "ი",
    "parsed": 100
@@ -5780,7 +5782,7 @@
   "isolate-vt": {
    "root": "ყ",
    "roots": [
-    "ა",
+    "ყა",
     "ყვ"
    ],
    "pfsf": "ოფ",
@@ -5800,13 +5802,15 @@
     "prohibitive"
    ],
    "version": "ე",
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "join-vti": {
    "root": "ერთ",
    "roots": [
     "რთ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "შე"
    ],
@@ -5975,21 +5979,21 @@
    "parsed": 100
   },
   "know-vt": {
-   "root": "ც",
+   "root": "იც",
    "roots": [
-    "ო",
+    "ცო",
     "ცოდინ",
     "ცოდნ"
    ],
    "pfsf": "ი",
    "preverbs": [],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "know-meet-someone-vt": {
    "root": "ცნ",
    "roots": [
-    "ი",
+    "იც",
     "ცან"
    ],
    "pfsf": "ობ",
@@ -6012,6 +6016,7 @@
   },
   "last-vi": {
    "root": "გრძელ",
+   "pfsf": "ებ",
    "preverbs": [
     "გა"
    ],
@@ -6102,7 +6107,7 @@
   "lay-vt": {
    "root": "დ",
    "roots": [
-    "ე",
+    "ბდ",
     "ვდ"
    ],
    "pfsf": "ებ",
@@ -6121,7 +6126,8 @@
     "imperative",
     "prohibitive"
    ],
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "lead-vt": {
    "root": "მეთაურ",
@@ -6146,6 +6152,7 @@
   },
   "lean-against": {
    "root": "ყუ",
+   "pfsf": "ებ",
    "preverbs": [
     "მი"
    ],
@@ -6264,7 +6271,7 @@
    "parsed": 100
   },
   "lie-vi-3": {
-   "root": "წ",
+   "root": "წევ",
    "roots": [
     "წოლილ",
     "წვ",
@@ -6290,11 +6297,10 @@
    "parsed": 100
   },
   "lift-vt": {
-   "root": "წ",
+   "root": "წევ",
    "roots": [
-    "ვ"
+    "წი"
    ],
-   "pfsf": "ევ",
    "preverbs": [
     "ა"
    ],
@@ -6315,6 +6321,7 @@
   },
   "light-vi": {
    "root": "ნათ",
+   "pfsf": "ებ",
    "preverbs": [
     "გა"
    ],
@@ -6357,8 +6364,8 @@
   "light-vt-2": {
    "root": "ნთ",
    "roots": [
-    "ნ",
-    "თ"
+    "ან",
+    "თო"
    ],
    "pfsf": "ებ",
    "preverbs": [
@@ -6427,6 +6434,7 @@
    "roots": [
     "ზღუდვ"
    ],
+   "pfsf": "ავ",
    "preverbs": [
     "შე"
    ],
@@ -6567,7 +6575,7 @@
    "parsed": 100
   },
   "look-for-vi": {
-   "root": "ძ",
+   "root": "ეძ",
    "roots": [
     "ძებნ",
     "ვძებნ"
@@ -6598,9 +6606,9 @@
    "parsed": 100
   },
   "lose-vi": {
-   "root": "გ",
+   "root": "აგ",
    "roots": [
-    "ა"
+    "გო"
    ],
    "pfsf": "ებ",
    "preverbs": [
@@ -6617,13 +6625,13 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ა",
+   "version": "ე",
    "parsed": 100
   },
   "lose-vi-2": {
-   "root": "გ",
+   "root": "აგ",
    "roots": [
-    "ა"
+    "გო"
    ],
    "pfsf": "ებ",
    "preverbs": [
@@ -6640,7 +6648,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ა",
+   "version": "ე",
    "parsed": 100
   },
   "lose-vt": {
@@ -6712,13 +6720,12 @@
    "parsed": 100
   },
   "lower-vt": {
-   "root": "წ",
+   "root": "წევ",
    "roots": [
-    "ვ",
+    "წი",
     "წვე",
     "წევედ"
    ],
-   "pfsf": "ევ",
    "preverbs": [
     "და"
    ],
@@ -6763,7 +6770,7 @@
    "root": "შლ",
    "roots": [
     "შალ",
-    "შ",
+    "ლო",
     "გეშლებ"
    ],
    "preverbs": [
@@ -6784,7 +6791,8 @@
    "parsed": 100
   },
   "make-happen": {
-   "root": "ხ",
+   "root": "ხდ",
+   "pfsf": "ენ",
    "preverbs": [
     "მო"
    ],
@@ -6874,6 +6882,7 @@
   },
   "marry-vt": {
    "root": "ქორწინ",
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -6895,6 +6904,7 @@
    "roots": [
     "წყილდ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -6939,6 +6949,7 @@
    "roots": [
     "ხვედრ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "შე"
    ],
@@ -6972,10 +6983,11 @@
    "parsed": 100
   },
   "mislead-vt": {
-   "root": "ც",
+   "root": "ცდ",
    "roots": [
     "ციდნ"
    ],
+   "pfsf": "ენ",
    "preverbs": [
     "შე"
    ],
@@ -7040,9 +7052,9 @@
    "parsed": 100
   },
   "mix-vt": {
-   "root": "რ",
+   "root": "ურ",
    "roots": [
-    "უ",
+    "რი",
     "ირი"
    ],
    "pfsf": "ევ",
@@ -7061,7 +7073,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "უ",
+   "version": "ე",
    "parsed": 100
   },
   "move-out-vi": {
@@ -7093,10 +7105,12 @@
     "prohibitive"
    ],
    "version": "ა",
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "move-vi": {
    "root": "დგილ",
+   "pfsf": "ებ",
    "preverbs": [
     "გადა"
    ],
@@ -7188,6 +7202,7 @@
    "roots": [
     "ჭირვებ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -7329,6 +7344,7 @@
     "კვირვებ",
     "კვირდბე"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -7370,9 +7386,9 @@
    "parsed": 100
   },
   "obtain-vt-2": {
-   "root": "ძ",
+   "root": "იძ",
    "roots": [
-    "ი"
+    "ეძ"
    ],
    "pfsf": "ენ",
    "preverbs": [
@@ -7389,7 +7405,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "occur-vi": {
@@ -7398,6 +7414,7 @@
     "ვლენილ",
     "მოვვლინ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "გამო",
     "გა"
@@ -7486,9 +7503,9 @@
    "parsed": 100
   },
   "open-vt-2": {
-   "root": "ღ",
+   "root": "აღ",
    "roots": [
-    "ა"
+    "აა"
    ],
    "pfsf": "ებ",
    "preverbs": [
@@ -7498,11 +7515,11 @@
     "aorist",
     "optative"
    ],
-   "version": "ა",
    "parsed": 100
   },
   "operate-vi": {
    "root": "მოქმე",
+   "pfsf": "ებ",
    "preverbs": [
     "ი"
    ],
@@ -7571,11 +7588,12 @@
    "parsed": 100
   },
   "overpower-vt": {
-   "root": "რ",
+   "root": "ერ",
    "roots": [
     "რე",
     "რივნ"
    ],
+   "pfsf": "ევ",
    "preverbs": [
     "მო"
    ],
@@ -7670,10 +7688,11 @@
    "parsed": 100
   },
   "pay-vt": {
-   "root": "ხ",
+   "root": "იხ",
    "roots": [
     "ხა"
    ],
+   "pfsf": "ი",
    "preverbs": [
     "გადა"
    ],
@@ -7688,7 +7707,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "perform-vt": {
@@ -7981,6 +8000,7 @@
   },
   "prepare-vt": {
    "root": "მზა",
+   "pfsf": "ებ",
    "preverbs": [
     "მო"
    ],
@@ -8022,6 +8042,7 @@
   },
   "preserve-vi": {
    "root": "კონსერვ",
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -8060,6 +8081,7 @@
   },
   "presume-vt": {
    "root": "ვარაუ",
+   "pfsf": "ობ",
    "preverbs": [
     "ი"
    ],
@@ -8113,6 +8135,7 @@
    "roots": [
     "რდ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -8132,6 +8155,7 @@
   },
   "promote-vt": {
    "root": "წინაურ",
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -8169,12 +8193,11 @@
    "parsed": 100
   },
   "protect-vt": {
-   "root": "ც",
+   "root": "ცავ",
    "roots": [
     "ცვ",
     "ცავა"
    ],
-   "pfsf": "ავ",
    "preverbs": [
     "და"
    ],
@@ -8245,7 +8268,7 @@
   "prove-vt": {
    "root": "მტკიც",
    "roots": [
-    "კ",
+    "ტკ",
     "ტმკიც"
    ],
    "pfsf": "ებ",
@@ -8320,11 +8343,12 @@
    "parsed": 100
   },
   "pursue-vt": {
-   "root": "ს",
+   "root": "სდ",
    "roots": [
     "დევნ",
-    "ვ"
+    "ვდ"
    ],
+   "pfsf": "ევ",
    "preverbs": [
     "მი"
    ],
@@ -8344,7 +8368,7 @@
   "push-vt": {
    "root": "წვ",
    "roots": [
-    "ა",
+    "აწ",
     "წოლ",
     "წექ"
    ],
@@ -8420,11 +8444,11 @@
    "parsed": 100
   },
   "put-on-to-put-in-into-vt": {
-   "root": "დ",
+   "root": "დებ",
    "roots": [
     "დე",
-    "ე",
-    "ვ"
+    "დო",
+    "ვდ"
    ],
    "preverbs": [
     "და"
@@ -8434,8 +8458,13 @@
     "conditional",
     "futureSubjunctive",
     "aorist",
+    "optative",
+    "pluperfect",
+    "perfectSubjunctive",
+    "imperative",
     "prohibitive"
    ],
+   "version": "ე",
    "parsed": 100
   },
   "rain": {
@@ -8497,9 +8526,9 @@
    "parsed": 100
   },
   "raise-vt-2": {
-   "root": "წ",
+   "root": "წევ",
    "roots": [
-    "ვ",
+    "წი",
     "წვე",
     "წევე"
    ],
@@ -8523,6 +8552,7 @@
   },
   "reach-vt": {
    "root": "წვ",
+   "pfsf": "ებ",
    "preverbs": [
     "მი"
    ],
@@ -9250,28 +9280,14 @@
    "parsed": 100
   },
   "resemble-vt": {
-   "root": "გ",
+   "root": "გავ",
    "roots": [
     "გვან",
     "მგვან",
     "ჰგ",
     "გა"
    ],
-   "preverbs": [
-    "ე"
-   ],
-   "preverbScreeves": [
-    "future",
-    "conditional",
-    "futureSubjunctive",
-    "aorist",
-    "optative",
-    "perfect",
-    "pluperfect",
-    "perfectSubjunctive",
-    "imperative",
-    "prohibitive"
-   ],
+   "preverbs": [],
    "version": "ე",
    "parsed": 99
   },
@@ -9380,6 +9396,7 @@
   },
   "restrict-vt": {
    "root": "ზღუ",
+   "pfsf": "ავ",
    "preverbs": [
     "შე"
    ],
@@ -9419,6 +9436,7 @@
   },
   "return-vi": {
    "root": "ბრუნ",
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -9502,7 +9520,7 @@
    "root": "წე",
    "roots": [
     "ულ",
-    "წ",
+    "იწ",
     "წივნ"
    ],
    "preverbs": [
@@ -9569,6 +9587,7 @@
    "roots": [
     "რებულყ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -9681,7 +9700,7 @@
    "roots": [
     "ტყ",
     "თქვ",
-    "ქ",
+    "ვა",
     "ტყვ"
    ],
    "pfsf": "ობ",
@@ -9752,7 +9771,7 @@
    "parsed": 100
   },
   "secure-vt": {
-   "root": "ც",
+   "root": "იც",
    "roots": [
     "ცვ"
    ],
@@ -9771,7 +9790,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "see-off-vt": {
@@ -9818,7 +9837,7 @@
    "parsed": 100
   },
   "seek-vt": {
-   "root": "ძ",
+   "root": "ეძ",
    "roots": [
     "ძებნ"
    ],
@@ -9857,6 +9876,7 @@
   },
   "sell-vt": {
    "root": "ყი",
+   "pfsf": "ი",
    "preverbs": [
     "გა"
    ],
@@ -9956,6 +9976,7 @@
   },
   "settle-vi": {
    "root": "სახლ",
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -10209,10 +10230,10 @@
    "parsed": 100
   },
   "sit": {
-   "root": "ზ",
+   "root": "ზი",
    "roots": [
     "ისხ",
-    "ჯ",
+    "ჯდ",
     "ჯდარ",
     "სხე",
     "სხდარ"
@@ -10244,6 +10265,7 @@
     "სხედ",
     "ჯექ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -10258,7 +10280,8 @@
     "imperative",
     "prohibitive"
    ],
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "sleep": {
    "root": "ძინ",
@@ -10279,7 +10302,7 @@
    "parsed": 100
   },
   "smell-vi": {
-   "root": "ნ",
+   "root": "უნ",
    "roots": [
     "ქვ"
    ],
@@ -10348,7 +10371,8 @@
     "imperative"
    ],
    "version": "ე",
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "soften-soak-vt": {
    "root": "ლბ",
@@ -10502,6 +10526,7 @@
    "roots": [
     "ტრიალდებო"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -10667,6 +10692,7 @@
   },
   "state-vt": {
    "root": "ცხა",
+   "pfsf": "ებ",
    "preverbs": [
     "გან"
    ],
@@ -10839,6 +10865,7 @@
   },
   "suppose-vt": {
    "root": "ვარაუ",
+   "pfsf": "ობ",
    "preverbs": [
     "ი"
    ],
@@ -10859,6 +10886,7 @@
   },
   "surface-vi": {
    "root": "ტივტივ",
+   "pfsf": "ებ",
    "preverbs": [
     "ამო"
    ],
@@ -10936,7 +10964,7 @@
   "sweep": {
    "root": "გვ",
    "roots": [
-    "გ",
+    "გავ",
     "ნუდაგვ",
     "გცი"
    ],
@@ -11056,8 +11084,8 @@
    "root": "ქვ",
    "roots": [
     "ქონ",
-    "ღ",
-    "ე"
+    "ღო",
+    "იღ"
    ],
    "preverbs": [
     "წა",
@@ -11078,7 +11106,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "take-off-vi": {
@@ -11086,6 +11114,7 @@
    "roots": [
     "ფრენილ"
    ],
+   "pfsf": "ებ",
    "preverbs": [
     "ა"
    ],
@@ -11104,10 +11133,11 @@
    "parsed": 100
   },
   "take-off-vt": {
-   "root": "ხ",
+   "root": "იხ",
    "roots": [
     "ხა"
    ],
+   "pfsf": "ი",
    "preverbs": [
     "გა"
    ],
@@ -11122,14 +11152,14 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "take-pick-up-to-receive-vt": {
-   "root": "ღ",
+   "root": "იღ",
    "roots": [
-    "ი",
-    "ო"
+    "ღე",
+    "ღო"
    ],
    "pfsf": "ებ",
    "preverbs": [
@@ -11147,7 +11177,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "talk-vti": {
@@ -11179,9 +11209,9 @@
    "parsed": 100
   },
   "tear-off-vt": {
-   "root": "ხ",
+   "root": "ახ",
    "roots": [
-    "ა"
+    "ხი"
    ],
    "pfsf": "ევ",
    "preverbs": [
@@ -11198,7 +11228,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ა",
+   "version": "ე",
    "parsed": 100
   },
   "tell-vt": {
@@ -11234,10 +11264,11 @@
    "parsed": 97
   },
   "test-vt": {
-   "root": "ც",
+   "root": "ცდ",
    "roots": [
     "ცა"
    ],
+   "pfsf": "ი",
    "preverbs": [
     "გამო"
    ],
@@ -11388,11 +11419,10 @@
    "parsed": 100
   },
   "tie": {
-   "root": "ბ",
+   "root": "ბა",
    "roots": [
-    "ა"
+    "აბ"
    ],
-   "pfsf": "ამ",
    "preverbs": [
     "და"
    ],
@@ -11428,7 +11458,8 @@
     "prohibitive"
    ],
    "version": "ე",
-   "parsed": 100
+   "parsed": 100,
+   "check": true
   },
   "tower-vi": {
    "root": "მართ",
@@ -11502,7 +11533,7 @@
    "root": "ქმნ",
    "roots": [
     "ქმ",
-    "ნ"
+    "მნ"
    ],
    "pfsf": "ი",
    "preverbs": [
@@ -11558,12 +11589,14 @@
    "root": "არ",
    "roots": [
     "დი",
-    "ვლ"
+    "ვლ",
+    "დიხ"
    ],
    "preverbs": [
     "და"
    ],
    "preverbScreeves": [
+    "present",
     "imperfect",
     "presentSubjunctive",
     "perfect"
@@ -11572,20 +11605,22 @@
    "parsed": 100
   },
   "trust-vi": {
-   "root": "ნ",
+   "root": "ნდ",
    "roots": [
     "ნდვნ"
    ],
+   "pfsf": "ობ",
    "preverbs": [],
    "version": "ე",
    "parsed": 100
   },
   "trust-vt": {
-   "root": "ნ",
+   "root": "ნდ",
    "roots": [
     "ბდობო",
     "ნდვნ"
    ],
+   "pfsf": "ობ",
    "preverbs": [
     "მი"
    ],
@@ -11604,10 +11639,11 @@
    "parsed": 100
   },
   "try-vti": {
-   "root": "ც",
+   "root": "ცდ",
    "roots": [
     "ცა"
    ],
+   "pfsf": "ი",
    "preverbs": [],
    "version": "ე",
    "parsed": 100
@@ -11716,7 +11752,7 @@
    "parsed": 100
   },
   "understand-vti": {
-   "root": "გ",
+   "root": "იგ",
    "roots": [
     "ი",
     "გო"
@@ -11726,12 +11762,17 @@
     "გა"
    ],
    "preverbScreeves": [
+    "future",
+    "conditional",
+    "futureSubjunctive",
+    "aorist",
     "optative",
     "pluperfect",
     "perfectSubjunctive",
-    "imperative"
+    "imperative",
+    "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "untie-vt": {
@@ -11779,6 +11820,7 @@
   },
   "wait-vti": {
    "root": "ლო",
+   "pfsf": "ებ",
    "preverbs": [
     "და"
    ],
@@ -11857,7 +11899,7 @@
    "parsed": 100
   },
   "want-vti": {
-   "root": "ნ",
+   "root": "ნდ",
    "roots": [
     "ნდომ"
    ],
@@ -12147,9 +12189,9 @@
    "parsed": 100
   },
   "win-vti": {
-   "root": "გ",
+   "root": "იგ",
    "roots": [
-    "ი"
+    "გო"
    ],
    "pfsf": "ებ",
    "preverbs": [
@@ -12166,7 +12208,7 @@
     "imperative",
     "prohibitive"
    ],
-   "version": "ი",
+   "version": "ე",
    "parsed": 100
   },
   "work-vi": {
