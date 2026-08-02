@@ -12,6 +12,8 @@ import VerbDetail from './components/VerbDetail';
 import GrammarIndex from './components/GrammarIndex';
 import GrammarTopic from './components/GrammarTopic';
 import WordOfTheDay from './components/WordOfTheDay';
+import StoryIndex from './components/StoryIndex';
+import StoryReader from './components/StoryReader';
 import Sidebar from './components/Sidebar';
 import Icon from './components/Icon';
 import { categoryImageCredits } from './utils/categoryImages';
@@ -156,6 +158,8 @@ function App() {
               <Route path="/flashcards" element={<FlashcardMode />} />
               <Route path="/export" element={<ExportAnki />} />
               <Route path="/search" element={<WordSearch />} />
+              <Route path="/stories" element={<StoryIndex />} />
+              <Route path="/stories/:storyId" element={<StoryReader />} />
               <Route path="/grammar" element={<GrammarIndex />} />
               <Route path="/grammar/:topicId" element={<GrammarTopic />} />
             </Routes>

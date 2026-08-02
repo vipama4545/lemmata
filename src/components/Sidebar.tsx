@@ -53,6 +53,7 @@ function Sidebar({ open, onClose }: SidebarProps) {
           <SidebarLink to="/categories" icon="grid" label="Categories" />
           <SidebarLink to="/verbs" icon="list" label="Verbs" />
           <SidebarLink to="/search" icon="search" label="Word search" />
+          <SidebarLink to="/stories" icon="message" label="Stories" />
           <SidebarLink to="/flashcards" icon="cards" label="Flashcards" />
           <SidebarLink to="/export" icon="download" label="Export to Anki" />
         </div>

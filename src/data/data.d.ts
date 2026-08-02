@@ -30,3 +30,10 @@ declare module '*/categoryImages.json' {
   const data: import('../types').ImageMap;
   export default data;
 }
+
+// One line per story. An ambient module pattern may hold only a single '*', so
+// '*/stories/*.json' is not available to cover the directory in one go.
+declare module '*/three-little-pigs.json' {
+  const data: import('../types').Story;
+  export default data;
+}

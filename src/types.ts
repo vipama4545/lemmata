@@ -172,3 +172,60 @@ export interface ImageInfo {
 
 /** Word id → image. Only words that survived the build script's checks appear. */
 export type ImageMap = Record<string, ImageInfo | undefined>;
+
+/* ------------------------------------------------------ stories/<id>.json */
+
+/** Where a glossary record points — a words.json entry, or a verbs.json paradigm. */
+export interface StoryRef {
+  kind: 'word' | 'verb';
+  id: string;
+}
+
+/**
+ * One distinct surface form as it occurs in the story, not one occurrence of it: მგელმა
+ * is a single record however many times the wolf is the subject.
+ */
+export interface StoryGloss {
+  /** The headword the form was traced back to. Null when nothing matched it. */
+  lemma: string | null;
+  /** Null for supplement words, which exist only in scripts/storyOverrides.json. */
+  ref: StoryRef | null;
+  /** Repeated from the dictionary so the file can be proof-read on its own, and the only
+   *  meaning available for a form whose `ref` is null. The app prefers `ref`. */
+  gloss: string;
+  /** How this form differs from the lemma: "erg", "dat.pl", "Aorist 3sg". */
+  gram?: string;
+  /** How the form was reached: "exact", "-dat -pl", "override", "no match". */
+  via: string;
+  /** Other entries that claim the same surface form, best guess first in `ref`. */
+  alts?: (StoryRef & { gloss: string; pos?: string })[];
+  /** Set on records worth a human eye — reconstructed, ambiguous, or unmatched. */
+  check?: boolean;
+  /** Free note carried over from scripts/storyOverrides.json. */
+  comment?: string;
+}
+
+export interface Story {
+  note: string;
+  id: string;
+  title: string;
+  titleEnglish: string;
+  /** A CEFR level as a plain string: stories are not confined to the A1/A2 word list. */
+  level: string;
+  source: string;
+  stats: {
+    tokens: number;
+    distinctForms: number;
+    linkedTokens: number;
+    flaggedForms: number;
+  };
+  paragraphs: string[];
+  /**
+   * The English, one entry per Georgian paragraph and in the same order, from the story's
+   * <id>.en.txt. Empty when there is no translation, which is what the reader checks
+   * before offering the split view.
+   */
+  translation: string[];
+  /** Keyed by the surface form exactly as it appears in `paragraphs`. */
+  glossary: Record<string, StoryGloss | undefined>;
+}

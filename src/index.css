@@ -2756,3 +2756,371 @@ a {
     width: 100%;
   }
 }
+
+/* ===== Stories ===== */
+.story-index-head {
+  margin-bottom: 24px;
+}
+
+.story-index-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+
+.story-index-sub {
+  color: var(--text-secondary);
+  max-width: 62ch;
+}
+
+.story-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.story-card {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.story-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.story-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.story-card-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.story-card-en {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+/* Two lines of the opening paragraph, as a taster. */
+.story-card-excerpt {
+  margin-top: 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.story-card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.story-card-bar {
+  margin-top: 8px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.story-card-bar span {
+  display: block;
+  height: 100%;
+  background: var(--progress-bg);
+}
+
+/* ----- the reader ----- */
+.story-head {
+  margin-bottom: 28px;
+}
+
+.story-title {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.story-title-en {
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.story-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.story-stat {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.story-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--control-hover-bg);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.story-prose {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  max-width: 68ch;
+}
+
+.story-para {
+  font-size: 19px;
+  line-height: 2;
+  margin-bottom: 18px;
+}
+
+.story-para:last-child {
+  margin-bottom: 0;
+}
+
+/* Words stay plain spans so a paragraph selects and copies like ordinary text. Only the
+   underline and the pointer are added when lookup is on; nothing about the element itself
+   changes, which is what keeps selection working in both modes. */
+.story-word.is-live {
+  cursor: help;
+  border-bottom: 1px dotted var(--border-strong);
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.story-word.is-live:hover {
+  border-bottom-color: var(--primary);
+  background: var(--primary-glow);
+}
+
+.story-word.is-live:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.story-word.is-open {
+  background: var(--primary-light);
+  border-bottom-color: var(--primary);
+}
+
+/* ----- reader controls ----- */
+.story-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.story-controls .toggle-btn {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.story-controls .toggle-btn.is-on {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.story-controls .toggle-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.story-controls .toggle-btn:disabled:hover {
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* ----- side by side ----- */
+/* A grid rather than two columns of running text: pairing by row is what guarantees a
+   paragraph stays level with its translation however differently the two languages wrap. */
+.story-split {
+  max-width: none;
+}
+
+.story-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.story-row:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+.story-row .story-para {
+  margin-bottom: 0;
+}
+
+.story-para-en {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+/* ----- the definition card ----- */
+.gloss-card {
+  position: fixed;
+  z-index: 60;
+  width: 320px;
+  max-width: calc(100vw - 24px);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 16px 18px;
+}
+
+.gloss-form {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.gloss-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.gloss-gram {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.gloss-lemma {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.gloss-lemma-word {
+  font-size: 17px;
+  color: var(--text);
+}
+
+.gloss-meaning {
+  margin-top: 8px;
+  font-size: 16px;
+}
+
+.gloss-senses,
+.gloss-alts {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.gloss-senses span,
+.gloss-alts span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+  margin-right: 4px;
+}
+
+.gloss-definition {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.gloss-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.gloss-link:hover {
+  text-decoration: underline;
+}
+
+.gloss-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+@media (max-width: 900px) {
+  /* Two columns stop being readable well before the sidebar drops away, so the pairs
+     stack: Georgian, then its translation directly under it. */
+  .story-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .story-para-en {
+    padding-left: 12px;
+    border-left: 2px solid var(--border);
+  }
+}
+
+@media (max-width: 768px) {
+  .story-prose {
+    padding: 20px;
+  }
+
+  .story-para {
+    font-size: 17px;
+    line-height: 1.9;
+  }
+
+  .story-title {
+    font-size: 24px;
+  }
+}
