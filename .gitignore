@@ -22,6 +22,9 @@ dist-ssr
 .cache
 *.tsbuildinfo
 
+# Local data-build scripts
+scripts
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
