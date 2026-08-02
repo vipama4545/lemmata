@@ -10,13 +10,16 @@
 // constantly: by the birthday bound you would expect a repeated word inside two months.
 //
 // The run boundary is guarded separately, see minGap below.
+//
+// Nothing here is specific to words: the functions are generic over the item type, and the
+// only thing they ask of an item is that it can sit in a Set.
 
 const DAY_MS = 86400000;
 
 // mulberry32: small, fast, and — the point here — the same stream from the same seed in
 // every browser and on every reload. Math.random cannot be used, because the pick has to be
 // reproducible from the date alone.
-function mulberry32(seed) {
+function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
   return function next() {
     a = (a + 0x6d2b79f5) >>> 0;
@@ -27,7 +30,7 @@ function mulberry32(seed) {
   };
 }
 
-function shuffled(items, seed) {
+function shuffled<T>(items: T[], seed: number): T[] {
   const out = items.slice();
   const rand = mulberry32(seed);
   for (let i = out.length - 1; i > 0; i--) {
@@ -39,7 +42,7 @@ function shuffled(items, seed) {
 
 // Spread consecutive run numbers across the seed space; feeding 0, 1, 2… straight into the
 // generator gives shuffles that are far too alike.
-const seedForRun = (run) => Math.imul(run + 1, 2654435761) >>> 0;
+const seedForRun = (run: number): number => Math.imul(run + 1, 2654435761) >>> 0;
 
 /**
  * How far apart two showings of the same word must stay. Only the seam between runs can
@@ -48,14 +51,16 @@ const seedForRun = (run) => Math.imul(run + 1, 2654435761) >>> 0;
  * run's last words back within a couple of months, which is exactly the "same word again
  * already" the permutation is meant to rule out.
  */
-const minGap = (n) => Math.min(180, Math.floor(n / 4));
+const minGap = (n: number): number => Math.min(180, Math.floor(n / 4));
 
-const runCache = new Map();
+// Keyed by list length and run number, so it is safe to share across item types; the cast
+// on the way out is what that sharing costs.
+const runCache = new Map<string, unknown[]>();
 
-function orderForRun(items, run) {
+function orderForRun<T>(items: T[], run: number): T[] {
   const n = items.length;
   const key = `${n}:${run}`;
-  const cached = runCache.get(key);
+  const cached = runCache.get(key) as T[] | undefined;
   if (cached) return cached;
 
   const order = shuffled(items, seedForRun(run));
@@ -87,11 +92,11 @@ function orderForRun(items, run) {
  * Days since the Unix epoch for a date's *local* calendar day, so the word turns over at the
  * reader's midnight rather than at UTC midnight.
  */
-export function dayIndex(date) {
-  return Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / DAY_MS) + 300;
+export function dayIndex(date: Date): number {
+  return Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / DAY_MS) + 2;
 }
 
-export function wordForDate(words, date) {
+export function wordForDate<T>(words: T[] | null | undefined, date: Date): T | null {
   if (!words || words.length === 0) return null;
   const n = words.length;
   const day = dayIndex(date);
@@ -102,8 +107,8 @@ export function wordForDate(words, date) {
 /**
  * The `count` days before `date`, most recent first, as `{ date, word }` pairs.
  */
-export function previousDays(words, date, count) {
-  const days = [];
+export function previousDays<T>(words: T[], date: Date, count: number): { date: Date; word: T }[] {
+  const days: { date: Date; word: T }[] = [];
   for (let back = 1; back <= count; back++) {
     const then = new Date(date.getFullYear(), date.getMonth(), date.getDate() - back);
     const word = wordForDate(words, then);
@@ -113,7 +118,7 @@ export function previousDays(words, date, count) {
 }
 
 /** `YYYY-MM-DD` for the local calendar day — for <time dateTime>. */
-export function isoDay(date) {
-  const pad = (n) => String(n).padStart(2, "0");
+export function isoDay(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }

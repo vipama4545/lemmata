@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { HashRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
+import type { Category, LevelFilter } from './types';
 import CategoryView from './components/CategoryView';
 import FlashcardMode from './components/FlashcardMode';
 import ExportAnki from './components/ExportAnki';
@@ -20,7 +22,7 @@ import './App.css';
 // Verbs come from the conjugation spreadsheet rather than the scraped dictionary, so they
 // are their own category rather than an entry in words.json. It carries no CEFR level,
 // which is why the card drops out whenever a level filter is on.
-const VERB_CATEGORY = {
+const VERB_CATEGORY: Category = {
   id: 'verbs',
   name: 'Verbs',
   nameGeorgian: 'ზმნები',
@@ -46,7 +48,7 @@ function useTheme() {
 function App() {
   const { dark, toggle } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState('all');
+  const [selectedLevel, setSelectedLevel] = useState<LevelFilter>('all');
   // Only used below 1024px, where the sidebar is a drawer rather than a column. The close
   // callback is stable because the sidebar hangs an escape-key listener off it.
   const [navOpen, setNavOpen] = useState(false);
@@ -167,6 +169,15 @@ function App() {
 // The category grid, with the search box and level filter that narrow it. The filtering
 // state stays in App so that it survives a trip into a category and back — this component
 // is remounted by the router on every such return.
+interface CategoryBrowserProps {
+  searchTerm: string;
+  setSearchTerm: Dispatch<SetStateAction<string>>;
+  selectedLevel: LevelFilter;
+  setSelectedLevel: Dispatch<SetStateAction<LevelFilter>>;
+  categories: Category[];
+  verbMatches: number;
+}
+
 function CategoryBrowser({
   searchTerm,
   setSearchTerm,
@@ -174,7 +185,7 @@ function CategoryBrowser({
   setSelectedLevel,
   categories,
   verbMatches,
-}) {
+}: CategoryBrowserProps) {
   return (
     <div className="main-content">
       <div className="breadcrumb">
@@ -252,7 +263,7 @@ function CategoryBrowser({
 // The category pictures are CC-licensed, which obliges us to name the photographer and
 // the licence wherever they appear. A collapsed list keeps that visible without putting
 // a caption under all 43 cards.
-function ImageCredits({ categories }) {
+function ImageCredits({ categories }: { categories: Category[] }) {
   const credits = categoryImageCredits(categories);
   if (!credits.length) return null;
 

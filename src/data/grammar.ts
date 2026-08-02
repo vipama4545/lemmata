@@ -9,16 +9,70 @@
 // `georgianColumns` marks which table columns hold Georgian script so the renderer can
 // set them in the larger, heavier face the rest of the app uses for Georgian.
 
+import type { IconName } from '../components/Icon';
+import type { Screeve, ScreeveKey, Verb } from '../types';
 import verbData from './verbs.json';
 
-export const grammarGroups = [
+/** A table in a section. `georgianColumns` holds the indices of the Georgian columns. */
+export interface GrammarTable {
+  columns: string[];
+  rows: string[][];
+  georgianColumns?: number[];
+}
+
+export interface GrammarExample {
+  ka: string;
+  en: string;
+  note?: string;
+}
+
+/** One conjugation group, as the verb-groups topic lists them. */
+export interface GrammarBlock {
+  label: string;
+  name: string;
+  count: number;
+  notes: string[];
+}
+
+/** Every part is optional; GrammarTopic renders whichever are present, in this order. */
+export interface GrammarSection {
+  heading?: string;
+  body?: string[];
+  table?: GrammarTable;
+  list?: string[];
+  examples?: GrammarExample[];
+  groups?: GrammarBlock[];
+  note?: string;
+}
+
+export interface GrammarTopic {
+  id: string;
+  title: string;
+  titleGeorgian: string;
+  /** The id of the group in `grammarGroups` this topic belongs under. */
+  group: string;
+  icon: IconName;
+  summary: string;
+  sections: GrammarSection[];
+}
+
+export interface GrammarGroup {
+  id: string;
+  label: string;
+}
+
+export interface GrammarGroupWithTopics extends GrammarGroup {
+  topics: GrammarTopic[];
+}
+
+export const grammarGroups: GrammarGroup[] = [
   { id: 'writing', label: 'Writing & sounds' },
   { id: 'nouns', label: 'Nouns & phrases' },
   { id: 'verbs', label: 'Verbs' },
   { id: 'sentences', label: 'Sentences' },
 ];
 
-const alphabet = {
+const alphabet: GrammarTopic = {
   id: 'alphabet',
   title: 'The alphabet',
   titleGeorgian: 'ანბანი',
@@ -85,7 +139,7 @@ const alphabet = {
   ],
 };
 
-const nounCases = {
+const nounCases: GrammarTopic = {
   id: 'noun-cases',
   title: 'Noun cases',
   titleGeorgian: 'ბრუნვები',
@@ -148,7 +202,7 @@ const nounCases = {
   ],
 };
 
-const pluralsAdjectives = {
+const pluralsAdjectives: GrammarTopic = {
   id: 'plurals-and-adjectives',
   title: 'Plurals & adjectives',
   titleGeorgian: 'მრავლობითი და ზედსართავი',
@@ -211,7 +265,7 @@ const pluralsAdjectives = {
   ],
 };
 
-const postpositions = {
+const postpositions: GrammarTopic = {
   id: 'postpositions',
   title: 'Postpositions',
   titleGeorgian: 'თანდებულები',
@@ -254,7 +308,7 @@ const postpositions = {
   ],
 };
 
-const pronouns = {
+const pronouns: GrammarTopic = {
   id: 'pronouns',
   title: 'Pronouns',
   titleGeorgian: 'ნაცვალსახელები',
@@ -319,7 +373,7 @@ const pronouns = {
   ],
 };
 
-const numbers = {
+const numbers: GrammarTopic = {
   id: 'numbers',
   title: 'Numbers',
   titleGeorgian: 'რიცხვები',
@@ -385,7 +439,7 @@ const numbers = {
   ],
 };
 
-const verbBasics = {
+const verbBasics: GrammarTopic = {
   id: 'verb-basics',
   title: 'How verbs work',
   titleGeorgian: 'ზმნა',
@@ -474,7 +528,11 @@ const verbBasics = {
 // straight out of it: any change to the conjugation data shows up here too.
 const exampleVerb = pickExampleVerb();
 
-const screeves = {
+const screeveByKey = Object.fromEntries(
+  verbData.screeves.map(s => [s.key, s]),
+) as Record<ScreeveKey, Screeve>;
+
+const screeves: GrammarTopic = {
   id: 'screeves',
   title: 'Tenses & screeves',
   titleGeorgian: 'მწკრივები',
@@ -492,7 +550,7 @@ const screeves = {
       table: {
         columns: ['Screeve', 'Sense', `1sg of ${exampleVerb.verbalNoun}`],
         rows: block.screeves.map(key => {
-          const screeve = verbData.screeves.find(s => s.key === key);
+          const screeve = screeveByKey[key];
           return [screeve.label, screeve.gloss, exampleVerb.forms[key]?.['1sg'] || '—'];
         }),
         georgianColumns: [2],
@@ -513,7 +571,7 @@ const screeves = {
 
 // One real verb carried across all three tables, so the example column reads as a single
 // paradigm rather than eleven unrelated forms. The verb with the fewest gaps wins.
-function pickExampleVerb() {
+function pickExampleVerb(): Verb {
   let best = verbData.verbs[0];
   let bestFilled = -1;
   for (const verb of verbData.verbs) {
@@ -526,7 +584,7 @@ function pickExampleVerb() {
   return best;
 }
 
-const verbGroups = {
+const verbGroups: GrammarTopic = {
   id: 'verb-groups',
   title: 'Conjugation groups',
   titleGeorgian: 'ჯგუფები',
@@ -550,7 +608,7 @@ const verbGroups = {
   ],
 };
 
-const sentenceBasics = {
+const sentenceBasics: GrammarTopic = {
   id: 'sentence-basics',
   title: 'Sentence basics',
   titleGeorgian: 'წინადადება',
@@ -613,7 +671,7 @@ const sentenceBasics = {
   ],
 };
 
-export const grammarTopics = [
+export const grammarTopics: GrammarTopic[] = [
   alphabet,
   nounCases,
   pluralsAdjectives,
@@ -626,12 +684,12 @@ export const grammarTopics = [
   sentenceBasics,
 ];
 
-export function getGrammarTopic(id) {
+export function getGrammarTopic(id: string | undefined): GrammarTopic | undefined {
   return grammarTopics.find(topic => topic.id === id);
 }
 
 // Topics in the order the groups are declared, so the sidebar and the index page agree.
-export function groupedGrammarTopics() {
+export function groupedGrammarTopics(): GrammarGroupWithTopics[] {
   return grammarGroups
     .map(group => ({
       ...group,

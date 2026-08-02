@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import type { LevelFilter } from '../types';
 import allData from '../data/words.json';
 import Icon from './Icon';
 
 function WordSearch() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState('all');
+  const [selectedLevel, setSelectedLevel] = useState<LevelFilter>('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const results = useMemo(() => {

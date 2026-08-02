@@ -1,20 +1,28 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
+import type { LevelFilter, Word } from '../types';
 import allData from '../data/words.json';
 import { getWordImage, creditLine } from '../utils/images';
 import CategoryThumb from './CategoryThumb';
 import Icon from './Icon';
 
+/** What the category cards on the browse page hand over in the link's router state. */
+interface CategoryViewState {
+  level?: LevelFilter;
+  search?: string;
+}
+
 function CategoryView() {
   const { categoryId } = useParams();
   const location = useLocation();
-  const levelFilter = location.state?.level || 'all';
-  const searchFilter = location.state?.search || '';
+  const state = location.state as CategoryViewState | null;
+  const levelFilter = state?.level || 'all';
+  const searchFilter = state?.search || '';
 
-  const [localLevel, setLocalLevel] = useState(levelFilter);
+  const [localLevel, setLocalLevel] = useState<LevelFilter>(levelFilter);
   const [localSearch, setLocalSearch] = useState(searchFilter);
   const [showTranslation, setShowTranslation] = useState(true);
-  const [currentWordIndex, setCurrentWordIndex] = useState(null);
+  const [currentWordIndex, setCurrentWordIndex] = useState<number | null>(null);
 
   const category = allData.categories.find(c => c.id === categoryId);
   const categoryWords = allData.words.filter(w => w.categoryId === categoryId);
@@ -138,7 +146,7 @@ function CategoryView() {
   );
 }
 
-function WordImageModal({ word, onClose }) {
+function WordImageModal({ word, onClose }: { word: Word; onClose: () => void }) {
   const image = getWordImage(word);
 
   return (

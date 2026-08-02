@@ -1,6 +1,15 @@
-# React + Vite
+# React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+
+## Types for the data files
+
+`src/data/*.json` is generated, and large — `verbs.json` alone is 2.7 MB. Rather than let
+TypeScript infer a type per file, `resolveJsonModule` is off and `src/data/data.d.ts` binds
+each JSON module to a hand-written shape in `src/types.ts`. Adding a new data file means
+adding a declaration there too, otherwise the import will not resolve.
+
+Run `npm run typecheck` (or `npm run build`, which does it first) to check types.
 
 Currently, two official plugins are available:
 
@@ -13,4 +22,5 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 ## Expanding the Oxlint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Oxlint's `typescript` plugin is enabled in `.oxlintrc.json`. For type-aware rules on top of
+that, see the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts).

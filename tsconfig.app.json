@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "useDefineForClassFields": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noUncheckedSideEffectImports": true,
+
+    // resolveJsonModule is deliberately off. The data files under src/data are large
+    // (verbs.json alone is 2.7 MB) and their inferred literal types would be both slow to
+    // check and wrong for our purposes — every verb would get its own object type keyed by
+    // exactly the screeves that verb happens to fill in. src/data/data.d.ts declares them
+    // against the hand-written shapes in src/types.ts instead. Vite still bundles the JSON.
+    "resolveJsonModule": false
+  },
+  "include": ["src"]
+}

@@ -469,7 +469,10 @@ a {
   margin-bottom: 14px;
 }
 
-.daily-head h1 {
+/* h1 on the word, h2 on the verb below it — one page heading, but the two sections read
+   as a pair, so they are styled alike. */
+.daily-head h1,
+.daily-head h2 {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -477,7 +480,8 @@ a {
   color: var(--text);
 }
 
-.daily-head h1 .icon {
+.daily-head h1 .icon,
+.daily-head h2 .icon {
   color: var(--primary);
 }
 
@@ -577,6 +581,59 @@ a {
   font-size: 13px;
   color: var(--text-light);
   text-align: center;
+}
+
+/* ===== Verb of the Day ===== */
+/* No picture and no level badge here, so the card is one column of its own regardless of
+   the width: headword, then the paradigm strip. */
+.daily-verb-card {
+  gap: 20px;
+}
+
+.daily-conj {
+  border-top: 2px solid var(--border);
+  padding-top: 18px;
+}
+
+.daily-conj-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+/* Three across, so the six persons fall into the two rows a paradigm is read in: the
+   singular on top, the plural under it. */
+.daily-conj-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 20px;
+}
+
+.daily-conj-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.daily-conj-pronoun {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.daily-conj-form {
+  font-size: 19px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* The link is a direct child of the card here rather than of a flex column, so it has to
+   be told not to stretch across it. */
+.daily-verb-card .daily-category {
+  justify-self: start;
+  margin-top: 0;
 }
 
 .section-heading {
@@ -2590,6 +2647,16 @@ a {
 
   .daily-english {
     font-size: 18px;
+  }
+
+  /* Two persons still fit side by side on a phone; three do not. */
+  .daily-conj-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 14px;
+  }
+
+  .daily-conj-form {
+    font-size: 17px;
   }
 
   .earlier-list {

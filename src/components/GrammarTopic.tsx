@@ -1,6 +1,11 @@
 import { Link, useParams } from 'react-router-dom';
 import Icon from './Icon';
 import { getGrammarTopic, grammarTopics } from '../data/grammar';
+// Aliased because this module's own components are called GrammarTopic and GrammarTable.
+import type {
+  GrammarTable as GrammarTableData,
+  GrammarTopic as GrammarTopicData,
+} from '../data/grammar';
 
 // One reference topic. A section may carry prose, a table, a bullet list, examples, a
 // closing note, or — for the conjugation groups — a list of named blocks; each part is
@@ -21,8 +26,9 @@ function GrammarTopic() {
   }
 
   const index = grammarTopics.indexOf(topic);
-  const previous = grammarTopics[index - 1];
-  const next = grammarTopics[index + 1];
+  // Undefined at either end of the list — the first topic has no previous, the last no next.
+  const previous: GrammarTopicData | undefined = grammarTopics[index - 1];
+  const next: GrammarTopicData | undefined = grammarTopics[index + 1];
 
   return (
     <div className="main-content">
@@ -116,7 +122,7 @@ function GrammarTopic() {
 // Tables are scrolled inside their own box rather than pushing the page sideways, the same
 // way the conjugation tables are. Georgian columns are marked in the data so they can be
 // set in the heavier face used for Georgian throughout the app.
-function GrammarTable({ table }) {
+function GrammarTable({ table }: { table: GrammarTableData }) {
   const georgian = new Set(table.georgianColumns || []);
 
   return (

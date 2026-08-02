@@ -1,19 +1,27 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import type { LevelFilter } from '../types';
 import allData from '../data/words.json';
 import { getWordImage, creditLine } from '../utils/images';
 import Icon from './Icon';
 
+/** Filters a caller may pre-set through the router state when linking here. */
+interface FlashcardState {
+  level?: LevelFilter;
+  categoryId?: string;
+}
+
 function FlashcardMode() {
   const location = useLocation();
-  const initialLevel = location.state?.level || 'all';
-  const initialCategory = location.state?.categoryId || 'all';
+  const state = location.state as FlashcardState | null;
+  const initialLevel = state?.level || 'all';
+  const initialCategory = state?.categoryId || 'all';
 
-  const [levelFilter, setLevelFilter] = useState(initialLevel);
+  const [levelFilter, setLevelFilter] = useState<LevelFilter>(initialLevel);
   const [categoryFilter, setCategoryFilter] = useState(initialCategory);
   const [isFlipped, setIsFlipped] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [knownWords, setKnownWords] = useState(new Set());
+  const [knownWords, setKnownWords] = useState<Set<string>>(new Set());
   const [showSettings, setShowSettings] = useState(true);
 
   const filteredWords = useMemo(() => {
@@ -68,7 +76,7 @@ function FlashcardMode() {
     setIsFlipped(false);
   };
 
-  const handleKeyDown = useCallback((e) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
       setIsFlipped(prev => !prev);
@@ -86,7 +94,7 @@ function FlashcardMode() {
   // Keyboard shortcuts. This has to be an effect: registering the listener from a
   // useState initialiser ran it once with the first render's handlers and never
   // unsubscribed, so the shortcuts acted on a stale card.
-  const cardRef = useRef(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
@@ -94,7 +102,7 @@ function FlashcardMode() {
 
   const progress = filteredWords.length > 0
     ? ((knownWords.size / filteredWords.length) * 100).toFixed(0)
-    : 0;
+    : '0';
 
   return (
     <div className="main-content flashcard-page">

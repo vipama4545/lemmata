@@ -8,7 +8,7 @@ import Icon from './Icon';
 // form you actually meet in a sentence. Everything else lives on the verb's own page.
 function VerbList() {
   const [search, setSearch] = useState('');
-  const [groupId, setGroupId] = useState('all');
+  const [groupId, setGroupId] = useState<string>('all');
   const [showTranslation, setShowTranslation] = useState(true);
 
   const filteredVerbs = useMemo(() => {

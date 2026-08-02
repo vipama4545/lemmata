@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import type { ImperativeForms, Screeve, ScreeveKey, Verb, VerbMorphemes } from '../types';
 import verbData from '../data/verbs.json';
 import morphemeData from '../data/verbMorphemes.json';
 import { MORPHEME_PARTS, segmentForm } from '../utils/verbMorphology';
@@ -7,7 +9,16 @@ import Icon from './Icon';
 
 const { persons, screeves, series, groups, verbs } = verbData;
 
-const screeveByKey = Object.fromEntries(screeves.map(s => [s.key, s]));
+const screeveByKey = Object.fromEntries(
+  screeves.map(s => [s.key, s]),
+) as Record<ScreeveKey, Screeve>;
+
+/** One row of a conjugation table: a screeve (or the imperative) across the persons. */
+interface ConjugationRow {
+  key: string;
+  label: string;
+  forms: ImperativeForms;
+}
 
 // One verb's whole paradigm: every screeve the spreadsheet fills in, across all six
 // persons, laid out a table per tense series. The imperative and prohibitive get their
@@ -22,10 +33,11 @@ function VerbDetail() {
 
   const { verb, index } = useMemo(() => {
     const i = verbs.findIndex(v => v.id === verbId);
-    return { verb: verbs[i], index: i };
+    // findIndex returns -1 for an unknown id, so this really can come back empty.
+    return { verb: verbs[i] as Verb | undefined, index: i };
   }, [verbId]);
 
-  const lex = morphemeData.verbs[verbId];
+  const lex = verbId ? morphemeData.verbs[verbId] : undefined;
 
   if (!verb) {
     return (
@@ -39,8 +51,8 @@ function VerbDetail() {
   }
 
   const group = groups.find(g => g.id === verb.groupId);
-  const previous = verbs[index - 1];
-  const next = verbs[index + 1];
+  const previous: Verb | undefined = verbs[index - 1];
+  const next: Verb | undefined = verbs[index + 1];
 
   return (
     <div className="main-content">
@@ -83,19 +95,16 @@ function VerbDetail() {
       )}
 
       {series.map(block => {
-        const rows = block.screeves.filter(key => verb.forms[key]);
+        // A defective paradigm simply has fewer rows; the series drops out when it has none.
+        const rows: ConjugationRow[] = block.screeves.flatMap(key => {
+          const forms = verb.forms[key];
+          return forms ? [{ key, label: screeveByKey[key].label, forms }] : [];
+        });
         if (rows.length === 0) return null;
         return (
           <section key={block.id} className="verb-series">
             <h2 className="verb-series-title">{block.label}</h2>
-            <ConjugationTable
-              rows={rows.map(key => ({
-                key,
-                label: screeveByKey[key].label,
-                forms: verb.forms[key],
-              }))}
-              lex={highlight ? lex : null}
-            />
+            <ConjugationTable rows={rows} lex={highlight ? lex : null} />
           </section>
         );
       })}
@@ -107,7 +116,7 @@ function VerbDetail() {
             rows={[
               verb.imperative && { key: 'imperative', label: 'Affirmative', forms: verb.imperative },
               verb.prohibitive && { key: 'prohibitive', label: 'Prohibitive', forms: verb.prohibitive },
-            ].filter(Boolean)}
+            ].filter((row): row is ConjugationRow => row !== null)}
             lex={highlight ? lex : null}
           />
         </section>
@@ -157,7 +166,15 @@ function VerbDetail() {
 // The verb's own morphemes, plus the colour key for the tables below. The parts are only
 // listed here if this verb actually has them — plenty of verbs take no preverb and plenty
 // take no version vowel.
-function MorphemeKey({ lex, highlight, onToggle }) {
+function MorphemeKey({
+  lex,
+  highlight,
+  onToggle,
+}: {
+  lex: VerbMorphemes;
+  highlight: boolean;
+  onToggle: () => void;
+}) {
   const anatomy = [
     { part: 'root', label: 'Root', value: [lex.root, ...(lex.roots || [])].join(' · ') },
     { part: 'pfsf', label: 'PFSF', value: lex.pfsf },
@@ -210,7 +227,15 @@ function MorphemeKey({ lex, highlight, onToggle }) {
 
 // One cell's form, cut into its morphemes. Without a lexicon entry — or with colouring
 // switched off — it renders as plain text.
-function VerbForm({ form, lex, screeve }) {
+function VerbForm({
+  form,
+  lex,
+  screeve,
+}: {
+  form: string;
+  lex: VerbMorphemes | null | undefined;
+  screeve: string;
+}): ReactNode {
   if (!lex) return form;
   const { segments } = segmentForm(form, lex, screeve);
   return segments.map((segment, i) => (
@@ -222,7 +247,13 @@ function VerbForm({ form, lex, screeve }) {
 
 // Screeves down the side, persons across the top. A cell the spreadsheet leaves blank
 // shows a dash rather than collapsing, so the shape of a defective paradigm stays visible.
-function ConjugationTable({ rows, lex }) {
+function ConjugationTable({
+  rows,
+  lex,
+}: {
+  rows: ConjugationRow[];
+  lex: VerbMorphemes | null | undefined;
+}) {
   return (
     <div className="conj-table-wrap">
       <table className="conj-table">
@@ -241,13 +272,14 @@ function ConjugationTable({ rows, lex }) {
           {rows.map(row => (
             <tr key={row.key}>
               <th scope="row" className="conj-screeve">{row.label}</th>
-              {persons.map(person => (
-                <td key={person.key} className={row.forms[person.key] ? 'verb-georgian' : 'conj-empty'}>
-                  {row.forms[person.key]
-                    ? <VerbForm form={row.forms[person.key]} lex={lex} screeve={row.key} />
-                    : '—'}
-                </td>
-              ))}
+              {persons.map(person => {
+                const form = row.forms[person.key];
+                return (
+                  <td key={person.key} className={form ? 'verb-georgian' : 'conj-empty'}>
+                    {form ? <VerbForm form={form} lex={lex} screeve={row.key} /> : '—'}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

@@ -6,6 +6,8 @@
 // Icons are decorative by default (aria-hidden). A button whose only content is an icon
 // needs its own aria-label.
 
+import type { ReactNode } from 'react';
+
 const PATHS = {
   sun: (
     <>
@@ -120,9 +122,18 @@ const PATHS = {
       <circle cx="12" cy="14.5" r="1.4" fill="currentColor" stroke="none" />
     </>
   ),
-};
+} satisfies Record<string, ReactNode>;
 
-function Icon({ name, size = 18, className = '' }) {
+/** The names Icon accepts — the keys of the set above, so the two cannot drift apart. */
+export type IconName = keyof typeof PATHS;
+
+interface IconProps {
+  name: IconName;
+  size?: number;
+  className?: string;
+}
+
+function Icon({ name, size = 18, className = '' }: IconProps) {
   const glyph = PATHS[name];
   if (!glyph) return null;
 

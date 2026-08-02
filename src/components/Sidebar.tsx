@@ -1,12 +1,18 @@
 import { useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import Icon from './Icon';
+import type { IconName } from './Icon';
 import { groupedGrammarTopics } from '../data/grammar';
+
+interface SidebarProps {
+  open: boolean;
+  onClose: () => void;
+}
 
 // The primary navigation. On a wide screen it is a column pinned beside the content; below
 // 1024px it slides in over the page as a drawer, which is why it needs to know when the
 // route changes — a tap on a link there should close it again.
-function Sidebar({ open, onClose }) {
+function Sidebar({ open, onClose }: SidebarProps) {
   const location = useLocation();
 
   useEffect(() => {
@@ -18,7 +24,7 @@ function Sidebar({ open, onClose }) {
   // Escape closes the drawer for keyboard users, who cannot reach the backdrop.
   useEffect(() => {
     if (!open) return undefined;
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
@@ -74,7 +80,15 @@ function Sidebar({ open, onClose }) {
   );
 }
 
-function SidebarLink({ to, icon, label, end = false, sub = false }) {
+interface SidebarLinkProps {
+  to: string;
+  icon: IconName;
+  label: string;
+  end?: boolean;
+  sub?: boolean;
+}
+
+function SidebarLink({ to, icon, label, end = false, sub = false }: SidebarLinkProps) {
   return (
     <NavLink
       to={to}

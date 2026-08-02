@@ -1,3 +1,4 @@
+import type { Category } from '../types';
 import { getCategoryImage } from '../utils/categoryImages';
 
 // The picture that identifies a category. Decorative in every place it is used — the
@@ -6,7 +7,12 @@ import { getCategoryImage } from '../utils/categoryImages';
 //
 // Categories without a resolved image fall back to their Georgian initial rather than an
 // empty grey box, which keeps the grid readable if a build ever comes back short.
-function CategoryThumb({ category, className = '' }) {
+interface CategoryThumbProps {
+  category: Category;
+  className?: string;
+}
+
+function CategoryThumb({ category, className = '' }: CategoryThumbProps) {
   const image = getCategoryImage(category);
   const classes = `category-thumb ${className}`.trim();
 

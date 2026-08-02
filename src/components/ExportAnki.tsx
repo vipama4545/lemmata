@@ -1,17 +1,24 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import type { Category, Level, LevelFilter, Word } from '../types';
 import allData from '../data/words.json';
 import verbData from '../data/verbs.json';
 import { getWordImage } from '../utils/images';
 import CategoryThumb from './CategoryThumb';
 import Icon from './Icon';
 
+/**
+ * A row in the flashcard export. Verbs are folded in alongside the dictionary words, and
+ * carry no CEFR level of their own — which is what the empty string in `level` means.
+ */
+type ExportWord = Omit<Word, 'englishFull' | 'level'> & { level: Level | '' };
+
 // Verbs join the ordinary export as one more category, carrying only their headword: the
 // verbal noun, the English, and the third person singular of the present. The full
 // paradigm is far too wide for a flashcard and has its own download below.
-const VERB_CATEGORY = { id: 'verbs', name: 'Verbs', nameGeorgian: 'ზმნები', wordCount: verbData.verbs.length };
+const VERB_CATEGORY: Category = { id: 'verbs', name: 'Verbs', nameGeorgian: 'ზმნები', wordCount: verbData.verbs.length };
 
-const verbsAsWords = verbData.verbs.map(verb => ({
+const verbsAsWords: ExportWord[] = verbData.verbs.map(verb => ({
   id: `verb-${verb.id}`,
   georgian: verb.verbalNoun,
   english: verb.english,
@@ -22,13 +29,15 @@ const verbsAsWords = verbData.verbs.map(verb => ({
   georgianDefinition: verb.present3sg,
 }));
 
-const exportCategories = [VERB_CATEGORY, ...allData.categories];
-const exportWords = [...allData.words, ...verbsAsWords];
+const exportCategories: Category[] = [VERB_CATEGORY, ...allData.categories];
+const exportWords: ExportWord[] = [...allData.words, ...verbsAsWords];
+
+type ExportFormat = 'csv' | 'txt';
 
 function ExportAnki() {
-  const [levelFilter, setLevelFilter] = useState('all');
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [format, setFormat] = useState('csv');
+  const [levelFilter, setLevelFilter] = useState<LevelFilter>('all');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [format, setFormat] = useState<ExportFormat>('csv');
   const [exporting, setExporting] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
 
@@ -42,7 +51,7 @@ function ExportAnki() {
     });
   }, [levelFilter, selectedCategories, allSelected]);
 
-  const toggleCategory = (catId) => {
+  const toggleCategory = (catId: string) => {
     setSelectedCategories(prev => {
       if (prev.includes(catId)) {
         return prev.filter(id => id !== catId);
@@ -57,8 +66,8 @@ function ExportAnki() {
   // Close dropdown when clicking outside
   useEffect(() => {
     if (!categoryDropdownOpen) return;
-    const handler = (e) => {
-      if (!e.target.closest('.multi-select')) {
+    const handler = (e: MouseEvent) => {
+      if (!(e.target as Element | null)?.closest('.multi-select')) {
         setCategoryDropdownOpen(false);
       }
     };
@@ -310,7 +319,7 @@ function exportVerbConjugations() {
   downloadBlob(blob, 'georgian_verb_conjugations.csv');
 }
 
-function exportAsCSV(words) {
+function exportAsCSV(words: ExportWord[]) {
   const headers = ['Georgian', 'English', 'Level', 'Part of Speech', 'Category', 'Georgian Definition', 'Image URL'];
   const rows = words.map(w => [
     w.georgian,
@@ -333,7 +342,7 @@ function exportAsCSV(words) {
 
 // Anki reads this file a line per note, so neither field may contain a newline of its
 // own — the HTML is emitted unbroken.
-function exportAsAnkiTxt(words) {
+function exportAsAnkiTxt(words: ExportWord[]) {
   const lines = words.map(w => {
     const image = getWordImage(w);
     const front =
@@ -361,7 +370,7 @@ function exportAsAnkiTxt(words) {
   downloadBlob(blob, 'georgian_dictionary.txt');
 }
 
-function downloadBlob(blob, filename) {
+function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
