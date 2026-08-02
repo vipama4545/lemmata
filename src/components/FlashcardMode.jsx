@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import allData from '../data/words.json';
 import { getWordImage, creditLine } from '../utils/images';
+import Icon from './Icon';
 
 function FlashcardMode() {
   const location = useLocation();
@@ -56,10 +57,10 @@ function FlashcardMode() {
     }
   }, [currentWord, remainingWords.length, handleNext]);
 
-  const handleShuffle = () => {
+  const handleShuffle = useCallback(() => {
     setIsFlipped(false);
     setCurrentIndex(Math.floor(Math.random() * (remainingWords.length || filteredWords.length)));
-  };
+  }, [remainingWords.length, filteredWords.length]);
 
   const handleReset = () => {
     setKnownWords(new Set());
@@ -80,15 +81,16 @@ function FlashcardMode() {
     } else if (e.key === 's' || e.key === 'S') {
       handleShuffle();
     }
-  }, [handleNext, handlePrev, handleKnow]);
+  }, [handleNext, handlePrev, handleKnow, handleShuffle]);
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts. This has to be an effect: registering the listener from a
+  // useState initialiser ran it once with the first render's handlers and never
+  // unsubscribed, so the shortcuts acted on a stale card.
   const cardRef = useRef(null);
-  useState(() => {
-    const handler = (e) => handleKeyDown(e);
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
-  });
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   const progress = filteredWords.length > 0
     ? ((knownWords.size / filteredWords.length) * 100).toFixed(0)
@@ -99,17 +101,17 @@ function FlashcardMode() {
       <div className="breadcrumb">
         <Link to="/">← Home</Link>
         <span className="breadcrumb-sep">/</span>
-        <span>🃏 Flashcard Mode</span>
+        <span>Flashcard Mode</span>
       </div>
 
       <div className="flashcard-container">
         <div className="flashcard-header">
-          <h2>🃏 Flashcard Study Mode</h2>
+          <h2>Flashcard Study Mode</h2>
           <button
             className="settings-toggle"
             onClick={() => setShowSettings(!showSettings)}
           >
-            ⚙️ Settings
+            <Icon name="sliders" /> Settings
           </button>
         </div>
 
@@ -136,7 +138,7 @@ function FlashcardMode() {
                 <option value="all">All Categories</option>
                 {allData.categories.map(cat => (
                   <option key={cat.id} value={cat.id}>
-                    {cat.icon} {cat.name} ({cat.wordCount})
+                    {cat.name} ({cat.wordCount})
                   </option>
                 ))}
               </select>
@@ -189,10 +191,7 @@ function FlashcardMode() {
                     )}
                   </figure>
                 )}
-                <div className="flashcard-category">
-                  {allData.categories.find(c => c.id === currentWord.categoryId)?.icon}{' '}
-                  {currentWord.category}
-                </div>
+                <div className="flashcard-category">{currentWord.category}</div>
               </div>
             </div>
           </div>
@@ -206,13 +205,21 @@ function FlashcardMode() {
         )}
 
         <div className="flashcard-controls">
-          <button className="control-btn" onClick={handlePrev}>⬅️ Prev</button>
-          <button className="control-btn shuffle" onClick={handleShuffle}>🔀 Shuffle</button>
-          <button className="control-btn know" onClick={handleKnow}>
-            ✅ Know ({knownWords.size})
+          <button className="control-btn" onClick={handlePrev}>
+            <Icon name="arrow-left" /> Prev
           </button>
-          <button className="control-btn" onClick={handleNext}>Next ➡️</button>
-          <button className="control-btn reset" onClick={handleReset}>🔄 Reset</button>
+          <button className="control-btn shuffle" onClick={handleShuffle}>
+            <Icon name="shuffle" /> Shuffle
+          </button>
+          <button className="control-btn know" onClick={handleKnow}>
+            <Icon name="check" /> Know ({knownWords.size})
+          </button>
+          <button className="control-btn" onClick={handleNext}>
+            Next <Icon name="arrow-right" />
+          </button>
+          <button className="control-btn reset" onClick={handleReset}>
+            <Icon name="refresh" /> Reset
+          </button>
         </div>
 
       </div>

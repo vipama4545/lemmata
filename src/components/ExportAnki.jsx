@@ -1,6 +1,29 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import allData from '../data/words.json';
+import verbData from '../data/verbs.json';
+import { getWordImage } from '../utils/images';
+import CategoryThumb from './CategoryThumb';
+import Icon from './Icon';
+
+// Verbs join the ordinary export as one more category, carrying only their headword: the
+// verbal noun, the English, and the third person singular of the present. The full
+// paradigm is far too wide for a flashcard and has its own download below.
+const VERB_CATEGORY = { id: 'verbs', name: 'Verbs', nameGeorgian: 'ზმნები', wordCount: verbData.verbs.length };
+
+const verbsAsWords = verbData.verbs.map(verb => ({
+  id: `verb-${verb.id}`,
+  georgian: verb.verbalNoun,
+  english: verb.english,
+  level: '',
+  partOfSpeech: 'verb',
+  category: VERB_CATEGORY.name,
+  categoryId: VERB_CATEGORY.id,
+  georgianDefinition: verb.present3sg,
+}));
+
+const exportCategories = [VERB_CATEGORY, ...allData.categories];
+const exportWords = [...allData.words, ...verbsAsWords];
 
 function ExportAnki() {
   const [levelFilter, setLevelFilter] = useState('all');
@@ -12,7 +35,7 @@ function ExportAnki() {
   const allSelected = selectedCategories.length === 0;
 
   const filteredWords = useMemo(() => {
-    return allData.words.filter(w => {
+    return exportWords.filter(w => {
       const matchesLevel = levelFilter === 'all' || w.level === levelFilter;
       const matchesCategory = allSelected || selectedCategories.includes(w.categoryId);
       return matchesLevel && matchesCategory;
@@ -29,7 +52,7 @@ function ExportAnki() {
   };
 
   const selectAll = () => setSelectedCategories([]);
-  const deselectAll = () => setSelectedCategories(allData.categories.map(c => c.id));
+  const deselectAll = () => setSelectedCategories(exportCategories.map(c => c.id));
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -62,10 +85,10 @@ function ExportAnki() {
       <div className="breadcrumb">
         <Link to="/">← Home</Link>
         <span className="breadcrumb-sep">/</span>
-        <span>📥 Export for Anki</span>
+        <span>Export for Anki</span>
       </div>
 
-      <h1>📥 Export for Anki</h1>
+      <h1>Export for Anki</h1>
       <p className="export-description">
         Select which words to export, then download them as a CSV or tab-separated file
         ready to import into Anki.
@@ -97,7 +120,7 @@ function ExportAnki() {
                     ? 'All Categories'
                     : `${selectedCategories.length} categor${selectedCategories.length === 1 ? 'y' : 'ies'} selected`}
                 </span>
-                <span className="multi-select-arrow">{categoryDropdownOpen ? '▲' : '▼'}</span>
+                <Icon name="chevron" className={`multi-select-arrow ${categoryDropdownOpen ? 'open' : ''}`} />
               </button>
               {categoryDropdownOpen && (
                 <div className="multi-select-dropdown">
@@ -106,7 +129,7 @@ function ExportAnki() {
                     <button className="multi-select-action" onClick={deselectAll}>Deselect All</button>
                   </div>
                   <div className="multi-select-list">
-                    {allData.categories.map(cat => {
+                    {exportCategories.map(cat => {
                       const checked = allSelected || selectedCategories.includes(cat.id);
                       return (
                         <label key={cat.id} className={`multi-select-option ${checked ? 'selected' : ''}`}>
@@ -115,7 +138,7 @@ function ExportAnki() {
                             checked={checked}
                             onChange={() => toggleCategory(cat.id)}
                           />
-                          <span className="multi-select-icon">{cat.icon}</span>
+                          <CategoryThumb category={cat} className="category-thumb-xs" />
                           <span className="multi-select-name">{cat.name}</span>
                           <span className="multi-select-count">{cat.wordCount}</span>
                         </label>
@@ -162,7 +185,7 @@ function ExportAnki() {
 
         <div className="export-preview">
           <div className="preview-header">
-            <h3>📊 Preview</h3>
+            <h3><Icon name="list" /> Preview</h3>
             <span className="word-count">{filteredWords.length} words selected</span>
           </div>
           <div className="preview-list">
@@ -171,7 +194,7 @@ function ExportAnki() {
                 <span className="preview-geo">{w.georgian}</span>
                 <span className="preview-arrow">→</span>
                 <span className="preview-eng">{w.english}</span>
-                <span className={`level-badge ${w.level.toLowerCase()}`}>{w.level}</span>
+                {w.level && <span className={`level-badge ${w.level.toLowerCase()}`}>{w.level}</span>}
               </div>
             ))}
             {filteredWords.length > 10 && (
@@ -186,12 +209,19 @@ function ExportAnki() {
             onClick={handleExport}
             disabled={exporting || filteredWords.length === 0}
           >
-            {exporting ? '⏳ Exporting...' : `📥 Export ${filteredWords.length} words`}
+            {exporting
+              ? 'Exporting…'
+              : <><Icon name="download" /> Export {filteredWords.length} words</>}
           </button>
         </div>
 
         <div className="export-help">
           <h3>How to import into Anki</h3>
+          <p className="export-note">
+            Verbs export as their verbal noun and English, with the third person singular
+            of the present in the definition column. Their conjugations are not included —
+            use the full verb database below for those.
+          </p>
           <ol>
             <li>Download the file using the button above.</li>
             <li>Open Anki and choose your deck (or create a new one).</li>
@@ -208,8 +238,76 @@ function ExportAnki() {
           </ol>
         </div>
       </div>
+
+      <h2 className="export-section-title">Verb database</h2>
+      <p className="export-description">
+        The whole conjugation sheet as one CSV: a row per verb, a column for every person
+        of every screeve, plus the imperative, the synonyms and the source link. This is a
+        reference dump rather than a flashcard deck.
+      </p>
+
+      <div className="export-card export-card-verbs">
+        <div className="export-preview">
+          <div className="preview-header">
+            <h3><Icon name="list" /> Contents</h3>
+            <span className="word-count">{verbData.verbs.length} verbs</span>
+          </div>
+          <ul className="export-columns">
+            <li>{verbData.screeves.length} screeves × {verbData.persons.length} persons</li>
+            <li>Imperative and prohibitive</li>
+            <li>Verbal noun and conjugation group</li>
+            <li>English and Georgian synonyms</li>
+          </ul>
+        </div>
+
+        <div className="export-actions">
+          <button className="export-btn anki-btn" onClick={exportVerbConjugations}>
+            <Icon name="download" /> Export all {verbData.verbs.length} verb conjugations
+          </button>
+        </div>
+      </div>
     </div>
   );
+}
+
+// One row per verb, one column per person-and-screeve — the shape the spreadsheet has,
+// flattened so a column header names exactly what is under it ("Aorist 3sg").
+function buildVerbConjugationCsv() {
+  const { screeves, persons, verbs } = verbData;
+
+  // The imperative has no first person singular, so that column would be dead weight.
+  const imperativePersons = persons.filter(p =>
+    verbs.some(v => v.imperative?.[p.key] || v.prohibitive?.[p.key]));
+
+  const headers = [
+    'English', 'Transitivity', 'Verbal Noun', 'Conjugation Group',
+    ...screeves.flatMap(s => persons.map(p => `${s.label} ${p.label}`)),
+    ...imperativePersons.map(p => `Imperative ${p.label}`),
+    ...imperativePersons.map(p => `Prohibitive ${p.label}`),
+    'English Synonyms', 'Georgian Synonyms', 'Source URL',
+  ];
+
+  const rows = verbs.map(verb => [
+    verb.english,
+    verb.transitivity,
+    verb.verbalNoun,
+    verb.group,
+    ...screeves.flatMap(s => persons.map(p => verb.forms[s.key]?.[p.key] || '')),
+    ...imperativePersons.map(p => verb.imperative?.[p.key] || ''),
+    ...imperativePersons.map(p => verb.prohibitive?.[p.key] || ''),
+    verb.synonymsEnglish.join('; '),
+    verb.synonymsGeorgian.join('; '),
+    verb.url,
+  ]);
+
+  return [headers, ...rows]
+    .map(row => row.map(cell => `"${(cell || '').replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+}
+
+function exportVerbConjugations() {
+  const blob = new Blob(['\uFEFF' + buildVerbConjugationCsv()], { type: 'text/csv;charset=utf-8' });
+  downloadBlob(blob, 'georgian_verb_conjugations.csv');
 }
 
 function exportAsCSV(words) {
@@ -221,7 +319,8 @@ function exportAsCSV(words) {
     w.partOfSpeech,
     w.category,
     w.georgianDefinition,
-    `https://source.unsplash.com/400x300/?${encodeURIComponent(w.english)}`,
+    // Words with no matched image get an empty cell rather than a URL that 404s.
+    getWordImage(w)?.url || '',
   ]);
 
   const csv = [headers, ...rows]
@@ -232,13 +331,28 @@ function exportAsCSV(words) {
   downloadBlob(blob, 'georgian_dictionary.csv');
 }
 
+// Anki reads this file a line per note, so neither field may contain a newline of its
+// own — the HTML is emitted unbroken.
 function exportAsAnkiTxt(words) {
   const lines = words.map(w => {
-    const front = `<div style="font-size:2em;text-align:center;padding:20px;">${w.georgian}</div>
-<div style="text-align:center;color:#666;">${w.level} &bull; ${w.partOfSpeech}</div>`;
-    const back = `<div style="font-size:1.5em;text-align:center;padding:20px;">${w.english}</div>
-<div style="text-align:center;color:#666;">${w.georgianDefinition}</div>
-<div style="text-align:center;"><img src="https://source.unsplash.com/400x300/?${encodeURIComponent(w.english)}" /></div>`;
+    const image = getWordImage(w);
+    const front =
+      `<div style="font-size:2em;text-align:center;padding:20px;">${w.georgian}</div>` +
+      `<div style="text-align:center;color:#666;">${w.level} &bull; ${w.partOfSpeech}</div>`;
+
+    // A card only carries a picture when one was actually matched to the word, and it
+    // carries the credit with it — the licence follows the image off the site.
+    const credit = [image?.author, image?.license].filter(Boolean).join(' · ');
+    const picture = image
+      ? `<div style="text-align:center;"><img src="${image.url}" /></div>` +
+        (credit ? `<div style="text-align:center;font-size:0.75em;color:#999;">${credit}</div>` : '')
+      : '';
+
+    const back =
+      `<div style="font-size:1.5em;text-align:center;padding:20px;">${w.english}</div>` +
+      `<div style="text-align:center;color:#666;">${w.georgianDefinition}</div>` +
+      picture;
+
     return `${front}\t${back}`;
   });
 

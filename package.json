@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
+    "build:images": "node scripts/buildImageData.cjs",
+    "build:category-images": "node scripts/buildCategoryImages.cjs",
+    "build:verbs": "node scripts/buildVerbData.cjs",
     "preview": "vite preview"
   },
   "dependencies": {

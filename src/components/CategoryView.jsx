@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import allData from '../data/words.json';
 import { getWordImage, creditLine } from '../utils/images';
+import CategoryThumb from './CategoryThumb';
+import Icon from './Icon';
 
 function CategoryView() {
   const { categoryId } = useParams();
@@ -43,23 +45,29 @@ function CategoryView() {
       <div className="breadcrumb">
         <Link to="/">← Categories</Link>
         <span className="breadcrumb-sep">/</span>
-        <span>{category.icon} {category.name}</span>
+        <span>{category.name}</span>
       </div>
 
       <div className="category-header">
-        <h1>{category.icon} {category.name}</h1>
-        <p className="category-header-geo">{category.nameGeorgian}</p>
-        <span className="word-count">{filteredWords.length} words</span>
+        <CategoryThumb category={category} className="category-thumb-sm" />
+        <div className="category-header-text">
+          <h1>{category.name}</h1>
+          <p className="category-header-geo">{category.nameGeorgian}</p>
+          <span className="word-count">{filteredWords.length} words</span>
+        </div>
       </div>
 
       <div className="toolbar">
-        <input
-          type="text"
-          className="search-input"
-          placeholder="🔍 Filter words..."
-          value={localSearch}
-          onChange={(e) => setLocalSearch(e.target.value)}
-        />
+        <div className="search-field">
+          <Icon name="search" />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Filter words…"
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
+          />
+        </div>
         <div className="level-filter">
           <button
             className={`level-btn ${localLevel === 'all' ? 'active' : ''}`}
@@ -84,7 +92,8 @@ function CategoryView() {
           className="toggle-btn"
           onClick={() => setShowTranslation(!showTranslation)}
         >
-          {showTranslation ? '🙈 Hide Translations' : '👁️ Show Translations'}
+          <Icon name={showTranslation ? 'eye-off' : 'eye'} />
+          {showTranslation ? 'Hide translations' : 'Show translations'}
         </button>
       </div>
 
@@ -109,8 +118,9 @@ function CategoryView() {
                     setCurrentWordIndex(idx);
                   }}
                   title="Show image"
+                  aria-label={`Show image for ${word.english}`}
                 >
-                  🖼️
+                  <Icon name="image" size={20} />
                 </button>
               )}
             </div>
@@ -134,7 +144,9 @@ function WordImageModal({ word, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>✕</button>
+        <button className="modal-close" onClick={onClose} aria-label="Close">
+          <Icon name="close" size={20} />
+        </button>
         <h3>{word.georgian} — {word.english}</h3>
         {image && (
           <figure className="modal-image">

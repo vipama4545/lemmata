@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import allData from '../data/words.json';
+import Icon from './Icon';
 
 function WordSearch() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,20 +28,23 @@ function WordSearch() {
       <div className="breadcrumb">
         <Link to="/">← Home</Link>
         <span className="breadcrumb-sep">/</span>
-        <span>🔍 Word Search</span>
+        <span>Word Search</span>
       </div>
 
-      <h2>🔍 Word Search</h2>
+      <h2>Word Search</h2>
 
       <div className="search-page-toolbar">
-        <input
-          type="text"
-          className="search-input large"
-          placeholder="Type in Georgian or English..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          autoFocus
-        />
+        <div className="search-field">
+          <Icon name="search" size={20} />
+          <input
+            type="text"
+            className="search-input large"
+            placeholder="Type in Georgian or English…"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            autoFocus
+          />
+        </div>
         <div className="search-filters">
           <div className="level-filter">
             <button className={`level-btn ${selectedLevel === 'all' ? 'active' : ''}`}
@@ -58,7 +62,7 @@ function WordSearch() {
             <option value="all">All Categories</option>
             {allData.categories.map(cat => (
               <option key={cat.id} value={cat.id}>
-                {cat.icon} {cat.name}
+                {cat.name}
               </option>
             ))}
           </select>
@@ -90,10 +94,7 @@ function WordSearch() {
               )}
             </div>
             <div className="word-card-right">
-              <span className="word-category-small">
-                {allData.categories.find(c => c.id === word.categoryId)?.icon}{' '}
-                {word.category}
-              </span>
+              <span className="word-category-small">{word.category}</span>
             </div>
           </Link>
         ))}

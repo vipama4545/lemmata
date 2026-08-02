@@ -1,0 +1,432 @@
+{
+ "actions-states": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Speedsuit.jpg/960px-Speedsuit.jpg",
+  "width": 640,
+  "height": 512,
+  "title": "Running",
+  "page": "https://en.wikipedia.org/wiki/Running",
+  "author": "Chris Hunkeler",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+ },
+ "qualities-characteristics": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Colouring_pencils.jpg/960px-Colouring_pencils.jpg",
+  "width": 640,
+  "height": 427,
+  "title": "Color",
+  "page": "https://en.wikipedia.org/wiki/Color",
+  "author": "MichaelMaggs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+ },
+ "time-place-measurements": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Pendulum_clock_by_Jacob_Kock%2C_antique_furniture_photography%2C_IMG_0931_edit.jpg/960px-Pendulum_clock_by_Jacob_Kock%2C_antique_furniture_photography%2C_IMG_0931_edit.jpg",
+  "width": 640,
+  "height": 876,
+  "title": "Clock",
+  "page": "https://en.wikipedia.org/wiki/Clock",
+  "author": "Christoph Braun",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+ },
+ "food-drink": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Old_Tbilisi%2C_Georgian_khachapuri%2C_Georgia.jpg/960px-Old_Tbilisi%2C_Georgian_khachapuri%2C_Georgia.jpg",
+  "width": 640,
+  "height": 425,
+  "title": "Khachapuri",
+  "page": "https://en.wikipedia.org/wiki/Khachapuri",
+  "author": "Vyacheslav Argenberg",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+ },
+ "nature-environment": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Startrails_above_Gunung_Bromo_-_Indonesia.jpg/960px-Startrails_above_Gunung_Bromo_-_Indonesia.jpg",
+  "width": 640,
+  "height": 524,
+  "title": "Nature",
+  "page": "https://en.wikipedia.org/wiki/Nature",
+  "author": "Thomas Fuhrmann",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "names-origins": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/View_of_Tbilisi_from_Tabori_Church_2023-10-08-2.jpg/960px-View_of_Tbilisi_from_Tabori_Church_2023-10-08-2.jpg",
+  "width": 640,
+  "height": 427,
+  "title": "Tbilisi",
+  "page": "https://en.wikipedia.org/wiki/Tbilisi",
+  "author": "Alexey Komarov",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "professions-work": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/A_blacksmith_at_work.jpg/960px-A_blacksmith_at_work.jpg",
+  "width": 640,
+  "height": 853,
+  "title": "Blacksmith",
+  "page": "https://en.wikipedia.org/wiki/Blacksmith",
+  "author": "Moose Jaw Times Herald",
+  "license": "CC BY-SA 1.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/1.0"
+ },
+ "education-science": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/SanDiegoCityCollegeLearningResource_-_bookshelf.jpg/960px-SanDiegoCityCollegeLearningResource_-_bookshelf.jpg",
+  "width": 640,
+  "height": 480,
+  "title": "Library",
+  "page": "https://en.wikipedia.org/wiki/Library",
+  "author": "Joe Crawford from Moorpark, California, USA",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+ },
+ "quantity-order-parts": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Abacus_%28PSF%29.png/960px-Abacus_%28PSF%29.png",
+  "width": 640,
+  "height": 452,
+  "title": "Abacus",
+  "page": "https://en.wikipedia.org/wiki/Abacus",
+  "author": "Pearson Scott Foresman",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "miscellaneous": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Juan_S%C3%A1nchez_Cot%C3%A1n_-_Still_Life_with_Game%2C_Vegetables_and_Fruit%2C_1602.jpg/960px-Juan_S%C3%A1nchez_Cot%C3%A1n_-_Still_Life_with_Game%2C_Vegetables_and_Fruit%2C_1602.jpg",
+  "width": 640,
+  "height": 500,
+  "title": "Still life",
+  "page": "https://en.wikipedia.org/wiki/Still_life",
+  "author": "Juan Sánchez Cotán",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "flora": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Magnolia_grandiflora_-_flower_1.jpg/960px-Magnolia_grandiflora_-_flower_1.jpg",
+  "width": 640,
+  "height": 512,
+  "title": "Flower",
+  "page": "https://en.wikipedia.org/wiki/Flower",
+  "author": "Ianaré Sévi",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+ },
+ "personal-social-relations": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Hermandad_-_friendship.jpg/960px-Hermandad_-_friendship.jpg",
+  "width": 640,
+  "height": 463,
+  "title": "Handshake",
+  "page": "https://en.wikipedia.org/wiki/Handshake",
+  "author": "Rufino",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+ },
+ "feelings-emotions": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Laughing_boy_at_golden_hour.jpg/960px-Laughing_boy_at_golden_hour.jpg",
+  "width": 640,
+  "height": 853,
+  "title": "Laughter",
+  "page": "https://en.wikipedia.org/wiki/Laughter",
+  "author": "Basile Morin",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "clothing-household-items": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Dining_table_laid_at_Chatsworth_House.jpg/960px-Dining_table_laid_at_Chatsworth_House.jpg",
+  "width": 640,
+  "height": 480,
+  "title": "Tableware",
+  "page": "https://en.wikipedia.org/wiki/Tableware",
+  "author": "Whiteghost.ink",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "general-concepts": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Le_Penseur_by_Rodin_%28Kunsthalle_Bielefeld%29_2014-04-10.JPG/960px-Le_Penseur_by_Rodin_%28Kunsthalle_Bielefeld%29_2014-04-10.JPG",
+  "width": 640,
+  "height": 853,
+  "title": "Philosophy",
+  "page": "https://en.wikipedia.org/wiki/Philosophy",
+  "author": "Kaisching",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "uncategorized": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Museum_Wormiani_Historia_1655_Wellcome_L0000128.jpg/960px-Museum_Wormiani_Historia_1655_Wellcome_L0000128.jpg",
+  "width": 640,
+  "height": 500,
+  "title": "Cabinet of curiosities",
+  "page": "https://en.wikipedia.org/wiki/Cabinet_of_curiosities",
+  "author": "Ole Worm",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+ },
+ "health-hygiene": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Stethoscope-2.png",
+  "width": 600,
+  "height": 519,
+  "title": "Stethoscope",
+  "page": "https://en.wikipedia.org/wiki/Stethoscope",
+  "author": "this version: Sonarpulse . origenal: Huji",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "home-living-environment": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Katsura_Imperial_Villa_in_Spring.jpg/960px-Katsura_Imperial_Villa_in_Spring.jpg",
+  "width": 640,
+  "height": 480,
+  "title": "House",
+  "page": "https://en.wikipedia.org/wiki/House",
+  "author": "John Chang",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+ },
+ "identification": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Passports-assorted.jpg/960px-Passports-assorted.jpg",
+  "width": 640,
+  "height": 872,
+  "title": "Passport",
+  "page": "https://en.wikipedia.org/wiki/Passport",
+  "author": "Normadic at English Wikipedia , User:Quistnix , बिजय पोख्रेल , and the PRC Government (as indicated in the file for the ",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "culture-art": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/960px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
+  "width": 640,
+  "height": 954,
+  "title": "Painting",
+  "page": "https://en.wikipedia.org/wiki/Painting",
+  "author": "Leonardo da Vinci",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "fauna": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Wildlife_at_Maasai_Mara_%28Lion%29.jpg/960px-Wildlife_at_Maasai_Mara_%28Lion%29.jpg",
+  "width": 640,
+  "height": 699,
+  "title": "Wildlife",
+  "page": "https://en.wikipedia.org/wiki/Wildlife",
+  "author": "Superbsic",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "services": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/EWM_shop_2007.jpg/960px-EWM_shop_2007.jpg",
+  "width": 640,
+  "height": 427,
+  "title": "Workshop",
+  "page": "https://en.wikipedia.org/wiki/Workshop",
+  "author": "Tom Murphy VII",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "business-relations": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Sitzung_von_Wiki_Loves_Broadcast_im_Kontor_Hamburg.jpg/960px-Sitzung_von_Wiki_Loves_Broadcast_im_Kontor_Hamburg.jpg",
+  "width": 640,
+  "height": 427,
+  "title": "Meeting",
+  "page": "https://en.wikipedia.org/wiki/Meeting",
+  "author": "Wikiolo",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "daily-life": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Breakfast_at_the_Black_Bear_Diner.jpg/960px-Breakfast_at_the_Black_Bear_Diner.jpg",
+  "width": 640,
+  "height": 478,
+  "title": "Breakfast",
+  "page": "https://en.wikipedia.org/wiki/Breakfast",
+  "author": "Kiddo27",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "family-relatives": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Sauk_Indian_family_by_Frank_Rinehart_1899.jpg/960px-Sauk_Indian_family_by_Frank_Rinehart_1899.jpg",
+  "width": 640,
+  "height": 790,
+  "title": "Family",
+  "page": "https://en.wikipedia.org/wiki/Family",
+  "author": "Frank Rinehart",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "speaking-instruments": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Kartuli%2C_Georgian_scripts.png/960px-Kartuli%2C_Georgian_scripts.png",
+  "width": 640,
+  "height": 456,
+  "title": "Georgian scripts",
+  "page": "https://en.wikipedia.org/wiki/Georgian_scripts",
+  "author": "Emperor of Emperors",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "body-parts-organs": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/960px-Da_Vinci_Vitruve_Luc_Viatour.jpg",
+  "width": 640,
+  "height": 870,
+  "title": "Vitruvian Man",
+  "page": "https://en.wikipedia.org/wiki/Vitruvian_Man",
+  "author": "Leonardo da Vinci",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "human-appearance-character": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Human_faces.jpg/960px-Human_faces.jpg",
+  "width": 640,
+  "height": 329,
+  "title": "Face",
+  "page": "https://en.wikipedia.org/wiki/Face",
+  "author": "Autisticeditor 20",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "shopping": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/5/57/The_Moorish_Bazaar.jpg",
+  "width": 456,
+  "height": 624,
+  "title": "Marketplace",
+  "page": "https://en.wikipedia.org/wiki/Marketplace",
+  "author": "Rudolf Ernst",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "free-time-entertainment": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/6/6f/ChessSet.jpg",
+  "width": 828,
+  "height": 762,
+  "title": "Chess",
+  "page": "https://en.wikipedia.org/wiki/Chess",
+  "author": "Alan Light",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+ },
+ "clothing-accessories": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/%D0%9A%D0%BE%D0%BD%D1%81%D1%82%D0%B0%D0%BD%D1%82%D0%B8%D0%BD_%D0%93%D0%B5%D0%BB%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8_%28A%29.JPG/960px-%D0%9A%D0%BE%D0%BD%D1%81%D1%82%D0%B0%D0%BD%D1%82%D0%B8%D0%BD_%D0%93%D0%B5%D0%BB%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8_%28A%29.JPG",
+  "width": 640,
+  "height": 872,
+  "title": "Chokha",
+  "page": "https://en.wikipedia.org/wiki/Chokha",
+  "author": "Pyotr Gankevich",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+ },
+ "politics-government": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/House_of_Commons_2010.jpg/960px-House_of_Commons_2010.jpg",
+  "width": 640,
+  "height": 426,
+  "title": "Parliament",
+  "page": "https://en.wikipedia.org/wiki/Parliament",
+  "author": "UK government",
+  "license": "OGL 3",
+  "licenseUrl": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3"
+ },
+ "travel": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Suitcase1.jpg/960px-Suitcase1.jpg",
+  "width": 640,
+  "height": 775,
+  "title": "Suitcase",
+  "page": "https://en.wikipedia.org/wiki/Suitcase",
+  "author": "JEXP",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+ },
+ "ethics": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Company-Shocked-Gillray.jpeg/960px-Company-Shocked-Gillray.jpeg",
+  "width": 640,
+  "height": 428,
+  "title": "Etiquette",
+  "page": "https://en.wikipedia.org/wiki/Etiquette",
+  "author": "James Gillray",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "sport": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Football_in_Bloomington%2C_Indiana%2C_1995.jpg/960px-Football_in_Bloomington%2C_Indiana%2C_1995.jpg",
+  "width": 640,
+  "height": 436,
+  "title": "Association football",
+  "page": "https://en.wikipedia.org/wiki/Association_football",
+  "author": "Rick Dikeman",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+ },
+ "transport": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/1925_Ford_Model_T_touring.jpg/960px-1925_Ford_Model_T_touring.jpg",
+  "width": 640,
+  "height": 480,
+  "title": "Car",
+  "page": "https://en.wikipedia.org/wiki/Car",
+  "author": "ModelTMitch",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "question-words": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Where%2C_When%2C_Who%2C_What%2C_Why%2C_How%5E_-_NARA_-_534144.jpg/960px-Where%2C_When%2C_Who%2C_What%2C_Why%2C_How%5E_-_NARA_-_534144.jpg",
+  "width": 640,
+  "height": 937,
+  "title": "Five Ws",
+  "page": "https://en.wikipedia.org/wiki/Five_Ws",
+  "author": "Unknown author Unknown author or not provided",
+  "license": "Public domain",
+  "licenseUrl": ""
+ },
+ "geographical-names": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Elbrus_view_on_the_mountains.jpg/960px-Elbrus_view_on_the_mountains.jpg",
+  "width": 640,
+  "height": 427,
+  "title": "Caucasus Mountains",
+  "page": "https://en.wikipedia.org/wiki/Caucasus_Mountains",
+  "author": "Riadchikova",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "religion": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Svetitskhoveli_Cathedral_09.23_%283%29.jpg/960px-Svetitskhoveli_Cathedral_09.23_%283%29.jpg",
+  "width": 640,
+  "height": 427,
+  "title": "Svetitskhoveli Cathedral",
+  "page": "https://en.wikipedia.org/wiki/Svetitskhoveli_Cathedral",
+  "author": "This Photo was taken by Supanut Arunoprayote . Feel free to use any of my images, but please mention me as the author an",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+ },
+ "information-technology": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Laptop_collage.jpg/960px-Laptop_collage.jpg",
+  "width": 640,
+  "height": 512,
+  "title": "Laptop",
+  "page": "https://en.wikipedia.org/wiki/Laptop",
+  "author": "Top left: Premeditated Top right: Tom Page Bottom left and right: Maurizio Pesce",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+ },
+ "abilities-hobbies": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Traditional_pottery_in_Nigeria_%28Ikpu_ite%29_19.jpg/960px-Traditional_pottery_in_Nigeria_%28Ikpu_ite%29_19.jpg",
+  "width": 640,
+  "height": 427,
+  "title": "Pottery",
+  "page": "https://en.wikipedia.org/wiki/Pottery",
+  "author": "Chukwukajustice",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "emergency-situations": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Stockholm%2C_ambulans%2C_2014%2C_21.jpg/960px-Stockholm%2C_ambulans%2C_2014%2C_21.jpg",
+  "width": 640,
+  "height": 427,
+  "title": "Ambulance",
+  "page": "https://en.wikipedia.org/wiki/Ambulance",
+  "author": "AleWi",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "personal-names-surnames": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Taxandriastraat.jpg",
+  "width": 368,
+  "height": 277,
+  "title": "Nameplate",
+  "page": "https://en.wikipedia.org/wiki/Nameplate",
+  "author": "LennartBolks",
+  "license": "Public domain",
+  "licenseUrl": ""
+ }
+}
