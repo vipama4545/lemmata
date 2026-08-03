@@ -15,6 +15,7 @@ import WordOfTheDay from './components/WordOfTheDay';
 import StoryIndex from './components/StoryIndex';
 import StoryReader from './components/StoryReader';
 import Sidebar from './components/Sidebar';
+import ScrollManager from './components/ScrollManager';
 import Icon from './components/Icon';
 import { categoryImageCredits } from './utils/categoryImages';
 import allData from './data/words.json';
@@ -95,6 +96,7 @@ function App() {
 
   return (
     <HashRouter>
+      <ScrollManager />
       <div className="app">
         <header className="header">
           <div className="header-content">

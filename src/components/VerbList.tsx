@@ -1,14 +1,18 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import verbData from '../data/verbs.json';
+import { useEntryState } from '../utils/entryState';
 import Icon from './Icon';
 
 // The verb index. Verbs are listed by their verbal noun — the form a dictionary would
 // use as the headword — next to the third person singular of the present, which is the
 // form you actually meet in a sentence. Everything else lives on the verb's own page.
 function VerbList() {
-  const [search, setSearch] = useState('');
-  const [groupId, setGroupId] = useState<string>('all');
+  // The filters are remembered per history entry: opening a verb and coming back to a list
+  // of all 1,300 rather than the six you had narrowed it to loses your place even when the
+  // scroll position is restored exactly.
+  const [search, setSearch] = useEntryState('search', '');
+  const [groupId, setGroupId] = useEntryState('group', 'all');
   const [showTranslation, setShowTranslation] = useState(true);
 
   const filteredVerbs = useMemo(() => {

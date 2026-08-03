@@ -263,7 +263,7 @@
    "id": "story-vocabulary",
    "name": "Story Vocabulary",
    "nameGeorgian": "მოთხრობის ლექსიკა",
-   "wordCount": 295
+   "wordCount": 296
   }
  ],
  "words": [
@@ -1700,7 +1700,8 @@
    "forms": [
     {
      "form": "თქვა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "said"
     }
    ]
   },
@@ -2376,20 +2377,28 @@
    "verbId": "be-vi",
    "forms": [
     {
+     "form": "არის",
+     "english": "there is"
+    },
+    {
      "form": "ვარ",
-     "gram": "Present 1sg"
+     "gram": "Present 1sg",
+     "english": "I am"
     },
     {
      "form": "ვართ",
-     "gram": "Present 1pl"
+     "gram": "Present 1pl",
+     "english": "we are"
     },
     {
      "form": "იყო",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "was; there was"
     },
     {
      "form": "იყოს",
-     "gram": "Optative 3sg"
+     "gram": "Optative 3sg",
+     "english": "should be"
     }
    ]
   },
@@ -2944,15 +2953,18 @@
    "forms": [
     {
      "form": "ატარებდნენ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "they were spending (their days)"
     },
     {
      "form": "გაატარეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they spent (the summer)"
     },
     {
      "form": "გავატაროთ",
-     "gram": "Optative 1pl"
+     "gram": "Optative 1pl",
+     "english": "let us spend (the winter)"
     }
    ]
   },
@@ -3562,19 +3574,23 @@
    "forms": [
     {
      "form": "ავაშენოთ",
-     "gram": "Optative 1pl"
+     "gram": "Optative 1pl",
+     "english": "let us build"
     },
     {
      "form": "ავიშენებ",
-     "gram": "Future 1sg"
+     "gram": "Future 1sg",
+     "english": "I shall build myself"
     },
     {
      "form": "აიშენა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "he built himself"
     },
     {
      "form": "აშენებდა",
-     "gram": "Imperfect 3sg"
+     "gram": "Imperfect 3sg",
+     "english": "was building"
     }
    ]
   },
@@ -8125,8 +8141,13 @@
    "verbId": "tread-vt",
    "forms": [
     {
+     "form": "დადის",
+     "english": "goes, walks"
+    },
+    {
      "form": "იარო",
-     "gram": "Optative 2sg"
+     "gram": "Optative 2sg",
+     "english": "you should walk"
     }
    ]
   },
@@ -9244,7 +9265,8 @@
    "forms": [
     {
      "form": "იდგა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "stood, was standing"
     }
    ]
   },
@@ -9286,7 +9308,8 @@
    "forms": [
     {
      "form": "დადგა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "came, set in"
     }
    ]
   },
@@ -10176,13 +10199,7 @@
      "english": "expects, waits for; is expecting, is waiting for"
     }
    ],
-   "verbId": "expect-vt",
-   "forms": [
-    {
-     "form": "ველი",
-     "gram": "Present 1sg"
-    }
-   ]
+   "verbId": "expect-vt"
   },
   {
    "id": "202",
@@ -10207,7 +10224,8 @@
    "forms": [
     {
      "form": "ელოდათ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "awaited them"
     }
    ]
   },
@@ -10827,7 +10845,8 @@
    "forms": [
     {
      "form": "დაეცა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "fell"
     }
    ]
   },
@@ -14817,11 +14836,13 @@
    "forms": [
     {
      "form": "აიღო",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "took up"
     },
     {
      "form": "იღებდნენ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "they could make (a sound)"
     }
    ]
   },
@@ -14961,11 +14982,13 @@
    "forms": [
     {
      "form": "ვიცით",
-     "gram": "Present 1pl"
+     "gram": "Present 1pl",
+     "english": "we know"
     },
     {
      "form": "იცოდა",
-     "gram": "Imperfect 3sg"
+     "gram": "Imperfect 3sg",
+     "english": "he knew"
     }
    ]
   },
@@ -17222,7 +17245,8 @@
    "forms": [
     {
      "form": "ლაპარაკობ",
-     "gram": "Present 2sg"
+     "gram": "Present 2sg",
+     "english": "you talk"
     }
    ]
   },
@@ -24160,7 +24184,8 @@
    "forms": [
     {
      "form": "უპასუხა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "answered"
     }
    ]
   },
@@ -25754,11 +25779,13 @@
    "forms": [
     {
      "form": "დარჩება",
-     "gram": "Future 3sg"
+     "gram": "Future 3sg",
+     "english": "will be left"
     },
     {
      "form": "დარჩენოდა",
-     "gram": "Pluperfect 3sg"
+     "gram": "Pluperfect 3sg",
+     "english": "was left to him"
     }
    ]
   },
@@ -30430,7 +30457,8 @@
    "forms": [
     {
      "form": "დასჭირვებიათ",
-     "gram": "Perfect 3pl"
+     "gram": "Perfect 3pl",
+     "english": "they had needed"
     }
    ]
   },
@@ -30581,7 +30609,8 @@
    "forms": [
     {
      "form": "სჯობს",
-     "gram": "Present 3sg"
+     "gram": "Present 3sg",
+     "english": "it is better"
     }
    ]
   },
@@ -31923,7 +31952,8 @@
    "forms": [
     {
      "form": "უხაროდათ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "they were glad"
     }
    ]
   },
@@ -32520,11 +32550,13 @@
    "forms": [
     {
      "form": "ვიფიქრებ",
-     "gram": "Future 1sg"
+     "gram": "Future 1sg",
+     "english": "I shall think of it"
     },
     {
      "form": "ფიქრობდა",
-     "gram": "Imperfect 3sg"
+     "gram": "Imperfect 3sg",
+     "english": "was thinking of"
     }
    ]
   },
@@ -34188,7 +34220,8 @@
    "forms": [
     {
      "form": "შეიძლება",
-     "gram": "Present 3sg"
+     "gram": "Present 3sg",
+     "english": "it is all right, one may"
     }
    ]
   },
@@ -36488,7 +36521,8 @@
    "forms": [
     {
      "form": "ცხოვრობდნენ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "they lived"
     }
    ]
   },
@@ -37992,7 +38026,8 @@
    "forms": [
     {
      "form": "მომხდარიყოს",
-     "gram": "Perfect subjunctive 3sg"
+     "gram": "Perfect subjunctive 3sg",
+     "english": "had happened"
     }
    ]
   },
@@ -38049,7 +38084,8 @@
    "forms": [
     {
      "form": "დაინახეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they saw"
     }
    ]
   },
@@ -38227,9 +38263,11 @@
    "forms": [
     {
      "form": "შეხვდებით",
-     "gram": "Future 2pl"
+     "gram": "Future 2pl",
+     "english": "you will meet"
     }
-   ]
+   ],
+   "note": "one spelling, two verbs: the scrape recorded \"understands\", and verbs.json links the paradigm of \"to meet\". Both are real, so both are senses"
   },
   {
    "id": "6212",
@@ -39667,15 +39705,18 @@
    "forms": [
     {
      "form": "მოდით",
-     "gram": "imperative 2pl"
+     "gram": "imperative 2pl",
+     "english": "come!"
     },
     {
      "form": "მოვა",
-     "gram": "Future 3sg"
+     "gram": "Future 3sg",
+     "english": "will come"
     },
     {
      "form": "მოვიდნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they came"
     }
    ]
   },
@@ -39702,15 +39743,18 @@
    "forms": [
     {
      "form": "გაიქცა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "ran off"
     },
     {
      "form": "გაიქცნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they ran"
     },
     {
      "form": "გარბოდნენ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "they were running"
     }
    ]
   },
@@ -39737,44 +39781,53 @@
    "forms": [
     {
      "form": "დაბრუნდნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they turned back"
     },
     {
      "form": "დაბრუნებულიყო",
-     "gram": "Pluperfect 3sg"
+     "gram": "Pluperfect 3sg",
+     "english": "should go back"
     }
    ]
   },
   {
    "id": "w:უნდა",
    "georgian": "უნდა",
-   "english": "to want",
+   "english": "must, ought to (with the optative)",
    "englishFull": [
-    "to want"
+    "must, ought to (with the optative)"
    ],
-   "georgianDefinition": "ნდომა",
+   "georgianDefinition": "",
    "level": "",
-   "partOfSpeech": "Verb",
+   "partOfSpeech": "",
    "category": "Story Vocabulary",
    "categoryId": "story-vocabulary",
    "origin": "added",
    "senses": [
     {
      "id": "w:უნდა.1",
-     "english": "to want"
+     "english": "must, ought to (with the optative)"
     }
    ],
    "verbId": "want-vti",
    "forms": [
     {
      "form": "გინდათ",
-     "gram": "Present 2pl"
+     "gram": "Present 2pl",
+     "english": "you want"
+    },
+    {
+     "form": "უნდა",
+     "gram": "Present 3sg"
     },
     {
      "form": "უნდოდათ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "they wanted"
     }
-   ]
+   ],
+   "note": "the 3sg of \"to want\" doubles as the modal: სახლი ციხე-სიმაგრე უნდა იყოს is \"a house ought to be a fortress\", not \"a house wants\""
   },
   {
    "id": "w:იწყებს",
@@ -39799,11 +39852,13 @@
    "forms": [
     {
      "form": "დაიწყეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they began"
     },
     {
      "form": "დაიწყო",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "began"
     }
    ]
   },
@@ -39851,7 +39906,8 @@
    "forms": [
     {
      "form": "მიაწვნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they pressed against it"
     }
    ]
   },
@@ -39878,11 +39934,13 @@
    "forms": [
     {
      "form": "გვეშინია",
-     "gram": "Present 1pl"
+     "gram": "Present 1pl",
+     "english": "we are afraid"
     },
     {
      "form": "ეშინოდა",
-     "gram": "Imperfect 3sg"
+     "gram": "Imperfect 3sg",
+     "english": "he was afraid"
     }
    ]
   },
@@ -39909,7 +39967,8 @@
    "forms": [
     {
      "form": "უთხრა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "said to him"
     }
    ]
   },
@@ -39936,7 +39995,8 @@
    "forms": [
     {
      "form": "ააგო",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "built it"
     }
    ]
   },
@@ -39963,11 +40023,13 @@
    "forms": [
     {
      "form": "გადაწყვიტა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "decided"
     },
     {
      "form": "გადაწყვიტეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they decided"
     }
    ]
   },
@@ -39994,7 +40056,8 @@
    "forms": [
     {
      "form": "დამშვიდდნენ",
-     "gram": "Optative 3pl"
+     "gram": "Optative 3pl",
+     "english": "they had calmed down"
     }
    ]
   },
@@ -40021,11 +40084,13 @@
    "forms": [
     {
      "form": "უბერა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "he blew"
     },
     {
      "form": "შეუბერა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "blew at it"
     }
    ]
   },
@@ -40052,11 +40117,13 @@
    "forms": [
     {
      "form": "მიდი",
-     "gram": "Imperative 2sg"
+     "gram": "Imperative 2sg",
+     "english": "go on!"
     },
     {
      "form": "წავიდე",
-     "gram": "Optative 1sg"
+     "gram": "Optative 1sg",
+     "english": "let me go"
     }
    ]
   },
@@ -40083,7 +40150,8 @@
    "forms": [
     {
      "form": "გავიდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "stepped aside"
     }
    ]
   },
@@ -40110,7 +40178,8 @@
    "forms": [
     {
      "form": "დაიმალა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "hid"
     }
    ]
   },
@@ -40137,7 +40206,8 @@
    "forms": [
     {
      "form": "მოატყუა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "he fooled them"
     }
    ],
    "note": "verbs.json also has lie-vi-2 under this spelling"
@@ -40165,7 +40235,8 @@
    "forms": [
     {
      "form": "მიუახლოვდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "approached it"
     }
    ],
    "note": "verbs.json also has approach-vt-2 under this spelling"
@@ -40193,7 +40264,8 @@
    "forms": [
     {
      "form": "გაეხვია",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "wrapped himself in it"
     }
    ]
   },
@@ -40220,7 +40292,8 @@
    "forms": [
     {
      "form": "დააკაკუნა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "knocked"
     }
    ]
   },
@@ -40247,7 +40320,8 @@
    "forms": [
     {
      "form": "დაემორჩილა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "gave way, obeyed"
     }
    ]
   },
@@ -40274,7 +40348,8 @@
    "forms": [
     {
      "form": "გაიგეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they heard, they made out"
     }
    ]
   },
@@ -40301,7 +40376,8 @@
    "forms": [
     {
      "form": "ასწავლეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they taught"
     }
    ]
   },
@@ -40640,6 +40716,32 @@
      "english": "lightning"
     }
    ]
+  },
+  {
+   "id": "w:ველი",
+   "georgian": "ველი",
+   "english": "field, plain",
+   "englishFull": [
+    "field, plain"
+   ],
+   "georgianDefinition": "",
+   "level": "",
+   "partOfSpeech": "Noun",
+   "category": "Story Vocabulary",
+   "categoryId": "story-vocabulary",
+   "origin": "added",
+   "senses": [
+    {
+     "id": "w:ველი.1",
+     "english": "field, plain"
+    }
+   ],
+   "forms": [
+    {
+     "form": "ველი"
+    }
+   ],
+   "note": "spelled exactly like ელის \"expects\" in the 1sg, which the paradigm index would otherwise claim — the form is listed here so the confirmed-forms index answers first"
   },
   {
    "id": "w:თიხა",
@@ -43140,7 +43242,8 @@
    "forms": [
     {
      "form": "ავარდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "shot back up"
     }
    ]
   },
@@ -43166,7 +43269,8 @@
    "forms": [
     {
      "form": "აუჩქარა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "quickened his pace"
     }
    ]
   },
@@ -43192,7 +43296,8 @@
    "forms": [
     {
      "form": "აუცახცახდათ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "began to tremble on them"
     }
    ]
   },
@@ -43218,7 +43323,8 @@
    "forms": [
     {
      "form": "აუხტა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "started out of his head"
     }
    ]
   },
@@ -43244,7 +43350,8 @@
    "forms": [
     {
      "form": "აცივდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "it turned cold"
     }
    ]
   },
@@ -43270,7 +43377,8 @@
    "forms": [
     {
      "form": "აძვრა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "climbed up"
     }
    ]
   },
@@ -43296,11 +43404,13 @@
    "forms": [
     {
      "form": "აჭრიალდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "creaked"
     },
     {
      "form": "აჭრიალდნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they creaked"
     }
    ]
   },
@@ -43326,7 +43436,8 @@
    "forms": [
     {
      "form": "ახარხარებულიყო",
-     "gram": "Pluperfect 3sg"
+     "gram": "Pluperfect 3sg",
+     "english": "should burst out laughing"
     }
    ]
   },
@@ -43352,7 +43463,8 @@
    "forms": [
     {
      "form": "ახლოვდებოდა",
-     "gram": "Imperfect 3sg"
+     "gram": "Imperfect 3sg",
+     "english": "was drawing nearer"
     }
    ]
   },
@@ -43378,7 +43490,8 @@
    "forms": [
     {
      "form": "აფრინდნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they flew off"
     }
    ]
   },
@@ -43404,7 +43517,8 @@
    "forms": [
     {
      "form": "გვაშინებს",
-     "gram": "Present 3sg > 1pl"
+     "gram": "Present 3sg > 1pl",
+     "english": "frightens us"
     }
    ]
   },
@@ -43430,7 +43544,8 @@
    "forms": [
     {
      "form": "აყენია",
-     "gram": "Present 3sg"
+     "gram": "Present 3sg",
+     "english": "is fitted on it"
     }
    ]
   },
@@ -43456,7 +43571,8 @@
    "forms": [
     {
      "form": "გაბრაზდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "grew angry"
     }
    ]
   },
@@ -43482,7 +43598,8 @@
    "forms": [
     {
      "form": "გაგორდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "rolled past"
     }
    ]
   },
@@ -43508,7 +43625,8 @@
    "forms": [
     {
      "form": "გადაგსანსლავთ",
-     "gram": "Future 1sg > 2pl"
+     "gram": "Future 1sg > 2pl",
+     "english": "I shall gobble you up"
     }
    ]
   },
@@ -43534,7 +43652,8 @@
    "forms": [
     {
      "form": "შეგსანსლავთ",
-     "gram": "Future 1sg > 2pl"
+     "gram": "Future 1sg > 2pl",
+     "english": "I shall gobble you up"
     }
    ]
   },
@@ -43560,7 +43679,8 @@
    "forms": [
     {
      "form": "გადავიფიქრე",
-     "gram": "Aorist 1sg"
+     "gram": "Aorist 1sg",
+     "english": "I have changed my mind"
     }
    ]
   },
@@ -43586,7 +43706,8 @@
    "forms": [
     {
      "form": "გადაკეტა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "shot the bolt"
     }
    ]
   },
@@ -43612,7 +43733,8 @@
    "forms": [
     {
      "form": "გადაკოტრიალდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "tumbled over"
     }
    ]
   },
@@ -43638,7 +43760,8 @@
    "forms": [
     {
      "form": "გადახადა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "took the lid off"
     }
    ]
   },
@@ -43664,7 +43787,8 @@
    "forms": [
     {
      "form": "გადახედეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they glanced at each other"
     }
    ]
   },
@@ -43691,7 +43815,8 @@
    "forms": [
     {
      "form": "გათავისუფლა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "freed him"
     }
    ]
   },
@@ -43717,7 +43842,8 @@
    "forms": [
     {
      "form": "გაიგონე",
-     "gram": "Aorist 2sg"
+     "gram": "Aorist 2sg",
+     "english": "did you hear?"
     }
    ]
   },
@@ -43743,7 +43869,8 @@
    "forms": [
     {
      "form": "გაიფიქრა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "thought to himself"
     }
    ]
   },
@@ -43769,7 +43896,8 @@
    "forms": [
     {
      "form": "გალურჯდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "turned blue"
     }
    ]
   },
@@ -43795,7 +43923,8 @@
    "forms": [
     {
      "form": "გამათენებინეთ",
-     "gram": "Imperative 2pl > 1sg"
+     "gram": "Imperative 2pl > 1sg",
+     "english": "let me stay the night"
     }
    ],
    "check": true
@@ -43822,7 +43951,8 @@
    "forms": [
     {
      "form": "გამიღე",
-     "gram": "Imperative 2sg > 1sg"
+     "gram": "Imperative 2sg > 1sg",
+     "english": "open it for me"
     }
    ]
   },
@@ -43848,7 +43978,8 @@
    "forms": [
     {
      "form": "გამოაღეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they opened it"
     }
    ]
   },
@@ -43874,7 +44005,8 @@
    "forms": [
     {
      "form": "გამოეკიდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "gave chase"
     }
    ]
   },
@@ -43900,7 +44032,8 @@
    "forms": [
     {
      "form": "გამოუშრათ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "went dry on them"
     }
    ]
   },
@@ -43926,7 +44059,8 @@
    "forms": [
     {
      "form": "გაფრინდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "flew off"
     }
    ]
   },
@@ -43952,7 +44086,8 @@
    "forms": [
     {
      "form": "გაშეშდნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they froze"
     }
    ]
   },
@@ -43978,7 +44113,8 @@
    "forms": [
     {
      "form": "გახალისდნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they cheered up"
     }
    ]
   },
@@ -44004,7 +44140,8 @@
    "forms": [
     {
      "form": "დაადო",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "fitted it on"
     }
    ]
   },
@@ -44030,7 +44167,8 @@
    "forms": [
     {
      "form": "დაამატა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "added"
     }
    ]
   },
@@ -44056,7 +44194,8 @@
    "forms": [
     {
      "form": "დააყარა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "heaped it on"
     }
    ]
   },
@@ -44082,7 +44221,8 @@
    "forms": [
     {
      "form": "დააჯდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "came up on it"
     }
    ]
   },
@@ -44108,7 +44248,8 @@
    "forms": [
     {
      "form": "დაგვაკარებს",
-     "gram": "Future 3sg > 1pl"
+     "gram": "Future 3sg > 1pl",
+     "english": "will lay a finger on us"
     }
    ]
   },
@@ -44134,7 +44275,8 @@
    "forms": [
     {
      "form": "დაგვაკლებს",
-     "gram": "Future 3sg > 1pl"
+     "gram": "Future 3sg > 1pl",
+     "english": "will do us harm"
     }
    ]
   },
@@ -44160,7 +44302,8 @@
    "forms": [
     {
      "form": "დაეფუფქა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "was scalded"
     }
    ]
   },
@@ -44186,7 +44329,8 @@
    "forms": [
     {
      "form": "დათანხმდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "agreed"
     }
    ]
   },
@@ -44212,7 +44356,8 @@
    "forms": [
     {
      "form": "დაიმტვრია",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "broke his own"
     }
    ]
   },
@@ -44238,7 +44383,8 @@
    "forms": [
     {
      "form": "დაიღრიალა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "gave a roar"
     }
    ]
   },
@@ -44264,7 +44410,8 @@
    "forms": [
     {
      "form": "დაიყარა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "came showering down"
     }
    ]
   },
@@ -44290,7 +44437,8 @@
    "forms": [
     {
      "form": "დაიშალა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "fell apart"
     }
    ]
   },
@@ -44316,7 +44464,8 @@
    "forms": [
     {
      "form": "დაიწრიპინა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "squeaked"
     }
    ]
   },
@@ -44342,11 +44491,13 @@
    "forms": [
     {
      "form": "დამაცადე",
-     "gram": "Imperative 2sg > 1sg"
+     "gram": "Imperative 2sg > 1sg",
+     "english": "just you wait!"
     },
     {
      "form": "დამაცადეთ",
-     "gram": "Imperative 2pl > 1sg"
+     "gram": "Imperative 2pl > 1sg",
+     "english": "just you wait! (to more than one)"
     }
    ],
    "check": true
@@ -44373,7 +44524,8 @@
    "forms": [
     {
      "form": "დატყდომოდა",
-     "gram": "Pluperfect 3sg"
+     "gram": "Pluperfect 3sg",
+     "english": "had broken over it"
     }
    ]
   },
@@ -44399,7 +44551,8 @@
    "forms": [
     {
      "form": "დაუარა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "ran through them"
     }
    ],
    "check": true
@@ -44426,7 +44579,8 @@
    "forms": [
     {
      "form": "დაუსხლტებოდნენ",
-     "gram": "Conditional 3pl"
+     "gram": "Conditional 3pl",
+     "english": "they would slip away from him"
     }
    ]
   },
@@ -44452,7 +44606,8 @@
    "forms": [
     {
      "form": "დაუძვრა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "slipped out of his grasp"
     }
    ]
   },
@@ -44478,7 +44633,8 @@
    "forms": [
     {
      "form": "დაუწყო",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "started in on it"
     }
    ]
   },
@@ -44504,7 +44660,8 @@
    "forms": [
     {
      "form": "დაწყნარებულიყვნენ",
-     "gram": "Pluperfect 3pl"
+     "gram": "Pluperfect 3pl",
+     "english": "they had calmed down"
     }
    ]
   },
@@ -44530,7 +44687,8 @@
    "forms": [
     {
      "form": "დუღდა",
-     "gram": "Imperfect 3sg"
+     "gram": "Imperfect 3sg",
+     "english": "was boiling"
     }
    ]
   },
@@ -44556,7 +44714,8 @@
    "forms": [
     {
      "form": "ეკვეთებოდათ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "were knocking together on them"
     }
    ]
   },
@@ -44582,7 +44741,8 @@
    "forms": [
     {
      "form": "ეცინებოდა",
-     "gram": "Imperfect 3sg"
+     "gram": "Imperfect 3sg",
+     "english": "he wanted to laugh"
     }
    ]
   },
@@ -44609,7 +44769,8 @@
    "forms": [
     {
      "form": "ეხმარა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "to use (a trick)"
     }
    ],
    "check": true
@@ -44636,7 +44797,8 @@
    "forms": [
     {
      "form": "იკავებდა",
-     "gram": "Imperfect 3sg"
+     "gram": "Imperfect 3sg",
+     "english": "was holding himself back"
     }
    ]
   },
@@ -44662,7 +44824,8 @@
    "forms": [
     {
      "form": "იკითხეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they asked"
     }
    ]
   },
@@ -44688,7 +44851,8 @@
    "forms": [
     {
      "form": "მელაპარაკები",
-     "gram": "Present 2sg > 1sg"
+     "gram": "Present 2sg > 1sg",
+     "english": "you are talking to me"
     }
    ]
   },
@@ -44714,7 +44878,8 @@
    "forms": [
     {
      "form": "მიაყურადა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "listened"
     }
    ]
   },
@@ -44740,7 +44905,8 @@
    "forms": [
     {
      "form": "მიაჯახუნეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they slammed it"
     }
    ]
   },
@@ -44766,7 +44932,8 @@
    "forms": [
     {
      "form": "მივარდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "rushed to it"
     }
    ]
   },
@@ -44792,7 +44959,8 @@
    "forms": [
     {
      "form": "მიირბინა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "reached it at a run"
     }
    ]
   },
@@ -44818,7 +44986,8 @@
    "forms": [
     {
      "form": "მიიჭრნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they came running up"
     }
    ]
   },
@@ -44845,11 +45014,13 @@
    "forms": [
     {
      "form": "მისდევდათ",
-     "gram": "Imperfect 3sg > 3pl"
+     "gram": "Imperfect 3sg > 3pl",
+     "english": "came after them"
     },
     {
      "form": "მოსდევდათ",
-     "gram": "Imperfect 3sg > 3pl"
+     "gram": "Imperfect 3sg > 3pl",
+     "english": "was after them"
     }
    ]
   },
@@ -44875,7 +45046,8 @@
    "forms": [
     {
      "form": "მიუგო",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "replied"
     }
    ]
   },
@@ -44901,7 +45073,8 @@
    "forms": [
     {
      "form": "მიუხურა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "shut it in his face"
     }
    ]
   },
@@ -44927,7 +45100,8 @@
    "forms": [
     {
      "form": "მიხვდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "understood at once"
     }
    ]
   },
@@ -44953,7 +45127,8 @@
    "forms": [
     {
      "form": "მოადინა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "made (a splash)"
     }
    ]
   },
@@ -44979,11 +45154,13 @@
    "forms": [
     {
      "form": "მოასწრეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they just managed it"
     },
     {
      "form": "მოვასწრებთ",
-     "gram": "Future 1pl"
+     "gram": "Future 1pl",
+     "english": "we shall manage in time"
     }
    ]
   },
@@ -45009,7 +45186,8 @@
    "forms": [
     {
      "form": "მობრძანდით",
-     "gram": "Imperative 2pl"
+     "gram": "Imperative 2pl",
+     "english": "come in!"
     }
    ]
   },
@@ -45035,7 +45213,8 @@
    "forms": [
     {
      "form": "მოენახულებინათ",
-     "gram": "Pluperfect 3pl"
+     "gram": "Pluperfect 3pl",
+     "english": "they should go and see it"
     }
    ]
   },
@@ -45061,7 +45240,8 @@
    "forms": [
     {
      "form": "მოვხვდები",
-     "gram": "Future 1sg"
+     "gram": "Future 1sg",
+     "english": "I shall get in"
     }
    ]
   },
@@ -45087,7 +45267,8 @@
    "forms": [
     {
      "form": "მოიარო",
-     "gram": "Optative 2sg"
+     "gram": "Optative 2sg",
+     "english": "you should go round"
     }
    ]
   },
@@ -45113,7 +45294,8 @@
    "forms": [
     {
      "form": "მოისმა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "was heard, came"
     }
    ]
   },
@@ -45139,7 +45321,8 @@
    "forms": [
     {
      "form": "მოისროლა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "flung it off"
     }
    ]
   },
@@ -45165,11 +45348,13 @@
    "forms": [
     {
      "form": "მოკურცხლა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "bolted off"
     },
     {
      "form": "მოკურცხლეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they bolted off"
     }
    ]
   },
@@ -45195,7 +45380,8 @@
    "forms": [
     {
      "form": "მორჩნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they had finished"
     }
    ]
   },
@@ -45221,7 +45407,8 @@
    "forms": [
     {
      "form": "მოჰკრა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "caught sight of"
     }
    ]
   },
@@ -45247,7 +45434,8 @@
    "forms": [
     {
      "form": "უკრთოდათ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "trembled on them"
     }
    ]
   },
@@ -45273,7 +45461,8 @@
    "forms": [
     {
      "form": "უყო",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "could shift it"
     }
    ],
    "check": true
@@ -45300,7 +45489,8 @@
    "forms": [
     {
      "form": "შეასწრო",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "just got inside"
     }
    ]
   },
@@ -45326,11 +45516,13 @@
    "forms": [
     {
      "form": "შეგვჭამს",
-     "gram": "Future 3sg > 1pl"
+     "gram": "Future 3sg > 1pl",
+     "english": "he will eat us"
     },
     {
      "form": "შევჭამ",
-     "gram": "Future 1sg"
+     "gram": "Future 1sg",
+     "english": "I shall eat"
     }
    ]
   },
@@ -45356,7 +45548,8 @@
    "forms": [
     {
      "form": "შეეჯახა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "ran straight into it"
     }
    ]
   },
@@ -45382,7 +45575,8 @@
    "forms": [
     {
      "form": "შეიკავა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "held himself back"
     }
    ]
   },
@@ -45408,7 +45602,8 @@
    "forms": [
     {
      "form": "შეირხა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "swayed"
     }
    ]
   },
@@ -45434,7 +45629,8 @@
    "forms": [
     {
      "form": "შეიყვანა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "led them in"
     }
    ]
   },
@@ -45460,7 +45656,8 @@
    "forms": [
     {
      "form": "შემოეღწია",
-     "gram": "Pluperfect 3sg"
+     "gram": "Pluperfect 3sg",
+     "english": "could get in"
     }
    ]
   },
@@ -45486,7 +45683,8 @@
    "forms": [
     {
      "form": "შემოვარდნილიყო",
-     "gram": "Pluperfect 3sg"
+     "gram": "Pluperfect 3sg",
+     "english": "should burst in"
     }
    ]
   },
@@ -45512,11 +45710,13 @@
    "forms": [
     {
      "form": "შემოვუშვათ",
-     "gram": "Optative 1pl"
+     "gram": "Optative 1pl",
+     "english": "shall we let him in?"
     },
     {
      "form": "შემომიშვით",
-     "gram": "Imperative 2pl > 1sg"
+     "gram": "Imperative 2pl > 1sg",
+     "english": "let me in"
     }
    ]
   },
@@ -45542,11 +45742,13 @@
    "forms": [
     {
      "form": "შემოსძახა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "sang out"
     },
     {
      "form": "შემოსძახეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they struck up"
     }
    ]
   },
@@ -45572,7 +45774,8 @@
    "forms": [
     {
      "form": "შენძრეულა",
-     "gram": "Perfect 3sg"
+     "gram": "Perfect 3sg",
+     "english": "he has not stirred"
     }
    ]
   },
@@ -45598,7 +45801,8 @@
    "forms": [
     {
      "form": "შესცქეროდნენ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "they gazed at"
     }
    ]
   },
@@ -45624,7 +45828,8 @@
    "forms": [
     {
      "form": "შეუდგა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "set about it"
     }
    ]
   },
@@ -45650,11 +45855,13 @@
    "forms": [
     {
      "form": "შეშინდნენ",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they took fright"
     },
     {
      "form": "შეშინებულიყვნენ",
-     "gram": "Pluperfect 3pl"
+     "gram": "Pluperfect 3pl",
+     "english": "they had been so frightened"
     }
    ]
   },
@@ -45680,7 +45887,8 @@
    "forms": [
     {
      "form": "შეძლო",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "he managed"
     }
    ]
   },
@@ -45706,7 +45914,8 @@
    "forms": [
     {
      "form": "შეწყვიტა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "stopped"
     }
    ]
   },
@@ -45733,7 +45942,8 @@
    "forms": [
     {
      "form": "შეხებიან",
-     "gram": "Perfect 3pl"
+     "gram": "Perfect 3pl",
+     "english": "they have touched it"
     }
    ]
   },
@@ -45759,7 +45969,8 @@
    "forms": [
     {
      "form": "შეჰყურებდნენ",
-     "gram": "Imperfect 3pl"
+     "gram": "Imperfect 3pl",
+     "english": "they looked on at"
     }
    ]
   },
@@ -45785,7 +45996,8 @@
    "forms": [
     {
      "form": "ჩაგორდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "rolled down"
     }
    ]
   },
@@ -45811,7 +46023,8 @@
    "forms": [
     {
      "form": "ჩაისუნთქა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "drew a breath"
     }
    ]
   },
@@ -45837,7 +46050,8 @@
    "forms": [
     {
      "form": "ჩამოვრჩი",
-     "gram": "Aorist 1sg"
+     "gram": "Aorist 1sg",
+     "english": "I have fallen behind"
     }
    ]
   },
@@ -45863,7 +46077,8 @@
    "forms": [
     {
      "form": "ჩამოკიდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "hung it"
     }
    ]
   },
@@ -45889,7 +46104,8 @@
    "forms": [
     {
      "form": "ჩამოცვივდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "came down, fell off"
     }
    ]
   },
@@ -45915,7 +46131,8 @@
    "forms": [
     {
      "form": "ჩამოჯდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "sat down"
     }
    ]
   },
@@ -45941,7 +46158,8 @@
    "forms": [
     {
      "form": "ჩაუკრა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "winked at them"
     }
    ]
   },
@@ -45967,7 +46185,8 @@
    "forms": [
     {
      "form": "ჩაუქროლეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they dashed past"
     }
    ]
   },
@@ -45993,7 +46212,8 @@
    "forms": [
     {
      "form": "ჩაძვრა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "squeezed into it"
     }
    ]
   },
@@ -46019,7 +46239,8 @@
    "forms": [
     {
      "form": "წამოიძახეს",
-     "gram": "Aorist 3pl"
+     "gram": "Aorist 3pl",
+     "english": "they cried out"
     }
    ]
   },
@@ -46045,7 +46266,8 @@
    "forms": [
     {
      "form": "ჰკითხა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "asked"
     }
    ]
   },
@@ -46071,7 +46293,8 @@
    "forms": [
     {
      "form": "გაუმართლა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "his luck held"
     }
    ]
   },
@@ -46097,7 +46320,8 @@
    "forms": [
     {
      "form": "გაუხარდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "was delighted"
     }
    ]
   },
@@ -46124,7 +46348,8 @@
    "forms": [
     {
      "form": "სწვდა",
-     "gram": "Aorist 3sg"
+     "gram": "Aorist 3sg",
+     "english": "caught hold of it"
     }
    ]
   },

@@ -11,6 +11,7 @@ import type { Sense, Story, StoryToken, Verb, VerbMorphemes, Word } from '../typ
 import wordData from '../data/words.json';
 import verbData from '../data/verbs.json';
 import morphemeData from '../data/verbMorphemes.json';
+import { focusHref } from './scroll';
 
 // No /g on either: these are handed to String.split and String.test, and a global flag on
 // a shared regex is a standing invitation to the lastIndex bug.
@@ -112,8 +113,9 @@ export function reading(token: StoryToken): Reading {
     verb,
     lex: verb ? morphemeData.verbs[verb.id] ?? undefined : undefined,
     // The paradigm is the more useful page when there is one: it is where the form the
-    // reader is looking at actually appears.
-    href: verb ? `/verbs/${verb.id}` : `/category/${word.categoryId}`,
+    // reader is looking at actually appears. Otherwise it is the word's category, opened
+    // at the word rather than at the top of a list the word is somewhere inside.
+    href: verb ? `/verbs/${verb.id}` : focusHref(`/category/${word.categoryId}`, word.id),
     pos: word.partOfSpeech || (verb?.transitivity ?? ''),
     sense,
     otherSenses: word.senses.filter((_, i) => i !== index).map(s => s.english),

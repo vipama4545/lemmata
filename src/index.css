@@ -911,6 +911,16 @@ a {
   cursor: pointer;
 }
 
+/* The word a link from elsewhere — a search result, a story, the day's card — was aiming
+   at. Marked rather than flashed: the scroll to it is instant, so an animation would be
+   over before the eye arrived, and in a column of near-identical rows the mark is what
+   says which one you were sent to. */
+.word-card.is-focus-target {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
 .word-card-left {
   display: flex;
   gap: 6px;

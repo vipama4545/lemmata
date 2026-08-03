@@ -3,6 +3,8 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import type { LevelFilter, Word } from '../types';
 import allData from '../data/words.json';
 import { getWordImage, creditLine } from '../utils/images';
+import { focusId } from '../utils/scroll';
+import { useEntryState } from '../utils/entryState';
 import CategoryThumb from './CategoryThumb';
 import Icon from './Icon';
 
@@ -18,9 +20,15 @@ function CategoryView() {
   const state = location.state as CategoryViewState | null;
   const levelFilter = state?.level || 'all';
   const searchFilter = state?.search || '';
+  // The word a link sent us here for, if any. It stays marked rather than flashing and
+  // fading: the scroll was instant, so a flash would be over before the eye found it, and
+  // a list of near-identical rows is exactly where you want to be shown which one is yours.
+  const focusedWord = focusId(location.search);
 
-  const [localLevel, setLocalLevel] = useState<LevelFilter>(levelFilter);
-  const [localSearch, setLocalSearch] = useState(searchFilter);
+  // Seeded from the browse page's filters, then remembered per history entry, so that
+  // coming back from a word lands on the list you narrowed rather than the whole category.
+  const [localLevel, setLocalLevel] = useEntryState<LevelFilter>('level', levelFilter);
+  const [localSearch, setLocalSearch] = useEntryState('search', searchFilter);
   const [showTranslation, setShowTranslation] = useState(true);
   const [currentWordIndex, setCurrentWordIndex] = useState<number | null>(null);
 
@@ -107,7 +115,11 @@ function CategoryView() {
 
       <div className="word-list">
         {filteredWords.map((word, idx) => (
-          <div key={word.id} className="word-card">
+          <div
+            key={word.id}
+            data-focus={word.id}
+            className={`word-card${word.id === focusedWord ? ' is-focus-target' : ''}`}
+          >
             <div className="word-card-left">
               <span className={`level-badge ${word.level.toLowerCase()}`}>{word.level}</span>
               <span className="pos-tag">{word.partOfSpeech}</span>

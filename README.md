@@ -19,6 +19,12 @@ can mean different things in different lines — აბა is "let's" where the 
 on and "just try" where the wolf threatens them. Correcting a definition is done once, in
 the lexicon, and every story that cites it follows.
 
+An inflected form may also carry a meaning of its own, which the card shows above the
+headword: `იყო` reads as "was", filed under `არის` "is". Nothing can derive that — the
+paradigm knows the frame ("I -ed") but not that the past of "build" is "built" — so it is
+written down, as `"იყო": { "gram": "Aorist 3sg", "en": "was; there was" }`. Case forms of a
+nominal get none: `მგელმა` means what `მგელი` means, and the `erg` tag says the rest.
+
 Nothing generated is edited by hand. The sources are:
 
 | File | Holds |

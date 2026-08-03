@@ -5,6 +5,7 @@ import allData from "../data/words.json";
 import verbData from "../data/verbs.json";
 import { wordForDate, previousDays, isoDay } from "../utils/dailyWord";
 import { getWordImage, creditLine } from "../utils/images";
+import { focusHref } from "../utils/scroll";
 import Icon from "./Icon";
 
 const FULL_DATE: Intl.DateTimeFormatOptions = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
@@ -34,7 +35,7 @@ function WordOfTheDay() {
       verb: wordForDate(verbData.verbs, now),
       earlierWords: previousDays(DAILY_WORDS, now, PAST_DAYS).map(({ date, word: past }) => ({
         date,
-        to: `/category/${past.categoryId}`,
+        to: focusHref(`/category/${past.categoryId}`, past.id),
         georgian: past.georgian,
         english: past.english,
       })),
@@ -92,7 +93,7 @@ function WordOfTheDay() {
                 <span>Also</span> {word.englishFull.slice(1).join(" · ")}
               </p>
             )}
-            <Link className="daily-category" to={`/category/${word.categoryId}`}>
+            <Link className="daily-category" to={focusHref(`/category/${word.categoryId}`, word.id)}>
               {word.category}
               <Icon name="arrow-right" size={16} />
             </Link>

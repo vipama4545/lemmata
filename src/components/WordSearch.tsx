@@ -1,13 +1,17 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { LevelFilter } from '../types';
 import allData from '../data/words.json';
+import { focusHref } from '../utils/scroll';
+import { useEntryState } from '../utils/entryState';
 import Icon from './Icon';
 
 function WordSearch() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState<LevelFilter>('all');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  // The whole page is the search: leaving it and coming back to an empty box would throw
+  // away the work of finding the word you then went to look at.
+  const [searchTerm, setSearchTerm] = useEntryState('search', '');
+  const [selectedLevel, setSelectedLevel] = useEntryState<LevelFilter>('level', 'all');
+  const [selectedCategory, setSelectedCategory] = useEntryState('category', 'all');
 
   const results = useMemo(() => {
     if (!searchTerm.trim()) return [];
@@ -80,7 +84,7 @@ function WordSearch() {
         {results.map((word) => (
           <Link
             key={word.id}
-            to={`/category/${word.categoryId}`}
+            to={focusHref(`/category/${word.categoryId}`, word.id)}
             className="word-card search-result"
           >
             <div className="word-card-left">
