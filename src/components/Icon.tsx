@@ -115,6 +115,7 @@ const PATHS = {
     </>
   ),
   layers: <path d="M12 3 3 8l9 5 9-5-9-5ZM3.5 13 12 17.6 20.5 13" />,
+  flag: <path d="M5.5 21V3.5M5.5 4.5h11l-2.2 3.6 2.2 3.6h-11" />,
   calendar: (
     <>
       <rect x="3.5" y="5" width="17" height="15" rx="2" />

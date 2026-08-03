@@ -9,7 +9,7 @@ function StoryIndex() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/">← Word of the day</Link>
+        <Link to="/">← Home</Link>
         <span className="breadcrumb-sep">/</span>
         <span>Stories</span>
       </div>

@@ -1,57 +1,57 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
-import type { Dispatch, SetStateAction } from 'react';
-import { HashRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
-import type { Category, LevelFilter } from './types';
-import CategoryView from './components/CategoryView';
-import FlashcardMode from './components/FlashcardMode';
-import ExportAnki from './components/ExportAnki';
-import WordSearch from './components/WordSearch';
-import CategoryThumb from './components/CategoryThumb';
-import VerbList from './components/VerbList';
-import VerbDetail from './components/VerbDetail';
-import GrammarIndex from './components/GrammarIndex';
-import GrammarTopic from './components/GrammarTopic';
-import WordOfTheDay from './components/WordOfTheDay';
-import StoryIndex from './components/StoryIndex';
-import StoryReader from './components/StoryReader';
-import Sidebar from './components/Sidebar';
-import ScrollManager from './components/ScrollManager';
-import Icon from './components/Icon';
-import { categoryImageCredits } from './utils/categoryImages';
-import allData from './data/words.json';
-import verbData from './data/verbs.json';
-import './App.css';
+import { useState, useMemo, useEffect, useCallback } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { HashRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import type { Category, LevelFilter } from "./types";
+import CategoryView from "./components/CategoryView";
+import FlashcardMode from "./components/FlashcardMode";
+import ExportAnki from "./components/ExportAnki";
+import WordSearch from "./components/WordSearch";
+import CategoryThumb from "./components/CategoryThumb";
+import VerbList from "./components/VerbList";
+import VerbDetail from "./components/VerbDetail";
+import GrammarIndex from "./components/GrammarIndex";
+import GrammarTopic from "./components/GrammarTopic";
+import WordOfTheDay from "./components/WordOfTheDay";
+import StoryIndex from "./components/StoryIndex";
+import StoryReader from "./components/StoryReader";
+import Sidebar from "./components/Sidebar";
+import ScrollManager from "./components/ScrollManager";
+import Icon from "./components/Icon";
+import { categoryImageCredits } from "./utils/categoryImages";
+import allData from "./data/words.json";
+import verbData from "./data/verbs.json";
+import "./App.css";
 
 // Verbs come from the conjugation spreadsheet rather than the scraped dictionary, so they
 // are their own category rather than an entry in words.json. It carries no CEFR level,
 // which is why the card drops out whenever a level filter is on.
 const VERB_CATEGORY: Category = {
-  id: 'verbs',
-  name: 'Verbs',
-  nameGeorgian: 'ზმნები',
+  id: "verbs",
+  name: "Verbs",
+  nameGeorgian: "ზმნები",
   wordCount: verbData.verbs.length,
 };
 
 function useTheme() {
   const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem('theme');
-    if (saved) return saved === 'dark';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const saved = localStorage.getItem("theme");
+    if (saved) return saved === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    localStorage.setItem("theme", dark ? "dark" : "light");
   }, [dark]);
 
-  const toggle = () => setDark(prev => !prev);
+  const toggle = () => setDark((prev) => !prev);
   return { dark, toggle };
 }
 
 function App() {
   const { dark, toggle } = useTheme();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState<LevelFilter>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState<LevelFilter>("all");
   // Only used below 1024px, where the sidebar is a drawer rather than a column. The close
   // callback is stable because the sidebar hangs an escape-key listener off it.
   const [navOpen, setNavOpen] = useState(false);
@@ -61,38 +61,35 @@ function App() {
   const words = allData.words;
 
   const filteredCategories = useMemo(() => {
-    if (!searchTerm && selectedLevel === 'all') return categories;
+    if (!searchTerm && selectedLevel === "all") return categories;
     const lowerSearch = searchTerm.toLowerCase();
     return categories
-      .map(cat => ({
+      .map((cat) => ({
         ...cat,
-        wordCount: words.filter(w => {
+        wordCount: words.filter((w) => {
           const inCategory = w.categoryId === cat.id;
-          const matchesSearch = !searchTerm ||
-            w.georgian.includes(lowerSearch) ||
-            w.english.toLowerCase().includes(lowerSearch);
-          const matchesLevel = selectedLevel === 'all' || w.level === selectedLevel;
+          const matchesSearch =
+            !searchTerm || w.georgian.includes(lowerSearch) || w.english.toLowerCase().includes(lowerSearch);
+          const matchesLevel = selectedLevel === "all" || w.level === selectedLevel;
           return inCategory && matchesSearch && matchesLevel;
         }).length,
       }))
-      .filter(cat => cat.wordCount > 0);
+      .filter((cat) => cat.wordCount > 0);
   }, [categories, words, searchTerm, selectedLevel]);
 
   // Verbs are filtered on their own fields, and only when no level is selected.
   const verbMatches = useMemo(() => {
-    if (selectedLevel !== 'all') return 0;
+    if (selectedLevel !== "all") return 0;
     if (!searchTerm) return verbData.verbs.length;
     const needle = searchTerm.toLowerCase();
-    return verbData.verbs.filter(v =>
-      v.english.toLowerCase().includes(needle) ||
-      v.verbalNoun.includes(needle) ||
-      v.present3sg.includes(needle),
+    return verbData.verbs.filter(
+      (v) => v.english.toLowerCase().includes(needle) || v.verbalNoun.includes(needle) || v.present3sg.includes(needle),
     ).length;
   }, [searchTerm, selectedLevel]);
 
   const totalWords = words.length;
-  const a1Count = words.filter(w => w.level === 'A1').length;
-  const a2Count = words.filter(w => w.level === 'A2').length;
+  const a1Count = words.filter((w) => w.level === "A1").length;
+  const a2Count = words.filter((w) => w.level === "A2").length;
 
   return (
     <HashRouter>
@@ -123,10 +120,10 @@ function App() {
               <button
                 className="theme-toggle"
                 onClick={toggle}
-                title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-                aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+                title={dark ? "Switch to light mode" : "Switch to dark mode"}
+                aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
               >
-                <Icon name={dark ? 'sun' : 'moon'} />
+                <Icon name={dark ? "sun" : "moon"} />
               </button>
             </div>
           </div>
@@ -195,7 +192,7 @@ function CategoryBrowser({
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/">← Word of the day</Link>
+        <Link to="/">← Home</Link>
         <span className="breadcrumb-sep">/</span>
         <span>Categories</span>
       </div>
@@ -213,20 +210,20 @@ function CategoryBrowser({
         </div>
         <div className="level-filter">
           <button
-            className={`level-btn ${selectedLevel === 'all' ? 'active' : ''}`}
-            onClick={() => setSelectedLevel('all')}
+            className={`level-btn ${selectedLevel === "all" ? "active" : ""}`}
+            onClick={() => setSelectedLevel("all")}
           >
             All
           </button>
           <button
-            className={`level-btn ${selectedLevel === 'A1' ? 'active a1' : ''}`}
-            onClick={() => setSelectedLevel('A1')}
+            className={`level-btn ${selectedLevel === "A1" ? "active a1" : ""}`}
+            onClick={() => setSelectedLevel("A1")}
           >
             A1
           </button>
           <button
-            className={`level-btn ${selectedLevel === 'A2' ? 'active a2' : ''}`}
-            onClick={() => setSelectedLevel('A2')}
+            className={`level-btn ${selectedLevel === "A2" ? "active a2" : ""}`}
+            onClick={() => setSelectedLevel("A2")}
           >
             A2
           </button>
@@ -244,7 +241,7 @@ function CategoryBrowser({
             </div>
           </Link>
         )}
-        {categories.map(cat => (
+        {categories.map((cat) => (
           <Link
             key={cat.id}
             to={`/category/${cat.id}`}
@@ -280,14 +277,20 @@ function ImageCredits({ categories }: { categories: Category[] }) {
         {credits.map(({ category, image }) => (
           <li key={category.id}>
             <span className="credit-category">{category.name}</span>
-            <a href={image.page} target="_blank" rel="noopener noreferrer">{image.title}</a>
+            <a href={image.page} target="_blank" rel="noopener noreferrer">
+              {image.title}
+            </a>
             {image.author && <> · {image.author}</>}
             {image.license && (
               <>
-                {' · '}
-                {image.licenseUrl
-                  ? <a href={image.licenseUrl} target="_blank" rel="noopener noreferrer">{image.license}</a>
-                  : image.license}
+                {" · "}
+                {image.licenseUrl ? (
+                  <a href={image.licenseUrl} target="_blank" rel="noopener noreferrer">
+                    {image.license}
+                  </a>
+                ) : (
+                  image.license
+                )}
               </>
             )}
           </li>

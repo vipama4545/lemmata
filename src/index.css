@@ -28,6 +28,17 @@
   --badge-a2-text: #fcd34d;
   --progress-bg: linear-gradient(90deg, #22c55e, #3b82f6);
   --control-hover-bg: rgba(37, 99, 235, 0.05);
+  /* The mastery ramp: one colour per level, from "keeps slipping away" to "retired", with
+     a colour of its own for a word never met. Every place a level is shown — the pips, the
+     meter, the badge on a definition card, the tint under a word in a story — mixes its
+     colour out of these, so a word is the same colour to the eye wherever it appears. */
+  --m-unseen: #6366f1;
+  --m-1: #ef4444;
+  --m-2: #f97316;
+  --m-3: #d9a706;
+  --m-4: #84cc16;
+  --m-5: #22c55e;
+  --m-6: #14b8a6;
 
   /* Shape and layout are the same in both themes, so they are only declared here.
      --header-h is what the sidebar sticks below; the header is held to it. */
@@ -65,6 +76,13 @@
   --badge-a2-text: #fcd34d;
   --progress-bg: linear-gradient(90deg, #16a34a, #3b82f6);
   --control-hover-bg: rgba(59, 130, 246, 0.1);
+  --m-unseen: #818cf8;
+  --m-1: #f87171;
+  --m-2: #fb923c;
+  --m-3: #facc15;
+  --m-4: #a3e635;
+  --m-5: #4ade80;
+  --m-6: #2dd4bf;
 }
 
 *, *::before, *::after {
@@ -286,6 +304,21 @@ a {
 .sidebar-link:hover {
   background: var(--surface-hover);
   color: var(--text);
+}
+
+/* Cards waiting. Carried on every page because a deck you have to open to find out whether
+   it needs opening is a deck that does not get opened. */
+.sidebar-badge {
+  margin-left: auto;
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .sidebar-link.active {
@@ -1155,168 +1188,486 @@ a {
   border-color: var(--primary);
 }
 
-/* ===== Progress Bar ===== */
-.progress-bar-container {
-  background: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  height: 32px;
-  position: relative;
-  overflow: hidden;
+/* ===== Mastery ===== */
+/* One colour per level, hung off a data-mastery attribute so that the pips, the meter, the
+   badge on a definition card and the tint under a word in a story all mix out of the same
+   value. Level 6 has a colour like the rest; only the tint under a word is dropped for it,
+   because the reward for knowing a word is that the page stops shouting about it. */
+[data-mastery] {
+  --m: var(--text-light);
 }
 
-.progress-bar {
-  height: 100%;
-  background: var(--progress-bg);
-  transition: width 0.5s ease;
-  border-radius: var(--radius-sm);
-}
+[data-mastery="unseen"] { --m: var(--m-unseen); }
+[data-mastery="1"] { --m: var(--m-1); }
+[data-mastery="2"] { --m: var(--m-2); }
+[data-mastery="3"] { --m: var(--m-3); }
+[data-mastery="4"] { --m: var(--m-4); }
+[data-mastery="5"] { --m: var(--m-5); }
+[data-mastery="6"] { --m: var(--m-6); }
 
-.progress-text {
-  position: absolute;
-  inset: 0;
-  display: flex;
+.mastery {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 7px;
+}
+
+.mastery-pips {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.mastery-pip {
+  width: 6px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+.mastery-pip.is-on {
+  background: var(--m);
+}
+
+.mastery-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* ----- picking one ----- */
+.mastery-picker {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.mastery-picker-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.mastery-picker-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+}
+
+.mastery-picker-current {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.mastery-picker-row {
+  display: flex;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.mastery-step {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 0;
   font-size: 13px;
   font-weight: 600;
-}
-
-/* ===== Flashcard ===== */
-.flashcard-area {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.flashcard {
-  width: 400px;
-  min-height: 280px;
-  perspective: 1000px;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  position: relative;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
 }
 
-.flashcard-front,
-.flashcard-back {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
+.mastery-step:hover {
+  border-color: var(--m);
+  color: var(--m);
+}
+
+.mastery-step.is-on {
+  border-color: var(--m);
+  background: color-mix(in srgb, var(--m) 22%, transparent);
+  color: var(--text);
+}
+
+.mastery-forget {
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--text-light);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.mastery-forget:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+/* ===== Deck summary ===== */
+/* Four states across one bar, in the order they run through a story's colours. The bar is
+   only ever three segments wide: what is left of it is what you have never seen, which is
+   the point of leaving the track visible rather than filling it. */
+.study-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.study-meter {
+  display: flex;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--m-unseen) 30%, var(--border));
+}
+
+.study-meter-seg {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.study-meter-seg.is-known { background: var(--m-6); }
+.study-meter-seg.is-solid { background: var(--m-5); }
+.study-meter-seg.is-weak { background: var(--m-3); }
+
+.study-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.study-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.study-legend .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot.is-known { background: var(--m-6); }
+.dot.is-solid { background: var(--m-5); }
+.dot.is-weak { background: var(--m-3); }
+.dot.is-unseen { background: var(--m-unseen); }
+
+.study-legend-session {
+  margin-left: auto;
+  color: var(--text-light);
+}
+
+.study-subtitle {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ===== The study card ===== */
+/* Ordinary flow, not two absolutely-positioned faces. The answer appears under the question
+   and the card grows to hold it, which is also what stops a tall picture from spilling out
+   of a face that had to be a fixed height in order to have a back at all. */
+.study-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.study-card {
+  width: 100%;
+  max-width: 620px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 2px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 24px 24px;
+}
+
+.study-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 24px;
+}
+
+.study-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.study-direction {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+/* The question sits in the middle of the space it has; the answer joins it there rather
+   than pushing it upwards, so the word does not jump when you reveal. */
+.study-card-main {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  transition: transform 0.6s;
-  border: 2px solid var(--border);
+  gap: 14px;
+  padding: 20px 0;
+  text-align: center;
 }
 
-.flashcard-front {
-  background: var(--surface);
-  transform: rotateY(0deg);
-}
-
-.flashcard-back {
-  background: var(--card-back-bg);
-  transform: rotateY(180deg);
-}
-
-.flashcard.flipped .flashcard-front {
-  transform: rotateY(-180deg);
-}
-
-.flashcard.flipped .flashcard-back {
-  transform: rotateY(0deg);
-}
-
-.flashcard-level {
-  position: absolute;
-  top: 12px;
-  left: 12px;
+.study-face {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 4px;
+  width: 100%;
 }
 
-.flashcard-word {
-  font-size: 42px;
+.study-face.is-second {
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.study-georgian {
+  font-size: 40px;
   font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
-.flashcard-hint {
-  position: absolute;
-  bottom: 12px;
-  font-size: 12px;
-  color: var(--text-light);
+.study-georgian-sub {
+  font-size: 20px;
+  color: var(--text-secondary);
 }
 
-.flashcard-word-english {
-  font-size: 32px;
+.study-english {
+  font-size: 26px;
   font-weight: 600;
   color: var(--primary-dark);
+  line-height: 1.3;
 }
 
-.flashcard-definition {
+.study-senses {
   font-size: 14px;
   color: var(--text-secondary);
-  text-align: center;
-  margin-top: 8px;
-  max-width: 260px;
 }
 
-.flashcard-translations {
+.study-reveal {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px;
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.study-reveal:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.study-reveal-key {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.study-card-extra {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 12px;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  text-align: center;
 }
 
-.translation-alt {
-  font-size: 13px;
+.study-definition {
+  font-size: 14px;
   color: var(--text-secondary);
-  background: rgba(255,255,255,0.3);
-  padding: 2px 8px;
-  border-radius: 10px;
+  max-width: 46ch;
 }
 
-[data-theme="dark"] .translation-alt {
-  background: rgba(255,255,255,0.1);
+/* Bounded on both axes, so neither a tall portrait nor a wide panorama can push the card
+   out of shape — the complaint the flip layout could never answer. */
+.study-image {
+  width: 100%;
+  max-width: 340px;
 }
 
-.flashcard-category {
-  position: absolute;
-  bottom: 12px;
-  font-size: 12px;
-  color: var(--text-light);
-}
-
-.flashcard-image-back {
-  margin-top: 12px;
-  width: 280px;
-  max-width: 100%;
-}
-
-.flashcard-image-back img {
+.study-image img {
   width: 100%;
   height: auto;
-  max-height: 180px;
+  max-height: 240px;
   object-fit: contain;
   display: block;
   border-radius: var(--radius-sm);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
 }
 
-.flashcard-image-back .image-credit {
-  padding-top: 4px;
+.study-category {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+/* ===== Grading ===== */
+.study-grades {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.grade-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.grade-row-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.grade-row-due {
+  margin-left: auto;
+  color: var(--text-light);
+}
+
+.grade-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+/* Each button says what it costs you: the wait it buys is what makes the choice between
+   Hard and Good a judgement rather than a mood. */
+.grade-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 6px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.grade-btn:hover {
+  border-color: var(--grade);
+  background: color-mix(in srgb, var(--grade) 14%, transparent);
+}
+
+.grade-btn-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.grade-btn-when {
+  font-size: 11px;
+  color: var(--text-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.grade-btn.is-again { --grade: var(--m-1); }
+.grade-btn.is-hard { --grade: var(--m-2); }
+.grade-btn.is-good { --grade: var(--m-5); }
+.grade-btn.is-easy { --grade: var(--primary); }
+
+.grade-btn::before {
+  content: "";
+  display: block;
+  width: 26px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--grade);
+  margin-bottom: 4px;
+}
+
+.study-known {
+  align-self: center;
 }
 
 .no-words {
   text-align: center;
   padding: 40px;
   color: var(--text-secondary);
+}
+
+.no-words h3 {
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.no-words .flashcard-controls {
+  margin-top: 20px;
+}
+
+/* ===== Settings extras ===== */
+.settings-checks {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  white-space: normal;
+}
+
+.check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.check.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-shortcuts {
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.settings-shortcuts strong {
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 /* ===== Flashcard Controls ===== */
@@ -1339,12 +1690,23 @@ a {
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
+  text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .control-btn:hover {
   border-color: var(--primary);
   background: var(--control-hover-bg);
+}
+
+.control-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.control-btn:disabled:hover {
+  border-color: var(--border);
+  background: var(--surface);
 }
 
 .control-btn.know {
@@ -2689,14 +3051,26 @@ a {
     width: 100%;
   }
 
-  .flashcard-area {
-    flex-direction: column;
-    align-items: center;
+  .study-card {
+    min-height: 240px;
+    padding: 16px 16px 20px;
   }
 
-  .flashcard {
-    width: 100%;
-    min-height: 220px;
+  .study-georgian {
+    font-size: 32px;
+  }
+
+  .study-english {
+    font-size: 22px;
+  }
+
+  /* Four grades in a row stop being tappable well before the sidebar drops away. */
+  .grade-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .study-legend-session {
+    margin-left: 0;
   }
 
   .settings-group {
@@ -2952,6 +3326,99 @@ a {
 .story-word.is-name.is-live {
   border-bottom-style: solid;
   border-bottom-color: var(--border);
+}
+
+/* ----- coloured by what you know ----- */
+/* A tint rather than an outline, so a paragraph still reads as a paragraph: the colour is
+   in the background of the word and the text keeps its own weight and hue. A word you have
+   marked Known loses its tint entirely — the reward for learning the page is that the page
+   quiets down, and by the end of a story it should be mostly plain prose again. */
+.story-word.is-graded {
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: 0 -1px;
+  background: color-mix(in srgb, var(--m) 15%, transparent);
+  box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--m) 45%, transparent);
+}
+
+.story-word.is-graded[data-mastery="6"] {
+  background: none;
+  box-shadow: none;
+}
+
+.story-word.is-graded.is-live:hover {
+  background: color-mix(in srgb, var(--m) 38%, transparent);
+}
+
+.story-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+/* ----- finishing ----- */
+.story-controls .toggle-btn.is-finish {
+  margin-left: auto;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.story-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.story-end-note {
+  color: var(--text-secondary);
+}
+
+.story-finish h2 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.story-finish-lead {
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.story-finish-check {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.story-finish-note {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-light);
+}
+
+.story-finish-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+/* The picker sits at the foot of a card that is already narrow, and the word it is about is
+   tinted its own colour in the text behind it — so it states the level once, here, where it
+   is also changed, rather than repeating it as a badge among the tags at the top. */
+.gloss-card .mastery-picker-row {
+  gap: 3px;
 }
 
 /* ----- reader controls ----- */

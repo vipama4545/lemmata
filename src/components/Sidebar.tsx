@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import Icon from './Icon';
 import type { IconName } from './Icon';
 import { groupedGrammarTopics } from '../data/grammar';
+import { dueCount, useProgress } from '../study/store';
 
 interface SidebarProps {
   open: boolean;
@@ -14,6 +15,9 @@ interface SidebarProps {
 // route changes — a tap on a link there should close it again.
 function Sidebar({ open, onClose }: SidebarProps) {
   const location = useLocation();
+  // Cards waiting is the one number worth carrying on every page: a spaced repetition deck
+  // that has to be opened to find out whether it needs opening does not get opened.
+  const due = dueCount(useProgress(), Date.now());
 
   useEffect(() => {
     onClose();
@@ -54,7 +58,7 @@ function Sidebar({ open, onClose }: SidebarProps) {
           <SidebarLink to="/verbs" icon="list" label="Verbs" />
           <SidebarLink to="/search" icon="search" label="Word search" />
           <SidebarLink to="/stories" icon="message" label="Stories" />
-          <SidebarLink to="/flashcards" icon="cards" label="Flashcards" />
+          <SidebarLink to="/flashcards" icon="cards" label="Flashcards" badge={due} />
           <SidebarLink to="/export" icon="download" label="Export to Anki" />
         </div>
 
@@ -87,9 +91,11 @@ interface SidebarLinkProps {
   label: string;
   end?: boolean;
   sub?: boolean;
+  /** A count to show at the right of the row. Hidden when it is zero. */
+  badge?: number;
 }
 
-function SidebarLink({ to, icon, label, end = false, sub = false }: SidebarLinkProps) {
+function SidebarLink({ to, icon, label, end = false, sub = false, badge = 0 }: SidebarLinkProps) {
   return (
     <NavLink
       to={to}
@@ -100,6 +106,7 @@ function SidebarLink({ to, icon, label, end = false, sub = false }: SidebarLinkP
     >
       <Icon name={icon} size={sub ? 16 : 18} />
       <span>{label}</span>
+      {badge > 0 && <span className="sidebar-badge" title={`${badge} cards due`}>{badge}</span>}
     </NavLink>
   );
 }
