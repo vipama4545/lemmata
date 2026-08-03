@@ -9,11 +9,31 @@
 
 /* ---------------------------------------------------------------- words.json */
 
-/** The CEFR levels the word list covers. */
+/** The CEFR levels the scraped word list covers. */
 export type Level = 'A1' | 'A2';
 
 /** A level, or the "All" setting every level filter in the UI starts on. */
 export type LevelFilter = Level | 'all';
+
+/** One meaning of a word. The id is what a story token cites to say which one applies. */
+export interface Sense {
+  /** `<word id>.<1-based position>` — stable as long as senses are only appended. */
+  id: string;
+  english: string;
+}
+
+/** An inflected form known to belong to a headword, and how it differs from it. */
+export interface WordForm {
+  form: string;
+  /** "erg", "dat.pl", "Aorist 3sg". Absent for the headword spelling itself. */
+  gram?: string;
+  /**
+   * What this form means in English, where the headword's meaning does not say it: იყო is
+   * "was", not "is". Absent for the case forms of a nominal, where the meaning is the
+   * headword's and the grammatical label carries the rest.
+   */
+  english?: string;
+}
 
 export interface Category {
   id: string;
@@ -26,17 +46,36 @@ export interface Word {
   id: string;
   georgian: string;
   english: string;
-  /** Every sense, of which `english` is the first. Empty for one word in the set. */
+  /** Every sense as plain text — the same list as `senses`, for the older screens. */
   englishFull: string[];
   georgianDefinition: string;
-  level: Level;
+  /** Empty for the vocabulary added by hand, which the scrape never graded. */
+  level: Level | '';
   /** "Noun", "Verb", "Adjective"… — see the POS tagging convention in scripts/. */
   partOfSpeech: string;
   category: string;
   categoryId: string;
+  /** "core" for the scraped A1–A2 dictionary, "added" for lemmas written by hand. */
+  origin: 'core' | 'added';
+  /** Always at least one. A story token names the one that applies where it stands. */
+  senses: Sense[];
+  /**
+   * 1-based, and absent when it is 1. The sense to lead with where nothing pins one — a
+   * fact about the word rather than about any story, for the entries whose commonest
+   * meaning is not the one the scrape happened to list first.
+   */
+  defaultSense?: number;
+  /** The verbs.json paradigm for this headword, for the ones that have one. */
+  verbId?: string;
+  /** Inflected forms confirmed to belong here — the story builder's first index. */
+  forms?: WordForm[];
+  /** Set when the meaning itself is a guess and wants verifying. */
+  check?: boolean;
+  note?: string;
 }
 
 export interface WordData {
+  note: string;
   categories: Category[];
   words: Word[];
 }
@@ -175,32 +214,38 @@ export type ImageMap = Record<string, ImageInfo | undefined>;
 
 /* ------------------------------------------------------ stories/<id>.json */
 
-/** Where a glossary record points — a words.json entry, or a verbs.json paradigm. */
-export interface StoryRef {
-  kind: 'word' | 'verb';
-  id: string;
+/** Another entry that could have claimed the same spelling — the shortlist for an editor. */
+export interface StoryAlt {
+  /** A words.json id. */
+  word: string;
+  english: string;
 }
 
 /**
- * One distinct surface form as it occurs in the story, not one occurrence of it: მგელმა
- * is a single record however many times the wolf is the subject.
+ * One *occurrence* of a word, not one spelling: the fourth word of the third paragraph is
+ * its own record, so აბა can be "let's" in one line and "just try" in another.
+ *
+ * It carries no meaning of its own. `word` and `sense` name an entry in words.json and one
+ * of its senses, and the reader looks the text up there, so a corrected definition reaches
+ * every story that cites it without any of them being rebuilt.
  */
-export interface StoryGloss {
-  /** The headword the form was traced back to. Null when nothing matched it. */
-  lemma: string | null;
-  /** Null for supplement words, which exist only in scripts/storyOverrides.json. */
-  ref: StoryRef | null;
-  /** Repeated from the dictionary so the file can be proof-read on its own, and the only
-   *  meaning available for a form whose `ref` is null. The app prefers `ref`. */
-  gloss: string;
-  /** How this form differs from the lemma: "erg", "dat.pl", "Aorist 3sg". */
+export interface StoryToken {
+  /** The surface form, exactly as it stands in `paragraphs`. */
+  form: string;
+  /** A words.json id. Absent when nothing matched the form, and for proper names. */
+  word?: string;
+  /** 1-based index into that entry's `senses`. */
+  sense?: number;
+  /** How this form differs from the headword: "erg", "dat.pl", "Aorist 3sg". */
   gram?: string;
-  /** How the form was reached: "exact", "-dat -pl", "override", "no match". */
+  /** A proper noun, glossed here rather than added to the dictionary. */
+  name?: string;
+  /** How the link was reached: "override", "form index", "paradigm", "-dat -pl". */
   via: string;
-  /** Other entries that claim the same surface form, best guess first in `ref`. */
-  alts?: (StoryRef & { gloss: string; pos?: string })[];
-  /** Set on records worth a human eye — reconstructed, ambiguous, or unmatched. */
+  /** Set when the link was a guess rather than something confirmed by hand. */
   check?: boolean;
+  /** Other entries that claim this spelling, best guess first in `word`. */
+  alts?: StoryAlt[];
   /** Free note carried over from scripts/storyOverrides.json. */
   comment?: string;
 }
@@ -216,8 +261,14 @@ export interface Story {
   stats: {
     tokens: number;
     distinctForms: number;
-    linkedTokens: number;
-    flaggedForms: number;
+    /** Occurrences that resolved to a dictionary entry or a name. */
+    covered: number;
+    /** `covered` as a percentage of `tokens`, to one decimal place. */
+    coverage: number;
+    names: number;
+    unresolved: number;
+    /** Occurrences reached by a guess rather than confirmed by hand. */
+    flagged: number;
   };
   paragraphs: string[];
   /**
@@ -226,6 +277,10 @@ export interface Story {
    * before offering the split view.
    */
   translation: string[];
-  /** Keyed by the surface form exactly as it appears in `paragraphs`. */
-  glossary: Record<string, StoryGloss | undefined>;
+  /**
+   * One array per paragraph, in reading order, so a record's position in it is the
+   * position of the word in the text. Paired with `paragraphs` by index, and produced by
+   * the same tokeniser src/utils/story.ts re-runs to render them.
+   */
+  tokens: StoryToken[][];
 }

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
-import type { Story } from "../types";
+import type { StoryToken } from "../types";
 import { storyById } from "../data/stories";
-import { headword, isLinked, meaning, pieces, reading } from "../utils/story";
+import { at, headword, isLinked, meaning, pieces, reading } from "../utils/story";
+import type { Reading } from "../utils/story";
 import { segmentForm } from "../utils/verbMorphology";
 import Icon from "./Icon";
 
@@ -17,10 +18,10 @@ const OPEN_DELAY = 140;
 // Covers the gap between leaving the word and reaching the card below it.
 const CLOSE_DELAY = 180;
 
-/** Which word is open, and the rectangle of the occurrence that opened it. */
+/** Which occurrence is open, and the rectangle it was measured at. */
 interface Selection {
-  form: string;
-  /** Identifies the exact occurrence, so only the hovered word is marked active. */
+  token: StoryToken;
+  /** "paragraph:word" — identifies the exact occurrence, so only that one looks active. */
   at: string;
   rect: DOMRect;
 }
@@ -86,11 +87,11 @@ function StoryReader() {
   const hasTranslation = story.translation.length > 0;
   const showSplit = split && hasTranslation;
 
-  const openLater = (form: string, at: string, target: HTMLElement) => {
+  const openLater = (token: StoryToken, key: string, target: HTMLElement) => {
     if (!lookup) return;
     cancel();
     const rect = target.getBoundingClientRect();
-    timer.current = window.setTimeout(() => setSelected({ form, at, rect }), OPEN_DELAY);
+    timer.current = window.setTimeout(() => setSelected({ token, at: key, rect }), OPEN_DELAY);
   };
 
   const closeLater = () => {
@@ -100,20 +101,24 @@ function StoryReader() {
 
   const renderParagraph = (paragraph: string, p: number) =>
     pieces(paragraph).map((piece, i) => {
-      if (!piece.word || !isLinked(story, piece.text)) {
+      const token = piece.word ? at(story, p, piece.index, piece.text) : null;
+      if (!isLinked(token)) {
         return <span key={i}>{piece.text}</span>;
       }
-      const at = `${p}:${i}`;
+      const key = `${p}:${piece.index}`;
       return (
         <span
           key={i}
-          className={`story-word${lookup ? " is-live" : ""}${selected?.at === at ? " is-open" : ""}`}
-          // Focusable only in lookup mode: 575 stops in the tab order would otherwise sit
+          className={
+            `story-word${token.name ? " is-name" : ""}${lookup ? " is-live" : ""}` +
+            `${selected?.at === key ? " is-open" : ""}`
+          }
+          // Focusable only in lookup mode: 976 stops in the tab order would otherwise sit
           // between the reader and the rest of the page for no gain.
           tabIndex={lookup ? 0 : undefined}
-          onMouseEnter={(e) => openLater(piece.text, at, e.currentTarget)}
+          onMouseEnter={(e) => openLater(token, key, e.currentTarget)}
           onMouseLeave={closeLater}
-          onFocus={(e) => openLater(piece.text, at, e.currentTarget)}
+          onFocus={(e) => openLater(token, key, e.currentTarget)}
           onBlur={closeLater}
         >
           {piece.text}
@@ -135,9 +140,7 @@ function StoryReader() {
         <div className="story-meta">
           {story.level && <span className={`level-badge ${story.level.toLowerCase()}`}>{story.level}</span>}
           <span className="story-stat">{story.stats.tokens} words</span>
-          <span className="story-stat">
-            {Math.round((story.stats.linkedTokens / story.stats.tokens) * 100)}% linked
-          </span>
+          <span className="story-stat">{story.stats.coverage}% linked</span>
         </div>
 
         <div className="story-controls">
@@ -183,9 +186,7 @@ function StoryReader() {
         </article>
       )}
 
-      {selected && (
-        <GlossCard story={story} selection={selected} onClose={close} onHold={cancel} onRelease={closeLater} />
-      )}
+      {selected && <GlossCard selection={selected} onClose={close} onHold={cancel} onRelease={closeLater} />}
     </div>
   );
 }
@@ -193,20 +194,23 @@ function StoryReader() {
 // The definition card. Anchored under the word it belongs to, flipped above when there is
 // no room below, and clamped so it never hangs off either edge. Hovering it holds it open,
 // so the link at the bottom can actually be reached.
+//
+// It leads with the one meaning that applies here rather than the entry's first, which is
+// the whole point of the story recording occurrences separately: აბა is "let's" where the
+// pigs egg each other on and "just try" where the wolf threatens them.
 function GlossCard({
-  story,
   selection,
   onClose,
   onHold,
   onRelease,
 }: {
-  story: Story;
   selection: Selection;
   onClose: () => void;
   onHold: () => void;
   onRelease: () => void;
 }) {
-  const item = reading(story, selection.form);
+  const { token } = selection;
+  const item = reading(token);
   const ref = useRef<HTMLDivElement>(null);
   const [style, setStyle] = useState(() => place(selection.rect, CARD_H));
 
@@ -217,10 +221,7 @@ function GlossCard({
     if (height) setStyle(place(selection.rect, height));
   }, [selection]);
 
-  if (!item) return null;
-
   const lemma = headword(item);
-  const { entry } = item;
 
   return (
     <div
@@ -228,59 +229,63 @@ function GlossCard({
       style={style}
       ref={ref}
       role="dialog"
-      aria-label={`Meaning of ${item.form}`}
+      aria-label={`Meaning of ${token.form}`}
       onMouseEnter={onHold}
       onMouseLeave={onRelease}
     >
-      <p className="gloss-form">{item.verb && item.lex ? <VerbSegments form={item.form} item={item} /> : item.form}</p>
+      <p className="gloss-form">
+        {item.verb && item.lex ? <VerbSegments form={token.form} item={item} /> : token.form}
+      </p>
 
       <div className="gloss-tags">
-        {entry.gram && <span className="gloss-gram">{entry.gram}</span>}
+        {token.gram && <span className="gloss-gram">{token.gram}</span>}
+        {token.name && <span className="pos-tag">Name</span>}
         {item.pos && <span className="pos-tag">{item.pos}</span>}
-        {item.word && <span className={`level-badge ${item.word.level.toLowerCase()}`}>{item.word.level}</span>}
+        {item.word?.level && <span className={`level-badge ${item.word.level.toLowerCase()}`}>{item.word.level}</span>}
       </div>
 
-      {lemma && lemma !== item.form && (
+      {/* What the word says here, before what the dictionary calls it. იყო reads as "was";
+          filing it under არის "is" is right, and is also not what the sentence said. */}
+      {item.formMeaning && <p className="gloss-form-meaning">{item.formMeaning}</p>}
+
+      {lemma && lemma !== token.form && (
         <p className="gloss-lemma">
           <Icon name="arrow-right" size={14} />
           <span className="gloss-lemma-word">{lemma}</span>
         </p>
       )}
 
-      <p className="gloss-meaning">{meaning(item)}</p>
+      <p className={`gloss-meaning${item.formMeaning ? " is-lemma-meaning" : ""}`}>{meaning(item)}</p>
 
-      {item.senses.length > 0 && (
+      {item.otherSenses.length > 0 && (
         <p className="gloss-senses">
-          <span>Also</span> {item.senses.slice(0, 3).join(" · ")}
+          <span>Elsewhere</span> {item.otherSenses.slice(0, 3).join(" · ")}
         </p>
       )}
 
       {item.word?.georgianDefinition && <p className="gloss-definition">{item.word.georgianDefinition}</p>}
 
-      {entry.alts && entry.alts.length > 0 && (
+      {token.alts && token.alts.length > 0 && (
         <p className="gloss-alts">
-          <span>Could also be</span> {entry.alts.map((alt) => alt.gloss).join(" · ")}
+          <span>Could also be</span> {token.alts.map((alt) => alt.english).join(" · ")}
         </p>
       )}
 
-      {item.href ? (
+      {item.href && (
         <Link className="gloss-link" to={item.href} onClick={onClose}>
           Full entry
           <Icon name="arrow-right" size={14} />
         </Link>
-      ) : (
-        // Supplement words live in scripts/storyOverrides.json and have no page to open.
-        <p className="gloss-note">Not in the A1–A2 word list</p>
       )}
     </div>
   );
 }
 
 // The form cut into its morphemes, coloured the way the verb pages colour a paradigm. The
-// screeve is left out on purpose: the glossary records it as a label ("Aorist 3sg") rather
+// screeve is left out on purpose: the token records it as a label ("Aorist 3sg") rather
 // than as the key segmentForm expects, and the wrong key strips preverbs the form has.
-function VerbSegments({ form, item }: { form: string; item: ReturnType<typeof reading> }): ReactNode {
-  const { segments } = segmentForm(form, item?.lex);
+function VerbSegments({ form, item }: { form: string; item: Reading }): ReactNode {
+  const { segments } = segmentForm(form, item.lex);
   return segments.map((segment, i) => (
     <span key={i} className={`mo mo-${segment.part}`}>
       {segment.text}

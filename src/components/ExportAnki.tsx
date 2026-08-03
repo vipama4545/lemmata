@@ -10,8 +10,11 @@ import Icon from './Icon';
 /**
  * A row in the flashcard export. Verbs are folded in alongside the dictionary words, and
  * carry no CEFR level of their own — which is what the empty string in `level` means.
+ * Only the fields a card actually prints are required, so a verb does not have to be
+ * dressed up as a full lexicon entry to be exported.
  */
-type ExportWord = Omit<Word, 'englishFull' | 'level'> & { level: Level | '' };
+type ExportWord = Pick<Word, 'id' | 'georgian' | 'english' | 'georgianDefinition' | 'partOfSpeech' | 'category' | 'categoryId'>
+  & { level: Level | '' };
 
 // Verbs join the ordinary export as one more category, carrying only their headword: the
 // verbal noun, the English, and the third person singular of the present. The full

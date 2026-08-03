@@ -1,6 +1,6 @@
 // The stories the reader offers. Each one is generated from its .txt source by
 // scripts/buildStoryData.cjs; adding another means dropping the .txt in stories/, running
-// `npm run build:stories`, then adding both a line here and a module declaration in
+// `npm run build:data`, then adding both a line here and a module declaration in
 // data.d.ts — an ambient pattern may hold only one '*', so the directory cannot be
 // covered in a single wildcard.
 

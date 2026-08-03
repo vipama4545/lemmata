@@ -2936,6 +2936,14 @@ a {
   border-bottom-color: var(--primary);
 }
 
+/* Proper names are looked up like any other word, but they are story furniture rather than
+   vocabulary — nothing to learn and no entry to open. A solid, fainter rule says as much
+   without breaking the run of dotted underlines the eye reads past. */
+.story-word.is-name.is-live {
+  border-bottom-style: solid;
+  border-bottom-color: var(--border);
+}
+
 /* ----- reader controls ----- */
 .story-controls {
   display: flex;
@@ -3032,6 +3040,15 @@ a {
   color: var(--primary-dark);
 }
 
+/* What the form means where it stands. It sits above the headword because it is what the
+   sentence actually said, and takes the weight the headword's meaning used to carry — the
+   two read as a pair, answering "here" and then "in the dictionary". */
+.gloss-form-meaning {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
 .gloss-lemma {
   display: flex;
   align-items: center;
@@ -3049,6 +3066,14 @@ a {
 .gloss-meaning {
   margin-top: 8px;
   font-size: 16px;
+}
+
+/* Demoted to a caption under the headword once the form has said its own meaning above,
+   so the card has one thing to read first rather than two competing lines of the same size. */
+.gloss-meaning.is-lemma-meaning {
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--text-secondary);
 }
 
 .gloss-senses,
