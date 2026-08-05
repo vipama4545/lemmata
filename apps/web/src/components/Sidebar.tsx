@@ -4,7 +4,6 @@ import Icon from './Icon';
 import type { IconName } from './Icon';
 import { groupedGrammarTopics } from '../data/grammar';
 import { dueCount, useProgress } from '../study/store';
-import Account from './Account';
 
 interface SidebarProps {
   open: boolean;
@@ -82,11 +81,6 @@ function Sidebar({ open, onClose }: SidebarProps) {
           ))}
         </div>
 
-        {/* Last, and below the fold on most screens. Signing in is optional here and the
-            navigation should not be pushed down by an invitation to do it. */}
-        <div className="sidebar-section sidebar-account">
-          <Account />
-        </div>
       </nav>
     </>
   );

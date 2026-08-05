@@ -3686,119 +3686,269 @@ a {
 
 /* ================================================================== account */
 
-.sidebar-account {
-  margin-top: auto;
+/* The control in the top right of the header, beside the theme toggle. Everything in this
+   first group sits on the dark header gradient rather than on a surface, so the colours
+   here are white at low alpha rather than the theme's own — the same treatment as
+   .theme-toggle and .nav-toggle, which are its neighbours. */
+
+.account-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Holds its width while the session resolves, so the header does not jump when two
+     buttons turn into a username. */
+  min-height: 36px;
 }
 
-.account {
+.account-btn {
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  white-space: nowrap;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+/* Sign in is the quieter of the two: it is for people who already know they have an
+   account, and they are not the ones who need to be able to find it. */
+.account-btn-ghost {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.account-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.account-btn-solid {
+  color: #0f172a;
+  background: #fff;
+  border: 2px solid #fff;
+}
+
+.account-btn-solid:hover {
+  background: #dbeafe;
+  border-color: #dbeafe;
+}
+
+.account-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 200px;
+  padding: 5px 10px 5px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.account-chip:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.account-chip-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.account-avatar-blank {
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* The menu leaves the header's dark band, so from here down it is theme colours again. */
+.account-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 150;
+  min-width: 220px;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+}
+
+.account-menu-who {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 0 10px;
-}
-
-.account-note {
+  gap: 2px;
   margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--text-light);
+  padding: 8px 10px 6px;
 }
 
-.account-signin,
-.account-signout {
+.account-menu-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-menu-email {
+  font-size: 11px;
+  color: var(--text-light);
+  overflow-wrap: anywhere;
+}
+
+.account-menu-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0 10px 8px;
+  font-size: 11px;
+  color: var(--text-light);
+  border-bottom: 1px solid var(--border);
+}
+
+.account-menu-item {
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  text-align: left;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.account-menu-item:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.account-menu-item:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ------------------------------------------------------ the sign-in dialog */
+
+.signin-dialog {
+  max-width: 380px;
+}
+
+.signin-heading {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.signin-lead {
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+/* Discord's own blurple, because a sign-in button that does not look like the service it
+   hands off to is a button people hesitate over. */
+.signin-discord {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 9px 12px;
-  font-size: 13px;
+  padding: 11px 12px;
+  font-size: 14px;
   font-weight: 600;
   font-family: inherit;
+  color: #fff;
+  background: #5865f2;
+  border: 1px solid #5865f2;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
 }
 
-/* Discord's own blurple, because a sign-in button that does not look like the service it
-   hands off to is a button people hesitate over. */
-.account-signin {
-  color: #fff;
-  background: #5865f2;
-  border: 1px solid #5865f2;
-}
-
-.account-signin:hover:not(:disabled) {
+.signin-discord:hover:not(:disabled) {
   background: #4752c4;
   border-color: #4752c4;
 }
 
-.account-signout {
-  color: var(--text-secondary);
-  background: transparent;
-  border: 1px solid var(--border);
-}
-
-.account-signout:hover:not(:disabled) {
-  background: var(--surface-hover);
-  border-color: var(--border-strong);
-}
-
-.account-signin:disabled,
-.account-signout:disabled {
+.signin-discord:disabled {
   opacity: 0.6;
   cursor: default;
 }
 
 /* A rule with the word sitting in a gap in it, rather than a word above a rule. The two
    ways in are alternatives and this is the whole of what says so. */
-.account-or {
+.signin-or {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 0;
-  font-size: 11px;
+  gap: 10px;
+  margin: 16px 0;
+  font-size: 12px;
   color: var(--text-light);
 }
 
-.account-or::before,
-.account-or::after {
+.signin-or::before,
+.signin-or::after {
   content: "";
   flex: 1;
   height: 1px;
   background: var(--border);
 }
 
-.account-email {
+.signin-form {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
-.account-label {
-  font-size: 11px;
+.signin-label {
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.02em;
   color: var(--text-secondary);
 }
 
-.account-input {
+.signin-input {
   width: 100%;
-  padding: 8px 10px;
-  font-size: 13px;
+  padding: 10px 12px;
+  font-size: 14px;
   font-family: inherit;
   color: var(--text);
-  background: var(--surface);
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.account-input::placeholder {
+.signin-input::placeholder {
   color: var(--text-light);
 }
 
-.account-input:focus {
+.signin-input:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-glow);
@@ -3807,22 +3957,23 @@ a {
 /* The browser's own :invalid fires on the first keystroke, when every address is still
    half-typed. :not(:placeholder-shown) holds it back until there is something there, and
    :not(:focus) until they have moved on from the field. */
-.account-input:invalid:not(:placeholder-shown):not(:focus) {
+.signin-input:invalid:not(:placeholder-shown):not(:focus) {
   border-color: var(--m-1);
 }
 
-.account-input:disabled {
+.signin-input:disabled {
   opacity: 0.6;
 }
 
-.account-emailsend {
+.signin-send {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 9px 12px;
-  font-size: 13px;
+  margin-top: 3px;
+  padding: 11px 12px;
+  font-size: 14px;
   font-weight: 600;
   font-family: inherit;
   color: #fff;
@@ -3833,67 +3984,70 @@ a {
   transition: background 0.15s, border-color 0.15s;
 }
 
-.account-emailsend:hover:not(:disabled) {
+.signin-send:hover:not(:disabled) {
   background: var(--primary-dark);
   border-color: var(--primary-dark);
 }
 
-.account-emailsend:disabled {
+.signin-send:disabled {
   opacity: 0.6;
   cursor: default;
 }
 
-.account-hint,
-.account-error {
-  margin: 0;
-  font-size: 11px;
-  line-height: 1.5;
+.signin-hint,
+.signin-error {
+  margin: 14px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
 }
 
-.account-hint {
+.signin-hint {
   color: var(--text-light);
 }
 
-.account-error {
+.signin-error {
   color: var(--m-1);
 }
 
-.account-sent {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  padding: 10px;
+.signin-sent {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  padding: 16px;
   background: var(--surface-hover);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
 }
 
-.account-sent-line {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
 /* The tick, and nothing else in this block, takes the "it worked" colour. */
-.account-sent-line .icon {
-  flex-shrink: 0;
-  margin-top: 2px;
+.signin-sent > .icon {
+  margin-top: 1px;
   color: var(--m-5);
 }
 
-.account-sent-line strong {
+.signin-sent-line {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--text);
+}
+
+.signin-sent-line strong {
   overflow-wrap: anywhere;
 }
 
-.account-linkish {
+.signin-sent-sub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.signin-linkish {
+  grid-column: 2;
+  justify-self: start;
+  margin-top: 10px;
   padding: 0;
-  font-size: 11px;
+  font-size: 12px;
   font-family: inherit;
   color: var(--text-secondary);
   background: none;
@@ -3902,49 +4056,19 @@ a {
   cursor: pointer;
 }
 
-.account-linkish:hover {
+.signin-linkish:hover {
   color: var(--text);
 }
 
-.account-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
+/* On a narrow screen .header-right wraps to its own centred row, and the account control
+   goes with it. The stats are the thing worth dropping there — they are ambient, and two
+   sign-in buttons are not. */
+@media (max-width: 768px) {
+  .account-slot {
+    min-height: 0;
+  }
 
-.account-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  object-fit: cover;
-}
-
-.account-avatar-blank {
-  display: grid;
-  place-items: center;
-  color: var(--text-light);
-  background: var(--surface-hover);
-  border: 1px solid var(--border);
-}
-
-.account-who {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.account-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.account-status {
-  font-size: 11px;
-  color: var(--text-light);
+  .account-chip {
+    max-width: 150px;
+  }
 }

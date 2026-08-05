@@ -1,19 +1,18 @@
-// Signing in, and the one place that tells the sync who is signed in.
+// The account control in the top right of the header, and the one place that tells the
+// sync who is signed in.
 //
-// The panel is deliberately quiet about it. An account is not required to use anything
-// here: what you know is kept in this browser whether or not you have one, and the only
-// thing signing in buys you is that it follows you to another device. So this says that,
-// rather than presenting a wall anyone has to get past to study a word.
+// Signed out it is two buttons and no explanation. An account is not required to use
+// anything here — what you know is kept in this browser whether or not you have one — so
+// the case for having one belongs in the dialog those buttons open, not in a paragraph
+// standing between somebody and the dictionary they came for.
 //
-// Two ways in, and neither is a password. Discord, or a link mailed to an address — which
-// is also how an account gets made, so there is no second form headed "sign up". Typing an
-// address that has never been here before and following the link is the whole of signing
-// up, and the panel says nothing about which of the two just happened, because an answer
-// that differed would let anyone use this box to ask whether a given person has an account.
+// Signed in it collapses to the username, with everything else behind it.
 
-import { useEffect, useState } from 'react';
-import { sendSignInLink, signInWithDiscord, signOut, useSession } from '../api/client';
+import { useEffect, useRef, useState } from 'react';
 import { flushNow, setSyncUser } from '../study/sync';
+import { signOut, useSession } from '../api/client';
+import SignInDialog from './SignInDialog';
+import type { SignInMode } from './SignInDialog';
 import Icon from './Icon';
 
 /**
@@ -37,15 +36,12 @@ function describeLinkError(code: string): string {
 export default function Account() {
   const { data: session, isPending } = useSession();
   const user = session?.user ?? null;
-  const [busy, setBusy] = useState(false);
 
-  // The email half. `sent` holds the address the link went to, which is worth showing back:
-  // a typo in the domain is invisible while you are typing it and obvious once it is quoted
-  // in a sentence about where the mail was sent.
-  const [email, setEmail] = useState('');
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [dialog, setDialog] = useState<SignInMode | null>(null);
+  const [linkError, setLinkError] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   // The only caller of setSyncUser. Everything about syncing hangs off this one line: it
   // starts on sign-in, reconciles the two stores, and stops on sign-out.
@@ -66,13 +62,14 @@ export default function Account() {
 
   // A link that failed verification lands back here as `?error=…`. Without this the browser
   // simply returns to the app looking signed out, which reads as the link having done
-  // nothing at all rather than as an expired one.
+  // nothing at all rather than as an expired one — so the dialog opens saying so.
   useEffect(() => {
     const params = new URLSearchParams(globalThis.location.search);
     const code = params.get('error');
     if (!code) return;
 
-    setError(describeLinkError(code));
+    setLinkError(describeLinkError(code));
+    setDialog('signin');
 
     // Then take it out of the URL, or a refresh re-reports a failure from ten minutes ago.
     // replaceState rather than the router, because the query string sits outside the hash
@@ -83,148 +80,96 @@ export default function Account() {
     globalThis.history.replaceState(null, '', `${pathname}${query ? `?${query}` : ''}${hash}`);
   }, []);
 
-  if (isPending) {
-    return (
-      <div className="account">
-        <p className="account-note">…</p>
-      </div>
-    );
-  }
+  // Click anywhere else, or press Escape, and the signed-in menu closes.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDown = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) setMenuOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
+
+  const close = () => {
+    setDialog(null);
+    setLinkError(null);
+  };
+
+  // Nothing at all until the session resolves. A pair of sign-in buttons that appear for a
+  // moment and then turn into a username is worse than a beat of empty space.
+  if (isPending) return <div className="account-slot" />;
 
   if (!user) {
     return (
-      <div className="account">
-        <p className="account-note">
-          Your progress is saved in this browser. Sign in and it follows you to any device —
-          everything you have already marked comes with you.
-        </p>
-
-        <button
-          className="account-signin"
-          disabled={busy}
-          onClick={() => {
-            setBusy(true);
-            void signInWithDiscord().catch(() => setBusy(false));
-          }}
-        >
-          <Icon name="discord" size={18} />
-          <span>{busy ? 'Opening Discord…' : 'Sign in with Discord'}</span>
+      <div className="account-slot">
+        <button className="account-btn account-btn-ghost" onClick={() => setDialog('signin')}>
+          Sign in
         </button>
-
-        <p className="account-or">
-          <span>or</span>
-        </p>
-
-        {sent ? (
-          // Nothing to do here but wait for a mail, so the form is out of the way until it
-          // is wanted again — a live input under "check your inbox" invites a second send.
-          <div className="account-sent" role="status">
-            <p className="account-sent-line">
-              <Icon name="check" size={15} />
-              <span>
-                A sign-in link is on its way to <strong>{sent}</strong>. It works once and
-                expires in fifteen minutes.
-              </span>
-            </p>
-            <button
-              className="account-linkish"
-              onClick={() => {
-                setSent(null);
-                setError(null);
-              }}
-            >
-              Use a different address
-            </button>
-          </div>
-        ) : (
-          <form
-            className="account-email"
-            onSubmit={event => {
-              event.preventDefault();
-              const address = email.trim();
-              if (!address || sending) return;
-
-              setSending(true);
-              setError(null);
-              sendSignInLink(address)
-                .then(() => {
-                  setSent(address);
-                  setEmail('');
-                })
-                .catch((cause: unknown) => {
-                  setError(cause instanceof Error ? cause.message : 'The link could not be sent.');
-                })
-                .finally(() => setSending(false));
-            }}
-          >
-            <label className="account-label" htmlFor="account-email-input">
-              Email
-            </label>
-            <input
-              id="account-email-input"
-              className="account-input"
-              type="email"
-              name="email"
-              value={email}
-              onChange={event => setEmail(event.target.value)}
-              placeholder="you@example.com"
-              autoComplete="email"
-              // A keyboard with an @ on it, and none of the autocapitalising or correcting
-              // a phone does to what it takes for a word.
-              inputMode="email"
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck={false}
-              required
-              disabled={sending}
-            />
-            <button className="account-emailsend" type="submit" disabled={sending || !email.trim()}>
-              <Icon name="mail" size={16} />
-              <span>{sending ? 'Sending…' : 'Email me a sign-in link'}</span>
-            </button>
-            <p className="account-hint">
-              No password. If the address is new here, this makes the account.
-            </p>
-          </form>
-        )}
-
-        {error ? (
-          <p className="account-error" role="alert">
-            {error}
-          </p>
-        ) : null}
+        <button className="account-btn account-btn-solid" onClick={() => setDialog('signup')}>
+          Sign up
+        </button>
+        {dialog ? <SignInDialog mode={dialog} initialError={linkError} onClose={close} /> : null}
       </div>
     );
   }
 
   return (
-    <div className="account">
-      <div className="account-user">
+    <div className="account-slot" ref={menuRef}>
+      <button
+        className="account-chip"
+        onClick={() => setMenuOpen(open => !open)}
+        aria-haspopup="menu"
+        aria-expanded={menuOpen}
+      >
         {user.image ? (
-          <img className="account-avatar" src={user.image} alt="" width={32} height={32} />
+          <img className="account-avatar" src={user.image} alt="" width={26} height={26} />
         ) : (
           <span className="account-avatar account-avatar-blank">
-            <Icon name="users" size={16} />
+            <Icon name="users" size={14} />
           </span>
         )}
-        <div className="account-who">
-          {/* The username as the provider gave it, or the one taken off the front of the
-              address for an account that came in by mail. There is no other name here. */}
-          <span className="account-name">{user.name}</span>
-          <span className="account-status">Progress is syncing</span>
-        </div>
-      </div>
-      <button
-        className="account-signout"
-        disabled={busy}
-        onClick={() => {
-          setBusy(true);
-          flushNow();
-          void signOut().finally(() => setBusy(false));
-        }}
-      >
-        Sign out
+        {/* The username as the provider gave it, or the one taken off the front of the
+            address for an account that came in by mail. There is no other name here. */}
+        <span className="account-chip-name">{user.name}</span>
+        <Icon name="chevron" size={14} />
       </button>
+
+      {menuOpen ? (
+        <div className="account-menu" role="menu">
+          <p className="account-menu-who">
+            <span className="account-menu-name">{user.name}</span>
+            <span className="account-menu-email">{user.email}</span>
+          </p>
+          <p className="account-menu-status">
+            <Icon name="refresh" size={13} />
+            <span>Progress is syncing</span>
+          </p>
+          <button
+            className="account-menu-item"
+            role="menuitem"
+            disabled={busy}
+            onClick={() => {
+              setBusy(true);
+              // Whatever has not reached the server yet goes now — signing out is exactly
+              // when an unflushed answer would be lost for good.
+              flushNow();
+              void signOut().finally(() => {
+                setBusy(false);
+                setMenuOpen(false);
+              });
+            }}
+          >
+            {busy ? 'Signing out…' : 'Sign out'}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -16,6 +16,7 @@ import StoryIndex from "./components/StoryIndex";
 import StoryReader from "./components/StoryReader";
 import Sidebar from "./components/Sidebar";
 import ScrollManager from "./components/ScrollManager";
+import Account from "./components/Account";
 import Icon from "./components/Icon";
 import { categoryImageCredits } from "./utils/categoryImages";
 import { verbData, wordData as allData } from "./content/store";
@@ -126,6 +127,7 @@ function App() {
               >
                 <Icon name={dark ? "sun" : "moon"} />
               </button>
+              <Account />
             </div>
           </div>
         </header>
