@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, lazy, Suspense } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { HashRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import type { Category, LevelFilter } from "@georgian/shared/types";
@@ -18,8 +18,9 @@ import Sidebar from "./components/Sidebar";
 import ScrollManager from "./components/ScrollManager";
 import Account from "./components/Account";
 import Icon from "./components/Icon";
+import { AdminGate } from "./admin/AdminHome";
 import { categoryImageCredits } from "./utils/categoryImages";
-import { verbData, wordData as allData } from "./content/store";
+import { useContent, verbData, wordData as allData } from "./content/store";
 import "./App.css";
 
 // Verbs come from the conjugation spreadsheet rather than the scraped dictionary, so they
@@ -34,6 +35,8 @@ const VERB_CATEGORY: Category = {
   // here that would ever be shown.
   wordCount: 0,
 };
+
+const AdminRoutes = lazy(() => import("./admin/AdminRoutes"));
 
 function useTheme() {
   const [dark, setDark] = useState(() => {
@@ -59,6 +62,11 @@ function App() {
   // callback is stable because the sidebar hangs an escape-key listener off it.
   const [navOpen, setNavOpen] = useState(false);
   const closeNav = useCallback(() => setNavOpen(false), []);
+
+  // Re-renders the whole tree when the dictionary is replaced — which now happens whenever an
+  // admin saves something. Every screen below reads the content synchronously, so one
+  // subscription at the top is all it takes for an edit to reach the one showing that word.
+  useContent();
 
   const { categories, words } = allData();
 
@@ -164,6 +172,24 @@ function App() {
               <Route path="/stories/:storyId" element={<StoryReader />} />
               <Route path="/grammar" element={<GrammarIndex />} />
               <Route path="/grammar/:topicId" element={<GrammarTopic />} />
+
+              {/* Admin-only, and in a chunk of its own — the editors are a fair amount of
+                  code for a section almost nobody who opens this app will reach, so it is
+                  fetched when /admin is, not before.
+
+                  The gate hides it; the server enforces it. Every procedure under `admin`
+                  re-reads is_admin from the table, so a route reached by typing the URL
+                  still gets nothing done. */}
+              <Route
+                path="/admin/*"
+                element={
+                  <AdminGate>
+                    <Suspense fallback={<div className="main-content" />}>
+                      <AdminRoutes />
+                    </Suspense>
+                  </AdminGate>
+                }
+              />
             </Routes>
           </main>
         </div>

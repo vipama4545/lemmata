@@ -1,13 +1,18 @@
 // Loads the generated files under data/ into Postgres.
 //
-// The authoring pipeline has not changed: the scripts under scripts/ still turn the
-// spreadsheet, the scrape and the hand-written lexicon into data/*.json, and those files
-// are still the thing to correct. This is the step that was previously done by `import`.
+//     npm run db:seed [-- --force]
 //
-// It is a full replace inside one transaction rather than a diff. The content tables hold
-// nothing a user has touched — every row is reproducible from the files — so working out
-// which of 2,096 words changed would be effort spent to save a few seconds, and a diff that
-// got it wrong would be far worse than a table that was briefly locked.
+// It is a full replace inside one transaction rather than a diff, which was free while the
+// content tables held nothing but a copy of the files. Since the admin screens they may hold
+// work that exists nowhere else, so this now stops rather than overwriting it:
+//
+//   `content_version.source` is 'seed' after this runs and 'admin' after any edit in the
+//   browser. Finding 'admin' means the tables and data/*.json have diverged and the files
+//   are the older of the two. `npm run db:export` is the way to reconcile them; --force is
+//   the way to say the files are right and the edits are not wanted.
+//
+// The authoring pipeline itself has not changed: the scripts under scripts/ still turn the
+// spreadsheet, the scrape and the hand-written lexicon into data/*.json.
 
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -72,6 +77,30 @@ const version = createHash('sha256')
   .update(JSON.stringify([words, verbs, morphemes, images, categoryImages, stories]))
   .digest('hex')
   .slice(0, 16);
+
+/* ------------------------------------------------------------------ guard */
+
+// Read before anything is deleted. Everything below this point destroys the content tables.
+const force = process.argv.includes('--force');
+const [live] = await db
+  .select({ version: schema.contentVersion.version, source: schema.contentVersion.source })
+  .from(schema.contentVersion)
+  .limit(1);
+
+if (live?.source === 'admin' && !force) {
+  console.error(
+    `The content in this database has been edited through the admin screens (version ${live.version}),\n` +
+      'so data/*.json is now the older copy. Seeding would replace the edits with it.\n\n' +
+      '  npm run db:export     write the database back out to data/*.json, keeping the edits\n' +
+      '  npm run db:seed -- --force   replace the edits with what is in data/*.json\n',
+  );
+  await sql.end({ timeout: 5 });
+  process.exit(1);
+}
+
+if (live?.source === 'admin') {
+  console.warn(`Replacing edited content (version ${live.version}) with data/*.json, as --force was given.\n`);
+}
 
 console.log(`Seeding content version ${version}`);
 
@@ -291,6 +320,9 @@ await db.transaction(async tx => {
   await tx.insert(schema.contentVersion).values({
     id: 1,
     version,
+    // Back to 'seed': the tables and data/*.json agree again, so the guard above has nothing
+    // to stop until somebody edits something in the browser.
+    source: 'seed',
     meta: {
       words: words.note ?? '',
       verbs: verbs.source ?? '',

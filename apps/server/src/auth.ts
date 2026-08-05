@@ -145,6 +145,16 @@ export const auth = betterAuth({
       // Set by us, never by the client — hence input: false.
       locale: { type: 'string', required: false, defaultValue: 'en', input: false },
       marketingOptIn: { type: 'boolean', required: false, defaultValue: false, input: false },
+      /**
+       * `input: false` matters more here than on the two above.
+       *
+       * Better Auth will happily write any additional field it is handed — by a sign-up
+       * body, by `updateUser`, by an OAuth profile mapping. Declaring this one as not an
+       * input takes all three routes away, which leaves exactly two ways to become an
+       * admin: the CLI on the host, and an existing admin saying so. Both go through
+       * Drizzle directly rather than through this library.
+       */
+      isAdmin: { type: 'boolean', required: false, defaultValue: false, input: false },
     },
     changeEmail: {
       enabled: true,

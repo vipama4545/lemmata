@@ -263,7 +263,7 @@
    "id": "story-vocabulary",
    "name": "Story Vocabulary",
    "nameGeorgian": "მოთხრობის ლექსიკა",
-   "wordCount": 296
+   "wordCount": 297
   }
  ],
  "words": [
@@ -46390,6 +46390,26 @@
     {
      "id": "w:გასაგონად.1",
      "english": "for somebody to hear, within earshot"
+    }
+   ]
+  },
+  {
+   "id": "w:ავტორი",
+   "georgian": "ავტორი",
+   "english": "Author",
+   "englishFull": [
+    "Author"
+   ],
+   "georgianDefinition": "",
+   "level": "",
+   "partOfSpeech": "Noun",
+   "category": "Story Vocabulary",
+   "categoryId": "story-vocabulary",
+   "origin": "added",
+   "senses": [
+    {
+     "id": "w:ავტორი.1",
+     "english": "Author"
     }
    ]
   }

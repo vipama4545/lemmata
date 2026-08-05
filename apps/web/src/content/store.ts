@@ -10,6 +10,7 @@
 // what makes that easy to obey: it takes the build of an index and defers it to first use,
 // then holds it until the content itself changes.
 
+import { useSyncExternalStore } from 'react';
 import type { ContentSnapshot } from '@georgian/shared/contract';
 import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar';
 import type { ImageMap, MorphemeData, StorySummary, VerbData, WordData } from '@georgian/shared/types';
@@ -72,6 +73,53 @@ export async function loadContent(): Promise<ContentSnapshot> {
 function stripDiscriminant(response: { upToDate: false } & ContentSnapshot): ContentSnapshot {
   const { upToDate: _upToDate, ...rest } = response;
   return rest;
+}
+
+/* ------------------------------------------------------------- staying current */
+
+// Until the admin screens, the dictionary could not change while the app was open: it was
+// fetched once at boot and that was the end of it. Editing a word has to reach the screens
+// showing that word, so there is now a way to say "it changed" — one subscription, notified
+// when the snapshot object is replaced.
+//
+// Nothing polls. The only thing that can change the content from this browser is an edit
+// made in it, and an edit already knows it happened. A *different* admin's edit arrives on
+// the next reload, which is the same guarantee everyone had before.
+
+const listeners = new Set<() => void>();
+
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+/**
+ * Re-fetches the dictionary and swaps it in.
+ *
+ * Deliberately no `known` version: the caller has just changed the content and wants what is
+ * there now, and sending the old version would only invite "still current" from a server that
+ * had not committed yet. Everything derived rebuilds by itself, because `derived()` keys on
+ * the identity of the snapshot object rather than on its version string.
+ */
+export async function refreshContent(): Promise<ContentSnapshot> {
+  const response = await api.content.snapshot({});
+  if (response.upToDate) throw new Error('The server said the dictionary was unchanged, but none was sent.');
+
+  snapshot = stripDiscriminant(response);
+  void cache.write(snapshot);
+  for (const listener of listeners) listener();
+  return snapshot;
+}
+
+/**
+ * Re-renders the caller whenever the dictionary is replaced.
+ *
+ * `App` uses it, so one call repaints everything below — which is what an edit wants, since
+ * a changed word could be on any screen. The snapshot object itself is the store value, so
+ * `useSyncExternalStore`'s identity check does the right thing without a version counter.
+ */
+export function useContent(): ContentSnapshot {
+  return useSyncExternalStore(subscribe, content, content);
 }
 
 /**

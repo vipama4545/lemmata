@@ -11,6 +11,7 @@
 // client sends the version it already has, so every visit after the first transfers a
 // version string and nothing else.
 
+import { randomUUID } from 'node:crypto';
 import { asc, eq } from 'drizzle-orm';
 import type {
   Category,
@@ -28,6 +29,7 @@ import type {
 } from '@georgian/shared/types';
 import type { ContentSnapshot, VerbContent } from '@georgian/shared/contract';
 import { db, schema } from '../db/index.ts';
+import type { Tx } from '../db/index.ts';
 import { os } from './base.ts';
 
 /* --------------------------------------------------------------- the cache */
@@ -72,8 +74,37 @@ async function snapshot(): Promise<ContentSnapshot> {
 }
 
 // There is deliberately no way to invalidate the cache by hand. It is keyed on the version
-// the database reports, and the seed bumps that as its last act, so a running server picks
-// up re-seeded data on the next request without being told and without being restarted.
+// the database reports, and both writers bump that as their last act, so a running server
+// picks up new data on the next request without being told and without being restarted.
+
+/**
+ * Marks the content as changed, from the last statement of an edit.
+ *
+ * This one line is the whole of cache invalidation for the admin screens. The server's
+ * snapshot is keyed on the version, so a new one rebuilds it on the next request; the
+ * browser sends the version it holds, so a new one means it is sent the dictionary again
+ * instead of the 55-byte "still current". Nothing else has to know an edit happened.
+ *
+ * `source` goes to 'admin', which is what `npm run db:seed` looks at before replacing these
+ * tables with the contents of data/*.json — see the guard there, and `npm run db:export` for
+ * the way back. The version itself is random rather than a digest of the content: the seed's
+ * digest exists so re-running it over unchanged files leaves cached snapshots valid, and an
+ * edit by definition changed something.
+ *
+ * Call it inside the same transaction as the write. Bumping the version first, or in a
+ * transaction of its own, would let a reader see the new version and then the old rows.
+ */
+export async function bumpContentVersion(tx: Tx): Promise<string> {
+  const version = randomUUID().replaceAll('-', '').slice(0, 16);
+  await tx
+    .insert(schema.contentVersion)
+    .values({ id: 1, version, source: 'admin', builtAt: new Date() })
+    .onConflictDoUpdate({
+      target: schema.contentVersion.id,
+      set: { version, source: 'admin', builtAt: new Date() },
+    });
+  return version;
+}
 
 /**
  * A fresh build, straight from the tables. What `npm run db:verify` compares against the

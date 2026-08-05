@@ -1,0 +1,3986 @@
+{
+ "note": "",
+ "id": "the-chatterbox-radish",
+ "title": "ყბედი ბოლოკი",
+ "titleEnglish": "The Chatterbox Radish",
+ "level": "A2",
+ "source": "https://dspace.nplg.gov.ge/bitstream/1234/29875/1/Nakaduli_1910_N16.pdf?hl=en-GB",
+ "stats": {
+  "names": 0,
+  "tokens": 638,
+  "covered": 357,
+  "flagged": 140,
+  "coverage": 56,
+  "unresolved": 281,
+  "distinctForms": 439
+ },
+ "paragraphs": [
+  "აი, კარტოფილის შესახებ. მართლაც ამბობენ: “ადამიანის მეგობარია... კარგი, სასარგებლო მცენარეაო!” - სთქვა მზეუჭვრიტამ.",
+  "კარტოფილი კი ამ დროს ვარდისა და ცისფრად ყვავოდა. ზოგიერთი იმათგანი უკვე მწვანე ბურთებად გადაქცეულიყო. ყველა სხვა და სხვა მწვანილი კარტოფილისაკენ წამოიწია, კარტოფილს შერცხვა.",
+  "\"მე არა მყოლია ისეთი შესანიშნავი წინაპრები, როგორც ბოლოსა,\" წყნარად თქვა, \" მაგრამ ყველა ჩემი მშობლები მხოლოდ ერთსა ცდილობდნენ; ემსახურნათ და სარგებლობა მოეტანათ ხალხისათვის. კარტოფილს ჭამდნენ მოხარშულს, შემწვარს, გამომცხვარს; კარტოფილისას აკეთებდნენ სახამებელს, ხდიდნენ არაყს... მახსოვს, ერთ სოფელში პური შემოაკლდათ, ჩემი ძმები მთელ ზამთარს ასაზრდოებდნენ ღარიბებს და სიკვდილს გადაარჩინეს მრავალნი.",
+  "კიტრი გატოტდა კვალზე, ულვაშებით მოუსვა კარტოფილს და დიდხანს უცქერდა; თანაც სწუხდა, რომ თვითონ ვერ მოჰქონდა ამოდენი სარგებლობა.",
+  "\"ერთი მიTxარი, რასა ჭამენ თქვენსას? აი, მაგ რგვალ ბუშტებს?\" ჰკითხა ხაშხაშმა კარტოფილს.",
+  "\"არა, არა. მიწაში მაქვს წვრილი რქები, ამ რქებზე მსხვილი გორგლები ანუ ქულები სხედან; ამ გორგლებს აზიათ წვრილი შავი თვალები. აი ამათ ეძახიან კარტოფილს, რომელსაც ჭამენ ადამიანები.\"",
+  "კარტოფილმა წყნარად გაიცინა.",
+  "\"არა, ვერ ვხედავ. ეს თვალები მაწაწკინა ორმოებია, სადაც თესლებია ჩასახული. შეგიძლიათ კარტოფილი დასჭრათ, მერმე ორმოებიანი ნაწილები მოარგოთ მიწაში და ამოვა ჩემისთანა კარტოფილები.\"",
+  "\"საოცარია! ჩვენს თესლს სთესენ ხოლმე\", შენიშნა მზეუჭვრიტამ.\"",
+  "\"მეც ეგრე ვარ!\" წამოიძახა ბოლოკმა \"ხოლო შენ ამ წელსვე დამწიფდები და მე კი მხოლოდ სამერმისოდ, იმიტომ, რომ მე ორწლოვანი მცენარე ვარ.\"",
+  "\"რა გინდა თქვა მაგითი? — ჰკითხა მზეუჭვრიტამ.\"",
+  "\"ჰაფი ჩემის დედას...\", დაიწყო ისევ ბოლოკმა. მაგრამ ბოლოკმა დაიქნია თავი და კარტოფილისაკენ დაიხარა.",
+  "\"მაშ, რიღასთვის გაიზარდა შენის ყვავილებისაგან ეგ მწვანე პარკები? — ჰკითხა კარტოფილმა ბოლოკს.\"",
+  "\"ეგ ჩემი ნაყოფი გახლავს! სახელად მრავალთესლოვანი ნაყოფი ჰქვიან, შიგ თესლი მწიფდება. დათესვაც შეიძლება მისი.\"",
+  "\"ჩემი თესლიც ნაყოფია!\" თქვა კიტრმა.",
+  "\"ჩემი ნაყოფი ბარდაა.\"",
+  "\"სასაცილო ხხილებია!\" — თქვა კომბოსტომ.",
+  "\"ჩემი ნაყოფი ორთესლოვანია\", განაცხადა სტაფილომ.",
+  "\"ჩემი კი კოლოფია,\" სთქვა ხაშხაშმა. \"პირველად მოლურჯოა, შემდეგ კი ხმება და წაბლის ფერს იღებს, კოლოფი შიგნით გაყოფილია ოთხად; როდესაც თესლი დამწიფდება, ზევიდან ჭუჭრუტანები გაკეთდება. ქარის დროს არსუკავებს და თესლს სხვა და სხვა მხარეს ფანტავს.\"",
+  "ყველანი გულმოდგინედ უგდებდნენ ყურს ხაშხაშის ლაპარაკს.",
+  "\"ჩემ ნაყოფს კალათა ჰქვიან\", სთქვა მზეუჭვრიტამ ანუ მზესუმზირამ.",
+  "\"მართლაც კალათასა ჰგავხართ\", მოისმა ღობის ძირიდან წვრილი ხმა. \"აბა, ყურადღება მოაქციეთ ჩემ ნაყოფს; ქარის შემწეობით ფრენა შეუძლია.\"",
+  "\"ეგ ვინ არის?\" ჰკითხა ხაშხაშს მზესუმზირამ.\"",
+  "\"ეს „ბაბუასწვერა“ ბალახია\", უპასუხა.",
+  "\"გაიწი, ხაშხაშო, გაიწი! გაიწი! ნუ აქნევ შენ წითელ თავს. მიშლი!..\" შეჰყვირა ბოლოკმა. — როდესაც დიასახლისი მოვა, დაგაბეზღებ, რომ არ მასვენებ. ჰაფი ჩემის დედას, ყველა იცნობს... ბებია ჩემი...\"",
+  "\"გავიგეთ, გავიგეთ!\" ერთხმად დაიყვირეს ყველა მწვანილებმა და ბოლოს აღარ აცალეს ლაპარაკი.",
+  "მოვიდა შემოდგომაც. ჩვენს ნაცნობ ბოსტანში რთველი იყო. ყოველ დღე მოდიოდა ბოსტანში ბებია შვილიშვილებით და მოსამსახურე გოგოთი და იღებდნენ ბოსტნეულს. დიდი ხანია მას შემდეგ, რაც მოჰკრიფეს კიტრი და შავი მაყვლის ფოთოლთან ერთად დაამჟავეს. კიტრის წნილი მშვენიერი გამოვიდა. კიტრები მაგრები იყო და მწვანეები! ის კიტრი კი, რომელსაც ბოსტანში ჩხუბი ეჯავრებოდა, ყვითელი და მსხვილი იდო კვალზე და სათესლედ მწიფდებოდა. დიდი ხანია, რაც კარტოფილიც ამოიღეს. ჭამდნენ ერბოთი შეზავებულს და თან აქებდნენ: \"იფ, რა გემრიელი და მსხვილი კარტოფილიო!“",
+  "კომბოსტოს წვენს ხარშავდნენ და ღვეზელს აკეთებდნენ. მუხუდოს, სტაფილოს და თალგამს ყოველ წუთს გაჰქონდა ხრაშახრუში ბავშვების კბილებში, რომელთაც ძლიერ უყვარდათ პირის ჩატკბარუნება. ხაშხაშს ბებიამ შეაგროვა და ნამდვილად შვილიშვილებს ქადებს გამოუცხობდა.",
+  "გაბერილი ბოლოკი კვალზე წყნარად იდო. ახლა აღარ მეტიჩრობდა, მედიდურად იცქირებოდა და იცდიდა როდის წაიღებდნენ გამოფენაზე, რომ სახელი გაეთქვა...",
+  "ერთხელ ბაღში მოვიდა ბებია შვილიშვილებით და მოჯამაგირე დედაკაცი მოიყვანა თან.",
+  "\"ბოლოკის ამოთხრის დროც დადგა. აბა, ქრისტინა, შეუდექი საქმეს!\" სთქვა ბებიამ. ბოლოკი უფრო გაიბერა და წაიჩურჩულა: „ახლა კი გაიგებთ, ვინცა ვარ... გაიგებთ, რა ჯიშისა ვარ. მადლიერი იქნებით, რომ ჩემ გვერდით იზრდებოდით ბაღში“.",
+  "— დიდია, მაგრამ გამოუსადეგარი! — ღიმილით უთხრა ბებიამ.",
+  "\"დახე, ბებია, რამსისხო ბოლოკია! აი ბოლოკი!\" დაიყვირა პატარა ქალმა და თან ჩვენი ენატარტალა ბოლოკი ანიშნა.",
+  "— შეიძლება ამოვაძროთ? — ჰკითხა შვილიშვილმა.",
+  "— ამოაძრეთ, გეთაყვა!",
+  "ბავშვებმა სიცილითა და ხუმრობით ამოაძრეს მსხვილი ბოლოკი.",
+  "— დიდებულ ბოლოკს სთხრიან!... დიდედა-ბოლოკს სთხრიან!",
+  "— დახეთ, დახეთ... — ჩურჩულებდნენ სტაფილოები, თალგამები, ჭარხლები, კარტოფილები და ცნობისმოყვარეობით იწევდნენ იქითკენ, რათა დაენახათ, რა ხდებოდა.",
+  "— ბებიკო, გეთაყვა! ეს ვეებერთელა ბოლოკი ფუღურო გამომდგარა! — სთქვა ყმაწვილმა და მაღლა ასწია ბოლოკი.",
+  "ყოველმა მწვანილეულმა დაინახა, რომ ბოლოკი მართლა ფუღურო იყო.",
+  "— იმიტომაც იყო ისეთი ტიკტიკა, — წასჩურჩულა ნიახურმა კომბოსტოს.",
+  "— ქალბატონო, რა ვუყოთ ამას? — ჰკითხა მოჯამაგირე დედაკაცმა.",
+  "— უნდა შორს გადააგდო, — უპასუხა ბებიამ.",
+  "— მოითმინეთ... ჩემი პაპის დედა... — დაიწყო შერცხვენილმა ბოლოკმა. მაგრამ ამ დროს გადაუძახეს ღობეს იქით და იქ არხში ჩავარდა.",
+  "ავტორი: კორდელი."
+ ],
+ "translation": [
+  "“Ah, about the potato. Truly they say: ‘It is man’s friend… a good, useful plant!’” said the Sunflower.",
+  "At that moment, the potato was blooming with rose and light-blue flowers. Some of them had already turned into small green balls. All the other greens leaned toward the potato, making it feel bashful.",
+  "“I do not have such grand ancestors as the radish,” the potato said quietly. “However, all my ancestors strived for only one thing: to serve and bring benefit to the people. They ate boiled, fried, and baked potato; they made starch from it and distilled vodka… I remember, in one village, they ran out of bread, and my brothers fed the poor all winter long, saving many from death.”",
+  "The cucumber spread its vines across the garden bed, brushed past the potato with its tendrils, and looked at it for a long time, feeling sad that it could not bring so much benefit itself.",
+  "“Tell me, what do they eat of yours? Those round little balloons?” Poppy asked the potato.",
+  "“No, no. Deep in the soil, I have thin roots, and on these roots sit thick tubers or knobs; these tubers have tiny black eyes. These are what they call potatoes, which humans eat.”",
+  "The potato smiled gently.",
+  "“No, I cannot see. Those eyes are tiny hollows where seeds are born. You can cut a potato into pieces, plant the parts with eyes into the soil, and potatoes like me will grow.”",
+  "“Remarkable! They usually sow our seeds,” noted the Sunflower.",
+  "“Me too!” exclaimed the radish. “Though you will ripen this very year, while I will only ripen next year—because I am a two-year plant.”",
+  "“What do you mean by that?” asked the Sunflower.",
+  "“By my mother’s soul…” the radish began again. But it shook its head and looked toward the potato.",
+  "“Then why did those green pods grow from your flowers?” the potato asked the radish.",
+  "“That is my fruit! It is called a multi-seeded fruit, and the seeds ripen inside it. It can also be sown.”",
+  "“My seed is a fruit too!” said the cucumber.",
+  "“My fruit is a pod.”",
+  "“Funny fruits!” said the cabbage.",
+  "“My fruit is a two-seeded pod,” declared the carrot.",
+  "“And mine is a capsule,” said the Poppy. “At first it is bluish, but later it dries up and turns chestnut brown. Inside, the capsule is divided into four sections; when the seed ripens, tiny holes open at the top. When the wind blows, it sways and scatters the seeds in all directions.”",
+  "Everyone listened attentively to Poppy’s talk.",
+  "“My fruit is called a basket,” said the Sunflower.",
+  "“It really does look like a basket,” a high-pitched voice called out from the bottom of the fence. “Just look at my fruit; it can fly with the help of the wind!”",
+  "“Who is that?” Sunflower asked Poppy.",
+  "“That is Dandelion grass,” Poppy answered.",
+  "“Move over, Poppy, move! Get out of the way! Stop shaking your red head, you’re bothering me!...” shouted the radish. “When the mistress arrives, I’ll tell on you for not giving me peace! By my mother’s soul, everyone knows my grandmother was…”",
+  "“We heard you, we heard you!” all the greens shouted in unison, and at last, they didn’t let the radish speak any further.",
+  "Autumn arrived. In our familiar garden, it was harvest time. Every day, the grandmother would come to the garden with her grandchildren and a maidservant to gather the vegetables. It had been a long time since they picked the cucumbers and pickled them with blackcurrant leaves. The pickled cucumbers turned out wonderful—they were firm and green! But the cucumber that hated fighting in the garden lay yellow and thick on the bed, ripening for seed. It had also been a long time since the potatoes were dug up; they ate them tossed with clarified butter, praising them: “Ooh, what delicious, large potatoes!”",
+  "They simmered cabbage soup and baked pies. Chickpeas, carrots, and turnips constantly crunched in the teeth of the children, who loved to treat their sweet tooth. Grandmother gathered the poppy seeds and was surely going to bake sweet cakes for her grandchildren.",
+  "The swollen radish lay quietly on the bed. Now it no longer acted bossy; it looked around grandly, waiting to be taken to an exhibition so it could win fame…",
+  "One day, grandmother came to the garden with her grandchildren, bringing a hired woman along with her.",
+  "“It’s time to dig up the radish too. Come on, Khristina, get to work!” said the grandmother. The radish puffed up even more and whispered: “Now you will find out who I am… You’ll see what fine stock I come from. You’ll be grateful you grew alongside me in this garden.”",
+  "“Look, Grandma, what a huge radish! What a radish!” exclaimed a young girl, pointing to our chatterbox radish.",
+  "“It’s big, but it’s useless!” grandmother said with a smile.",
+  "“Can we pull it up?” asked a grandchild.",
+  "“Pull it up, my dear!”",
+  "With laughter and jokes, the children pulled out the large radish.",
+  "“They’re digging up a grand radish!... They’re pulling up the grandmother-radish!”",
+  "“Look, look…” whispered the carrots, turnips, beets, and potatoes, leaning forward out of curiosity to see what was happening.",
+  "“Grandma, dear! This giant radish turned out to be hollow!” said the young boy, holding the radish up high.",
+  "Every single vegetable saw that the radish was indeed hollow.",
+  "“That’s why it was such a chatterbox,” Celery whispered to the cabbage.",
+  "“Ma’am, what should I do with this?” asked the hired woman.",
+  "“Throw it far away,” grandmother replied.",
+  "“Wait… my great-grandmother…” the shamed radish began. But just then, it was tossed over the fence, and it fell right into the ditch.",
+  "Author: Cordeli."
+ ],
+ "tokens": [
+  [
+   {
+    "form": "აი",
+    "via": "headword",
+    "word": "4186",
+    "sense": 1
+   },
+   {
+    "form": "კარტოფილის",
+    "via": "override",
+    "word": "318",
+    "sense": 1,
+    "gram": "gen"
+   },
+   {
+    "form": "შესახებ",
+    "via": "headword",
+    "word": "w:შესახებ",
+    "sense": 1
+   },
+   {
+    "form": "მართლაც",
+    "via": "-too, syncope",
+    "word": "380",
+    "sense": 1,
+    "gram": "too",
+    "check": true
+   },
+   {
+    "form": "ამბობენ",
+    "via": "paradigm",
+    "word": "68",
+    "sense": 1,
+    "gram": "Present 3pl"
+   },
+   {
+    "form": "ადამიანის",
+    "via": "-gen",
+    "word": "52",
+    "sense": 1,
+    "gram": "gen",
+    "check": true
+   },
+   {
+    "form": "მეგობარია",
+    "via": "unresolved"
+   },
+   {
+    "form": "კარგი",
+    "via": "headword",
+    "word": "330",
+    "sense": 1
+   },
+   {
+    "form": "სასარგებლო",
+    "via": "headword",
+    "word": "2567",
+    "sense": 1
+   },
+   {
+    "form": "მცენარეაო",
+    "via": "unresolved"
+   },
+   {
+    "form": "სთქვა",
+    "via": "override",
+    "word": "6323",
+    "sense": 1
+   },
+   {
+    "form": "მზეუჭვრიტამ",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "კარტოფილი",
+    "via": "headword",
+    "word": "318",
+    "sense": 1
+   },
+   {
+    "form": "კი",
+    "via": "headword",
+    "word": "340",
+    "sense": 1
+   },
+   {
+    "form": "ამ",
+    "via": "form index",
+    "word": "207",
+    "sense": 1,
+    "gram": "obl"
+   },
+   {
+    "form": "დროს",
+    "via": "form index",
+    "word": "141",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "ვარდისა",
+    "via": "-gen",
+    "word": "216",
+    "sense": 1,
+    "gram": "gen",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "ცისფრად",
+    "via": "unresolved"
+   },
+   {
+    "form": "ყვავოდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ზოგიერთი",
+    "via": "headword",
+    "word": "547",
+    "sense": 1
+   },
+   {
+    "form": "იმათგანი",
+    "via": "unresolved"
+   },
+   {
+    "form": "უკვე",
+    "via": "headword",
+    "word": "w:უკვე",
+    "sense": 1
+   },
+   {
+    "form": "მწვანე",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბურთებად",
+    "via": "-adv -pl",
+    "word": "131",
+    "sense": 1,
+    "gram": "adv.pl",
+    "check": true
+   },
+   {
+    "form": "გადაქცეულიყო",
+    "via": "unresolved"
+   },
+   {
+    "form": "ყველა",
+    "via": "headword",
+    "word": "2101",
+    "sense": 1
+   },
+   {
+    "form": "სხვა",
+    "via": "headword",
+    "word": "2003",
+    "sense": 1
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "სხვა",
+    "via": "headword",
+    "word": "2003",
+    "sense": 1
+   },
+   {
+    "form": "მწვანილი",
+    "via": "headword",
+    "word": "431",
+    "sense": 1
+   },
+   {
+    "form": "კარტოფილისაკენ",
+    "via": "-towards -gen",
+    "word": "318",
+    "sense": 1,
+    "gram": "towards.gen",
+    "check": true
+   },
+   {
+    "form": "წამოიწია",
+    "via": "unresolved"
+   },
+   {
+    "form": "კარტოფილს",
+    "via": "-dat",
+    "word": "318",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "შერცხვა",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "მე",
+    "via": "headword",
+    "word": "40",
+    "sense": 1
+   },
+   {
+    "form": "არა",
+    "via": "headword",
+    "word": "147",
+    "sense": 1
+   },
+   {
+    "form": "მყოლია",
+    "via": "unresolved"
+   },
+   {
+    "form": "ისეთი",
+    "via": "headword",
+    "word": "587",
+    "sense": 1
+   },
+   {
+    "form": "შესანიშნავი",
+    "via": "headword",
+    "word": "3808",
+    "sense": 1
+   },
+   {
+    "form": "წინაპრები",
+    "via": "unresolved"
+   },
+   {
+    "form": "როგორც",
+    "via": "headword",
+    "word": "w:როგორც",
+    "sense": 1
+   },
+   {
+    "form": "ბოლოსა",
+    "via": "-dat",
+    "word": "124",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "წყნარად",
+    "via": "form index",
+    "word": "2423",
+    "sense": 1,
+    "gram": "adv"
+   },
+   {
+    "form": "თქვა",
+    "via": "form index",
+    "word": "68",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "მაგრამ",
+    "via": "headword",
+    "word": "948",
+    "sense": 1
+   },
+   {
+    "form": "ყველა",
+    "via": "headword",
+    "word": "2101",
+    "sense": 1
+   },
+   {
+    "form": "ჩემი",
+    "via": "headword",
+    "word": "45",
+    "sense": 1
+   },
+   {
+    "form": "მშობლები",
+    "via": "-nom -pl, syncope",
+    "word": "426",
+    "sense": 1,
+    "gram": "nom.pl",
+    "check": true
+   },
+   {
+    "form": "მხოლოდ",
+    "via": "headword",
+    "word": "w:მხოლოდ",
+    "sense": 1
+   },
+   {
+    "form": "ერთსა",
+    "via": "-dat",
+    "word": "46",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "ცდილობდნენ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ემსახურნათ",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "სარგებლობა",
+    "via": "unresolved"
+   },
+   {
+    "form": "მოეტანათ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ხალხისათვის",
+    "via": "-for -gen",
+    "word": "2226",
+    "sense": 1,
+    "gram": "for.gen",
+    "check": true
+   },
+   {
+    "form": "კარტოფილს",
+    "via": "-dat",
+    "word": "318",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "ჭამდნენ",
+    "via": "paradigm",
+    "word": "2218",
+    "sense": 1,
+    "gram": "Imperfect 3pl"
+   },
+   {
+    "form": "მოხარშულს",
+    "via": "-dat",
+    "word": "5798",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "შემწვარს",
+    "via": "-dat",
+    "word": "6150",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "გამომცხვარს",
+    "via": "-dat",
+    "word": "4999",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "კარტოფილისას",
+    "via": "unresolved"
+   },
+   {
+    "form": "აკეთებდნენ",
+    "via": "paradigm",
+    "word": "15",
+    "sense": 1,
+    "gram": "Imperfect 3pl"
+   },
+   {
+    "form": "სახამებელს",
+    "via": "unresolved"
+   },
+   {
+    "form": "ხდიდნენ",
+    "via": "unresolved"
+   },
+   {
+    "form": "არაყს",
+    "via": "-dat",
+    "word": "75",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "მახსოვს",
+    "via": "paradigm",
+    "word": "783",
+    "sense": 1,
+    "gram": "Present 1sg"
+   },
+   {
+    "form": "ერთ",
+    "via": "form index",
+    "word": "46",
+    "sense": 1
+   },
+   {
+    "form": "სოფელში",
+    "via": "-in",
+    "word": "1984",
+    "sense": 1,
+    "gram": "in",
+    "check": true
+   },
+   {
+    "form": "პური",
+    "via": "headword",
+    "word": "1904",
+    "sense": 1
+   },
+   {
+    "form": "შემოაკლდათ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩემი",
+    "via": "headword",
+    "word": "45",
+    "sense": 1
+   },
+   {
+    "form": "ძმები",
+    "via": "form index",
+    "word": "2188",
+    "sense": 1,
+    "gram": "nom.pl"
+   },
+   {
+    "form": "მთელ",
+    "via": "form index",
+    "word": "5762",
+    "sense": 2
+   },
+   {
+    "form": "ზამთარს",
+    "via": "-dat",
+    "word": "234",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "ასაზრდოებდნენ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ღარიბებს",
+    "via": "-dat -pl",
+    "word": "2379",
+    "sense": 1,
+    "gram": "dat.pl",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "სიკვდილს",
+    "via": "-dat",
+    "word": "2336",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "გადაარჩინეს",
+    "via": "unresolved"
+   },
+   {
+    "form": "მრავალნი",
+    "via": "-pl",
+    "word": "440",
+    "sense": 1,
+    "gram": "pl",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "კიტრი",
+    "via": "headword",
+    "word": "324",
+    "sense": 1
+   },
+   {
+    "form": "გატოტდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "კვალზე",
+    "via": "unresolved"
+   },
+   {
+    "form": "ულვაშებით",
+    "via": "unresolved"
+   },
+   {
+    "form": "მოუსვა",
+    "via": "unresolved"
+   },
+   {
+    "form": "კარტოფილს",
+    "via": "-dat",
+    "word": "318",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "დიდხანს",
+    "via": "headword",
+    "word": "849",
+    "sense": 1
+   },
+   {
+    "form": "უცქერდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "თანაც",
+    "via": "unresolved"
+   },
+   {
+    "form": "სწუხდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "თვითონ",
+    "via": "headword",
+    "word": "w:თვითონ",
+    "sense": 1
+   },
+   {
+    "form": "ვერ",
+    "via": "form index",
+    "word": "4190",
+    "sense": 1
+   },
+   {
+    "form": "მოჰქონდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ამოდენი",
+    "via": "unresolved"
+   },
+   {
+    "form": "სარგებლობა",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ერთი",
+    "via": "headword",
+    "word": "46",
+    "sense": 1
+   },
+   {
+    "form": "მი",
+    "via": "unresolved"
+   },
+   {
+    "form": "არი",
+    "via": "-nom",
+    "word": "146",
+    "sense": 1,
+    "gram": "nom",
+    "check": true
+   },
+   {
+    "form": "რასა",
+    "via": "-dat",
+    "word": "1907",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "ჭამენ",
+    "via": "paradigm",
+    "word": "2218",
+    "sense": 1,
+    "gram": "Present 3pl"
+   },
+   {
+    "form": "თქვენსას",
+    "via": "unresolved"
+   },
+   {
+    "form": "აი",
+    "via": "headword",
+    "word": "4186",
+    "sense": 1
+   },
+   {
+    "form": "მაგ",
+    "via": "unresolved"
+   },
+   {
+    "form": "რგვალ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბუშტებს",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჰკითხა",
+    "via": "form index",
+    "word": "w:ჰკითხავს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ხაშხაშმა",
+    "via": "unresolved"
+   },
+   {
+    "form": "კარტოფილს",
+    "via": "-dat",
+    "word": "318",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "არა",
+    "via": "headword",
+    "word": "147",
+    "sense": 1
+   },
+   {
+    "form": "არა",
+    "via": "headword",
+    "word": "147",
+    "sense": 1
+   },
+   {
+    "form": "მიწაში",
+    "via": "-in",
+    "word": "437",
+    "sense": 1,
+    "gram": "in",
+    "check": true
+   },
+   {
+    "form": "მაქვს",
+    "via": "paradigm",
+    "word": "150",
+    "sense": 1,
+    "gram": "Present 1sg"
+   },
+   {
+    "form": "წვრილი",
+    "via": "headword",
+    "word": "2420",
+    "sense": 1
+   },
+   {
+    "form": "რქები",
+    "via": "unresolved"
+   },
+   {
+    "form": "ამ",
+    "via": "form index",
+    "word": "207",
+    "sense": 1,
+    "gram": "obl"
+   },
+   {
+    "form": "რქებზე",
+    "via": "unresolved"
+   },
+   {
+    "form": "მსხვილი",
+    "via": "unresolved"
+   },
+   {
+    "form": "გორგლები",
+    "via": "unresolved"
+   },
+   {
+    "form": "ანუ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ქულები",
+    "via": "unresolved"
+   },
+   {
+    "form": "სხედან",
+    "via": "paradigm",
+    "word": "248",
+    "sense": 1,
+    "gram": "Present 3pl"
+   },
+   {
+    "form": "ამ",
+    "via": "form index",
+    "word": "207",
+    "sense": 1,
+    "gram": "obl"
+   },
+   {
+    "form": "გორგლებს",
+    "via": "unresolved"
+   },
+   {
+    "form": "აზიათ",
+    "via": "unresolved"
+   },
+   {
+    "form": "წვრილი",
+    "via": "headword",
+    "word": "2420",
+    "sense": 1
+   },
+   {
+    "form": "შავი",
+    "via": "unresolved"
+   },
+   {
+    "form": "თვალები",
+    "via": "form index",
+    "word": "265",
+    "sense": 1,
+    "gram": "nom.pl"
+   },
+   {
+    "form": "აი",
+    "via": "headword",
+    "word": "4186",
+    "sense": 1
+   },
+   {
+    "form": "ამათ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ეძახიან",
+    "via": "unresolved"
+   },
+   {
+    "form": "კარტოფილს",
+    "via": "-dat",
+    "word": "318",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "რომელსაც",
+    "via": "-too -dat",
+    "word": "1927",
+    "sense": 1,
+    "gram": "too.dat",
+    "check": true
+   },
+   {
+    "form": "ჭამენ",
+    "via": "paradigm",
+    "word": "2218",
+    "sense": 1,
+    "gram": "Present 3pl"
+   },
+   {
+    "form": "ადამიანები",
+    "via": "-nom -pl",
+    "word": "52",
+    "sense": 1,
+    "gram": "nom.pl",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "კარტოფილმა",
+    "via": "-erg",
+    "word": "318",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   },
+   {
+    "form": "წყნარად",
+    "via": "form index",
+    "word": "2423",
+    "sense": 1,
+    "gram": "adv"
+   },
+   {
+    "form": "გაიცინა",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "არა",
+    "via": "headword",
+    "word": "147",
+    "sense": 1
+   },
+   {
+    "form": "ვერ",
+    "via": "form index",
+    "word": "4190",
+    "sense": 1
+   },
+   {
+    "form": "ვხედავ",
+    "via": "paradigm",
+    "word": "2429",
+    "sense": 1,
+    "gram": "Present 1sg"
+   },
+   {
+    "form": "ეს",
+    "via": "headword",
+    "word": "207",
+    "sense": 1
+   },
+   {
+    "form": "თვალები",
+    "via": "form index",
+    "word": "265",
+    "sense": 1,
+    "gram": "nom.pl"
+   },
+   {
+    "form": "მაწაწკინა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ორმოებია",
+    "via": "unresolved"
+   },
+   {
+    "form": "სადაც",
+    "via": "-too",
+    "word": "1936",
+    "sense": 1,
+    "gram": "too",
+    "check": true
+   },
+   {
+    "form": "თესლებია",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩასახული",
+    "via": "unresolved"
+   },
+   {
+    "form": "შეგიძლიათ",
+    "via": "unresolved"
+   },
+   {
+    "form": "კარტოფილი",
+    "via": "headword",
+    "word": "318",
+    "sense": 1
+   },
+   {
+    "form": "დასჭრათ",
+    "via": "unresolved"
+   },
+   {
+    "form": "მერმე",
+    "via": "unresolved"
+   },
+   {
+    "form": "ორმოებიანი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ნაწილები",
+    "via": "-nom -pl",
+    "word": "1860",
+    "sense": 1,
+    "gram": "nom.pl",
+    "check": true
+   },
+   {
+    "form": "მოარგოთ",
+    "via": "unresolved"
+   },
+   {
+    "form": "მიწაში",
+    "via": "-in",
+    "word": "437",
+    "sense": 1,
+    "gram": "in",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "ამოვა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩემისთანა",
+    "via": "unresolved"
+   },
+   {
+    "form": "კარტოფილები",
+    "via": "-nom -pl",
+    "word": "318",
+    "sense": 1,
+    "gram": "nom.pl",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "საოცარია",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩვენს",
+    "via": "-dat",
+    "word": "2147",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "თესლს",
+    "via": "unresolved"
+   },
+   {
+    "form": "სთესენ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ხოლმე",
+    "via": "unresolved"
+   },
+   {
+    "form": "შენიშნა",
+    "via": "unresolved"
+   },
+   {
+    "form": "მზეუჭვრიტამ",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "მეც",
+    "via": "form index",
+    "word": "40",
+    "sense": 1,
+    "gram": "too"
+   },
+   {
+    "form": "ეგრე",
+    "via": "unresolved"
+   },
+   {
+    "form": "ვარ",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Present 1sg"
+   },
+   {
+    "form": "წამოიძახა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოლოკმა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ხოლო",
+    "via": "unresolved"
+   },
+   {
+    "form": "შენ",
+    "via": "headword",
+    "word": "2119",
+    "sense": 1
+   },
+   {
+    "form": "ამ",
+    "via": "form index",
+    "word": "207",
+    "sense": 1,
+    "gram": "obl"
+   },
+   {
+    "form": "წელსვე",
+    "via": "-same -dat",
+    "word": "2260",
+    "sense": 1,
+    "gram": "same.dat",
+    "check": true
+   },
+   {
+    "form": "დამწიფდები",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "მე",
+    "via": "headword",
+    "word": "40",
+    "sense": 1
+   },
+   {
+    "form": "კი",
+    "via": "headword",
+    "word": "340",
+    "sense": 1
+   },
+   {
+    "form": "მხოლოდ",
+    "via": "headword",
+    "word": "w:მხოლოდ",
+    "sense": 1
+   },
+   {
+    "form": "სამერმისოდ",
+    "via": "unresolved"
+   },
+   {
+    "form": "იმიტომ",
+    "via": "headword",
+    "word": "913",
+    "sense": 1
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "მე",
+    "via": "headword",
+    "word": "40",
+    "sense": 1
+   },
+   {
+    "form": "ორწლოვანი",
+    "via": "unresolved"
+   },
+   {
+    "form": "მცენარე",
+    "via": "headword",
+    "word": "427",
+    "sense": 1
+   },
+   {
+    "form": "ვარ",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Present 1sg"
+   }
+  ],
+  [
+   {
+    "form": "რა",
+    "via": "headword",
+    "word": "1907",
+    "sense": 1
+   },
+   {
+    "form": "გინდა",
+    "via": "paradigm",
+    "word": "w:უნდა",
+    "sense": 1,
+    "gram": "Present 2sg"
+   },
+   {
+    "form": "თქვა",
+    "via": "form index",
+    "word": "68",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "მაგითი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჰკითხა",
+    "via": "form index",
+    "word": "w:ჰკითხავს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "მზეუჭვრიტამ",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ჰაფი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩემის",
+    "via": "-gen",
+    "word": "45",
+    "sense": 1,
+    "gram": "gen",
+    "check": true
+   },
+   {
+    "form": "დედას",
+    "via": "-dat",
+    "word": "1",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "დაიწყო",
+    "via": "form index",
+    "word": "w:იწყებს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ისევ",
+    "via": "headword",
+    "word": "w:ისევ",
+    "sense": 1
+   },
+   {
+    "form": "ბოლოკმა",
+    "via": "unresolved"
+   },
+   {
+    "form": "მაგრამ",
+    "via": "headword",
+    "word": "948",
+    "sense": 1
+   },
+   {
+    "form": "ბოლოკმა",
+    "via": "unresolved"
+   },
+   {
+    "form": "დაიქნია",
+    "via": "unresolved"
+   },
+   {
+    "form": "თავი",
+    "via": "headword",
+    "word": "261",
+    "sense": 1
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "კარტოფილისაკენ",
+    "via": "-towards -gen",
+    "word": "318",
+    "sense": 1,
+    "gram": "towards.gen",
+    "check": true
+   },
+   {
+    "form": "დაიხარა",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "მაშ",
+    "via": "unresolved"
+   },
+   {
+    "form": "რიღასთვის",
+    "via": "unresolved"
+   },
+   {
+    "form": "გაიზარდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "შენის",
+    "via": "-gen",
+    "word": "2119",
+    "sense": 1,
+    "gram": "gen",
+    "check": true
+   },
+   {
+    "form": "ყვავილებისაგან",
+    "via": "-from -gen -pl",
+    "word": "2100",
+    "sense": 1,
+    "gram": "from.gen.pl",
+    "check": true
+   },
+   {
+    "form": "ეგ",
+    "via": "unresolved"
+   },
+   {
+    "form": "მწვანე",
+    "via": "unresolved"
+   },
+   {
+    "form": "პარკები",
+    "via": "-nom -pl",
+    "word": "1891",
+    "sense": 1,
+    "gram": "nom.pl",
+    "check": true
+   },
+   {
+    "form": "ჰკითხა",
+    "via": "form index",
+    "word": "w:ჰკითხავს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "კარტოფილმა",
+    "via": "-erg",
+    "word": "318",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   },
+   {
+    "form": "ბოლოკს",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ეგ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩემი",
+    "via": "headword",
+    "word": "45",
+    "sense": 1
+   },
+   {
+    "form": "ნაყოფი",
+    "via": "unresolved"
+   },
+   {
+    "form": "გახლავს",
+    "via": "unresolved"
+   },
+   {
+    "form": "სახელად",
+    "via": "-adv",
+    "word": "1966",
+    "sense": 1,
+    "gram": "adv",
+    "check": true
+   },
+   {
+    "form": "მრავალთესლოვანი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ნაყოფი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჰქვიან",
+    "via": "unresolved"
+   },
+   {
+    "form": "შიგ",
+    "via": "unresolved"
+   },
+   {
+    "form": "თესლი",
+    "via": "unresolved"
+   },
+   {
+    "form": "მწიფდება",
+    "via": "unresolved"
+   },
+   {
+    "form": "დათესვაც",
+    "via": "unresolved"
+   },
+   {
+    "form": "შეიძლება",
+    "via": "form index",
+    "word": "2389",
+    "sense": 1,
+    "gram": "Present 3sg"
+   },
+   {
+    "form": "მისი",
+    "via": "form index",
+    "word": "300",
+    "sense": 1,
+    "gram": "poss"
+   }
+  ],
+  [
+   {
+    "form": "ჩემი",
+    "via": "headword",
+    "word": "45",
+    "sense": 1
+   },
+   {
+    "form": "თესლიც",
+    "via": "unresolved"
+   },
+   {
+    "form": "ნაყოფია",
+    "via": "unresolved"
+   },
+   {
+    "form": "თქვა",
+    "via": "form index",
+    "word": "68",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "კიტრმა",
+    "via": "-erg",
+    "word": "324",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "ჩემი",
+    "via": "headword",
+    "word": "45",
+    "sense": 1
+   },
+   {
+    "form": "ნაყოფი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბარდაა",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "სასაცილო",
+    "via": "unresolved"
+   },
+   {
+    "form": "ხხილებია",
+    "via": "unresolved"
+   },
+   {
+    "form": "თქვა",
+    "via": "form index",
+    "word": "68",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "კომბოსტომ",
+    "via": "-erg",
+    "word": "325",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "ჩემი",
+    "via": "headword",
+    "word": "45",
+    "sense": 1
+   },
+   {
+    "form": "ნაყოფი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ორთესლოვანია",
+    "via": "unresolved"
+   },
+   {
+    "form": "განაცხადა",
+    "via": "unresolved"
+   },
+   {
+    "form": "სტაფილომ",
+    "via": "-erg",
+    "word": "2615",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "ჩემი",
+    "via": "headword",
+    "word": "45",
+    "sense": 1
+   },
+   {
+    "form": "კი",
+    "via": "headword",
+    "word": "340",
+    "sense": 1
+   },
+   {
+    "form": "კოლოფია",
+    "via": "unresolved"
+   },
+   {
+    "form": "სთქვა",
+    "via": "override",
+    "word": "6323",
+    "sense": 1
+   },
+   {
+    "form": "ხაშხაშმა",
+    "via": "unresolved"
+   },
+   {
+    "form": "პირველად",
+    "via": "headword",
+    "word": "6346",
+    "sense": 1
+   },
+   {
+    "form": "მოლურჯოა",
+    "via": "unresolved"
+   },
+   {
+    "form": "შემდეგ",
+    "via": "headword",
+    "word": "w:შემდეგ",
+    "sense": 1
+   },
+   {
+    "form": "კი",
+    "via": "headword",
+    "word": "340",
+    "sense": 1
+   },
+   {
+    "form": "ხმება",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "წაბლის",
+    "via": "unresolved"
+   },
+   {
+    "form": "ფერს",
+    "via": "-dat",
+    "word": "2055",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "იღებს",
+    "via": "paradigm",
+    "word": "990",
+    "sense": 1,
+    "gram": "Present 3sg"
+   },
+   {
+    "form": "კოლოფი",
+    "via": "unresolved"
+   },
+   {
+    "form": "შიგნით",
+    "via": "unresolved"
+   },
+   {
+    "form": "გაყოფილია",
+    "via": "unresolved"
+   },
+   {
+    "form": "ოთხად",
+    "via": "-adv, syncope",
+    "word": "1876",
+    "sense": 1,
+    "gram": "adv",
+    "check": true
+   },
+   {
+    "form": "როდესაც",
+    "via": "unresolved"
+   },
+   {
+    "form": "თესლი",
+    "via": "unresolved"
+   },
+   {
+    "form": "დამწიფდება",
+    "via": "unresolved"
+   },
+   {
+    "form": "ზევიდან",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჭუჭრუტანები",
+    "via": "unresolved"
+   },
+   {
+    "form": "გაკეთდება",
+    "via": "unresolved"
+   },
+   {
+    "form": "ქარის",
+    "via": "-gen",
+    "word": "2076",
+    "sense": 1,
+    "gram": "gen",
+    "check": true
+   },
+   {
+    "form": "დროს",
+    "via": "form index",
+    "word": "141",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "არსუკავებს",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "თესლს",
+    "via": "unresolved"
+   },
+   {
+    "form": "სხვა",
+    "via": "headword",
+    "word": "2003",
+    "sense": 1
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "სხვა",
+    "via": "headword",
+    "word": "2003",
+    "sense": 1
+   },
+   {
+    "form": "მხარეს",
+    "via": "form index",
+    "word": "2453",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "ფანტავს",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ყველანი",
+    "via": "-pl",
+    "word": "2101",
+    "sense": 1,
+    "gram": "pl",
+    "check": true
+   },
+   {
+    "form": "გულმოდგინედ",
+    "via": "unresolved"
+   },
+   {
+    "form": "უგდებდნენ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ყურს",
+    "via": "-dat",
+    "word": "2108",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "ხაშხაშის",
+    "via": "unresolved"
+   },
+   {
+    "form": "ლაპარაკს",
+    "via": "-dat",
+    "word": "360",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "ჩემ",
+    "via": "restored",
+    "word": "45",
+    "sense": 1,
+    "check": true
+   },
+   {
+    "form": "ნაყოფს",
+    "via": "unresolved"
+   },
+   {
+    "form": "კალათა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჰქვიან",
+    "via": "unresolved"
+   },
+   {
+    "form": "სთქვა",
+    "via": "override",
+    "word": "6323",
+    "sense": 1
+   },
+   {
+    "form": "მზეუჭვრიტამ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ანუ",
+    "via": "unresolved"
+   },
+   {
+    "form": "მზესუმზირამ",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "მართლაც",
+    "via": "-too, syncope",
+    "word": "380",
+    "sense": 1,
+    "gram": "too",
+    "check": true
+   },
+   {
+    "form": "კალათასა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჰგავხართ",
+    "via": "paradigm",
+    "word": "6231",
+    "sense": 1,
+    "gram": "Present 2pl"
+   },
+   {
+    "form": "მოისმა",
+    "via": "form index",
+    "word": "w:მოისმის",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ღობის",
+    "via": "unresolved"
+   },
+   {
+    "form": "ძირიდან",
+    "via": "unresolved"
+   },
+   {
+    "form": "წვრილი",
+    "via": "headword",
+    "word": "2420",
+    "sense": 1
+   },
+   {
+    "form": "ხმა",
+    "via": "headword",
+    "word": "2236",
+    "sense": 1
+   },
+   {
+    "form": "აბა",
+    "via": "headword",
+    "word": "1013",
+    "sense": 1
+   },
+   {
+    "form": "ყურადღება",
+    "via": "unresolved"
+   },
+   {
+    "form": "მოაქციეთ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩემ",
+    "via": "restored",
+    "word": "45",
+    "sense": 1,
+    "check": true
+   },
+   {
+    "form": "ნაყოფს",
+    "via": "unresolved"
+   },
+   {
+    "form": "ქარის",
+    "via": "-gen",
+    "word": "2076",
+    "sense": 1,
+    "gram": "gen",
+    "check": true
+   },
+   {
+    "form": "შემწეობით",
+    "via": "unresolved"
+   },
+   {
+    "form": "ფრენა",
+    "via": "unresolved"
+   },
+   {
+    "form": "შეუძლია",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ეგ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ვინ",
+    "via": "headword",
+    "word": "231",
+    "sense": 1
+   },
+   {
+    "form": "არის",
+    "via": "form index",
+    "word": "148",
+    "sense": 1
+   },
+   {
+    "form": "ჰკითხა",
+    "via": "form index",
+    "word": "w:ჰკითხავს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ხაშხაშს",
+    "via": "unresolved"
+   },
+   {
+    "form": "მზესუმზირამ",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ეს",
+    "via": "headword",
+    "word": "207",
+    "sense": 1
+   },
+   {
+    "form": "ბაბუასწვერა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბალახია",
+    "via": "unresolved"
+   },
+   {
+    "form": "უპასუხა",
+    "via": "form index",
+    "word": "5935",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   }
+  ],
+  [
+   {
+    "form": "გაიწი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ხაშხაშო",
+    "via": "unresolved"
+   },
+   {
+    "form": "გაიწი",
+    "via": "unresolved"
+   },
+   {
+    "form": "გაიწი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ნუ",
+    "via": "headword",
+    "word": "w:ნუ",
+    "sense": 1
+   },
+   {
+    "form": "აქნევ",
+    "via": "unresolved"
+   },
+   {
+    "form": "შენ",
+    "via": "headword",
+    "word": "2119",
+    "sense": 1
+   },
+   {
+    "form": "წითელ",
+    "via": "unresolved"
+   },
+   {
+    "form": "თავს",
+    "via": "form index",
+    "word": "261",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "მიშლი",
+    "via": "unresolved"
+   },
+   {
+    "form": "შეჰყვირა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოლოკმა",
+    "via": "unresolved"
+   },
+   {
+    "form": "როდესაც",
+    "via": "unresolved"
+   },
+   {
+    "form": "დიასახლისი",
+    "via": "unresolved"
+   },
+   {
+    "form": "მოვა",
+    "via": "form index",
+    "word": "w:მოდის",
+    "sense": 1,
+    "gram": "Future 3sg"
+   },
+   {
+    "form": "დაგაბეზღებ",
+    "via": "unresolved"
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "არ",
+    "via": "headword",
+    "word": "146",
+    "sense": 1
+   },
+   {
+    "form": "მასვენებ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჰაფი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩემის",
+    "via": "-gen",
+    "word": "45",
+    "sense": 1,
+    "gram": "gen",
+    "check": true
+   },
+   {
+    "form": "დედას",
+    "via": "-dat",
+    "word": "1",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "ყველა",
+    "via": "headword",
+    "word": "2101",
+    "sense": 1
+   },
+   {
+    "form": "იცნობს",
+    "via": "paradigm",
+    "word": "5656",
+    "sense": 1,
+    "gram": "Present 3sg",
+    "check": true,
+    "alts": [
+     {
+      "word": "6183",
+      "english": "knows smb, is acquainted with smb"
+     }
+    ]
+   },
+   {
+    "form": "ბებია",
+    "via": "headword",
+    "word": "112",
+    "sense": 1
+   },
+   {
+    "form": "ჩემი",
+    "via": "headword",
+    "word": "45",
+    "sense": 1
+   }
+  ],
+  [
+   {
+    "form": "გავიგეთ",
+    "via": "paradigm",
+    "word": "w:იგებს",
+    "sense": 1,
+    "gram": "Aorist 1pl"
+   },
+   {
+    "form": "გავიგეთ",
+    "via": "paradigm",
+    "word": "w:იგებს",
+    "sense": 1,
+    "gram": "Aorist 1pl"
+   },
+   {
+    "form": "ერთხმად",
+    "via": "headword",
+    "word": "w:ერთხმად",
+    "sense": 1
+   },
+   {
+    "form": "დაიყვირეს",
+    "via": "unresolved"
+   },
+   {
+    "form": "ყველა",
+    "via": "headword",
+    "word": "2101",
+    "sense": 1
+   },
+   {
+    "form": "მწვანილებმა",
+    "via": "-erg -pl",
+    "word": "431",
+    "sense": 1,
+    "gram": "erg.pl",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "ბოლოს",
+    "via": "headword",
+    "word": "6284",
+    "sense": 1
+   },
+   {
+    "form": "აღარ",
+    "via": "headword",
+    "word": "1153",
+    "sense": 1
+   },
+   {
+    "form": "აცალეს",
+    "via": "unresolved"
+   },
+   {
+    "form": "ლაპარაკი",
+    "via": "headword",
+    "word": "360",
+    "sense": 1
+   }
+  ],
+  [
+   {
+    "form": "მოვიდა",
+    "via": "paradigm",
+    "word": "w:მოდის",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "შემოდგომაც",
+    "via": "-too",
+    "word": "2118",
+    "sense": 1,
+    "gram": "too",
+    "check": true
+   },
+   {
+    "form": "ჩვენს",
+    "via": "-dat",
+    "word": "2147",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "ნაცნობ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოსტანში",
+    "via": "unresolved"
+   },
+   {
+    "form": "რთველი",
+    "via": "headword",
+    "word": "5963",
+    "sense": 1
+   },
+   {
+    "form": "იყო",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ყოველ",
+    "via": "form index",
+    "word": "4383",
+    "sense": 1
+   },
+   {
+    "form": "დღე",
+    "via": "headword",
+    "word": "143",
+    "sense": 1
+   },
+   {
+    "form": "მოდიოდა",
+    "via": "paradigm",
+    "word": "w:მოდის",
+    "sense": 1,
+    "gram": "Imperfect 3sg"
+   },
+   {
+    "form": "ბოსტანში",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბებია",
+    "via": "headword",
+    "word": "112",
+    "sense": 1
+   },
+   {
+    "form": "შვილიშვილებით",
+    "via": "-inst -pl",
+    "word": "2398",
+    "sense": 1,
+    "gram": "inst.pl",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "მოსამსახურე",
+    "via": "unresolved"
+   },
+   {
+    "form": "გოგოთი",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "იღებდნენ",
+    "via": "form index",
+    "word": "990",
+    "sense": 1,
+    "gram": "Imperfect 3pl"
+   },
+   {
+    "form": "ბოსტნეულს",
+    "via": "-dat",
+    "word": "498",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "დიდი",
+    "via": "headword",
+    "word": "41",
+    "sense": 1
+   },
+   {
+    "form": "ხანია",
+    "via": "unresolved"
+   },
+   {
+    "form": "მას",
+    "via": "form index",
+    "word": "300",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "შემდეგ",
+    "via": "headword",
+    "word": "w:შემდეგ",
+    "sense": 1
+   },
+   {
+    "form": "რაც",
+    "via": "headword",
+    "word": "w:რაც",
+    "sense": 1
+   },
+   {
+    "form": "მოჰკრიფეს",
+    "via": "unresolved"
+   },
+   {
+    "form": "კიტრი",
+    "via": "headword",
+    "word": "324",
+    "sense": 1
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "შავი",
+    "via": "unresolved"
+   },
+   {
+    "form": "მაყვლის",
+    "via": "unresolved"
+   },
+   {
+    "form": "ფოთოლთან",
+    "via": "-with",
+    "word": "2059",
+    "sense": 1,
+    "gram": "with",
+    "check": true
+   },
+   {
+    "form": "ერთად",
+    "via": "headword",
+    "word": "205",
+    "sense": 1
+   },
+   {
+    "form": "დაამჟავეს",
+    "via": "unresolved"
+   },
+   {
+    "form": "კიტრის",
+    "via": "-gen",
+    "word": "324",
+    "sense": 1,
+    "gram": "gen",
+    "check": true
+   },
+   {
+    "form": "წნილი",
+    "via": "unresolved"
+   },
+   {
+    "form": "მშვენიერი",
+    "via": "headword",
+    "word": "5818",
+    "sense": 1
+   },
+   {
+    "form": "გამოვიდა",
+    "via": "paradigm",
+    "word": "158",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "კიტრები",
+    "via": "-nom -pl",
+    "word": "324",
+    "sense": 1,
+    "gram": "nom.pl",
+    "check": true
+   },
+   {
+    "form": "მაგრები",
+    "via": "-nom -pl, syncope",
+    "word": "369",
+    "sense": 1,
+    "gram": "nom.pl",
+    "check": true
+   },
+   {
+    "form": "იყო",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "მწვანეები",
+    "via": "unresolved"
+   },
+   {
+    "form": "ის",
+    "via": "headword",
+    "word": "300",
+    "sense": 1
+   },
+   {
+    "form": "კიტრი",
+    "via": "headword",
+    "word": "324",
+    "sense": 1
+   },
+   {
+    "form": "კი",
+    "via": "headword",
+    "word": "340",
+    "sense": 1
+   },
+   {
+    "form": "რომელსაც",
+    "via": "-too -dat",
+    "word": "1927",
+    "sense": 1,
+    "gram": "too.dat",
+    "check": true
+   },
+   {
+    "form": "ბოსტანში",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩხუბი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ეჯავრებოდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ყვითელი",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "მსხვილი",
+    "via": "unresolved"
+   },
+   {
+    "form": "იდო",
+    "via": "unresolved"
+   },
+   {
+    "form": "კვალზე",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "სათესლედ",
+    "via": "unresolved"
+   },
+   {
+    "form": "მწიფდებოდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "დიდი",
+    "via": "headword",
+    "word": "41",
+    "sense": 1
+   },
+   {
+    "form": "ხანია",
+    "via": "unresolved"
+   },
+   {
+    "form": "რაც",
+    "via": "headword",
+    "word": "w:რაც",
+    "sense": 1
+   },
+   {
+    "form": "კარტოფილიც",
+    "via": "-too",
+    "word": "318",
+    "sense": 1,
+    "gram": "too",
+    "check": true
+   },
+   {
+    "form": "ამოიღეს",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჭამდნენ",
+    "via": "paradigm",
+    "word": "2218",
+    "sense": 1,
+    "gram": "Imperfect 3pl"
+   },
+   {
+    "form": "ერბოთი",
+    "via": "unresolved"
+   },
+   {
+    "form": "შეზავებულს",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "თან",
+    "via": "unresolved"
+   },
+   {
+    "form": "აქებდნენ",
+    "via": "unresolved"
+   },
+   {
+    "form": "იფ",
+    "via": "unresolved"
+   },
+   {
+    "form": "რა",
+    "via": "headword",
+    "word": "1907",
+    "sense": 1
+   },
+   {
+    "form": "გემრიელი",
+    "via": "headword",
+    "word": "165",
+    "sense": 1
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "მსხვილი",
+    "via": "unresolved"
+   },
+   {
+    "form": "კარტოფილიო",
+    "via": "-voc",
+    "word": "318",
+    "sense": 1,
+    "gram": "voc",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "კომბოსტოს",
+    "via": "-dat",
+    "word": "325",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "წვენს",
+    "via": "-dat",
+    "word": "2201",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "ხარშავდნენ",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "ღვეზელს",
+    "via": "unresolved"
+   },
+   {
+    "form": "აკეთებდნენ",
+    "via": "paradigm",
+    "word": "15",
+    "sense": 1,
+    "gram": "Imperfect 3pl"
+   },
+   {
+    "form": "მუხუდოს",
+    "via": "unresolved"
+   },
+   {
+    "form": "სტაფილოს",
+    "via": "-dat",
+    "word": "2615",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "თალგამს",
+    "via": "unresolved"
+   },
+   {
+    "form": "ყოველ",
+    "via": "form index",
+    "word": "4383",
+    "sense": 1
+   },
+   {
+    "form": "წუთს",
+    "via": "-dat",
+    "word": "2213",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "გაჰქონდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ხრაშახრუში",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბავშვების",
+    "via": "-gen -pl",
+    "word": "99",
+    "sense": 1,
+    "gram": "gen.pl",
+    "check": true
+   },
+   {
+    "form": "კბილებში",
+    "via": "-in -pl",
+    "word": "334",
+    "sense": 1,
+    "gram": "in.pl",
+    "check": true
+   },
+   {
+    "form": "რომელთაც",
+    "via": "-too -inst",
+    "word": "1927",
+    "sense": 1,
+    "gram": "too.inst",
+    "check": true
+   },
+   {
+    "form": "ძლიერ",
+    "via": "headword",
+    "word": "6413",
+    "sense": 1
+   },
+   {
+    "form": "უყვარდათ",
+    "via": "paradigm",
+    "word": "2045",
+    "sense": 1,
+    "gram": "Imperfect 3pl"
+   },
+   {
+    "form": "პირის",
+    "via": "-gen",
+    "word": "10861",
+    "sense": 1,
+    "gram": "gen",
+    "check": true
+   },
+   {
+    "form": "ჩატკბარუნება",
+    "via": "unresolved"
+   },
+   {
+    "form": "ხაშხაშს",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბებიამ",
+    "via": "-erg",
+    "word": "112",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   },
+   {
+    "form": "შეაგროვა",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "ნამდვილად",
+    "via": "-adv",
+    "word": "2463",
+    "sense": 1,
+    "gram": "adv",
+    "check": true
+   },
+   {
+    "form": "შვილიშვილებს",
+    "via": "-dat -pl",
+    "word": "2398",
+    "sense": 1,
+    "gram": "dat.pl",
+    "check": true
+   },
+   {
+    "form": "ქადებს",
+    "via": "unresolved"
+   },
+   {
+    "form": "გამოუცხობდა",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "გაბერილი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოლოკი",
+    "via": "unresolved"
+   },
+   {
+    "form": "კვალზე",
+    "via": "unresolved"
+   },
+   {
+    "form": "წყნარად",
+    "via": "form index",
+    "word": "2423",
+    "sense": 1,
+    "gram": "adv"
+   },
+   {
+    "form": "იდო",
+    "via": "unresolved"
+   },
+   {
+    "form": "ახლა",
+    "via": "headword",
+    "word": "94",
+    "sense": 1
+   },
+   {
+    "form": "აღარ",
+    "via": "headword",
+    "word": "1153",
+    "sense": 1
+   },
+   {
+    "form": "მეტიჩრობდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "მედიდურად",
+    "via": "unresolved"
+   },
+   {
+    "form": "იცქირებოდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "იცდიდა",
+    "via": "unresolved"
+   },
+   {
+    "form": "როდის",
+    "via": "headword",
+    "word": "1925",
+    "sense": 1
+   },
+   {
+    "form": "წაიღებდნენ",
+    "via": "unresolved"
+   },
+   {
+    "form": "გამოფენაზე",
+    "via": "-on",
+    "word": "1323",
+    "sense": 1,
+    "gram": "on",
+    "check": true
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "სახელი",
+    "via": "headword",
+    "word": "1966",
+    "sense": 1
+   },
+   {
+    "form": "გაეთქვა",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ერთხელ",
+    "via": "headword",
+    "word": "206",
+    "sense": 1
+   },
+   {
+    "form": "ბაღში",
+    "via": "-in",
+    "word": "110",
+    "sense": 1,
+    "gram": "in",
+    "check": true
+   },
+   {
+    "form": "მოვიდა",
+    "via": "paradigm",
+    "word": "w:მოდის",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ბებია",
+    "via": "headword",
+    "word": "112",
+    "sense": 1
+   },
+   {
+    "form": "შვილიშვილებით",
+    "via": "-inst -pl",
+    "word": "2398",
+    "sense": 1,
+    "gram": "inst.pl",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "მოჯამაგირე",
+    "via": "unresolved"
+   },
+   {
+    "form": "დედაკაცი",
+    "via": "unresolved"
+   },
+   {
+    "form": "მოიყვანა",
+    "via": "unresolved"
+   },
+   {
+    "form": "თან",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ბოლოკის",
+    "via": "unresolved"
+   },
+   {
+    "form": "ამოთხრის",
+    "via": "unresolved"
+   },
+   {
+    "form": "დროც",
+    "via": "-too",
+    "word": "141",
+    "sense": 1,
+    "gram": "too",
+    "check": true
+   },
+   {
+    "form": "დადგა",
+    "via": "form index",
+    "word": "199",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "აბა",
+    "via": "headword",
+    "word": "1013",
+    "sense": 1
+   },
+   {
+    "form": "ქრისტინა",
+    "via": "unresolved"
+   },
+   {
+    "form": "შეუდექი",
+    "via": "unresolved"
+   },
+   {
+    "form": "საქმეს",
+    "via": "-dat",
+    "word": "1958",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   },
+   {
+    "form": "სთქვა",
+    "via": "override",
+    "word": "6323",
+    "sense": 1
+   },
+   {
+    "form": "ბებიამ",
+    "via": "-erg",
+    "word": "112",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   },
+   {
+    "form": "ბოლოკი",
+    "via": "unresolved"
+   },
+   {
+    "form": "უფრო",
+    "via": "headword",
+    "word": "w:უფრო",
+    "sense": 1
+   },
+   {
+    "form": "გაიბერა",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "წაიჩურჩულა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ახლა",
+    "via": "headword",
+    "word": "94",
+    "sense": 1
+   },
+   {
+    "form": "კი",
+    "via": "headword",
+    "word": "340",
+    "sense": 1
+   },
+   {
+    "form": "გაიგებთ",
+    "via": "paradigm",
+    "word": "w:იგებს",
+    "sense": 1,
+    "gram": "Future 2pl"
+   },
+   {
+    "form": "ვინცა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ვარ",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Present 1sg"
+   },
+   {
+    "form": "გაიგებთ",
+    "via": "paradigm",
+    "word": "w:იგებს",
+    "sense": 1,
+    "gram": "Future 2pl"
+   },
+   {
+    "form": "რა",
+    "via": "headword",
+    "word": "1907",
+    "sense": 1
+   },
+   {
+    "form": "ჯიშისა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ვარ",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Present 1sg"
+   },
+   {
+    "form": "მადლიერი",
+    "via": "unresolved"
+   },
+   {
+    "form": "იქნებით",
+    "via": "paradigm",
+    "word": "148",
+    "sense": 1,
+    "gram": "Future 2pl"
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "ჩემ",
+    "via": "restored",
+    "word": "45",
+    "sense": 1,
+    "check": true
+   },
+   {
+    "form": "გვერდით",
+    "via": "headword",
+    "word": "184",
+    "sense": 1
+   },
+   {
+    "form": "იზრდებოდით",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბაღში",
+    "via": "-in",
+    "word": "110",
+    "sense": 1,
+    "gram": "in",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "დიდია",
+    "via": "unresolved"
+   },
+   {
+    "form": "მაგრამ",
+    "via": "headword",
+    "word": "948",
+    "sense": 1
+   },
+   {
+    "form": "გამოუსადეგარი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ღიმილით",
+    "via": "form index",
+    "word": "w:ღიმილი",
+    "sense": 1,
+    "gram": "inst"
+   },
+   {
+    "form": "უთხრა",
+    "via": "form index",
+    "word": "w:ეუბნება",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ბებიამ",
+    "via": "-erg",
+    "word": "112",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "დახე",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბებია",
+    "via": "headword",
+    "word": "112",
+    "sense": 1
+   },
+   {
+    "form": "რამსისხო",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოლოკია",
+    "via": "unresolved"
+   },
+   {
+    "form": "აი",
+    "via": "headword",
+    "word": "4186",
+    "sense": 1
+   },
+   {
+    "form": "ბოლოკი",
+    "via": "unresolved"
+   },
+   {
+    "form": "დაიყვირა",
+    "via": "unresolved"
+   },
+   {
+    "form": "პატარა",
+    "via": "headword",
+    "word": "1895",
+    "sense": 1
+   },
+   {
+    "form": "ქალმა",
+    "via": "-erg",
+    "word": "2071",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "თან",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩვენი",
+    "via": "headword",
+    "word": "2148",
+    "sense": 1
+   },
+   {
+    "form": "ენატარტალა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოლოკი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ანიშნა",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "შეიძლება",
+    "via": "form index",
+    "word": "2389",
+    "sense": 1,
+    "gram": "Present 3sg"
+   },
+   {
+    "form": "ამოვაძროთ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჰკითხა",
+    "via": "form index",
+    "word": "w:ჰკითხავს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "შვილიშვილმა",
+    "via": "-erg",
+    "word": "2398",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "ამოაძრეთ",
+    "via": "unresolved"
+   },
+   {
+    "form": "გეთაყვა",
+    "via": "headword",
+    "word": "163",
+    "sense": 1
+   }
+  ],
+  [
+   {
+    "form": "ბავშვებმა",
+    "via": "-erg -pl",
+    "word": "99",
+    "sense": 1,
+    "gram": "erg.pl",
+    "check": true
+   },
+   {
+    "form": "სიცილითა",
+    "via": "-pl.gen",
+    "word": "1980",
+    "sense": 1,
+    "gram": "pl.gen",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "ხუმრობით",
+    "via": "-inst",
+    "word": "5310",
+    "sense": 1,
+    "gram": "inst",
+    "check": true
+   },
+   {
+    "form": "ამოაძრეს",
+    "via": "unresolved"
+   },
+   {
+    "form": "მსხვილი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოლოკი",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "დიდებულ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოლოკს",
+    "via": "unresolved"
+   },
+   {
+    "form": "სთხრიან",
+    "via": "unresolved"
+   },
+   {
+    "form": "დიდედა-ბოლოკს",
+    "via": "unresolved"
+   },
+   {
+    "form": "სთხრიან",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "დახეთ",
+    "via": "unresolved"
+   },
+   {
+    "form": "დახეთ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩურჩულებდნენ",
+    "via": "unresolved"
+   },
+   {
+    "form": "სტაფილოები",
+    "via": "-nom -pl",
+    "word": "2615",
+    "sense": 1,
+    "gram": "nom.pl",
+    "check": true
+   },
+   {
+    "form": "თალგამები",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჭარხლები",
+    "via": "-nom -pl, syncope",
+    "word": "2767",
+    "sense": 1,
+    "gram": "nom.pl",
+    "check": true
+   },
+   {
+    "form": "კარტოფილები",
+    "via": "-nom -pl",
+    "word": "318",
+    "sense": 1,
+    "gram": "nom.pl",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "ცნობისმოყვარეობით",
+    "via": "unresolved"
+   },
+   {
+    "form": "იწევდნენ",
+    "via": "unresolved"
+   },
+   {
+    "form": "იქითკენ",
+    "via": "-towards -inst",
+    "word": "303",
+    "sense": 1,
+    "gram": "towards.inst",
+    "check": true
+   },
+   {
+    "form": "რათა",
+    "via": "-pl.gen",
+    "word": "1907",
+    "sense": 1,
+    "gram": "pl.gen",
+    "check": true
+   },
+   {
+    "form": "დაენახათ",
+    "via": "paradigm",
+    "word": "2429",
+    "sense": 1,
+    "gram": "Pluperfect 3pl"
+   },
+   {
+    "form": "რა",
+    "via": "headword",
+    "word": "1907",
+    "sense": 1
+   },
+   {
+    "form": "ხდებოდა",
+    "via": "paradigm",
+    "word": "6209",
+    "sense": 1,
+    "gram": "Imperfect 3sg"
+   }
+  ],
+  [
+   {
+    "form": "ბებიკო",
+    "via": "unresolved"
+   },
+   {
+    "form": "გეთაყვა",
+    "via": "headword",
+    "word": "163",
+    "sense": 1
+   },
+   {
+    "form": "ეს",
+    "via": "headword",
+    "word": "207",
+    "sense": 1
+   },
+   {
+    "form": "ვეებერთელა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოლოკი",
+    "via": "unresolved"
+   },
+   {
+    "form": "ფუღურო",
+    "via": "unresolved"
+   },
+   {
+    "form": "გამომდგარა",
+    "via": "unresolved"
+   },
+   {
+    "form": "სთქვა",
+    "via": "override",
+    "word": "6323",
+    "sense": 1
+   },
+   {
+    "form": "ყმაწვილმა",
+    "via": "unresolved"
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "მაღლა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ასწია",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოლოკი",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ყოველმა",
+    "via": "-erg",
+    "word": "4383",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   },
+   {
+    "form": "მწვანილეულმა",
+    "via": "unresolved"
+   },
+   {
+    "form": "დაინახა",
+    "via": "paradigm",
+    "word": "2429",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "ბოლოკი",
+    "via": "unresolved"
+   },
+   {
+    "form": "მართლა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ფუღურო",
+    "via": "unresolved"
+   },
+   {
+    "form": "იყო",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   }
+  ],
+  [
+   {
+    "form": "იმიტომაც",
+    "via": "-too",
+    "word": "913",
+    "sense": 1,
+    "gram": "too",
+    "check": true
+   },
+   {
+    "form": "იყო",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ისეთი",
+    "via": "headword",
+    "word": "587",
+    "sense": 1
+   },
+   {
+    "form": "ტიკტიკა",
+    "via": "unresolved"
+   },
+   {
+    "form": "წასჩურჩულა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ნიახურმა",
+    "via": "-erg",
+    "word": "2942",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   },
+   {
+    "form": "კომბოსტოს",
+    "via": "-dat",
+    "word": "325",
+    "sense": 1,
+    "gram": "dat",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "ქალბატონო",
+    "via": "-voc",
+    "word": "2370",
+    "sense": 1,
+    "gram": "voc",
+    "check": true
+   },
+   {
+    "form": "რა",
+    "via": "headword",
+    "word": "1907",
+    "sense": 1
+   },
+   {
+    "form": "ვუყოთ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ამას",
+    "via": "form index",
+    "word": "207",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "ჰკითხა",
+    "via": "form index",
+    "word": "w:ჰკითხავს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "მოჯამაგირე",
+    "via": "unresolved"
+   },
+   {
+    "form": "დედაკაცმა",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "უნდა",
+    "via": "form index",
+    "word": "w:უნდა",
+    "sense": 1,
+    "gram": "Present 3sg"
+   },
+   {
+    "form": "შორს",
+    "via": "headword",
+    "word": "2132",
+    "sense": 1
+   },
+   {
+    "form": "გადააგდო",
+    "via": "unresolved"
+   },
+   {
+    "form": "უპასუხა",
+    "via": "form index",
+    "word": "5935",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ბებიამ",
+    "via": "-erg",
+    "word": "112",
+    "sense": 1,
+    "gram": "erg",
+    "check": true
+   }
+  ],
+  [
+   {
+    "form": "მოითმინეთ",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩემი",
+    "via": "headword",
+    "word": "45",
+    "sense": 1
+   },
+   {
+    "form": "პაპის",
+    "via": "-gen",
+    "word": "1889",
+    "sense": 1,
+    "gram": "gen",
+    "check": true
+   },
+   {
+    "form": "დედა",
+    "via": "headword",
+    "word": "1",
+    "sense": 1
+   },
+   {
+    "form": "დაიწყო",
+    "via": "form index",
+    "word": "w:იწყებს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "შერცხვენილმა",
+    "via": "unresolved"
+   },
+   {
+    "form": "ბოლოკმა",
+    "via": "unresolved"
+   },
+   {
+    "form": "მაგრამ",
+    "via": "headword",
+    "word": "948",
+    "sense": 1
+   },
+   {
+    "form": "ამ",
+    "via": "form index",
+    "word": "207",
+    "sense": 1,
+    "gram": "obl"
+   },
+   {
+    "form": "დროს",
+    "via": "form index",
+    "word": "141",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "გადაუძახეს",
+    "via": "unresolved"
+   },
+   {
+    "form": "ღობეს",
+    "via": "unresolved"
+   },
+   {
+    "form": "იქით",
+    "via": "-inst",
+    "word": "303",
+    "sense": 1,
+    "gram": "inst",
+    "check": true
+   },
+   {
+    "form": "და",
+    "via": "headword",
+    "word": "53",
+    "sense": 1,
+    "check": true,
+    "alts": [
+     {
+      "word": "38",
+      "english": "and"
+     }
+    ]
+   },
+   {
+    "form": "იქ",
+    "via": "headword",
+    "word": "303",
+    "sense": 1
+   },
+   {
+    "form": "არხში",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჩავარდა",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ავტორი",
+    "via": "headword",
+    "word": "w:ავტორი",
+    "sense": 1
+   },
+   {
+    "form": "კორდელი",
+    "via": "unresolved"
+   }
+  ]
+ ]
+}

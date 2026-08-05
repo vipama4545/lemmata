@@ -1074,6 +1074,25 @@
    ],
    "parsed": 100
   },
+  "improve": {
+   "root": "უმჯობეს",
+   "pfsf": "ებ",
+   "preverbs": [
+    "გა"
+   ],
+   "preverbScreeves": [
+    "future",
+    "conditional",
+    "futureSubjunctive",
+    "aorist",
+    "optative",
+    "pluperfect",
+    "perfectSubjunctive",
+    "imperative"
+   ],
+   "version": "ა",
+   "parsed": 100
+  },
   "become-vt": {
    "root": "ხდ",
    "roots": [
@@ -3187,6 +3206,24 @@
    "parsed": 100,
    "check": true
   },
+  "survive": {
+   "root": "რჩ",
+   "pfsf": "ებ",
+   "preverbs": [
+    "გადა"
+   ],
+   "preverbScreeves": [
+    "future",
+    "conditional",
+    "futureSubjunctive",
+    "aorist",
+    "optative",
+    "pluperfect",
+    "perfectSubjunctive",
+    "imperative"
+   ],
+   "parsed": 100
+  },
   "divorce-vt": {
    "root": "ქორწინ",
    "pfsf": "ებ",
@@ -4595,6 +4632,26 @@
    "version": "ი",
    "parsed": 100
   },
+  "impose-vt": {
+   "root": "წეს",
+   "pfsf": "ებ",
+   "preverbs": [
+    "და"
+   ],
+   "preverbScreeves": [
+    "future",
+    "conditional",
+    "futureSubjunctive",
+    "aorist",
+    "optative",
+    "pluperfect",
+    "perfectSubjunctive",
+    "imperative",
+    "prohibitive"
+   ],
+   "version": "ა",
+   "parsed": 100
+  },
   "go-down-2": {
    "root": "დ",
    "roots": [
@@ -5313,45 +5370,6 @@
     "prohibitive"
    ],
    "version": "ი",
-   "parsed": 100
-  },
-  "impose-vt": {
-   "root": "წეს",
-   "pfsf": "ებ",
-   "preverbs": [
-    "და"
-   ],
-   "preverbScreeves": [
-    "future",
-    "conditional",
-    "futureSubjunctive",
-    "aorist",
-    "optative",
-    "pluperfect",
-    "perfectSubjunctive",
-    "imperative",
-    "prohibitive"
-   ],
-   "version": "ა",
-   "parsed": 100
-  },
-  "improve": {
-   "root": "უმჯობეს",
-   "pfsf": "ებ",
-   "preverbs": [
-    "გა"
-   ],
-   "preverbScreeves": [
-    "future",
-    "conditional",
-    "futureSubjunctive",
-    "aorist",
-    "optative",
-    "pluperfect",
-    "perfectSubjunctive",
-    "imperative"
-   ],
-   "version": "ა",
    "parsed": 100
   },
   "increase-vi": {
@@ -10941,24 +10959,6 @@
     "prohibitive"
    ],
    "version": "ა",
-   "parsed": 100
-  },
-  "survive": {
-   "root": "რჩ",
-   "pfsf": "ებ",
-   "preverbs": [
-    "გადა"
-   ],
-   "preverbScreeves": [
-    "future",
-    "conditional",
-    "futureSubjunctive",
-    "aorist",
-    "optative",
-    "pluperfect",
-    "perfectSubjunctive",
-    "imperative"
-   ],
    "parsed": 100
   },
   "sweep": {

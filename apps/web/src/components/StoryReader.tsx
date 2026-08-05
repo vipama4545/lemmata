@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
-import type { StoryToken } from "@georgian/shared/types";
-import { useStory } from "../data/stories";
+import type { Story, StoryToken } from "@georgian/shared/types";
+import { useIsAdmin } from "../admin/useAdmin";
+import { replaceStory, useStory } from "../data/stories";
 import { at, headword, isLinked, meaning, pieces, reading } from "../utils/story";
 import type { Reading } from "../utils/story";
 import { segmentForm } from "../utils/verbMorphology";
@@ -13,6 +14,10 @@ import { forgetItem, markUnseenKnown, readingMastery, setItemMastery, useProgres
 import type { Progress } from "../study/store";
 import { MasteryPicker } from "./Mastery";
 import Icon from "./Icon";
+
+// Only ever rendered for an admin who has turned editing on, so it rides in the admin chunk
+// rather than in the one every reader downloads.
+const TokenEditor = lazy(() => import("../admin/TokenEditor"));
 
 const CARD_W = 320;
 // Only the estimate the card is first placed with, before its real height is measurable.
@@ -32,6 +37,13 @@ interface Selection {
   rect: DOMRect;
 }
 
+/** Which occurrence an admin is editing the link on, and where in the text it is. */
+interface Editing {
+  token: StoryToken;
+  paragraph: number;
+  position: number;
+}
+
 // A story with its words linked to the dictionary, and coloured by how well you know them.
 //
 // Lookup is a mode rather than something always on, because the two things you want from a
@@ -48,14 +60,37 @@ function StoryReader() {
   const { storyId } = useParams<{ storyId: string }>();
   // The text and its tokens are fetched rather than bundled — 120 KB for this one story,
   // which is not worth carrying around for the visits that never open it.
-  const { story, loading, error } = useStory(storyId);
+  const { story: fetched, loading, error } = useStory(storyId);
   const progress = useProgress();
+  const { isAdmin } = useIsAdmin();
 
   const [lookup, setLookup] = useState(true);
   const [split, setSplit] = useState(false);
   const [highlight, setHighlight] = useState(true);
   const [selected, setSelected] = useState<Selection | null>(null);
   const [finishing, setFinishing] = useState(false);
+
+  // Editing links is a mode of its own rather than something an admin always has on, for the
+  // same reason lookup is: it turns every word into a control, and most visits to a story are
+  // to read it. Off by default even for an admin.
+  const [editing, setEditing] = useState(false);
+  const [editingToken, setEditingToken] = useState<Editing | null>(null);
+  // An edit comes back from the server as the whole relinked story, and that is what the page
+  // shows from then on. Held here rather than pushed back through `useStory`, so the fetch
+  // hook stays about fetching.
+  const [edited, setEdited] = useState<Story | null>(null);
+  const story = edited ?? fetched;
+
+  // A different story means the edited copy is not this one's.
+  useEffect(() => {
+    setEdited(null);
+    setEditingToken(null);
+  }, [storyId]);
+
+  // Leaving edit mode must take the panel with it, as turning lookup off takes the card.
+  useEffect(() => {
+    if (!editing) setEditingToken(null);
+  }, [editing]);
   // One shared timer: a pending open and a pending close can never both be wanted.
   const timer = useRef<number | undefined>(undefined);
 
@@ -67,10 +102,11 @@ function StoryReader() {
 
   useEffect(() => cancel, [cancel]);
 
-  // Turning lookup off must also take any open card with it.
+  // Turning lookup off must also take any open card with it — unless editing is on, where
+  // the card is the reference you are editing against rather than a reading aid.
   useEffect(() => {
-    if (!lookup) close();
-  }, [lookup, close]);
+    if (!lookup && !editing) close();
+  }, [lookup, editing, close]);
 
   // The card is anchored to a rectangle measured when it opened, which stops being where
   // the word is as soon as the page moves.
@@ -132,7 +168,9 @@ function StoryReader() {
   const showSplit = split && hasTranslation;
 
   const openLater = (token: StoryToken, key: string, target: HTMLElement) => {
-    if (!lookup) return;
+    // Editing counts as a reason to open the card even with lookup switched off: choosing
+    // what a word should mean is exactly when you need to see what it means now.
+    if (!lookup && !editing) return;
     cancel();
     const rect = target.getBoundingClientRect();
     timer.current = window.setTimeout(() => setSelected({ token, at: key, rect }), OPEN_DELAY);
@@ -146,10 +184,50 @@ function StoryReader() {
   const renderParagraph = (paragraph: string, p: number) =>
     pieces(paragraph).map((piece, i) => {
       const token = piece.word ? at(story, p, piece.index, piece.text) : null;
+      const key = `${p}:${piece.index}`;
+
+      // In edit mode every word is a control, including the ones nothing matched — those are
+      // the whole point, because an unresolved spelling is usually either a missing lemma or
+      // a proper noun, and both are answered here. Reading mode keeps the old rule: only a
+      // word with something to say is interactive.
+      if (editing && token) {
+        // The classes are additive rather than a chain of else-ifs, because the states are
+        // not exclusive: a name can be marked as a guess, and a pinned link usually is not
+        // but may be. The stylesheet resolves what wins — see the note there.
+        const classes = ["story-word", "is-editable"];
+        if (token.name) classes.push("is-name");
+        else if (!token.word) classes.push("is-unresolved");
+        if (token.check) classes.push("is-guess");
+        if (token.via === "name" || token.via.startsWith("override")) classes.push("is-pinned");
+        if (selected?.at === key) classes.push("is-open");
+
+        // Hovering still opens the real card. Deciding what a word should link to means
+        // reading what it links to now — the sense that applies, the other senses, the
+        // paradigm behind it — and none of that fits in a title attribute. So editing adds
+        // the click without taking the card away: hover to see, click to change.
+        const hoverable = isLinked(token);
+        return (
+          <button
+            key={i}
+            type="button"
+            className={classes.join(" ")}
+            onClick={() => {
+              close();
+              setEditingToken({ token, paragraph: p, position: piece.index });
+            }}
+            onMouseEnter={hoverable ? (e) => openLater(token, key, e.currentTarget) : undefined}
+            onMouseLeave={hoverable ? closeLater : undefined}
+            onFocus={hoverable ? (e) => openLater(token, key, e.currentTarget) : undefined}
+            onBlur={hoverable ? closeLater : undefined}
+          >
+            {piece.text}
+          </button>
+        );
+      }
+
       if (!isLinked(token)) {
         return <span key={i}>{piece.text}</span>;
       }
-      const key = `${p}:${piece.index}`;
       // Proper names are story furniture rather than vocabulary, so they carry no level.
       const item = token.word ? wordKey(token.word) : "";
       return (
@@ -225,9 +303,25 @@ function StoryReader() {
             <Icon name="flag" size={16} />
             Finish
           </button>
+
+          {isAdmin && (
+            <button
+              type="button"
+              className={`toggle-btn is-admin${editing ? " is-on" : ""}`}
+              onClick={() => {
+                setEditing((on) => !on);
+                close();
+              }}
+              aria-pressed={editing}
+              title="Correct what each word links to"
+            >
+              <Icon name="link" size={16} />
+              Edit links
+            </button>
+          )}
         </div>
 
-        <StoryProgress counts={counts} shown={highlight} />
+        {editing ? <EditLegend story={story} /> : <StoryProgress counts={counts} shown={highlight} />}
       </header>
 
       {showSplit ? (
@@ -267,6 +361,60 @@ function StoryReader() {
       )}
 
       {finishing && <FinishDialog unseen={counts.unseen} vocabulary={vocabulary} onClose={() => setFinishing(false)} />}
+
+      {editingToken && (
+        <Suspense fallback={null}>
+          <TokenEditor
+            story={story}
+            paragraph={editingToken.paragraph}
+            position={editingToken.position}
+            token={editingToken.token}
+            onClose={() => setEditingToken(null)}
+            onSaved={(result) => {
+              // The server hands back the whole relinked story. Showing that rather than
+              // patching the one token in place is what keeps the screen and the database
+              // agreeing — pinning a spelling "everywhere" changes tokens this panel never saw.
+              setEdited(result.story);
+              replaceStory(result.story);
+              setEditingToken(null);
+            }}
+          />
+        </Suspense>
+      )}
+    </div>
+  );
+}
+
+/* --------------------------------------------------------------- edit mode */
+
+// What the colours mean while links are being edited, and how much is left to do.
+//
+// It replaces the mastery bar rather than sitting under it, because the two say different
+// things about the same words and showing both at once would put two colour schemes on one
+// page of text.
+function EditLegend({ story }: { story: Story }) {
+  const tally = { unresolved: 0, guessed: 0, pinned: 0, named: 0, total: 0 };
+  for (const token of story.tokens.flat()) {
+    tally.total += 1;
+    if (token.name) tally.named += 1;
+    if (!token.word && !token.name) tally.unresolved += 1;
+    else if (token.check) tally.guessed += 1;
+    if (token.via === "name" || token.via.startsWith("override")) tally.pinned += 1;
+  }
+
+  return (
+    <div className="story-progress story-edit-legend">
+      <p className="admin-note">
+        Every word is a button. Click one to link it to a dictionary entry, name it as a proper noun for this
+        story only, or mark it as deliberately not a word.
+      </p>
+      <div className="study-legend">
+        <span><i className="dot is-unresolved-word" />{tally.unresolved} nothing matched</span>
+        <span><i className="dot is-guess" />{tally.guessed} reached by a guess</span>
+        <span><i className="dot is-name" />{tally.named} named</span>
+        <span><i className="dot is-pinned" />{tally.pinned} set by hand</span>
+        <span className="study-legend-session">{tally.total} words</span>
+      </div>
     </div>
   );
 }

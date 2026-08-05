@@ -23,4 +23,10 @@ export const db = drizzle(sql, { schema });
 
 export type Database = typeof db;
 
+/**
+ * What you can run statements on inside `db.transaction` — the same interface as `db`, but
+ * a different type, so anything meant to work in both has to name this one.
+ */
+export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
 export { schema };

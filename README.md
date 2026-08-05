@@ -35,9 +35,26 @@ Postgres is on **5433**, not 5432, because 5432 is usually already taken. Change
 
 ## Where the data lives, and how it gets there
 
-The authoring pipeline has not changed. The scripts under `scripts/` still turn the
+**The database is the source of truth for content.** An admin can add and correct words,
+paradigms and stories from the browser (see [Editing it](#editing-it) below), so the tables
+are no longer just a copy of `data/*.json` — they can hold work that exists nowhere else.
+Two commands keep that honest:
+
+```sh
+npm run db:export     # database -> data/*.json, so the files catch up
+npm run db:seed       # data/*.json -> database, and it now refuses to clobber edits
+```
+
+`content_version.source` is `seed` after a seed and `admin` after any edit in the browser.
+Finding `admin`, the seed stops and says so rather than replacing the edits with the older
+files; `--force` overrides it. `db:export` is the way out that keeps both — it writes through
+the same assembly the server serves from, skips any file whose content has not actually
+changed, and never overwrites a story's `.txt`, so `git diff data/` shows the content that
+moved rather than a reformat of everything.
+
+The offline pipeline is still there and still works. The scripts under `scripts/` turn the
 conjugation spreadsheet, the scrape and the hand-written lexicon into `data/*.json`, and
-those files are still the thing to correct:
+those files remain the right place to correct a *bulk* import:
 
 | File | Holds |
 | --- | --- |
@@ -55,7 +72,76 @@ cache is keyed on it.
 
 Adding a story means dropping `<id>.txt` (and optionally `<id>.en.txt`, one paragraph per
 Georgian paragraph) in `data/stories/`, then `build:data` and `db:seed`. Nothing in the app
-needs editing any more — no module declaration, no list of stories.
+needs editing any more — no module declaration, no list of stories. Or paste it into
+**Admin → Stories → New story**, which does the same work against the live database.
+
+## Editing it
+
+An **admin** may add and change words, paradigms and stories from the app itself. It is one
+column, `user.is_admin`, and nothing else grants it: no list of addresses in the environment,
+and no route through Better Auth — the field is declared `input: false`, so no sign-up body,
+profile update or OAuth profile can set it. A fresh database therefore has no admins at all.
+Make the first one from a shell on the host:
+
+```sh
+npm run admin -- list
+npm run admin -- grant nino@example.com     # they must have signed in once already
+npm run admin -- revoke nino@example.com
+```
+
+After that, an admin can promote anyone else from **Admin → Admins**. Nobody can remove their
+own access, and the last admin cannot be removed — an installation with none can only be
+repaired from the host. In Portainer there is no `compose run`, so do it the way seeding is
+done: **Containers → `lemmata-server-1` → Console → `/bin/sh`**, then
+`node --import tsx apps/server/src/db/admin.ts grant nino@example.com`.
+
+Hiding the `/admin` routes is a courtesy, not the enforcement. Every procedure under `admin`
+checks the session itself and re-reads `is_admin` from the table rather than trusting the
+session cookie, which is cached for thirty seconds — so revoking somebody takes effect on
+their next request, not half a minute later.
+
+Every edit bumps `content_version` in the same transaction that made it. That is the cache key
+the server's in-memory snapshot and every browser already use, so nothing new had to be
+invented: the snapshot rebuilds on the next request, the editing browser re-fetches at once,
+and everyone else picks it up on their next visit.
+
+### Stories link themselves
+
+Paste the Georgian in and the server tokenises it and resolves every word against the lexicon,
+using the same matcher `scripts/buildStoryData.cjs` has always used — the confirmed-forms
+index, then an exact paradigm hit, then the nominal peeler. It reproduces that script's output
+token for token; on *The Three Little Pigs* a cold paste links **95.2%** of 975 words with no
+help at all, and what it cannot do is exactly the interesting part:
+
+| Left over | What it is | Where it is fixed |
+| --- | --- | --- |
+| 47 unresolved | the proper nouns — ნიფ-ნიფი and its case forms | named in the story |
+| 54 flagged | `და`, which is both "and" and "sister" | pinned in the story |
+
+Both are fixed **in the reader**, on the word, with the sentence in front of you: open a story
+as an admin and turn on **Edit links**. Every word becomes a button, including the ones nothing
+matched — those are the ones that need you. Clicking one offers three answers, which are three
+different claims rather than three ways of saying one thing:
+
+- **A dictionary word** — this occurrence means that entry, in that sense. The resolver's own
+  shortlist of rival entries is offered as one-tap chips.
+- **A name** — a proper noun, glossed here and deliberately kept *out* of the dictionary,
+  because ნიფ-ნიფი is a pig in this story and nothing at all in the next one.
+- **Not a word** — left as plain text on purpose, which is a different thing from the resolver
+  having failed to find something.
+
+Each can apply to the one occurrence or to every occurrence of that spelling in the story —
+the `at` and `forms` blocks of the old overrides file. And any of them can be ticked **"still
+a guess"**, the same flag the matcher sets on its own uncertain links, so a doubt you have
+lands in the same list instead of needing a wrong link left in place to record it.
+
+There is no overrides table. A decision *is* a token: `story_tokens.via` already distinguished
+the hand-made rows (`name`, `override`) from the resolver's own reasoning (`form index`,
+`headword`, `paradigm`, `-dat -pl`), and **Relink from the lexicon** re-derives everything
+except those. So adding a missing word today and relinking picks it up everywhere without
+disturbing a single decision anybody made. A pin is matched back by position *and* spelling;
+edit the prose and the words shift, so a pin whose spelling no longer agrees is dropped rather
+than silently re-applied to whatever now stands in that place.
 
 ### Proving the move was lossless
 
@@ -241,8 +327,9 @@ docker compose -f docker-compose.prod.yml run --rm seed   # first deploy, and af
 
 `up` applies pending migrations in a container of its own and will not start the server if
 one fails. Seeding is deliberately not part of it — it replaces every content table, which is
-the right thing after `npm run build:data` and wasted work otherwise. `run --rm verify` proves
-the database still matches `data/`.
+the right thing after `npm run build:data` and wasted work otherwise, and outright wrong once
+anything has been edited through the admin screens. `run --rm verify` proves the database
+still matches `data/`.
 
 Both images are built for `linux/amd64` and `linux/arm64`, because the host is an Ampere
 instance and an amd64-only image there fails as `exec format error`. Rebuild them with:
@@ -275,7 +362,9 @@ equivalent of `compose run`. Seed from the server container instead — **Contai
 | `npm run db:up` / `db:down` | Postgres in Docker |
 | `npm run db:generate` | a migration from a schema change |
 | `npm run db:migrate` | apply pending migrations |
-| `npm run db:seed` | load `data/` into Postgres |
+| `npm run db:seed` | load `data/` into Postgres; refuses to clobber admin edits without `--force` |
+| `npm run db:export` | write Postgres back out to `data/` |
+| `npm run admin -- grant <email>` | make somebody an admin (also `revoke`, `list`) |
 | `npm run db:verify` | prove the database still matches `data/` |
 | `npm run db:verify-sync` | prove the study merge rule holds |
 | `npm run db:studio` | Drizzle Studio |

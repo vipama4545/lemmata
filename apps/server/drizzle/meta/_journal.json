@@ -8,6 +8,13 @@
       "when": 1785862714455,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785922855190,
+      "tag": "0001_amazing_the_call",
+      "breakpoints": true
     }
   ]
 }

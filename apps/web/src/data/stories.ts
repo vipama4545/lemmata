@@ -21,9 +21,21 @@ export function storySummary(id: string | undefined): StorySummary | undefined {
   return id ? storySummaries().find(story => story.id === id) : undefined;
 }
 
-/** Fetched stories, by id. Never invalidated: a story does not change while you read it. */
+/**
+ * Fetched stories, by id.
+ *
+ * Nothing expires them, because a story does not change while you read it — with one
+ * exception: an admin editing a link in the reader changes exactly this story, and the server
+ * hands the whole of it back. `replaceStory` is how that answer gets in here, so leaving the
+ * story and coming back shows the correction rather than the copy from before it.
+ */
 const loaded = new Map<string, Story>();
 const inFlight = new Map<string, Promise<Story | null>>();
+
+/** Puts a freshly-linked story in the cache, replacing whatever was there. */
+export function replaceStory(story: Story): void {
+  loaded.set(story.id, story);
+}
 
 function fetchStory(id: string): Promise<Story | null> {
   const already = inFlight.get(id);

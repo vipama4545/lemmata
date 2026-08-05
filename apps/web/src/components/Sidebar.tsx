@@ -4,6 +4,7 @@ import Icon from './Icon';
 import type { IconName } from './Icon';
 import { groupedGrammarTopics } from '../data/grammar';
 import { dueCount, useProgress } from '../study/store';
+import { useIsAdmin } from '../admin/useAdmin';
 
 interface SidebarProps {
   open: boolean;
@@ -18,6 +19,7 @@ function Sidebar({ open, onClose }: SidebarProps) {
   // Cards waiting is the one number worth carrying on every page: a spaced repetition deck
   // that has to be opened to find out whether it needs opening does not get opened.
   const due = dueCount(useProgress(), Date.now());
+  const { isAdmin } = useIsAdmin();
 
   useEffect(() => {
     onClose();
@@ -80,6 +82,19 @@ function Sidebar({ open, onClose }: SidebarProps) {
             </div>
           ))}
         </div>
+
+        {/* Last, and only for an admin. Editing is a different job from learning, and putting
+            it above the grammar topics would make it look like part of the app everyone uses. */}
+        {isAdmin && (
+          <div className="sidebar-section">
+            <p className="sidebar-heading">Admin</p>
+            <SidebarLink to="/admin" icon="sliders" label="Overview" end />
+            <SidebarLink to="/admin/words" icon="type" label="Words" />
+            <SidebarLink to="/admin/verbs" icon="table" label="Verbs" />
+            <SidebarLink to="/admin/stories" icon="message" label="Stories" />
+            <SidebarLink to="/admin/users" icon="users" label="Admins" />
+          </div>
+        )}
 
       </nav>
     </>
