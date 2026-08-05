@@ -108,6 +108,12 @@ const PATHS = {
     </>
   ),
   message: <path d="M20.5 12.5a7.5 7.5 0 0 1-10.7 6.8L4 21l1.7-5.4A7.5 7.5 0 1 1 20.5 12.5Z" />,
+  mail: (
+    <>
+      <rect x="2.5" y="5" width="19" height="14" rx="2" />
+      <path d="M3 6.5 12 13l9-6.5" />
+    </>
+  ),
   clock: (
     <>
       <circle cx="12" cy="12" r="8.5" />

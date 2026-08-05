@@ -1,20 +1,26 @@
-// Better Auth: Discord and nothing else.
+// Better Auth: Discord, or a link mailed to an address.
 //
-// There is no password here on purpose. The only thing an account does in this app is hold
-// your review records, and a password would mean a reset flow, a hashing policy and a
-// credential to leak — all of it in aid of storing which Georgian words you know. Discord
-// is where the people this is for already are, so it does the identifying.
+// There is still no password here, and the second option is how it stays that way rather
+// than a step towards one. The only thing an account does in this app is hold your review
+// records, and a password would mean a reset flow, a hashing policy and a credential to
+// leak — all of it in aid of storing which Georgian words you know. A mailed link needs
+// none of it: reading the inbox is the proof, the token is single-use and dead in fifteen
+// minutes, and a stolen copy of this database contains nothing anyone can sign in with.
+//
+// Signing up and signing in are the same request. An address with no account behind it
+// gets one when the link is followed, which is why the web app has one form and not two.
 //
 // Adding another provider later is a block in `socialProviders` and a button in the web
 // app's sign-in panel; nothing else here assumes there is only one.
 
 import { betterAuth } from 'better-auth';
+import { magicLink } from 'better-auth/plugins';
 import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 import * as schema from '@georgian/shared/schema';
 import { db } from './db/index.ts';
 import { env } from './env.ts';
-import { sendMail } from './mail/mailjet.ts';
-import { changeEmail, deleteAccount, verifyEmail, welcome } from './mail/templates.ts';
+import { sendMail } from './mail/mailgun.ts';
+import { changeEmail, deleteAccount, signInLink, verifyEmail, welcome } from './mail/templates.ts';
 
 /**
  * Whether the browser and this server are on different origins.
@@ -35,6 +41,21 @@ async function trySend(to: string, name: string, message: { subject: string; tex
   }
 }
 
+/**
+ * A username for an account that arrived by email, where nobody was asked for one.
+ *
+ * The local part as written, minus any `+tag`, which is a routing detail its owner did not
+ * choose as a name. Not split on a dot to pull a first name out of `nino.beridze` — that
+ * guess is wrong for most of the world and reads as prying when it is right. If the result
+ * is empty or absurd, the address itself is the name; a blank one is the only bad outcome,
+ * because it is what the sidebar would then render.
+ */
+function usernameFromEmail(email: string): string {
+  const local = email.slice(0, email.lastIndexOf('@'));
+  const untagged = local.split('+')[0].trim();
+  return untagged.length > 0 && untagged.length <= 64 ? untagged : email;
+}
+
 export const auth = betterAuth({
   appName: 'Georgian Dictionary',
   baseURL: env.BETTER_AUTH_URL,
@@ -48,15 +69,61 @@ export const auth = betterAuth({
   // Origins allowed to start a sign-in and receive the redirect back.
   trustedOrigins: [env.WEB_ORIGIN],
 
+  // Still off, and the magic-link plugin below is why it can stay off: an address can sign
+  // in here without one ever being set. See the note at the top of this file.
   emailAndPassword: { enabled: false },
+
+  plugins: [
+    magicLink({
+      // Fifteen minutes. Long enough to walk to another device and open the mail there,
+      // short enough that a link left sitting in an inbox is not a standing key to the
+      // account. The web app's panel quotes this figure, so the two move together.
+      expiresIn: 60 * 15,
+
+      // What is stored against the request is a hash of the token, not the token. The one
+      // in the mail is the only usable copy, so read access to `verification` — a backup, a
+      // support query, a dump — hands over nothing that can be redeemed.
+      storeToken: 'hashed',
+
+      // An address nobody has used before gets an account when the link is followed. This
+      // is the "sign up with email" half, and it is the default; it is written out because
+      // the alternative is one word and would otherwise look like an oversight.
+      disableSignUp: false,
+
+      // Three a minute per address. The endpoint answers the same either way — see below —
+      // so the thing worth limiting is not guessing but using this server to post mail at
+      // somebody who never asked for it.
+      rateLimit: { window: 60, max: 3 },
+
+      /**
+       * Note `sendMail` rather than the `trySend` above: here the mail *is* the sign-in.
+       * Swallowing a Mailgun failure would leave the panel saying "check your inbox" about
+       * a message that was never accepted, and the person waiting on it has no way to tell
+       * that from a slow one. Throwing gets a failure onto the screen they are looking at.
+       */
+      sendMagicLink: async ({ email, url }) => {
+        const message = signInLink(url);
+        await sendMail({
+          to: email,
+          // No name to greet them by yet, and asking for one before they are in would be a
+          // form standing where a single field should be.
+          toName: email,
+          subject: message.subject,
+          text: message.text,
+          html: message.html,
+        });
+      },
+    }),
+  ],
 
   socialProviders: {
     discord: {
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
-      // Discord marks its own addresses as verified, and it is the only way in, so there is
-      // nothing for us to re-verify at sign-up. The verification mail below is for the
-      // change-email flow, which is the one case where an address arrives unproven.
+      // Discord marks its own addresses as verified, and an address that arrived by magic
+      // link proved itself by receiving the link, so neither route leaves anything for us to
+      // re-verify at sign-up. The verification mail below is for the change-email flow,
+      // which is the one case where an address arrives unproven.
 
       /**
        * `name` is a username and nothing else.
@@ -122,6 +189,22 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
+        /**
+         * Gives an account a name when it arrived without one.
+         *
+         * The magic-link plugin creates users with `name: ''` unless the sign-in request
+         * carried one, and ours never does — the panel is a single email field on purpose.
+         * An empty string satisfies the not-null column and then shows up as a blank line
+         * in the sidebar where the username goes, so it is filled here rather than left to
+         * every reader of `user.name` to cope with.
+         *
+         * Discord accounts arrive with a name already set by `mapProfileToUser` and fall
+         * straight through.
+         */
+        before: async user => {
+          if (user.name?.trim()) return;
+          return { data: { name: usernameFromEmail(user.email) } };
+        },
         after: async user => {
           await trySend(user.email, user.name, welcome(user.name));
         },

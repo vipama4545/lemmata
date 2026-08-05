@@ -28,7 +28,7 @@ Four things in `.env` need filling in:
 | --- | --- |
 | `BETTER_AUTH_SECRET` | `openssl rand -base64 32` |
 | `DISCORD_CLIENT_ID` / `DISCORD_CLIENT_SECRET` | [Discord developer portal](https://discord.com/developers/applications) → your app → OAuth2. Add `http://localhost:4000/api/auth/callback/discord` as a redirect URL, exactly. |
-| `MAILJET_API_KEY` / `MAILJET_API_SECRET` | [Mailjet](https://app.mailjet.com/account/apikeys). **Optional in development** — leave both blank and mail is printed to the server's terminal, links included. Required when `NODE_ENV=production`. |
+| `MAILGUN_API_KEY` / `MAILGUN_DOMAIN` | [Mailgun](https://app.mailgun.com) → Sending → Domain settings → API keys, and the sending domain itself. **Optional in development** — leave both blank and mail is printed to the server's terminal, sign-in links included, so email sign-in works locally with no account anywhere. Required when `NODE_ENV=production`. A domain in Mailgun's EU region also needs `MAILGUN_API_BASE=https://api.eu.mailgun.net`. |
 
 Postgres is on **5433**, not 5432, because 5432 is usually already taken. Change both
 `docker-compose.yml` and `DATABASE_URL` if you want it back.
@@ -176,17 +176,30 @@ the stale-push and undo cases.
 
 ## Auth and mail
 
-Discord, and nothing else. There is no password here on purpose: the only thing an account
+Two ways in: Discord, or a link mailed to an address. There is no password on either, and
+that is the point of the second rather than an accident of it — the only thing an account
 does is hold your review records, and a password would mean a reset flow, a hashing policy
 and a credential to leak, all in aid of storing which Georgian words you know. Adding another
-provider is a block in `socialProviders` and a button in `Account.tsx`.
+social provider is a block in `socialProviders` and a button in `Account.tsx`.
+
+Signing up and signing in by email are the same request. An address with no account behind
+it gets one when the link is followed, which is why there is one form and not two, and why
+nothing in the response says which of the two just happened — an answer that differed would
+turn the form into a way of asking the server whether a given person has an account. Links
+are single-use, expire in fifteen minutes, and are stored hashed, so `verification` holds
+nothing anyone can redeem.
 
 There is no first name or last name anywhere. Discord's username (or the display name the
-user chose) becomes `name`, and that is the only name stored.
+user chose) becomes `name`; an account that arrived by email takes the local part of the
+address, minus any `+tag` and not split on dots. That is the only name stored.
 
-Mailjet sends the welcome mail, the change-email confirmation and the delete-account
-confirmation. Without credentials the transport prints the message to the terminal instead,
-so `npm run dev` works before anyone has a Mailjet account.
+Mailgun sends the sign-in link, the welcome mail, the change-email confirmation and the
+delete-account confirmation, over its HTTP API — no SDK, since one authenticated POST is the
+whole of what this app needs. Without credentials the transport prints the message to the
+terminal instead, so `npm run dev` and email sign-in both work before anyone has a Mailgun
+account. Everything but the sign-in link is sent best-effort and logs its failures; the
+sign-in link throws, because there the mail *is* the sign-in and "check your inbox" would
+otherwise be a lie.
 
 ## Deploying
 

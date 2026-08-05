@@ -76,8 +76,10 @@ x-server: &server
 
     # Only the server enforces these — assertMailConfigured runs in index.ts, not in migrate
     # or seed — but the stack is not deployable without them, so they fail here too.
-    MAILJET_API_KEY: ${MAILJET_API_KEY:?set MAILJET_API_KEY}
-    MAILJET_API_SECRET: ${MAILJET_API_SECRET:?set MAILJET_API_SECRET}
+    MAILGUN_API_KEY: ${MAILGUN_API_KEY:?set MAILGUN_API_KEY}
+    MAILGUN_DOMAIN: ${MAILGUN_DOMAIN:?set MAILGUN_DOMAIN}
+    # US region unless overridden. An EU domain needs https://api.eu.mailgun.net here.
+    MAILGUN_API_BASE: ${MAILGUN_API_BASE:-https://api.mailgun.net}
     MAIL_FROM_EMAIL: ${MAIL_FROM_EMAIL:-no-reply@lemmata.fyi}
     MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Lemmata}
   depends_on:

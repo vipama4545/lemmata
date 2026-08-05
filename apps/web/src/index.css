@@ -3750,6 +3750,162 @@ a {
   cursor: default;
 }
 
+/* A rule with the word sitting in a gap in it, rather than a word above a rule. The two
+   ways in are alternatives and this is the whole of what says so. */
+.account-or {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.account-or::before,
+.account-or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.account-email {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.account-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+}
+
+.account-input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.account-input::placeholder {
+  color: var(--text-light);
+}
+
+.account-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* The browser's own :invalid fires on the first keystroke, when every address is still
+   half-typed. :not(:placeholder-shown) holds it back until there is something there, and
+   :not(:focus) until they have moved on from the field. */
+.account-input:invalid:not(:placeholder-shown):not(:focus) {
+  border-color: var(--m-1);
+}
+
+.account-input:disabled {
+  opacity: 0.6;
+}
+
+.account-emailsend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.account-emailsend:hover:not(:disabled) {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.account-emailsend:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.account-hint,
+.account-error {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.account-hint {
+  color: var(--text-light);
+}
+
+.account-error {
+  color: var(--m-1);
+}
+
+.account-sent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 10px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.account-sent-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* The tick, and nothing else in this block, takes the "it worked" colour. */
+.account-sent-line .icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--m-5);
+}
+
+.account-sent-line strong {
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.account-linkish {
+  padding: 0;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.account-linkish:hover {
+  color: var(--text);
+}
+
 .account-user {
   display: flex;
   align-items: center;

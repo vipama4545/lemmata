@@ -14,7 +14,7 @@ import Fastify from 'fastify';
 import { fromNodeHeaders } from 'better-auth/node';
 import { auth } from './auth.ts';
 import { env, isProduction } from './env.ts';
-import { assertMailConfigured, mailEnabled } from './mail/mailjet.ts';
+import { assertMailConfigured, mailEnabled } from './mail/mailgun.ts';
 import { router } from './router/index.ts';
 import { sql } from './db/index.ts';
 
@@ -106,7 +106,7 @@ await app.register(async instance => {
 
 app.get('/health', async () => {
   await sql`select 1`;
-  return { ok: true, mail: mailEnabled ? 'mailjet' : 'console' };
+  return { ok: true, mail: mailEnabled ? 'mailgun' : 'console' };
 });
 
 /* -------------------------------------------------------------- lifecycle */
@@ -121,5 +121,5 @@ for (const signal of ['SIGINT', 'SIGTERM'] as const) {
 await app.listen({ host: env.HOST, port: env.PORT });
 
 if (!mailEnabled) {
-  app.log.warn('No Mailjet credentials: mail will be printed to this terminal, not sent.');
+  app.log.warn('No Mailgun credentials: mail will be printed to this terminal, not sent.');
 }

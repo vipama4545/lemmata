@@ -2,7 +2,7 @@
 //
 // A missing DISCORD_CLIENT_SECRET should stop the process here, with the name of the
 // variable, rather than surface half an hour later as a redirect that fails for one user.
-// The two exceptions are the Mailjet credentials: without them the server still runs and
+// The two exceptions are the Mailgun credentials: without them the server still runs and
 // prints what it would have sent, because wiring up a transactional mail account is not a
 // thing anyone should have to do before `npm run dev` works.
 
@@ -30,15 +30,23 @@ const schema = z.object({
   DISCORD_CLIENT_ID: z.string().min(1),
   DISCORD_CLIENT_SECRET: z.string().min(1),
 
-  // Optional as a pair: both or neither. See mail/mailjet.ts.
-  MAILJET_API_KEY: z.string().min(1).optional(),
-  MAILJET_API_SECRET: z.string().min(1).optional(),
+  // Optional as a pair: both or neither. See mail/mailgun.ts.
+  MAILGUN_API_KEY: z.string().min(1).optional(),
+  /** The sending domain as Mailgun knows it — `mg.example.com`, not a URL. */
+  MAILGUN_DOMAIN: z.string().min(1).optional(),
+  /**
+   * Which Mailgun region the domain lives in. A domain created in the EU is not reachable
+   * on the US host and answers a perfectly well-formed request with "Domain not found", so
+   * this is worth setting deliberately rather than discovering.
+   */
+  MAILGUN_API_BASE: z.url().default('https://api.mailgun.net'),
+  /** Must be on MAILGUN_DOMAIN, or Mailgun refuses to send as it. */
   MAIL_FROM_EMAIL: z.email().default('no-reply@localhost'),
   MAIL_FROM_NAME: z.string().default('Georgian Dictionary'),
 });
 
 // A variable present but empty is a variable not set. `.env` files are full of
-// `MAILJET_API_KEY=` written out with nothing after it, and treating that as the string ""
+// `MAILGUN_API_KEY=` written out with nothing after it, and treating that as the string ""
 // would fail a `.min(1)` that was meant to be optional — or worse, pass one that was not.
 const present = Object.fromEntries(
   Object.entries(process.env).filter(([, value]) => value !== undefined && value !== ''),

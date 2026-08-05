@@ -87,6 +87,37 @@ export function welcome(name: string): Message {
   };
 }
 
+/**
+ * The sign-in link itself — the one message here that is not a notification about something
+ * that already happened, but the mechanism.
+ *
+ * It says what to do about a message nobody asked for, and says it as "ignore this" rather
+ * than "secure your account": there is no password to change and no session to revoke, and
+ * an unclicked link expires on its own. Someone typing your address into the form is the
+ * whole of what this can be abused for.
+ */
+export function signInLink(url: string): Message {
+  return {
+    subject: `Your sign-in link for ${env.MAIL_FROM_NAME}`,
+    text: [
+      'Here is your link. Open it and you are signed in — there is no password to enter.',
+      '',
+      url,
+      '',
+      'It works once and expires in fifteen minutes.',
+      '',
+      'If you did not ask to sign in, nothing has happened and nothing will: ignore this and',
+      'the link expires unused.',
+    ].join('\n'),
+    html: layout(
+      'Your sign-in link',
+      `<p style="margin:0 0 12px;">Open the link and you are signed in. There is no password to enter.</p>
+       ${button(url, 'Sign in')}
+       <p style="margin:16px 0 0;font-size:13px;color:${MUTED};">It works once and expires in fifteen minutes. If you did not ask to sign in, ignore this — the link expires unused.</p>`,
+    ),
+  };
+}
+
 /** Better Auth's email-verification link. */
 export function verifyEmail(url: string): Message {
   return {
