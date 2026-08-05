@@ -1,0 +1,30 @@
+# What never belongs in a build context. node_modules above all: the images install their
+# own, and shipping a host copy would put Linux builds at the mercy of whatever platform
+# the last `npm i` ran on.
+node_modules
+**/node_modules
+dist
+**/dist
+*.tsbuildinfo
+
+.git
+.gitignore
+.github
+
+# Secrets stay in the environment. env.ts reads a .env if one is there, and a copy baked
+# into an image is a copy that outlives the deploy that made it.
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# The authoring pipeline. It turns the spreadsheet and the scrape into data/, which is
+# committed; the images only ever need the output.
+scripts
+
+.claude
+.vscode
+.idea
+*.log
+README.md
+docker-compose*.yml

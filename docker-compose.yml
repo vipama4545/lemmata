@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: georgian-dict-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: georgian
+      POSTGRES_PASSWORD: georgian
+      POSTGRES_DB: georgian_dict
+      # The lexicon is Georgian and the definitions are English; sorting has to be
+      # predictable across machines, so the collation is pinned rather than inherited.
+      POSTGRES_INITDB_ARGS: '--encoding=UTF8 --locale=C'
+    ports:
+      # 5433 on the host, because 5432 is usually already taken by a system Postgres or
+      # another project's container. Change both this and DATABASE_URL if you want 5432.
+      - '5433:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U georgian -d georgian_dict']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db-data:

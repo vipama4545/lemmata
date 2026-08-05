@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "useDefineForClassFields": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noUncheckedSideEffectImports": true,
+
+    // Still off, and now for a second reason. The app no longer imports any JSON — the
+    // lexicon arrives over oRPC and is typed by @georgian/shared/contract — so there is
+    // nothing left for it to resolve, and leaving it off keeps the door shut on anyone
+    // re-importing a 2.7 MB file into the bundle by accident.
+    "resolveJsonModule": false
+  },
+  "include": ["src"]
+}

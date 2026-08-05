@@ -3,30 +3,34 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "typecheck": "tsc -b",
-    "lint": "oxlint",
+    "dev": "concurrently -n server,web -c blue,magenta \"npm:dev:server\" \"npm:dev:web\"",
+    "dev:web": "npm run dev -w @georgian/web",
+    "dev:server": "npm run dev -w @georgian/server",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "preview": "npm run preview -w @georgian/web",
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose down",
+    "db:generate": "npm run db:generate -w @georgian/server",
+    "db:migrate": "npm run db:migrate -w @georgian/server",
+    "db:seed": "npm run db:seed -w @georgian/server",
+    "db:verify": "npm run db:verify -w @georgian/server",
+    "db:verify-sync": "npm run db:verify-sync -w @georgian/server",
+    "db:studio": "npm run db:studio -w @georgian/server",
     "build:images": "node scripts/buildImageData.cjs",
     "build:category-images": "node scripts/buildCategoryImages.cjs",
     "build:verbs": "node scripts/buildVerbData.cjs",
     "build:words": "node scripts/buildWordData.cjs",
     "build:stories": "node scripts/buildStoryData.cjs",
-    "build:data": "node scripts/buildWordData.cjs && node scripts/buildStoryData.cjs --learn && node scripts/buildWordData.cjs && node scripts/buildStoryData.cjs",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.2"
+    "build:data": "node scripts/buildWordData.cjs && node scripts/buildStoryData.cjs --learn && node scripts/buildWordData.cjs && node scripts/buildStoryData.cjs"
   },
   "devDependencies": {
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.4",
-    "oxlint": "^1.75.0",
-    "typescript": "^7.0.2",
-    "vite": "^8.2.0"
+    "concurrently": "^10.0.4"
   }
 }
