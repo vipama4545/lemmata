@@ -73,6 +73,11 @@ const contentContract = {
 export interface SessionUser {
   id: string;
   name: string;
+  /**
+   * Your own address, in full. This is the one place an address is sent to a browser, and it
+   * is sent only to the person it belongs to — saying which account you are signed in as is
+   * the whole job of the line that shows it. Other people's are masked; see `AdminUser`.
+   */
   email: string;
   image: string | null;
   /**
@@ -331,14 +336,26 @@ export interface StoryLinkResult {
   flagged: { form: string; count: number }[];
 }
 
-/** One account, for the admin user list. */
+/**
+ * One account, for the admin user list — the only place in this app where you see anybody
+ * but yourself.
+ *
+ * **There is no email field, not even a masked one.** Somebody else's address is not
+ * something this app shows, and the way to guarantee that is for the server never to put it
+ * in the response: a field that is absent cannot be leaked by a screen that forgets to hide
+ * it, read out of the network tab, or logged by something downstream. `listUsers` does not
+ * select the column.
+ *
+ * Which leaves the username to tell accounts apart, and `createdAt` behind it for the case
+ * where two people picked the same one — names are not unique here, only addresses are, and
+ * addresses are exactly what is not on offer.
+ */
 export interface AdminUser {
   id: string;
   name: string;
-  email: string;
   image: string | null;
   isAdmin: boolean;
-  /** Epoch ms. */
+  /** Epoch ms. Shown as a join date, which is what distinguishes two identical usernames. */
   createdAt: number;
 }
 

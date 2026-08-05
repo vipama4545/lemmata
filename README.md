@@ -279,6 +279,38 @@ There is no first name or last name anywhere. Discord's username (or the display
 user chose) becomes `name`; an account that arrived by email takes the local part of the
 address, minus any `+tag` and not split on dots. That is the only name stored.
 
+**Your own address comes back to you in full; nobody else's is sent at all.** The account
+menu shows the address you are signed in as, which is the whole job of that line, and
+`session.me` is the only place this server puts an address in a response.
+
+The one screen listing other people is the admin user list, and it shows **usernames only** —
+no address, not masked, not partially, not to admins. `listUsers` does not select the column,
+which is the point: a field that never enters the response cannot be leaked by a screen that
+forgets to hide it, read out of the network tab, or logged downstream. Names are not unique
+here (only addresses are, and those are not on offer), so each row carries a join date to
+separate two people who chose the same one, and your own row is marked "you".
+
+### Deleting an account
+
+The account menu has it, under a rule and in red — the only irreversible thing in the app.
+Asking sends a link rather than deleting anything, the same standard as signing in, because a
+misclick or an unlocked laptop should not be enough on its own. The link has to be opened in
+a browser still signed in to the account: the endpoint reads the session to know whose
+deletion it is confirming.
+
+What it removes is the account and its review records. **What this browser knows is kept**,
+and the dialog says so — your progress lives in IndexedDB first and was there before you
+signed up, so deleting the account drops the replica that outlives the laptop and leaves you
+studying, signed out, with everything you knew. A checkbox erases the local copy too for
+anyone who meant *that*. Coming back after the link redirects, the app says the account is
+gone rather than just showing Sign in again, which is otherwise indistinguishable from having
+been signed out.
+
+The last admin cannot delete themselves, for the same reason they cannot revoke themselves:
+an installation with no admins is repairable only from a shell on the host. Only the *last*
+one — being an admin is a reason to hand the keys over first, not to be stuck with an account
+you want gone.
+
 Mailgun sends the sign-in link, the welcome mail, the change-email confirmation and the
 delete-account confirmation, over its HTTP API — no SDK, since one authenticated POST is the
 whole of what this app needs. Without credentials the transport prints the message to the

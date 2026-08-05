@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import type { AdminUser } from '@georgian/shared/contract';
-import { api } from '../api/client';
+import { api, useSession } from '../api/client';
 import Icon from '../components/Icon';
 import { storySummaries, verbData, wordData } from '../content/store';
 import { searchWords } from './search';
@@ -300,9 +300,19 @@ export function StoryList() {
 
 /* -------------------------------------------------------------------- users */
 
+/** A join date, which is all that separates two accounts with the same username. */
+function joined(at: number): string {
+  return new Date(at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
 export function UserList() {
   const [users, setUsers] = useState<AdminUser[] | null>(null);
   const { busy, error, run } = useEdit();
+  // Every address in this list is masked, your own included, so there has to be some other
+  // way to find yourself in it — otherwise "which of these is me" is unanswerable, and this
+  // is the screen where you might revoke the wrong person.
+  const { data: session } = useSession();
+  const me = session?.user?.id ?? null;
 
   // The account list is the one admin read that is not already in the snapshot, so it is the
   // one that has to be fetched. `refresh: false` on both calls here: neither touches content,
@@ -334,6 +344,10 @@ export function UserList() {
           An admin may add, change and delete every word, paradigm and story. There is no way back into an
           installation with no admins except a shell on the host, so the last one cannot be removed here.
         </p>
+        <p className="admin-sub">
+          Accounts are listed by username. Email addresses are not shown — not partially, not to admins —
+          and the server does not send them, so there is nothing here to reveal.
+        </p>
       </header>
 
       {error && <p className="admin-error">{error}</p>}
@@ -345,13 +359,18 @@ export function UserList() {
             <li key={user.id}>
               <div className="admin-row-link is-static">
                 <span className="admin-row-geo admin-row-plain">{user.name}</span>
-                <span className="admin-row-en">{user.email}</span>
+                {/* The username, and nothing else about who they are. There is no address
+                    here to show: `admin.users` does not send one. The join date is what
+                    separates two people who picked the same name. */}
+                <span className="admin-row-en">joined {joined(user.createdAt)}</span>
                 <span className="admin-row-meta">
+                  {user.id === me && <span className="admin-badge">you</span>}
                   {user.isAdmin && <span className="admin-badge is-admin">admin</span>}
                   <button
                     type="button"
                     className={user.isAdmin ? 'admin-danger-btn' : 'control-btn'}
-                    disabled={busy}
+                    disabled={busy || user.id === me}
+                    title={user.id === me ? 'You cannot change your own access.' : undefined}
                     onClick={() => toggle(user)}
                   >
                     {user.isAdmin ? 'Remove admin' : 'Make admin'}

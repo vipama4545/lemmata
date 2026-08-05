@@ -445,12 +445,22 @@ async function recountStory(tx: Tx, storyId: string, paragraphs: string[]): Prom
 
 /* --------------------------------------------------------------------- users */
 
+/**
+ * Every account, for the admin user list.
+ *
+ * `email` is not in the select, and that is the whole of the privacy story here rather than
+ * an optimisation. Somebody else's address is not something this app shows — not masked, not
+ * partially, not to admins — and a column that is never read cannot be leaked by a screen
+ * that forgets to hide it, by whoever opens the network tab, or by a log line downstream.
+ *
+ * The username identifies the account, and the join date separates two people who chose the
+ * same one.
+ */
 async function listUsers(tx: Tx | typeof db) {
   const rows = await tx
     .select({
       id: schema.user.id,
       name: schema.user.name,
-      email: schema.user.email,
       image: schema.user.image,
       isAdmin: schema.user.isAdmin,
       createdAt: schema.user.createdAt,
@@ -458,7 +468,7 @@ async function listUsers(tx: Tx | typeof db) {
     .from(schema.user)
     .orderBy(asc(schema.user.createdAt));
 
-  return rows.map(row => ({ ...row, createdAt: row.createdAt.getTime() }));
+  return rows.map(({ createdAt, ...row }) => ({ ...row, createdAt: createdAt.getTime() }));
 }
 
 /* -------------------------------------------------------------------- routes */

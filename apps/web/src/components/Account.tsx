@@ -10,7 +10,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { flushNow, setSyncUser } from '../study/sync';
-import { signOut, useSession } from '../api/client';
+import { DELETED_FLAG, signOut, useSession } from '../api/client';
+import DeleteAccountDialog from './DeleteAccountDialog';
 import SignInDialog from './SignInDialog';
 import type { SignInMode } from './SignInDialog';
 import Icon from './Icon';
@@ -41,6 +42,8 @@ export default function Account() {
   const [linkError, setLinkError] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleted, setDeleted] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // The only caller of setSyncUser. Everything about syncing hangs off this one line: it
@@ -60,21 +63,28 @@ export default function Account() {
     return () => window.removeEventListener('pagehide', send);
   }, []);
 
-  // A link that failed verification lands back here as `?error=…`. Without this the browser
-  // simply returns to the app looking signed out, which reads as the link having done
-  // nothing at all rather than as an expired one — so the dialog opens saying so.
+  // Two things can come back in the query string, and both are read the same way: a link
+  // that failed verification arrives as `?error=`, and a completed account deletion as
+  // `?deleted=1`. Without this the browser just returns to the app looking signed out, which
+  // reads as the link having done nothing rather than as an expired one — or, for a
+  // deletion, as everything having silently vanished.
   useEffect(() => {
     const params = new URLSearchParams(globalThis.location.search);
     const code = params.get('error');
-    if (!code) return;
+    const wasDeleted = params.get(DELETED_FLAG) === '1';
+    if (!code && !wasDeleted) return;
 
-    setLinkError(describeLinkError(code));
-    setDialog('signin');
+    if (code) {
+      setLinkError(describeLinkError(code));
+      setDialog('signin');
+    }
+    if (wasDeleted) setDeleted(true);
 
-    // Then take it out of the URL, or a refresh re-reports a failure from ten minutes ago.
+    // Then take them out of the URL, or a refresh re-reports something from ten minutes ago.
     // replaceState rather than the router, because the query string sits outside the hash
     // that HashRouter owns and the router will not touch it.
     params.delete('error');
+    params.delete(DELETED_FLAG);
     const query = params.toString();
     const { pathname, hash } = globalThis.location;
     globalThis.history.replaceState(null, '', `${pathname}${query ? `?${query}` : ''}${hash}`);
@@ -116,6 +126,9 @@ export default function Account() {
           Sign up
         </button>
         {dialog ? <SignInDialog mode={dialog} initialError={linkError} onClose={close} /> : null}
+        {/* Shown signed out, which is the only state it can be shown in — the account it is
+            reporting on no longer exists. */}
+        {deleted ? <DeletedNotice onClose={() => setDeleted(false)} /> : null}
       </div>
     );
   }
@@ -145,6 +158,9 @@ export default function Account() {
         <div className="account-menu" role="menu">
           <p className="account-menu-who">
             <span className="account-menu-name">{user.name}</span>
+            {/* Your own, in full. Saying which account you are signed in as is the whole job
+                of this line. Other people's addresses are masked wherever they appear, which
+                is the admin user list and nowhere else. */}
             <span className="account-menu-email">{user.email}</span>
           </p>
           <p className="account-menu-status">
@@ -168,8 +184,73 @@ export default function Account() {
           >
             {busy ? 'Signing out…' : 'Sign out'}
           </button>
+
+          {/* Last, under a rule, and the only red thing in here. It is the one irreversible
+              action in the app and should not sit a pixel from Sign out. */}
+          <button
+            className="account-menu-item is-danger"
+            role="menuitem"
+            onClick={() => {
+              setMenuOpen(false);
+              setDeleting(true);
+            }}
+          >
+            Delete account
+          </button>
         </div>
       ) : null}
+
+      {deleting ? <DeleteAccountDialog email={user.email} onClose={() => setDeleting(false)} /> : null}
+    </div>
+  );
+}
+
+/**
+ * What you come back to after following the confirmation link.
+ *
+ * The account is gone and the session with it, so without this the app would simply be
+ * showing Sign in / Sign up again — indistinguishable from having been signed out, which is
+ * a poor way to learn that something irreversible worked.
+ */
+function DeletedNotice({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div
+        className="modal-content danger-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Account deleted"
+        onClick={event => event.stopPropagation()}
+      >
+        <button className="modal-close" onClick={onClose} aria-label="Close">
+          <Icon name="close" />
+        </button>
+
+        <h2>Your account has been deleted</h2>
+        <p className="danger-lead">
+          The account and every review record on it are gone, and so is the address we had.
+          Nothing is left to sign back in to.
+        </p>
+        <p className="danger-note">
+          Unless you asked for it to be erased too, what this browser knows is still here — so
+          the dictionary works exactly as it did, and your progress with it. Signing up again
+          later would upload this browser’s copy to the new account.
+        </p>
+
+        <div className="danger-actions">
+          <button type="button" className="control-btn know" onClick={onClose}>
+            <Icon name="check" /> Carry on
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

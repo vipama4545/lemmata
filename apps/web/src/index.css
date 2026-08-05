@@ -4967,3 +4967,122 @@ a {
     flex-basis: 100%;
   }
 }
+
+/* ===== Deleting an account =====
+   The one irreversible thing in this app, so it gets its own colour and its own distance
+   from everything else. Red is used nowhere in the ordinary UI — the mastery ramp's --m-1 is
+   the closest thing, and it means "you keep forgetting this word", not danger — so it is
+   unambiguous here. */
+
+.account-menu-item.is-danger {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 6px 6px;
+  color: var(--m-1);
+}
+
+.account-menu-item.is-danger:hover:not(:disabled) {
+  color: var(--m-1);
+  background: color-mix(in srgb, var(--m-1) 10%, transparent);
+}
+
+.danger-dialog {
+  max-width: 520px;
+  text-align: left;
+}
+
+.danger-dialog h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.danger-lead {
+  margin-bottom: 14px;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.danger-note {
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* What is *kept* — deliberately a panel rather than another paragraph. It is the one thing
+   in the dialog somebody is likely to have got wrong in their head, so it has to survive
+   being skim-read. */
+.danger-panel {
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-hover);
+}
+
+.danger-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.danger-panel .danger-note:last-of-type {
+  margin-bottom: 10px;
+}
+
+.danger-check {
+  align-items: flex-start;
+  margin: 0;
+  font-size: 13.5px;
+}
+
+.danger-hint {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-light);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.danger-error {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--m-1);
+  border-left-width: 3px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--m-1) 8%, var(--surface));
+  font-size: 13.5px;
+}
+
+.danger-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.danger-btn {
+  padding: 9px 18px;
+  border: 1px solid var(--m-1);
+  border-radius: var(--radius-sm);
+  background: var(--m-1);
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.danger-btn:hover:not(:disabled) {
+  filter: brightness(0.93);
+}
+
+.danger-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

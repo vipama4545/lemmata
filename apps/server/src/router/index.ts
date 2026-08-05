@@ -19,6 +19,12 @@ export const router = os.router({
       return {
         id: user.id,
         name: user.name,
+        // In full, and only ever to its owner: this is the signed-in user's own address, and
+        // saying which account you are in is the whole job of the line that shows it.
+        //
+        // It is the only address this server ever sends anywhere. Nobody else's appears in
+        // any response — `admin.users`, the one screen listing other people, does not select
+        // the column at all.
         email: user.email,
         image: user.image ?? null,
         // Better Auth carries the additional fields through on the session user, but types

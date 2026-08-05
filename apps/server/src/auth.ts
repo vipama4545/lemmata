@@ -16,6 +16,7 @@
 import { betterAuth } from 'better-auth';
 import { magicLink } from 'better-auth/plugins';
 import { drizzleAdapter } from '@better-auth/drizzle-adapter';
+import { and, eq, ne } from 'drizzle-orm';
 import * as schema from '@georgian/shared/schema';
 import { db } from './db/index.ts';
 import { env } from './env.ts';
@@ -166,8 +167,52 @@ export const auth = betterAuth({
     },
     deleteUser: {
       enabled: true,
+      /**
+       * Note `sendMail` rather than `trySend`: as with the sign-in link, the mail *is* the
+       * mechanism. Swallowing a failure would leave the panel saying "check your inbox"
+       * about a message nobody accepted, and the account would quietly not be deleted.
+       */
       sendDeleteAccountVerification: async ({ user, url }) => {
-        await trySend(user.email, user.name, deleteAccount(url));
+        const message = deleteAccount(url);
+        await sendMail({
+          to: user.email,
+          toName: user.name,
+          subject: message.subject,
+          text: message.text,
+          html: message.html,
+        });
+      },
+      /**
+       * Runs when the emailed link is followed, just before the row goes.
+       *
+       * The last admin cannot delete themselves, for the same reason they cannot revoke
+       * themselves in the admin screens: an installation with no admins can only be repaired
+       * from a shell on the host, and finding that out afterwards is a bad way to find out.
+       * Granting somebody else first is one click and then this stops objecting.
+       *
+       * Deliberately *only* the last one. Being an admin is not a reason to be stuck with an
+       * account you want gone — it is a reason to hand the keys over first.
+       */
+      beforeDelete: async user => {
+        const [row] = await db
+          .select({ isAdmin: schema.user.isAdmin })
+          .from(schema.user)
+          .where(eq(schema.user.id, user.id))
+          .limit(1);
+        if (!row?.isAdmin) return;
+
+        const others = await db
+          .select({ id: schema.user.id })
+          .from(schema.user)
+          .where(and(eq(schema.user.isAdmin, true), ne(schema.user.id, user.id)))
+          .limit(1);
+
+        if (others.length === 0) {
+          throw new Error(
+            'You are the only administrator. Make somebody else one first, or the dictionary ' +
+              'can only be edited again from the server itself.',
+          );
+        }
       },
     },
   },
