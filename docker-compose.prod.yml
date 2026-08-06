@@ -6,20 +6,9 @@
 #   migrate                                       runs once before the server starts
 #   seed                                          on demand: loads data/ into Postgres
 #
-# TLS and lemmata.fyi belong to your existing proxy. It gets one upstream and needs no
-# path rules: send everything for the hostname to 127.0.0.1:5050 and web sorts out which
-# requests are files and which belong to the server. That is not laziness — it is what
-# keeps the browser on a single origin, which is what keeps the session cookie
-# first-party. See the note at the bottom.
-#
 #   cp .env.production.example .env     # on the server, then fill it in
 #   docker compose -f docker-compose.prod.yml up -d --build
 #   docker compose -f docker-compose.prod.yml run --rm seed
-#
-# In Portainer, paste this into the stack editor and put the same variables into its
-# Environment variables panel. Those are substitution values, not container environment:
-# a variable only reaches a container because it is named in an `environment:` block
-# below. That is why every one of them is listed there explicitly.
 #
 # The plain docker-compose.yml is unchanged and still just the development database.
 
@@ -30,8 +19,8 @@ name: lemmata
 x-logging: &logging
   driver: json-file
   options:
-    max-size: '10m'
-    max-file: '3'
+    max-size: "10m"
+    max-file: "3"
 
 # The server image, and the one-shot jobs that are the same image with a different entry
 # point. Sharing the definition is what keeps a migration from ever running against a build
@@ -47,13 +36,6 @@ x-server: &server
   logging: *logging
   # Every variable is listed and substituted, rather than pulled in with `env_file: .env`.
   #
-  # That is not a style preference. Portainer never creates a .env — it writes the variables
-  # from its own UI to stack.env and passes --env-file, which drives ${...} substitution and
-  # nothing else. An env_file entry there either fails to find the file or finds an empty
-  # one, and the first thing you see is `migrate exited 1`, because env.ts validates its
-  # configuration and gives up. Substitution is the one mechanism both Portainer and the
-  # plain CLI honour, so this file uses only that.
-  #
   # `:?` means compose refuses to deploy and names the variable, instead of starting a
   # container that dies for a reason you have to go and read the logs to discover.
   environment:
@@ -61,7 +43,7 @@ x-server: &server
     # 127.0.0.1 is the default in env.ts and would make the container unreachable from web —
     # inside a container, localhost is only the container.
     HOST: 0.0.0.0
-    PORT: '4000'
+    PORT: "4000"
     # Assembled here: the host and port are facts about this network, not the deployment.
     DATABASE_URL: postgres://${POSTGRES_USER:-georgian}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-georgian_dict}
 
@@ -97,13 +79,13 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-georgian_dict}
       # The lexicon is Georgian and the definitions are English; sorting has to be
       # predictable across machines, so the collation is pinned rather than inherited.
-      POSTGRES_INITDB_ARGS: '--encoding=UTF8 --locale=C'
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     # No published port, deliberately. Reach it with
     #   docker compose -f docker-compose.prod.yml exec db psql -U georgian georgian_dict
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-georgian} -d ${POSTGRES_DB:-georgian_dict}']
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-georgian} -d ${POSTGRES_DB:-georgian_dict}"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -115,8 +97,8 @@ services:
   # deploy, not leave a server up and serving against a half-changed schema.
   migrate:
     <<: *server
-    restart: 'no'
-    command: ['node', '--import', 'tsx', 'apps/server/src/db/migrate.ts']
+    restart: "no"
+    command: ["node", "--import", "tsx", "apps/server/src/db/migrate.ts"]
 
   server:
     <<: *server
@@ -132,9 +114,9 @@ services:
       # node's global fetch, because the image has no curl and adding one for this is silly.
       test:
         [
-          'CMD',
-          'node',
-          '-e',
+          "CMD",
+          "node",
+          "-e",
           "fetch('http://127.0.0.1:4000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
         ]
       interval: 30s
@@ -148,8 +130,6 @@ services:
   #
   #   docker compose -f docker-compose.prod.yml run --rm seed
   #
-  # `profiles` is what keeps this out of `up`, and also what keeps it out of Portainer,
-  # which has no equivalent of `compose run`. In Portainer, do it from the server container
   # instead — same image, same data/, and the environment is already set:
   #
   #   Containers -> lemmata-server-1 -> Console -> /bin/sh, then
@@ -159,17 +139,17 @@ services:
   # serving the old snapshot until the new one is complete.
   seed:
     <<: *server
-    profiles: ['manual']
-    restart: 'no'
-    command: ['node', '--import', 'tsx', 'apps/server/src/db/seed.ts']
+    profiles: ["manual"]
+    restart: "no"
+    command: ["node", "--import", "tsx", "apps/server/src/db/seed.ts"]
 
   # Proves the database still matches data/. Same idea:
   #   docker compose -f docker-compose.prod.yml run --rm verify
   verify:
     <<: *server
-    profiles: ['manual']
-    restart: 'no'
-    command: ['node', '--import', 'tsx', 'apps/server/src/db/verify.ts']
+    profiles: ["manual"]
+    restart: "no"
+    command: ["node", "--import", "tsx", "apps/server/src/db/verify.ts"]
 
   web:
     build:
@@ -185,14 +165,14 @@ services:
       # Loopback only: the proxy on this host is the one thing that should reach it, and a
       # plain-HTTP port on a public interface is one firewall rule away from serving the
       # site without TLS. Drop the 127.0.0.1: prefix only if your proxy is on another box.
-      - '127.0.0.1:${WEB_PORT:-5050}:80'
+      - "127.0.0.1:${WEB_PORT:-5050}:80"
     depends_on:
       # Started, not healthy: nginx should come up and serve pages even while the server is
       # still connecting to Postgres. Requests to /rpc get a 502 until it is ready.
       server:
         condition: service_started
     healthcheck:
-      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1/healthz']
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthz"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -200,78 +180,3 @@ services:
 
 volumes:
   db-data:
-
-# ---------------------------------------------------------------------------------------
-# Images, and the two ways to deploy them
-#
-# Both live in one private repo under $REGISTRY, told apart by a tag prefix — :server-*
-# and :web-*. The date is the tag rather than a git sha because the images were built from a
-# working tree with uncommitted changes, and a sha would name a commit that does not contain
-# what is inside them. Once this is committed, prefer the sha:
-#
-#   TAG=$(git rev-parse --short HEAD)
-#
-# Build on the server (needs the repo checked out there, and enough RAM for vite):
-#
-#   docker compose -f docker-compose.prod.yml up -d --build
-#
-# Or build here and let the server only pull — the reason to push at all:
-#
-#   TAG=20260805 docker compose -f docker-compose.prod.yml build
-#   TAG=20260805 docker compose -f docker-compose.prod.yml push
-#   # on the server, with .env and this file present:
-#   TAG=20260805 docker compose -f docker-compose.prod.yml pull
-#   TAG=20260805 docker compose -f docker-compose.prod.yml up -d
-#
-# Put TAG in .env on the server so it is not on every command line, and a rollback is one
-# line edited and `up -d` again. `docker login` is needed on the server first: the repo is
-# private, so an anonymous pull gets a 401 that reads like the image does not exist.
-#
-# ---------------------------------------------------------------------------------------
-# If your proxy is itself in Docker
-#
-# Traefik, Nginx Proxy Manager and the like cannot reach 127.0.0.1 on the host. Drop the
-# `ports` block from web, and put it on the proxy's network instead:
-#
-#   services:
-#     web:
-#       networks: [default, proxy]
-#   networks:
-#     proxy:
-#       external: true
-#       name: <whatever the proxy's network is called>
-#
-# The proxy then points at http://web:80 — but only containers on that network can, which
-# is the same protection the loopback binding gives.
-#
-# ---------------------------------------------------------------------------------------
-# What the proxy in front has to send
-#
-# One upstream, the whole hostname, no path rules. It must pass these through, because
-# Fastify runs with trustProxy in production and reads the client's address and protocol
-# from them — get X-Forwarded-Proto wrong and every request looks like plain http:
-#
-#   proxy_set_header Host              $host;
-#   proxy_set_header X-Real-IP         $remote_addr;
-#   proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-#   proxy_set_header X-Forwarded-Proto $scheme;
-#
-# nginx.conf inside web appends its own hop rather than overwriting them.
-#
-# ---------------------------------------------------------------------------------------
-# If you do decide on api.lemmata.fyi
-#
-# Nothing here needs an extra container — it is the same server behind a second hostname —
-# but four things have to change together, and the cookie is the one that bites:
-#
-#   1. Point api.lemmata.fyi at the server from your proxy, and delete the /rpc and /api
-#      location blocks from apps/web/nginx.conf.
-#   2. .env: BETTER_AUTH_URL=https://api.lemmata.fyi, WEB_ORIGIN=https://lemmata.fyi.
-#   3. This file: uncomment the VITE_API_URL build arg above, and rebuild web — the value is
-#      compiled into the bundle, so changing it is a rebuild and not a restart.
-#   4. Discord: add https://api.lemmata.fyi/api/auth/callback/discord as a redirect URL.
-#
-# auth.ts then sees the two origins differ and marks the session cookie SameSite=None;
-# Secure. That works, but it is a cookie sent on cross-site requests, it depends on browsers
-# that still allow third-party cookies, and every oRPC call pays a CORS preflight. Two DNS
-# records instead of three is not the reason to prefer the setup above — that is.
