@@ -1,0 +1,8 @@
+# torch is not here. It is installed separately in the Dockerfile from PyTorch's own CPU
+# index, because since torch 2.11 the default PyPI aarch64 wheel bundles CUDA and is 427 MB
+# against the CPU build's 144 MB — for a host with no GPU, on an image we build twice over
+# for two architectures. Pinning the index is the whole saving.
+
+stanza==1.14.0
+fastapi==0.141.1
+uvicorn[standard]==0.52.1

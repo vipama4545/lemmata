@@ -17,6 +17,7 @@
     "preview": "npm run preview -w @georgian/web",
     "db:up": "docker compose up -d db",
     "db:down": "docker compose down",
+    "analyser:up": "docker compose up -d --build analyser",
     "db:generate": "npm run db:generate -w @georgian/server",
     "db:migrate": "npm run db:migrate -w @georgian/server",
     "db:seed": "npm run db:seed -w @georgian/server",

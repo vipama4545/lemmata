@@ -30,6 +30,17 @@ const schema = z.object({
   DISCORD_CLIENT_ID: z.string().min(1),
   DISCORD_CLIENT_SECRET: z.string().min(1),
 
+  /**
+   * The Georgian tagger, if one is running — `http://analyser:8000` under compose.
+   *
+   * Optional on purpose, and the only optional service that is not a pair like Mailgun's.
+   * Unset, story linking works exactly as it did before the tagger existed: spellings match
+   * against the lexicon and collisions fall back to list order. Set, the resolver gets a
+   * part of speech per occurrence and can tell და "and" from და "sister". Nothing else in
+   * the app reads it, and nothing fails without it. See story/analyser.ts.
+   */
+  ANALYSER_URL: z.url().optional(),
+
   // Optional as a pair: both or neither. See mail/mailgun.ts.
   MAILGUN_API_KEY: z.string().min(1).optional(),
   /** The sending domain as Mailgun knows it — `mg.example.com`, not a URL. */

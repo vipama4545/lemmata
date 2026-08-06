@@ -24,7 +24,9 @@ import { PERSONS, SCREEVES } from '@georgian/shared/grammar';
 import type { Story, StoryToken } from '@georgian/shared/types';
 import { db, schema } from '../db/index.ts';
 import type { Tx } from '../db/index.ts';
+import { analyse, type Tags } from '../story/analyser.ts';
 import { buildIndexes, isHandMade, linkStory, pinKey } from '../story/resolve.ts';
+import { tokeniseAll } from '../story/tokenise.ts';
 import type { Pinned } from '../story/resolve.ts';
 import { readLines } from '../story/tokenise.ts';
 import { adminOnly, os } from './base.ts';
@@ -346,18 +348,49 @@ async function readPinned(tx: Tx, storyId: string): Promise<Pinned> {
 }
 
 /**
+ * A story's prose, read before any transaction is opened, so the tagger can be asked about
+ * it. Fails the request if there is no such story, which is the same check the caller's own
+ * transaction repeats against a consistent snapshot.
+ */
+async function storyProse(storyId: string): Promise<string[]> {
+  const [story] = await db
+    .select({ paragraphs: schema.stories.paragraphs })
+    .from(schema.stories)
+    .where(eq(schema.stories.id, storyId))
+    .limit(1);
+  if (!story) fail('There is no such story.');
+  return story.paragraphs;
+}
+
+/**
+ * What the tagger makes of a story's words, or null when there is no tagger.
+ *
+ * Always called *before* `db.transaction`, never inside one. It is an HTTP round trip to a
+ * Python process that holds a gigabyte of models, and a transaction left open across it
+ * would turn one admin's button press into a lock held on the stories table for as long as
+ * a container somewhere else takes to answer. Nothing here needs to be atomic with the
+ * write: the tags describe the prose, and if the prose changes underneath them linkStory
+ * notices the token counts disagree and links without them.
+ */
+async function tagsFor(paragraphs: string[]): Promise<Tags | null> {
+  return analyse(tokeniseAll(paragraphs));
+}
+
+/**
  * Re-resolves a story from the lexicon as it now stands, keeping every hand-made token, and
  * writes the result. The caller supplies the paragraphs so this serves both "the text
- * changed" and "the dictionary changed".
+ * changed" and "the dictionary changed", and the tags because fetching them is not this
+ * function's job to do inside a transaction — see `tagsFor`.
  */
 async function relink(
   tx: Tx,
   storyId: string,
   paragraphs: string[],
   pinned: Pinned,
+  tags: Tags | null,
 ): Promise<{ unresolved: { form: string; count: number }[]; flagged: { form: string; count: number }[] }> {
   const indexes = await buildIndexes();
-  const report = linkStory(paragraphs, indexes, pinned);
+  const report = linkStory(paragraphs, indexes, pinned, tags);
 
   // A pin may cite a word that has since been deleted. Better a token that falls back to
   // plain text than a write that fails on a foreign key and loses the whole edit.
@@ -564,6 +597,10 @@ export const adminRouter = os.admin.router({
       );
     }
 
+    // Before the transaction, and on the text as submitted — this is the one path where the
+    // prose is new, so there is nothing in the database to read it from anyway.
+    const tags = await tagsFor(paragraphs);
+
     const result = await db.transaction(async tx => {
       const existing = input.id
         ? (await tx.select({ id: schema.stories.id }).from(schema.stories).where(eq(schema.stories.id, input.id)).limit(1))[0]
@@ -598,7 +635,7 @@ export const adminRouter = os.admin.router({
       // spelling — so editing the prose drops the pins the edit moved rather than sliding
       // them onto whatever words now stand in those positions.
       const pinned = existing ? await readPinned(tx, id) : new Map();
-      const report = await relink(tx, id, paragraphs, pinned);
+      const report = await relink(tx, id, paragraphs, pinned, tags);
       await bumpContentVersion(tx);
       return { id, report };
     });
@@ -623,6 +660,8 @@ export const adminRouter = os.admin.router({
   ),
 
   relinkStory: os.admin.relinkStory.use(adminOnly).handler(async ({ input }) => {
+    const tags = await tagsFor(await storyProse(input.id));
+
     const report = await db.transaction(async tx => {
       const [story] = await tx
         .select({ id: schema.stories.id, paragraphs: schema.stories.paragraphs })
@@ -632,7 +671,7 @@ export const adminRouter = os.admin.router({
       if (!story) fail('There is no such story.');
 
       const pinned = await readPinned(tx, input.id);
-      const result = await relink(tx, input.id, story.paragraphs, pinned);
+      const result = await relink(tx, input.id, story.paragraphs, pinned, tags);
       await bumpContentVersion(tx);
       return result;
     });
@@ -726,6 +765,8 @@ export const adminRouter = os.admin.router({
   }),
 
   resetStoryToken: os.admin.resetStoryToken.use(adminOnly).handler(async ({ input }) => {
+    const tags = await tagsFor(await storyProse(input.storyId));
+
     const report = await db.transaction(async tx => {
       const [story] = await tx
         .select({ id: schema.stories.id, paragraphs: schema.stories.paragraphs })
@@ -746,7 +787,7 @@ export const adminRouter = os.admin.router({
         pinned.delete(pinKey(input.paragraph, input.position, input.form));
       }
 
-      const result = await relink(tx, input.storyId, story.paragraphs, pinned);
+      const result = await relink(tx, input.storyId, story.paragraphs, pinned, tags);
       await bumpContentVersion(tx);
       return result;
     });

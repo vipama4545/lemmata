@@ -35,6 +35,17 @@ export function tokenise(text: string): string[] {
 }
 
 /**
+ * The same for a whole story, which is what the tagger has to be sent.
+ *
+ * It exists so that the tokens the tagger is asked about and the tokens the resolver walks
+ * are produced by one call and cannot drift apart — the tagger's reply is read back by
+ * position, so it is subject to the same rule as everything else in this file.
+ */
+export function tokeniseAll(paragraphs: string[]): string[][] {
+  return paragraphs.map(tokenise);
+}
+
+/**
  * A pasted story, cut up the way a `.txt` under data/stories/ has always been read: blank
  * lines separate paragraphs, the first non-blank line is the title, and a lone "-" under it
  * is a typographic rule rather than a paragraph.

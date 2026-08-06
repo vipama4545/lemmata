@@ -12,11 +12,35 @@
 //   2. the lexicon's own forms index  — a form someone has already confirmed
 //   3. an exact paradigm hit          — ~38,000 conjugated forms, never guessed
 //   4. the nominal peeler             — case, number and postposition endings
+//   5. the tagger's lemma             — when a tagger is running; see story/analyser.ts
 //
 // Confidence falls off down that list, and `check` marks what is genuinely a guess: anything
 // the peeler had to reconstruct, and anything more than one entry answers to. A confirmed
 // form and an unambiguous paradigm cell are not guesses and are not flagged, which is what
 // keeps the flag worth reading.
+//
+// Step 5 is optional and recent. Steps 2, 3 and 4 all match a *spelling*, which is why they
+// cannot tell და "and" from და "sister" and never could: nothing in the letters says which,
+// and the winner was whichever entry sat earlier in the words table. A tagger answers a
+// different question — what part of speech is this word, *here* — and that is the one piece
+// of evidence a spelling cannot carry. It is used three ways, all of them conservative:
+//
+//   · to choose between entries that spell the same, inside step 4 — this is the და fix
+//   · to reach a lemma the peeler cannot, as step 5, which for verbs is most of them
+//   · to flag a paradigm hit the tagger contradicts — გვიან is the adverb "late" far more
+//     often than it is the 3pl present of "to sweep", and step 3 had no way to doubt itself
+//
+// It never overrules a person or a confirmed form, and a tag that would leave a token with
+// no candidate at all is discarded rather than obeyed. With no tagger reachable every one of
+// those falls away and this file behaves exactly as it did before.
+//
+// The tagger sits *below* the peeler rather than above it, which is worth saying because the
+// other order is the obvious one. The peeler's suffix tables were arrived at by reading its
+// output on these stories and correcting it; the tagger was trained on 56,000 tokens of
+// modern encyclopaedic prose. On this corpus the incumbent is the better bet, so it keeps
+// first refusal and the tagger picks up what it drops — which is mostly verbs, since the
+// peeler is not allowed near them. Swapping the two is a two-line change if that stops
+// being true.
 //
 // Step 1 is the difference from the offline script. There, hand corrections come from
 // storyOverrides.json and are applied on top; here they are already *in* the story as tokens
@@ -27,6 +51,7 @@ import { asc } from 'drizzle-orm';
 import { SCREEVES } from '@georgian/shared/grammar';
 import type { StoryAlt, StoryToken } from '@georgian/shared/types';
 import { db, schema } from '../db/index.ts';
+import { contradictsVerb, posAgrees, type Tag, type Tags } from './analyser.ts';
 import { analyses, ENCLITICS } from './peel.ts';
 import { tokenise, WORD_ONLY } from './tokenise.ts';
 
@@ -51,6 +76,19 @@ export interface Indexes {
   forms: Map<string, { word: LexWord; gram: string }>;
   /** Cleaned headword spellings, for the peeler to land on. Verbs excluded. */
   lemmas: Map<string, LexWord[]>;
+  /**
+   * The same for verb entries, which `lemmas` leaves out.
+   *
+   * Kept apart rather than merged, because the exclusion from `lemmas` is load-bearing: the
+   * peeler takes nominal endings off anything it is shown, and shown a verb headword it
+   * produced შინ "at home" from შია "is hungry". Only the tagger reads this map, and only
+   * when it has already said the token is a verb — so nothing is stripped to reach it.
+   *
+   * Georgian UD lemmatises verbs to the 3sg present, which is how words.json spells its
+   * verb headwords too: ადგენს, ქმნის, სწავლობს. The two conventions meet without any
+   * translation between them, which is the only reason this step is a plain lookup.
+   */
+  verbLemmas: Map<string, LexWord[]>;
   /** Which lexicon entry owns a given paradigm. */
   byVerbId: Map<string, LexWord>;
   /** Conjugated form → the paradigm cells it fills. */
@@ -166,12 +204,13 @@ export async function buildIndexes(): Promise<Indexes> {
   // Lemma spellings, for the peeler to land on. Verbs are excluded on purpose — a nominal
   // ending peeled off a verb headword is how შინ ("at home") came out as შია ("is hungry").
   const lemmas = new Map<string, LexWord[]>();
+  const verbLemmas = new Map<string, LexWord[]>();
   for (const word of byId.values()) {
-    if (word.partOfSpeech === 'Verb') continue;
+    const into = word.partOfSpeech === 'Verb' ? verbLemmas : lemmas;
     for (const key of headwordKeys(word.georgian)) {
-      const list = lemmas.get(key);
+      const list = into.get(key);
       if (list) list.push(word);
-      else lemmas.set(key, [word]);
+      else into.set(key, [word]);
     }
   }
 
@@ -197,7 +236,7 @@ export async function buildIndexes(): Promise<Indexes> {
     }
   }
 
-  return { byId, byHeadword, forms, lemmas, byVerbId, verbForms, contested };
+  return { byId, byHeadword, forms, lemmas, verbLemmas, byVerbId, verbForms, contested };
 }
 
 /* ----------------------------------------------------------------- matching */
@@ -217,14 +256,42 @@ interface Resolved {
 }
 
 /**
+ * Candidates reordered so the ones the tagger agrees with come first.
+ *
+ * `decided` says the tag left exactly one standing, which is a real disambiguation and not
+ * a guess — that is what clears `check` on და. A tag that agrees with all of them or with
+ * none of them has decided nothing, and the order is left alone: ruling out every candidate
+ * would turn a mistagged word into an unresolved one, which is strictly worse than the
+ * arbitrary-but-plausible entry it would otherwise have got.
+ */
+function preferByPos(hits: LexWord[], tag?: Tag): { hits: LexWord[]; decided: boolean } {
+  if (!tag || hits.length < 2) return { hits, decided: false };
+
+  const agree = hits.filter(word => posAgrees(tag.upos, word.partOfSpeech));
+  if (!agree.length || agree.length === hits.length) return { hits, decided: false };
+
+  const rest = hits.filter(word => !agree.includes(word));
+  return { hits: [...agree, ...rest], decided: agree.length === 1 };
+}
+
+/**
  * What one spelling resolves to, or null when nothing claims it.
  *
  * `unclaimed` collects paradigms that matched but that no lexicon entry owns — the report
  * turns those into the one-line entry that would claim them, which is the single most useful
  * thing to know after linking a new story.
+ *
+ * `tag` is what the tagger said about *this occurrence*, so two occurrences of one spelling
+ * can resolve differently — which is the entire point of it and the reason the caller's
+ * cache is keyed on the tag as well as the spelling.
  */
-function resolveForm(token: string, indexes: Indexes, unclaimed: Map<string, number>): Resolved | null {
-  const { forms, lemmas, byVerbId, verbForms } = indexes;
+function resolveForm(
+  token: string,
+  indexes: Indexes,
+  unclaimed: Map<string, number>,
+  tag?: Tag,
+): Resolved | null {
+  const { forms, lemmas, verbLemmas, byVerbId, verbForms } = indexes;
 
   // 2. A form somebody has already confirmed belongs to a lemma.
   const confirmed = forms.get(token);
@@ -264,39 +331,90 @@ function resolveForm(token: string, indexes: Indexes, unclaimed: Map<string, num
     const word = byVerbId.get(hit.id)!;
     const others = [...new Map(claimed.slice(1).map(h => [h.id, h])).values()].filter(h => h.id !== hit.id);
 
+    // A conjugated form the tagger says is not a verb, *and* a non-verb entry spelled the
+    // same for it to have meant instead. Both halves are needed. This is the გვიან case —
+    // the adverb "late", which the 3pl present of "to sweep" had been quietly outranking
+    // with nothing to show for it — but the tag alone is not enough to raise it: on this
+    // prose the tagger calls a Georgian verb a noun or an adverb often enough (five times
+    // in one 638-token story) that acting on that by itself is noise, not a warning. A
+    // rival entry is what turns it into the choice it actually is.
+    const rival =
+      tag && contradictsVerb(tag.upos)
+        ? (lemmas.get(candidate.text) ?? []).filter(entry => posAgrees(tag.upos, entry.partOfSpeech))
+        : [];
+    const trail = candidate.peeled.length ? `paradigm, -${candidate.peeled.join(' -')}` : 'paradigm';
+
     return {
       word,
       sense: defaultSense(word),
       gram: [SCREEVE_LABEL[hit.screeve] ?? hit.screeve, hit.person].filter(Boolean).join(' '),
-      via: candidate.peeled.length ? `paradigm, -${candidate.peeled.join(' -')}` : 'paradigm',
-      alts: others.map(h => byVerbId.get(h.id)).filter((w): w is LexWord => Boolean(w)),
+      via: rival.length ? `${trail}, tagged ${tag!.upos}` : trail,
+      // The rival goes in the shortlist too: an editor told the tagger disagrees will want
+      // the entry it disagreed in favour of, not a flag and a search box.
+      alts: [...others.map(h => byVerbId.get(h.id)).filter((w): w is LexWord => Boolean(w)), ...rival],
       // A verbatim hit in a curated paradigm table is as good as a confirmed form — unless
-      // two different verbs spell a cell the same way, which is a real choice to make.
-      check: others.length > 0,
+      // two different verbs spell a cell the same way, which is a real choice to make, or
+      // the tagger read the sentence and named a different word that spells the same.
+      check: others.length > 0 || rival.length > 0,
     };
   }
 
   // 4. The peeler.
   for (const analysis of analyses(token)) {
-    const hits = lemmas.get(analysis.form);
-    if (!hits?.length) continue;
+    const found = lemmas.get(analysis.form);
+    if (!found?.length) continue;
 
-    const via: string[] = [];
-    if (analysis.form !== token) {
-      via.push(analysis.peeled.length ? `-${analysis.peeled.join(' -')}` : 'restored');
-    }
-    if (analysis.note) via.push(analysis.note);
+    // Where two entries spell the same, the tag chooses. და is the whole of this case in
+    // the lexicon as it stands: sister and and*, decided by CCONJ against Conjunction.
+    const { hits, decided } = preferByPos(found, tag);
+
+    const trail: string[] = [
+      analysis.form === token ? 'headword' : analysis.peeled.length ? `-${analysis.peeled.join(' -')}` : 'restored',
+    ];
+    if (analysis.note) trail.push(analysis.note);
+    if (decided) trail.push(`tagged ${tag!.upos}`);
+
+    const reconstructed = analysis.form !== token || Boolean(analysis.note);
 
     return {
       word: hits[0],
       sense: defaultSense(hits[0]),
       gram: analysis.peeled.join('.'),
-      via: via.length ? via.join(', ') : 'headword',
+      via: trail.join(', '),
       alts: hits.slice(1),
       // The headword spelled out in full is not a guess; anything peeled or restored is, and
-      // so is a spelling more than one entry answers to.
-      check: via.length > 0 || hits.length > 1,
+      // so is a spelling more than one entry answers to — unless the tagger settled which.
+      check: reconstructed || (hits.length > 1 && !decided),
     };
+  }
+
+  // 5. The tagger's lemma, for what the peeler could not reach.
+  //
+  // Mostly verbs. The peeler is kept away from verb headwords on purpose, so a conjugated
+  // form missing from the paradigm tables — and only 165 of 603 paradigms are claimed by an
+  // entry — had nowhere left to go and came out unresolved. Georgian UD lemmatises verbs to
+  // the 3sg present, which is the form words.json files them under, so the tagger's answer
+  // is a key into the lexicon with nothing in between.
+  if (tag) {
+    const verbal = tag.upos === 'VERB' || tag.upos === 'AUX';
+    const found = (verbal ? verbLemmas : lemmas).get(tag.lemma) ?? [];
+    // Agreement is required here rather than merely preferred: this step is reached only
+    // because everything better has already failed, and a lemma that lands on an entry of
+    // the wrong kind is the tagger being wrong twice rather than evidence of anything.
+    const hits = found.filter(word => posAgrees(tag.upos, word.partOfSpeech));
+
+    if (hits.length) {
+      return {
+        word: hits[0],
+        sense: defaultSense(hits[0]),
+        gram: '',
+        via: tag.lemma === token ? `headword, tagged ${tag.upos}` : `lemma ${tag.lemma}`,
+        alts: hits.slice(1),
+        // Always a guess. Nothing confirmed it, and it is here because the lexicon's own
+        // machinery had already run out — exactly the case the flag exists to mark.
+        check: true,
+      };
+    }
   }
 
   return null;
@@ -365,7 +483,12 @@ export interface LinkReport {
  * they were placed, and every other token is worked out afresh against the dictionary as it
  * now stands.
  */
-export function linkStory(paragraphs: string[], indexes: Indexes, pinned: Pinned): LinkReport {
+export function linkStory(
+  paragraphs: string[],
+  indexes: Indexes,
+  pinned: Pinned,
+  tags?: Tags | null,
+): LinkReport {
   const tokens: ResolvedToken[] = [];
   const unclaimed = new Map<string, number>();
   const unresolvedCounts = new Map<string, number>();
@@ -377,17 +500,31 @@ export function linkStory(paragraphs: string[], indexes: Indexes, pinned: Pinned
 
   // Resolved once per distinct spelling: a story of 976 tokens holds around 575 spellings,
   // and the peeler is the expensive step. A pin is applied on top of the shared result.
+  //
+  // Keyed on the tag as well as the spelling. A tagger exists precisely so that one spelling
+  // can resolve two ways in one story, and a cache on the spelling alone would hand the
+  // first occurrence's answer to every later one and quietly undo the whole thing.
   const cache = new Map<string, Resolved | null>();
-  const resolveOnce = (form: string): Resolved | null => {
-    const hit = cache.get(form);
+  const resolveOnce = (form: string, tag?: Tag): Resolved | null => {
+    const key = tag ? `${form} ${tag.upos} ${tag.lemma}` : form;
+    const hit = cache.get(key);
     if (hit !== undefined) return hit;
-    const resolved = resolveForm(form, indexes, unclaimed);
-    cache.set(form, resolved);
+    const resolved = resolveForm(form, indexes, unclaimed, tag);
+    cache.set(key, resolved);
     return resolved;
   };
 
   paragraphs.forEach((paragraph, p) => {
-    tokenise(paragraph).forEach((form, t) => {
+    const words = tokenise(paragraph);
+
+    // Tags are read back by position, so a paragraph is only tagged if the reply still has
+    // exactly one entry per word in it. The client checks this against what it sent; this
+    // checks it against what is actually being linked, which is not the same claim if the
+    // prose was edited between the two. Same rule as `at()` on the web side: a position is
+    // believed only when something independent of it agrees.
+    const tagged = tags?.[p]?.length === words.length ? tags[p] : undefined;
+
+    words.forEach((form, t) => {
       distinct.add(form);
 
       // 1. A record a person made. Carried straight across, exactly as it was.
@@ -416,7 +553,9 @@ export function linkStory(paragraphs: string[], indexes: Indexes, pinned: Pinned
         return;
       }
 
-      const resolved = resolveOnce(form);
+      // Absent for every token when no tagger is reachable, which is the null that makes
+      // all of this optional: resolveForm without a tag is the function as it was.
+      const resolved = resolveOnce(form, tagged?.[t]);
 
       if (!resolved) {
         unresolvedCounts.set(form, (unresolvedCounts.get(form) ?? 0) + 1);

@@ -123,6 +123,56 @@ disturbing a single decision anybody made. A pin is matched back by position _an
 edit the prose and the words shift, so a pin whose spelling no longer agrees is dropped rather
 than silently re-applied to whatever now stands in that place.
 
+### The tagger
+
+Everything above matches a **spelling**, and a spelling cannot tell two entries apart. და is
+the conjunction "and" nearly everywhere and the noun "sister" occasionally, and for a long
+time the winner was whichever of the two sat earlier in the words table — which is sister, so
+every "and" in every story linked to the wrong word and said "a guess" underneath it.
+
+`apps/analyser/` is a small Python service that answers the one question a spelling cannot:
+what part of speech is this word, _here_. It runs [Stanza](https://stanfordnlp.github.io/stanza/)
+with the Georgian `glc` models — the UD_Georgian-GLC treebank, the only one that exists for
+Georgian — and returns a UPOS tag and a lemma per token. The resolver uses it three ways, all
+of them conservative:
+
+- **To choose between entries that spell the same.** და tagged `CCONJ` picks the conjunction
+  over the noun, and the link stops being a guess. This is the whole of the ambiguity in the
+  lexicon as it stands — და is the only spelling two non-verb entries both claim.
+- **To reach lemmas the peeler cannot**, as a last step. The peeler is kept away from verb
+  headwords on purpose, so a conjugated form missing from the paradigm tables had nowhere to
+  go. Georgian UD lemmatises verbs to the 3sg present, which is exactly how `words.json`
+  files them, so `შეგიძლიათ` → `შეუძლია` is a plain lookup with nothing in between.
+- **To doubt a paradigm hit**, but only when a non-verb entry spells the same and the tag
+  prefers it. `გვიან` is the adverb "late" far more often than the 3pl present of "to sweep",
+  and step 3 had no way to say so. Both halves are required: the tagger alone mistags Georgian
+  verbs often enough here that acting on the tag by itself produced five false flags in one
+  638-token story.
+
+It is **optional at every call site**. With `ANALYSER_URL` unset, the container down, or the
+request slow, `analyse()` returns null and linking behaves exactly as it did before any of
+this existed. Nothing depends on it, and it is never called with a database transaction open.
+
+The pipeline is **pretokenised**: the server sends the tokens it already cut and gets back
+exactly that many tags. Letting Stanza tokenise would be better linguistics — its MWT layer
+splits `სახლში` into `სახლ` + `ში` and `ობიექტია` into `ობიექტი` + `ა`, the copula the peeler
+cannot reach — but a token's position is its identity in three other places, and changing the
+count would move every pin in the database. That is a migration, not a flag.
+
+Two things worth knowing before trusting it. The treebank is 56,000 tokens of modern
+encyclopaedic prose, so on 1910 children's stories it is working well out of domain; and
+because `tokenise` keeps only Mkhedruli runs, the tagger never sees the punctuation it would
+need to find sentence boundaries. Both show. On _the chatterbox radish_ it lifts coverage from
+55.2% to 56.9% and drops flagged links from 141 to 121, and of the ten links it adds on its
+own roughly seven are right — `მაშ` ("so, then") coming out as the pronoun `იგი` is the shape
+of the other three. They are all flagged as guesses, which is where they belong.
+
+And it does not really _understand_ და. There are 1,537 occurrences of it in the treebank and
+every one is tagged `CCONJ`, so the model has never seen the noun: in `ჩემი და სახლში მოვიდა`
+("my sister came home") it still says "and". It has replaced a wrong answer everywhere with a
+right answer nearly everywhere, which is worth having, but the sentence that needs "sister"
+still needs a person.
+
 ## The snapshot
 
 The whole dictionary goes to the browser in one response, and everything reads it
@@ -291,7 +341,7 @@ the right thing after `npm run build:data` and wasted work otherwise, and outrig
 anything has been edited through the admin screens. `run --rm verify` proves the database
 still matches `data/`.
 
-Both images are built for `linux/amd64` and `linux/arm64`, because the host is an Ampere
+All three images are built for `linux/amd64` and `linux/arm64`, because the host is an Ampere
 instance.
 
 ```sh
@@ -303,11 +353,21 @@ docker buildx build --builder lemmata-multi --platform linux/amd64,linux/arm64 \
   -f apps/server/Dockerfile -t $REGISTRY:server-$TAG --push .
 docker buildx build --builder lemmata-multi --platform linux/amd64,linux/arm64 \
   -f apps/web/Dockerfile    -t $REGISTRY:web-$TAG    --push .
+docker buildx build --builder lemmata-multi --platform linux/amd64,linux/arm64 \
+  -f apps/analyser/Dockerfile -t $REGISTRY:analyser-$TAG --push .
 ```
 
 The web build is quick because its build stage is pinned to `$BUILDPLATFORM` — `dist` is the
 same bytes on any CPU. The server's cannot be: `tsx` pulls in esbuild, which ships a binary
 per architecture, so its `npm ci` really does run emulated.
+
+The analyser is the slow one and the big one: 1.8 GB, most of it PyTorch and 205 MB of
+models baked in so a container start never depends on someone else's CDN. Nothing in it is
+compiled or emulated, though — PyTorch publishes CPU `aarch64` wheels, and the Dockerfile
+pins `--index-url https://download.pytorch.org/whl/cpu` to get them. That pin is load-bearing:
+since torch 2.11 the default PyPI `aarch64` wheel bundles CUDA and is 427 MB against the CPU
+build's 144 MB, for a host that has no GPU. It idles at 580 MB resident and tags a 975-token
+story in under half a second.
 
 ## Commands
 
@@ -317,6 +377,7 @@ per architecture, so its `npm ci` really does run emulated.
 | `npm run build`                      | typecheck and build both                                                     |
 | `npm run typecheck` / `npm run lint` | across all workspaces                                                        |
 | `npm run db:up` / `db:down`          | Postgres in Docker                                                           |
+| `npm run analyser:up`                | the Georgian tagger in Docker; then set `ANALYSER_URL`                       |
 | `npm run db:generate`                | a migration from a schema change                                             |
 | `npm run db:migrate`                 | apply pending migrations                                                     |
 | `npm run db:seed`                    | load `data/` into Postgres; refuses to clobber admin edits without `--force` |

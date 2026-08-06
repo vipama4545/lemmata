@@ -22,5 +22,38 @@ services:
       timeout: 5s
       retries: 10
 
+  # The Georgian tagger the story resolver asks about ambiguous spellings. Optional: with
+  # ANALYSER_URL unset the server never calls it and linking works as it always has.
+  #
+  #   npm run analyser:up
+  #
+  # then put ANALYSER_URL=http://127.0.0.1:8000 in .env. `npm run db:up` names the db
+  # service on its own, so it does not drag this 1.8 GB image along with it.
+  analyser:
+    build:
+      context: .
+      dockerfile: apps/analyser/Dockerfile
+    container_name: georgian-dict-analyser
+    restart: unless-stopped
+    ports:
+      # Published here, unlike in production, because the server runs on the host in
+      # development and cannot reach a compose network by service name.
+      - '8000:8000'
+    healthcheck:
+      # /health builds the pipeline, so passing it means the models are loaded and the
+      # first real request will not pay for a cold start.
+      test:
+        [
+          'CMD',
+          'python',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=10)",
+        ]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      # Reading ~200 MB of models off disk, once, on a cold container.
+      start_period: 60s
+
 volumes:
   db-data:

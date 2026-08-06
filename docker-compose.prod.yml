@@ -56,6 +56,12 @@ x-server: &server
     DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:?set DISCORD_CLIENT_ID}
     DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:?set DISCORD_CLIENT_SECRET}
 
+    # The tagger, by service name on this network. The only optional variable here without a
+    # `:?`, and deliberately so: with it unset the server never calls out, and story linking
+    # falls back to matching spellings the way it did before the analyser existed. Comment
+    # it out to turn the tagger off without redeploying anything else.
+    ANALYSER_URL: ${ANALYSER_URL:-http://analyser:8000}
+
     # Only the server enforces these — assertMailConfigured runs in index.ts, not in migrate
     # or seed — but the stack is not deployable without them, so they fail here too.
     MAILGUN_API_KEY: ${MAILGUN_API_KEY:?set MAILGUN_API_KEY}
@@ -150,6 +156,42 @@ services:
     profiles: ["manual"]
     restart: "no"
     command: ["node", "--import", "tsx", "apps/server/src/db/verify.ts"]
+
+  # The Georgian tagger. Asked one question — what part of speech is this word, here — when
+  # an admin links a story, and otherwise idle.
+  #
+  # Nothing depends on it. The server treats it as optional at every call site, so this can
+  # be down, restarting or never deployed at all and the only difference is that ambiguous
+  # spellings go back to being decided by the order of the words table. That is why `server`
+  # has no depends_on for it: waiting on a gigabyte of models to load before the site can
+  # serve a page would be trading a real outage for an imaginary one.
+  analyser:
+    build:
+      context: .
+      dockerfile: apps/analyser/Dockerfile
+    image: ${REGISTRY:?set REGISTRY, e.g. youruser/yourrepo}:analyser-${TAG:-20260805}
+    restart: unless-stopped
+    logging: *logging
+    # No published port. Only `server` talks to it, over the compose network, by name.
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=10)",
+        ]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          # Measured at 580 MB resident with the models loaded and a 975-token story just
+          # tagged. The ceiling is well clear of that, and it is here so that a leak in a
+          # service nothing depends on cannot take Postgres down with it.
+          memory: 2G
 
   web:
     build:
