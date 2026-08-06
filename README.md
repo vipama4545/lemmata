@@ -369,11 +369,12 @@ instance and an amd64-only image there fails as `exec format error`. Rebuild the
 ```sh
 docker buildx create --name lemmata-multi --driver docker-container --bootstrap   # once
 docker run --privileged --rm tonistiigi/binfmt --install arm64                    # once per boot
+REGISTRY=youruser/yourrepo   # the same value the stack's REGISTRY variable is set to
 TAG=$(git rev-parse --short HEAD)
 docker buildx build --builder lemmata-multi --platform linux/amd64,linux/arm64 \
-  -f apps/server/Dockerfile -t youruser/yourrepo:server-$TAG --push .
+  -f apps/server/Dockerfile -t $REGISTRY:server-$TAG --push .
 docker buildx build --builder lemmata-multi --platform linux/amd64,linux/arm64 \
-  -f apps/web/Dockerfile    -t youruser/yourrepo:web-$TAG    --push .
+  -f apps/web/Dockerfile    -t $REGISTRY:web-$TAG    --push .
 ```
 
 The web build is quick because its build stage is pinned to `$BUILDPLATFORM` — `dist` is the

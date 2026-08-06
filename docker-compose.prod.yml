@@ -43,7 +43,7 @@ x-server: &server
   # Both a build and an image, so one file covers both halves of the deploy: `build` here or
   # on CI tags this name, `push` sends it, and `pull` on the server fetches it instead of
   # compiling anything. TAG pins which one — see the note at the bottom of this file.
-  image: ${REGISTRY:-youruser/yourrepo}:server-${TAG:-20260805}
+  image: ${REGISTRY:?set REGISTRY, e.g. youruser/yourrepo}:server-${TAG:-20260805}
   logging: *logging
   # Every variable is listed and substituted, rather than pulled in with `env_file: .env`.
   #
@@ -178,7 +178,7 @@ services:
       # Leave this alone for the single-origin deployment. See the note at the bottom.
       # args:
       #   VITE_API_URL: https://api.lemmata.fyi
-    image: ${REGISTRY:-youruser/yourrepo}:web-${TAG:-20260805}
+    image: ${REGISTRY:?set REGISTRY, e.g. youruser/yourrepo}:web-${TAG:-20260805}
     restart: unless-stopped
     logging: *logging
     ports:
@@ -204,7 +204,7 @@ volumes:
 # ---------------------------------------------------------------------------------------
 # Images, and the two ways to deploy them
 #
-# Both live in one private repo, told apart by a tag prefix — youruser/yourrepo:server-*
+# Both live in one private repo under $REGISTRY, told apart by a tag prefix — :server-*
 # and :web-*. The date is the tag rather than a git sha because the images were built from a
 # working tree with uncommitted changes, and a sha would name a commit that does not contain
 # what is inside them. Once this is committed, prefer the sha:
