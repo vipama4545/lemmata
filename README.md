@@ -60,6 +60,7 @@ those files remain the right place to correct a _bulk_ import:
 | ----------------------------- | --------------------------------------------------------------------------- |
 | `scripts/wordsBase.json`      | the scraped A1–A2 dictionary; replace wholesale from a re-scrape            |
 | `scripts/posOverrides.json`   | part of speech for the entries the scrape left untagged                     |
+| `scripts/wiktionaryBase.json` | the imported common words; replace with `node scripts/fetchWiktionary.cjs`  |
 | `scripts/lexicon.json`        | lemmas, senses and paradigm links written by hand                           |
 | `scripts/lexiconForms.json`   | inflected forms the story builder has resolved, grown by `--learn`          |
 | `scripts/storyOverrides.json` | what is true of one story: its names, and the spellings or positions to pin |
@@ -74,6 +75,41 @@ Adding a story means dropping `<id>.txt` (and optionally `<id>.en.txt`, one para
 Georgian paragraph) in `data/stories/`, then `build:data` and `db:seed`. Nothing in the app
 needs editing any more — no module declaration, no list of stories. Or paste it into
 **Admin → Stories → New story**, which does the same work against the live database.
+
+### The imported words
+
+The A1–A2 scrape is about 1,800 headwords, which a story exhausts quickly: the chatterbox
+radish only ever reached 56% coverage against it. `scripts/fetchWiktionary.cjs` fills the
+gap from English Wiktionary — 22,245 Georgian entries with English glosses, via
+[kaikki.org](https://kaikki.org/dictionary/Georgian/) — and keeps the ones that are common
+enough to be worth learning.
+
+```sh
+node scripts/fetchWiktionary.cjs            # rewrites scripts/wiktionaryBase.json
+node scripts/fetchWiktionary.cjs --min 20 --report
+```
+
+Common enough is measured, not guessed. Two [Leipzig](https://wortschatz.uni-leipzig.de)
+corpora — 200k sentences of Georgian Wikipedia and web text — give a frequency per spelling,
+and a headword's score is its own count plus those of its inflected forms. Only forms that
+belong to exactly one lemma are counted: `იყო` is both the vocative of `იყი` "vodka" and the
+past of `არის` "is", and crediting it to vodka puts a rare noun in the commonest fifty. The
+cut is 50 occurrences, which admits 1,968 words and stops at the point where they stop being
+words a learner meets.
+
+Both downloads are cached in `scripts/.cache` (250 MB, not in git) and fetched once.
+
+What it deliberately does not do: overwrite anything. A headword the scrape already has is
+skipped, so the A1–A2 definitions — written for learners — are never replaced by a
+dictionary gloss. Proper nouns are skipped too, because the reader glosses names inside the
+story that needs them and keeps them out of the lexicon on purpose. Imported entries carry
+`origin: "wiktionary"` and no CEFR level, so the level filter still means what it says, and
+they land in a **Common Words** category appended after the scraped ones rather than
+reshuffling the grid. Corrections go in `lexicon.json` as always — it is applied afterwards
+and wins.
+
+Wiktionary text is CC BY-SA 4.0. `data/words.json` carries the attribution in its
+`attribution` field; if you redistribute the data, that licence comes with it.
 
 ## Editing it
 
@@ -153,19 +189,31 @@ It is **optional at every call site**. With `ANALYSER_URL` unset, the container 
 request slow, `analyse()` returns null and linking behaves exactly as it did before any of
 this existed. Nothing depends on it, and it is never called with a database transaction open.
 
-The pipeline is **pretokenised**: the server sends the tokens it already cut and gets back
-exactly that many tags. Letting Stanza tokenise would be better linguistics — its MWT layer
-splits `სახლში` into `სახლ` + `ში` and `ობიექტია` into `ობიექტი` + `ა`, the copula the peeler
-cannot reach — but a token's position is its identity in three other places, and changing the
-count would move every pin in the database. That is a migration, not a flag.
+The server sends **prose**, not tokens. Georgian welds its postpositions onto the noun, and
+only Stanza's own tokeniser can cut them apart: the MWT layer that does it runs inside the
+tokeniser and cannot run on pretokenised input at all. Sending prose also gives the tagger
+the sentence boundaries and punctuation it was trained on, which a stream of Mkhedruli runs
+had thrown away.
+
+What that costs is the guarantee pretokenised input gave for free — that the reply has as
+many entries as the caller has tokens. A token's position is its identity in
+`data/stories/*.json`, `story_tokens` and `storyOverrides.json`, so the count may not move.
+So `main.py` re-cuts the same prose with the *same* regex as `tokenise.ts`, aligns Stanza's
+words onto those tokens by character offset, and returns one tag per token. Splits survive
+as `parts`; `lemma` is the head alone. `სახლში` comes back `NOUN/სახლი` with parts
+`[სახლი, ში]` — and `სახლი` is a headword, where `სახლში` is a headword nowhere.
+
+That alignment is an agreement between two regexes in two languages, so `analyse()` checks
+the length of every paragraph and discards the whole reply if any disagrees. Across the 1,740
+tokens of the three stories there are no mismatches and 100 tokens (5.7%) carry a split.
 
 Two things worth knowing before trusting it. The treebank is 56,000 tokens of modern
-encyclopaedic prose, so on 1910 children's stories it is working well out of domain; and
-because `tokenise` keeps only Mkhedruli runs, the tagger never sees the punctuation it would
-need to find sentence boundaries. Both show. On _the chatterbox radish_ it lifts coverage from
-55.2% to 56.9% and drops flagged links from 141 to 121, and of the ten links it adds on its
-own roughly seven are right — `მაშ` ("so, then") coming out as the pronoun `იგი` is the shape
-of the other three. They are all flagged as guesses, which is where they belong.
+encyclopaedic prose, so on a 1910 children's story it is working well out of domain, and it
+shows. On _the chatterbox radish_ the tagger lifts coverage from 64.9% to 67.4%; MWT is worth
+0.5 of that, because the peeler was already reaching most postpositions by its own route. The
+split earns its keep on lemmas rather than on coverage — `ფინიშისკენ` now lemmatises to
+`ფინიში` instead of to itself, which is worth nothing until `ფინიში` is in the lexicon and
+everything once it is.
 
 And it does not really _understand_ და. There are 1,537 occurrences of it in the treebank and
 every one is tagged `CCONJ`, so the model has never seen the noun: in `ჩემი და სახლში მოვიდა`
@@ -387,3 +435,4 @@ story in under half a second.
 | `npm run db:verify-sync`             | prove the study merge rule holds                                             |
 | `npm run db:studio`                  | Drizzle Studio                                                               |
 | `npm run build:data`                 | rebuild `data/` from `scripts/` sources                                      |
+| `npm run build:wiktionary`           | re-import the common words from Wiktionary, then `build:data`                |

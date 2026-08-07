@@ -151,7 +151,12 @@ function WordEditor() {
         <h1 className="admin-title">{existing ? existing.georgian : 'New word'}</h1>
         {existing && (
           <p className="admin-sub">
-            <code>{existing.id}</code> · {existing.origin === 'core' ? 'from the scrape' : 'written by hand'}
+            <code>{existing.id}</code> ·{' '}
+            {existing.origin === 'core'
+              ? 'from the scrape'
+              : existing.origin === 'wiktionary'
+                ? 'imported from Wiktionary'
+                : 'written by hand'}
           </p>
         )}
       </header>

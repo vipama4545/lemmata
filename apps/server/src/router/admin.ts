@@ -26,7 +26,6 @@ import { db, schema } from '../db/index.ts';
 import type { Tx } from '../db/index.ts';
 import { analyse, type Tags } from '../story/analyser.ts';
 import { buildIndexes, isHandMade, linkStory, pinKey } from '../story/resolve.ts';
-import { tokeniseAll } from '../story/tokenise.ts';
 import type { Pinned } from '../story/resolve.ts';
 import { readLines } from '../story/tokenise.ts';
 import { adminOnly, os } from './base.ts';
@@ -373,7 +372,7 @@ async function storyProse(storyId: string): Promise<string[]> {
  * notices the token counts disagree and links without them.
  */
 async function tagsFor(paragraphs: string[]): Promise<Tags | null> {
-  return analyse(tokeniseAll(paragraphs));
+  return analyse(paragraphs);
 }
 
 /**

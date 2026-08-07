@@ -99,7 +99,11 @@ export const words = pgTable(
     categoryId: text('category_id')
       .notNull()
       .references(() => categories.id, { onDelete: 'cascade' }),
-    /** 'core' for the scraped A1–A2 dictionary, 'added' for lemmas written by hand. */
+    /**
+     * 'core' for the scraped A1–A2 dictionary, 'wiktionary' for the imported common words,
+     * 'added' for lemmas written by hand. Text rather than an enum so a new source needs no
+     * migration.
+     */
     origin: text('origin').notNull().default('core'),
     /** 1-based; null where it is 1. The sense to lead with when nothing pins one. */
     defaultSense: smallint('default_sense'),

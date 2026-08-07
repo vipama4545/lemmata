@@ -55,8 +55,11 @@ export interface Word {
   partOfSpeech: string;
   category: string;
   categoryId: string;
-  /** "core" for the scraped A1–A2 dictionary, "added" for lemmas written by hand. */
-  origin: 'core' | 'added';
+  /**
+   * "core" for the scraped A1–A2 dictionary, "wiktionary" for the common words imported
+   * from English Wiktionary, "added" for lemmas written by hand.
+   */
+  origin: 'core' | 'wiktionary' | 'added';
   /** Always at least one. A story token names the one that applies where it stands. */
   senses: Sense[];
   /**

@@ -404,11 +404,22 @@ function resolveForm(
     const hits = found.filter(word => posAgrees(tag.upos, word.partOfSpeech));
 
     if (hits.length) {
+      // What the tagger split off the head, if anything: the ში of სახლში, the copula of
+      // ობიექტია. `tag.lemma` is already the head alone, which is why this step reaches a
+      // headword at all for a spelling that has a postposition welded to it — the rest is
+      // grammar, and is reported the way the peeler reports the endings it strips.
+      const glued = (tag.parts ?? []).filter(part => part.lemma !== tag.lemma);
+      const split = glued.map(part => part.lemma).join('.');
+
       return {
         word: hits[0],
         sense: defaultSense(hits[0]),
-        gram: '',
-        via: tag.lemma === token ? `headword, tagged ${tag.upos}` : `lemma ${tag.lemma}`,
+        gram: split,
+        via: split
+          ? `split ${tag.lemma}+${glued.map(p => p.lemma).join('+')}`
+          : tag.lemma === token
+            ? `headword, tagged ${tag.upos}`
+            : `lemma ${tag.lemma}`,
         alts: hits.slice(1),
         // Always a guess. Nothing confirmed it, and it is here because the lexicon's own
         // machinery had already run out — exactly the case the flag exists to mark.
@@ -506,7 +517,7 @@ export function linkStory(
   // first occurrence's answer to every later one and quietly undo the whole thing.
   const cache = new Map<string, Resolved | null>();
   const resolveOnce = (form: string, tag?: Tag): Resolved | null => {
-    const key = tag ? `${form} ${tag.upos} ${tag.lemma}` : form;
+    const key = tag ? `${form}\0${tag.upos}\0${tag.lemma}` : form;
     const hit = cache.get(key);
     if (hit !== undefined) return hit;
     const resolved = resolveForm(form, indexes, unclaimed, tag);

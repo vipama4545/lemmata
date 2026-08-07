@@ -1,0 +1,915 @@
+{
+ "note": "Reading data for one story: the prose in \"paragraphs\", and one record per word occurrence in \"tokens\" — an array per paragraph, in reading order, so a record's position in it is the position of the word in the text. A record carries no meaning of its own: \"word\" is a words.json id and \"sense\" is a 1-based index into that entry's senses, which is how one spelling can mean different things in different lines. \"gram\" is how the form differs from the headword, \"via\" how the link was reached, \"check\" marks a guess worth a human eye, and \"name\" is a proper noun glossed here rather than added to the dictionary. Corrections go in scripts/storyOverrides.json, NOT here, or the next build will drop them. Regenerate with: node scripts/buildStoryData.cjs",
+ "id": "the-tortoise-and-the-hare",
+ "title": "კუ და კურდღელი",
+ "titleEnglish": "The Tortoise and the Hare",
+ "level": "",
+ "source": "",
+ "stats": {
+  "names": 0,
+  "tokens": 128,
+  "covered": 128,
+  "flagged": 0,
+  "coverage": 100,
+  "unresolved": 0,
+  "distinctForms": 98
+ },
+ "paragraphs": [
+  "\"შეხედე შენს თავს!\" ამბობდა კურდღელი. \"მთელი დილა გჭირდება იმისათვის, რომ მინდორი გადაკვეთო!\"",
+  "კუმ ერთ დღესაც მოიწყინა ეს დაცინვა, მშვიდად ასწია თავი და უთხრა: \"შეიძლება ნელი ვარ, მაგრამ რასაში გაჯობებ.\"",
+  "კურდღელს ეს ხუმრობა ეგონა და სიხარულით დათანხმდა. მათ სთხოვეს ბრძენ მელას, რომ ყოფილიყო მსაჯული.",
+  "როდესაც რასა დაიწყო, კურდღელი ძალიან სწრაფად გაიქცა და კუ შორს დატოვა. ცოტა რომ გაიარა, კურდღელმა იფიქრა: „კუ ვერასდროს დამეწევა“. ის დაწვა მწვანე ბალახზე და მალე დაიძინა.",
+  "ხოლო კუ ნელ-ნელა, სულ წინ მიდიოდა. ის არასდროს ჩერდებოდა დასასვენებლად. საათები გადიოდა, კურდღელს ეძინა, ხოლო კუმ ჩუმად ჩაუარა მას და ფინიშთან ძალიან ახლოს მივიდა.",
+  "როდესაც კურდღელს გაეღვიძა, მზე უკვე დაბლა იყო. ის მიხვდა, რომ ძალიან ბევრი ეძინა. კურდღელი სწრაფად გაიქცა ფინიშისკენ, მაგრამ ვიღაცამ დაასწრო. მან დაინახა, რომ კუმ უკვე გადაკვეთა ფინიშის ხაზი. ტყის ცხოველები სიხარულით ყვიროდნენ და კუს უცინოდნენ."
+ ],
+ "translation": [
+  "\"Look at yourself!\" said the hare. \"It takes you the whole morning just to cross the field!\"",
+  "One day, the tortoise grew tired of this teasing, calmly raised his head, and told him: \"I may be slow, but I will beat you in a race.\"",
+  "The hare thought this was a joke and gladly agreed. They asked the wise fox to be the judge.",
+  "When the race started, the hare ran very fast and left the tortoise far behind. After going a short distance, the hare thought, \"The tortoise will never catch up to me.\" He lay down on the green grass and soon fell asleep.",
+  "Meanwhile, the tortoise kept moving forward slowly. He never stopped to rest. Hours passed while the hare slept, and the tortoise quietly passed him, getting very close to the finish line.",
+  "When the hare woke up, the sun was already low. He realized that he had slept too long. The hare ran quickly toward the finish line, but someone had beaten him to it. He saw that the tortoise had already crossed the finish line. The forest animals were shouting with joy and cheering for the tortoise."
+ ],
+ "tokens": [
+  [
+   {
+    "form": "შეხედე",
+    "via": "form index",
+    "word": "w:შეხედავს",
+    "sense": 1,
+    "gram": "Imperative 2sg"
+   },
+   {
+    "form": "შენს",
+    "via": "headword",
+    "word": "w:შენს",
+    "sense": 1
+   },
+   {
+    "form": "თავს",
+    "via": "form index",
+    "word": "261",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "ამბობდა",
+    "via": "form index",
+    "word": "68",
+    "sense": 1,
+    "gram": "Imperfect 3sg"
+   },
+   {
+    "form": "კურდღელი",
+    "via": "headword",
+    "word": "353",
+    "sense": 1
+   },
+   {
+    "form": "მთელი",
+    "via": "headword",
+    "word": "5762",
+    "sense": 2
+   },
+   {
+    "form": "დილა",
+    "via": "headword",
+    "word": "139",
+    "sense": 1
+   },
+   {
+    "form": "გჭირდება",
+    "via": "form index",
+    "word": "6071",
+    "sense": 1,
+    "gram": "Present 2sg"
+   },
+   {
+    "form": "იმისათვის",
+    "via": "headword",
+    "word": "w:იმისათვის",
+    "sense": 1
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "მინდორი",
+    "via": "headword",
+    "word": "407",
+    "sense": 1
+   },
+   {
+    "form": "გადაკვეთო",
+    "via": "form index",
+    "word": "w:გადაკვეთს",
+    "sense": 1,
+    "gram": "Optative 1sg"
+   }
+  ],
+  [
+   {
+    "form": "კუმ",
+    "via": "form index",
+    "word": "1842",
+    "sense": 1,
+    "gram": "erg"
+   },
+   {
+    "form": "ერთ",
+    "via": "form index",
+    "word": "46",
+    "sense": 1
+   },
+   {
+    "form": "დღესაც",
+    "via": "form index",
+    "word": "6248",
+    "sense": 1,
+    "gram": "too"
+   },
+   {
+    "form": "მოიწყინა",
+    "via": "form index",
+    "word": "w:იწყენს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ეს",
+    "via": "headword",
+    "word": "207",
+    "sense": 1
+   },
+   {
+    "form": "დაცინვა",
+    "via": "headword",
+    "word": "w:დაცინვა",
+    "sense": 1
+   },
+   {
+    "form": "მშვიდად",
+    "via": "form index",
+    "word": "5819",
+    "sense": 1,
+    "gram": "adv"
+   },
+   {
+    "form": "ასწია",
+    "via": "form index",
+    "word": "w:სწევს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "თავი",
+    "via": "headword",
+    "word": "261",
+    "sense": 1
+   },
+   {
+    "form": "და",
+    "via": "headword, tagged CCONJ",
+    "word": "38",
+    "sense": 1,
+    "alts": [
+     {
+      "word": "53",
+      "english": "sister"
+     }
+    ]
+   },
+   {
+    "form": "უთხრა",
+    "via": "form index",
+    "word": "w:ეუბნება",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "შეიძლება",
+    "via": "form index",
+    "word": "2389",
+    "sense": 1,
+    "gram": "Present 3sg"
+   },
+   {
+    "form": "ნელი",
+    "via": "headword",
+    "word": "1867",
+    "sense": 1
+   },
+   {
+    "form": "ვარ",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Present 1sg"
+   },
+   {
+    "form": "მაგრამ",
+    "via": "headword",
+    "word": "948",
+    "sense": 1
+   },
+   {
+    "form": "რასაში",
+    "via": "form index",
+    "word": "1907",
+    "sense": 1,
+    "gram": "in.dat"
+   },
+   {
+    "form": "გაჯობებ",
+    "via": "form index",
+    "word": "w:აჯობებს",
+    "sense": 1,
+    "gram": "Future 1sg"
+   }
+  ],
+  [
+   {
+    "form": "კურდღელს",
+    "via": "form index",
+    "word": "353",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "ეს",
+    "via": "headword",
+    "word": "207",
+    "sense": 1
+   },
+   {
+    "form": "ხუმრობა",
+    "via": "headword",
+    "word": "5310",
+    "sense": 1
+   },
+   {
+    "form": "ეგონა",
+    "via": "form index",
+    "word": "6232",
+    "sense": 1,
+    "gram": "Imperfect 3sg"
+   },
+   {
+    "form": "და",
+    "via": "headword, tagged CCONJ",
+    "word": "38",
+    "sense": 1,
+    "alts": [
+     {
+      "word": "53",
+      "english": "sister"
+     }
+    ]
+   },
+   {
+    "form": "სიხარულით",
+    "via": "form index",
+    "word": "2340",
+    "sense": 1,
+    "gram": "inst"
+   },
+   {
+    "form": "დათანხმდა",
+    "via": "form index",
+    "word": "w:დათანხმდება",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "მათ",
+    "via": "form index",
+    "word": "302",
+    "sense": 1,
+    "gram": "erg/dat"
+   },
+   {
+    "form": "სთხოვეს",
+    "via": "override",
+    "word": "6040",
+    "sense": 1
+   },
+   {
+    "form": "ბრძენ",
+    "via": "form index",
+    "word": "w:ბრძენი",
+    "sense": 1,
+    "gram": "attributive"
+   },
+   {
+    "form": "მელას",
+    "via": "form index",
+    "word": "w:მელა",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "ყოფილიყო",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Pluperfect 3sg"
+   },
+   {
+    "form": "მსაჯული",
+    "via": "headword",
+    "word": "w:მსაჯული",
+    "sense": 1
+   }
+  ],
+  [
+   {
+    "form": "როდესაც",
+    "via": "headword",
+    "word": "w:როდესაც",
+    "sense": 1
+   },
+   {
+    "form": "რასა",
+    "via": "form index",
+    "word": "1907",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "დაიწყო",
+    "via": "form index",
+    "word": "w:იწყებს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "კურდღელი",
+    "via": "headword",
+    "word": "353",
+    "sense": 1
+   },
+   {
+    "form": "ძალიან",
+    "via": "headword",
+    "word": "w:ძალიან",
+    "sense": 1
+   },
+   {
+    "form": "სწრაფად",
+    "via": "headword",
+    "word": "2348",
+    "sense": 1
+   },
+   {
+    "form": "გაიქცა",
+    "via": "form index",
+    "word": "w:გარბის",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "და",
+    "via": "headword, tagged CCONJ",
+    "word": "38",
+    "sense": 1,
+    "alts": [
+     {
+      "word": "53",
+      "english": "sister"
+     }
+    ]
+   },
+   {
+    "form": "კუ",
+    "via": "headword",
+    "word": "1842",
+    "sense": 1
+   },
+   {
+    "form": "შორს",
+    "via": "headword",
+    "word": "2132",
+    "sense": 1
+   },
+   {
+    "form": "დატოვა",
+    "via": "override",
+    "word": "9191",
+    "sense": 1
+   },
+   {
+    "form": "ცოტა",
+    "via": "headword",
+    "word": "2167",
+    "sense": 1
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "გაიარა",
+    "via": "form index",
+    "word": "w:გაივლის",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "კურდღელმა",
+    "via": "form index",
+    "word": "353",
+    "sense": 1,
+    "gram": "erg"
+   },
+   {
+    "form": "იფიქრა",
+    "via": "form index",
+    "word": "2365",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "კუ",
+    "via": "headword",
+    "word": "1842",
+    "sense": 1
+   },
+   {
+    "form": "ვერასდროს",
+    "via": "headword",
+    "word": "5581",
+    "sense": 1
+   },
+   {
+    "form": "დამეწევა",
+    "via": "form index",
+    "word": "569",
+    "sense": 1,
+    "gram": "Future 3sg + 1sg object"
+   },
+   {
+    "form": "ის",
+    "via": "headword",
+    "word": "300",
+    "sense": 1
+   },
+   {
+    "form": "დაწვა",
+    "via": "form index",
+    "word": "2198",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "მწვანე",
+    "via": "headword",
+    "word": "w:მწვანე",
+    "sense": 1
+   },
+   {
+    "form": "ბალახზე",
+    "via": "form index",
+    "word": "101",
+    "sense": 1,
+    "gram": "on"
+   },
+   {
+    "form": "და",
+    "via": "headword, tagged CCONJ",
+    "word": "38",
+    "sense": 1,
+    "alts": [
+     {
+      "word": "53",
+      "english": "sister"
+     }
+    ]
+   },
+   {
+    "form": "მალე",
+    "via": "headword",
+    "word": "636",
+    "sense": 1
+   },
+   {
+    "form": "დაიძინა",
+    "via": "form index",
+    "word": "w:იძინებს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   }
+  ],
+  [
+   {
+    "form": "ხოლო",
+    "via": "headword",
+    "word": "w:ხოლო",
+    "sense": 1
+   },
+   {
+    "form": "კუ",
+    "via": "headword",
+    "word": "1842",
+    "sense": 1
+   },
+   {
+    "form": "ნელ-ნელა",
+    "via": "form index",
+    "word": "1866",
+    "sense": 1,
+    "gram": "reduplicated"
+   },
+   {
+    "form": "სულ",
+    "via": "headword",
+    "word": "w:სულ",
+    "sense": 1
+   },
+   {
+    "form": "წინ",
+    "via": "headword",
+    "word": "w:წინ",
+    "sense": 1
+   },
+   {
+    "form": "მიდიოდა",
+    "via": "form index",
+    "word": "w:მიდის",
+    "sense": 1,
+    "gram": "Imperfect 3sg"
+   },
+   {
+    "form": "ის",
+    "via": "headword",
+    "word": "300",
+    "sense": 1
+   },
+   {
+    "form": "არასდროს",
+    "via": "headword",
+    "word": "w:არასდროს",
+    "sense": 1
+   },
+   {
+    "form": "ჩერდებოდა",
+    "via": "form index",
+    "word": "w:ჩერდება",
+    "sense": 1,
+    "gram": "Imperfect 3sg"
+   },
+   {
+    "form": "დასასვენებლად",
+    "via": "form index",
+    "word": "5507",
+    "sense": 1,
+    "gram": "adv"
+   },
+   {
+    "form": "საათები",
+    "via": "form index",
+    "word": "1933",
+    "sense": 1,
+    "gram": "nom.pl"
+   },
+   {
+    "form": "გადიოდა",
+    "via": "form index",
+    "word": "w:გადის",
+    "sense": 1,
+    "gram": "Imperfect 3sg"
+   },
+   {
+    "form": "კურდღელს",
+    "via": "form index",
+    "word": "353",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "ეძინა",
+    "via": "form index",
+    "word": "6266",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ხოლო",
+    "via": "headword",
+    "word": "w:ხოლო",
+    "sense": 1
+   },
+   {
+    "form": "კუმ",
+    "via": "form index",
+    "word": "1842",
+    "sense": 1,
+    "gram": "erg"
+   },
+   {
+    "form": "ჩუმად",
+    "via": "headword",
+    "word": "w:ჩუმად",
+    "sense": 1
+   },
+   {
+    "form": "ჩაუარა",
+    "via": "form index",
+    "word": "w:ჩაუვლის",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "მას",
+    "via": "form index",
+    "word": "300",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "და",
+    "via": "headword, tagged CCONJ",
+    "word": "38",
+    "sense": 1,
+    "alts": [
+     {
+      "word": "53",
+      "english": "sister"
+     }
+    ]
+   },
+   {
+    "form": "ფინიშთან",
+    "via": "form index",
+    "word": "w:ფინიში",
+    "sense": 1,
+    "gram": "with"
+   },
+   {
+    "form": "ძალიან",
+    "via": "headword",
+    "word": "w:ძალიან",
+    "sense": 1
+   },
+   {
+    "form": "ახლოს",
+    "via": "headword",
+    "word": "7",
+    "sense": 1
+   },
+   {
+    "form": "მივიდა",
+    "via": "override",
+    "word": "w:მიდის",
+    "sense": 1
+   }
+  ],
+  [
+   {
+    "form": "როდესაც",
+    "via": "headword",
+    "word": "w:როდესაც",
+    "sense": 1
+   },
+   {
+    "form": "კურდღელს",
+    "via": "form index",
+    "word": "353",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "გაეღვიძა",
+    "via": "form index",
+    "word": "4257",
+    "sense": 1,
+    "gram": "Pluperfect 3sg"
+   },
+   {
+    "form": "მზე",
+    "via": "headword",
+    "word": "402",
+    "sense": 1
+   },
+   {
+    "form": "უკვე",
+    "via": "headword",
+    "word": "w:უკვე",
+    "sense": 1
+   },
+   {
+    "form": "დაბლა",
+    "via": "headword",
+    "word": "187",
+    "sense": 1
+   },
+   {
+    "form": "იყო",
+    "via": "form index",
+    "word": "148",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ის",
+    "via": "headword",
+    "word": "300",
+    "sense": 1
+   },
+   {
+    "form": "მიხვდა",
+    "via": "form index",
+    "word": "w:მიხვდება",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "ძალიან",
+    "via": "headword",
+    "word": "w:ძალიან",
+    "sense": 1
+   },
+   {
+    "form": "ბევრი",
+    "via": "headword",
+    "word": "115",
+    "sense": 1
+   },
+   {
+    "form": "ეძინა",
+    "via": "form index",
+    "word": "6266",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "კურდღელი",
+    "via": "headword",
+    "word": "353",
+    "sense": 1
+   },
+   {
+    "form": "სწრაფად",
+    "via": "headword",
+    "word": "2348",
+    "sense": 1
+   },
+   {
+    "form": "გაიქცა",
+    "via": "form index",
+    "word": "w:გარბის",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "ფინიშისკენ",
+    "via": "form index",
+    "word": "w:ფინიში",
+    "sense": 1,
+    "gram": "towards.gen"
+   },
+   {
+    "form": "მაგრამ",
+    "via": "headword",
+    "word": "948",
+    "sense": 1
+   },
+   {
+    "form": "ვიღაცამ",
+    "via": "form index",
+    "word": "233",
+    "sense": 1,
+    "gram": "erg"
+   },
+   {
+    "form": "დაასწრო",
+    "via": "form index",
+    "word": "w:ასწრებს",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "მან",
+    "via": "form index",
+    "word": "300",
+    "sense": 1,
+    "gram": "erg"
+   },
+   {
+    "form": "დაინახა",
+    "via": "form index",
+    "word": "2429",
+    "sense": 1,
+    "gram": "Aorist 3sg"
+   },
+   {
+    "form": "რომ",
+    "via": "headword",
+    "word": "w:რომ",
+    "sense": 1
+   },
+   {
+    "form": "კუმ",
+    "via": "form index",
+    "word": "1842",
+    "sense": 1,
+    "gram": "erg"
+   },
+   {
+    "form": "უკვე",
+    "via": "headword",
+    "word": "w:უკვე",
+    "sense": 1
+   },
+   {
+    "form": "გადაკვეთა",
+    "via": "headword",
+    "word": "w:გადაკვეთა",
+    "sense": 1
+   },
+   {
+    "form": "ფინიშის",
+    "via": "form index",
+    "word": "w:ფინიში",
+    "sense": 1,
+    "gram": "gen"
+   },
+   {
+    "form": "ხაზი",
+    "via": "headword",
+    "word": "2225",
+    "sense": 1
+   },
+   {
+    "form": "ტყის",
+    "via": "form index",
+    "word": "2029",
+    "sense": 1,
+    "gram": "gen"
+   },
+   {
+    "form": "ცხოველები",
+    "via": "form index",
+    "word": "2176",
+    "sense": 1,
+    "gram": "nom.pl"
+   },
+   {
+    "form": "სიხარულით",
+    "via": "form index",
+    "word": "2340",
+    "sense": 1,
+    "gram": "inst"
+   },
+   {
+    "form": "ყვიროდნენ",
+    "via": "form index",
+    "word": "w:ყვირის",
+    "sense": 1,
+    "gram": "Imperfect 3pl"
+   },
+   {
+    "form": "და",
+    "via": "headword, tagged CCONJ",
+    "word": "38",
+    "sense": 1,
+    "alts": [
+     {
+      "word": "53",
+      "english": "sister"
+     }
+    ]
+   },
+   {
+    "form": "კუს",
+    "via": "form index",
+    "word": "1842",
+    "sense": 1,
+    "gram": "dat"
+   },
+   {
+    "form": "უცინოდნენ",
+    "via": "form index",
+    "word": "w:უცინის",
+    "sense": 1,
+    "gram": "Imperfect 3pl"
+   }
+  ]
+ ]
+}

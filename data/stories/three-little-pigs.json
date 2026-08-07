@@ -6,13 +6,13 @@
  "level": "A2",
  "source": "",
  "stats": {
-  "names": 47,
   "tokens": 975,
+  "distinctForms": 574,
   "covered": 975,
-  "flagged": 0,
   "coverage": 100,
+  "names": 47,
   "unresolved": 0,
-  "distinctForms": 574
+  "flagged": 0
  },
  "paragraphs": [
   "იყო და არა იყო რა. იყო სამი მხიარული გოჭი,  ერთნაირი ვარდისფერი კუდებით: ნიფ-ნიფი, ნუფ-ნუფი და ნაფ-ნაფი.",
@@ -168,6478 +168,6478 @@
   [
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "არა",
-    "via": "headword",
     "word": "147",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "რა",
-    "via": "headword",
     "word": "1907",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სამი",
-    "via": "headword",
     "word": "w:სამი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მხიარული",
-    "via": "headword",
     "word": "2456",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭი",
-    "via": "headword",
     "word": "510",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ერთნაირი",
-    "via": "headword",
     "word": "w:ერთნაირი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვარდისფერი",
-    "via": "headword",
     "word": "868",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კუდებით",
-    "via": "form index",
     "word": "w:კუდი",
     "sense": 1,
-    "gram": "inst.pl"
+    "gram": "inst.pl",
+    "via": "form index"
    },
    {
     "form": "ნიფ-ნიფი",
-    "via": "name",
-    "name": "Nif-Nif, one of the three pigs"
+    "name": "Nif-Nif, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "ნუფ-ნუფი",
-    "via": "name",
-    "name": "Nuf-Nuf, one of the three pigs"
+    "name": "Nuf-Nuf, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ნაფ-ნაფი",
-    "via": "name",
-    "name": "Naf-Naf, one of the three pigs"
+    "name": "Naf-Naf, one of the three pigs",
+    "via": "name"
    }
   ],
   [
    {
     "form": "მთელი",
-    "via": "headword",
     "word": "5762",
-    "sense": 2
+    "sense": 2,
+    "via": "headword"
    },
    {
     "form": "ზაფხული",
-    "via": "headword",
     "word": "235",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მხიარულად",
-    "via": "form index",
     "word": "2456",
     "sense": 1,
-    "gram": "adv"
+    "gram": "adv",
+    "via": "form index"
    },
    {
     "form": "გაატარეს",
-    "via": "form index",
     "word": "82",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "დადგა",
-    "via": "form index",
     "word": "199",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "შემოდგომა",
-    "via": "headword",
     "word": "2118",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცოტა",
-    "via": "headword",
     "word": "2167",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აცივდა",
-    "via": "form index",
     "word": "w:აცივდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "მალე",
-    "via": "headword",
     "word": "636",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ზამთარი",
-    "via": "headword",
     "word": "234",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოვა",
-    "via": "form index",
     "word": "w:მოდის",
     "sense": 1,
-    "gram": "Future 3sg"
+    "gram": "Future 3sg",
+    "via": "form index"
    },
    {
     "form": "უთხრა",
-    "via": "form index",
     "word": "w:ეუბნება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ერთხელ",
-    "via": "headword",
     "word": "206",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძმებს",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "ნაფ-ნაფმა",
-    "via": "name",
-    "name": "Naf-Naf (ergative)"
+    "name": "Naf-Naf (ergative)",
+    "via": "name"
    },
    {
     "form": "მოდით",
-    "via": "form index",
     "word": "w:მოდის",
     "sense": 1,
-    "gram": "imperative 2pl"
+    "gram": "imperative 2pl",
+    "via": "form index"
    },
    {
     "form": "სახლი",
-    "via": "headword",
     "word": "1967",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ავაშენოთ",
-    "via": "form index",
     "word": "483",
     "sense": 1,
-    "gram": "Optative 1pl"
+    "gram": "Optative 1pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ზამთარი",
-    "via": "headword",
     "word": "234",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ერთად",
-    "via": "headword",
     "word": "205",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თბილ",
-    "via": "form index",
     "word": "255",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "სახლში",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "გავატაროთ",
-    "via": "form index",
     "word": "82",
     "sense": 1,
-    "gram": "Optative 1pl"
+    "gram": "Optative 1pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ზარმაც",
-    "via": "form index",
     "word": "w:ზარმაცი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "გოჭებს",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უნდოდათ",
-    "via": "form index",
     "word": "w:უნდა",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "მუშაობა",
-    "via": "headword",
     "word": "5811",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "მოვასწრებთ",
-    "via": "form index",
     "word": "w:მოასწრებს",
     "sense": 1,
-    "gram": "Future 1pl"
+    "gram": "Future 1pl",
+    "via": "form index"
    },
    {
     "form": "ჯერ",
-    "via": "headword",
     "word": "w:ჯერ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კიდევ",
-    "via": "headword",
     "word": "w:კიდევ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არის",
-    "via": "form index",
     "word": "148",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "დრო",
-    "via": "headword",
     "word": "141",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თქვა",
-    "via": "form index",
     "word": "68",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნიფ-ნიფმა",
-    "via": "name",
-    "name": "Nif-Nif (ergative)"
+    "name": "Nif-Nif (ergative)",
+    "via": "name"
    }
   ],
   [
    {
     "form": "ჯერ",
-    "via": "headword",
     "word": "w:ჯერ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ადრე",
-    "via": "headword",
     "word": "55",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სახლს",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ჩემთვის",
-    "via": "form index",
     "word": "45",
     "sense": 1,
-    "gram": "for"
+    "gram": "for",
+    "via": "form index"
    },
    {
     "form": "თვითონ",
-    "via": "headword",
     "word": "w:თვითონ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ავიშენებ",
-    "via": "form index",
     "word": "483",
     "sense": 1,
-    "gram": "Future 1sg"
+    "gram": "Future 1sg",
+    "via": "form index"
    },
    {
     "form": "თქვა",
-    "via": "form index",
     "word": "68",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნუფ-ნუფმა",
-    "via": "name",
-    "name": "Nuf-Nuf (ergative)"
+    "name": "Nuf-Nuf (ergative)",
+    "via": "name"
    }
   ],
   [
    {
     "form": "მეც",
-    "via": "form index",
     "word": "40",
     "sense": 1,
-    "gram": "too"
+    "gram": "too",
+    "via": "form index"
    },
    {
     "form": "დაამატა",
-    "via": "form index",
     "word": "w:დაამატებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნიფ-ნიფმა",
-    "via": "name",
-    "name": "Nif-Nif (ergative)"
+    "name": "Nif-Nif (ergative)",
+    "via": "name"
    }
   ],
   [
    {
     "form": "როგორც",
-    "via": "headword",
     "word": "w:როგორც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გინდათ",
-    "via": "form index",
     "word": "w:უნდა",
     "sense": 1,
-    "gram": "Present 2pl"
+    "gram": "Present 2pl",
+    "via": "form index"
    },
    {
     "form": "მაშინ",
-    "via": "headword",
     "word": "w:მაშინ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მე",
-    "via": "headword",
     "word": "40",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მარტო",
-    "via": "headword",
     "word": "w:მარტო",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ავიშენებ",
-    "via": "form index",
     "word": "483",
     "sense": 1,
-    "gram": "Future 1sg"
+    "gram": "Future 1sg",
+    "via": "form index"
    },
    {
     "form": "სახლს",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "თქვა",
-    "via": "form index",
     "word": "68",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნაფ-ნაფმა",
-    "via": "name",
-    "name": "Naf-Naf (ergative)"
+    "name": "Naf-Naf (ergative)",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "შრომას",
-    "via": "form index",
     "word": "4864",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "შეუდგა",
-    "via": "form index",
     "word": "w:შეუდგება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ნიფ-ნიფი",
-    "via": "name",
-    "name": "Nif-Nif, one of the three pigs"
+    "name": "Nif-Nif, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ნუფ-ნუფი",
-    "via": "name",
-    "name": "Nuf-Nuf, one of the three pigs"
+    "name": "Nuf-Nuf, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "მთელ",
-    "via": "form index",
     "word": "5762",
-    "sense": 2
+    "sense": 2,
+    "via": "form index"
    },
    {
     "form": "დღეებს",
-    "via": "form index",
     "word": "143",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "თამაშში",
-    "via": "form index",
     "word": "5051",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "ატარებდნენ",
-    "via": "form index",
     "word": "82",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "ზამთარი",
-    "via": "headword",
     "word": "234",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყოველ",
-    "via": "form index",
     "word": "4383",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "დღე",
-    "via": "headword",
     "word": "143",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უფრო",
-    "via": "headword",
     "word": "w:უფრო",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "უფრო",
-    "via": "headword",
     "word": "w:უფრო",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ახლოვდებოდა",
-    "via": "form index",
     "word": "w:ახლოვდება",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "როცა",
-    "via": "headword",
     "word": "w:როცა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გვარიანად",
-    "via": "headword",
     "word": "w:გვარიანად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აცივდა",
-    "via": "form index",
     "word": "w:აცივდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ძმებმა",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "erg.pl"
+    "gram": "erg.pl",
+    "via": "form index"
    },
    {
     "form": "მხოლოდ",
-    "via": "headword",
     "word": "w:მხოლოდ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მაშინ",
-    "via": "headword",
     "word": "w:მაშინ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიწყეს",
-    "via": "form index",
     "word": "w:იწყებს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "სახლზე",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "ზრუნვა",
-    "via": "headword",
     "word": "w:ზრუნვა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "ნიფ-ნიფმა",
-    "via": "name",
-    "name": "Nif-Nif (ergative)"
+    "name": "Nif-Nif (ergative)",
+    "via": "name"
    },
    {
     "form": "სახლი",
-    "via": "headword",
     "word": "1967",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ლერწმისაგან",
-    "via": "form index",
     "word": "w:ლერწამი",
     "sense": 1,
-    "gram": "from.gen"
+    "gram": "from.gen",
+    "via": "form index"
    },
    {
     "form": "ერთ",
-    "via": "form index",
     "word": "46",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "დღეში",
-    "via": "form index",
     "word": "143",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "ააგო",
-    "via": "form index",
     "word": "w:აგებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ნუფ-ნუფმაც",
-    "via": "name",
-    "name": "Nuf-Nuf too (ergative)"
+    "name": "Nuf-Nuf too (ergative)",
+    "via": "name"
    },
    {
     "form": "ახლომახლო",
-    "via": "headword",
     "word": "w:ახლომახლო",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ტოტებისა",
-    "via": "form index",
     "word": "w:ტოტი",
     "sense": 1,
-    "gram": "gen.pl"
+    "gram": "gen.pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ფიჩხებისაგან",
-    "via": "form index",
     "word": "w:ფიჩხი",
     "sense": 1,
-    "gram": "from.gen.pl"
+    "gram": "from.gen.pl",
+    "via": "form index"
    },
    {
     "form": "აიშენა",
-    "via": "form index",
     "word": "483",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სახლი",
-    "via": "headword",
     "word": "1967",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სახურავზე",
-    "via": "form index",
     "word": "1968",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გამხმარი",
-    "via": "headword",
     "word": "w:გამხმარი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ფოთლები",
-    "via": "form index",
     "word": "2059",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "დააყარა",
-    "via": "form index",
     "word": "w:დააყრის",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "როცა",
-    "via": "headword",
     "word": "w:როცა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მორჩნენ",
-    "via": "form index",
     "word": "w:მორჩება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ძმები",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "მუშაობას",
-    "via": "form index",
     "word": "5811",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "გადაწყვიტეს",
-    "via": "form index",
     "word": "w:წყვეტს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ნაფ-ნაფის",
-    "via": "name",
-    "name": "Naf-Naf's"
+    "name": "Naf-Naf's",
+    "via": "name"
    },
    {
     "form": "სახლი",
-    "via": "headword",
     "word": "1967",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოენახულებინათ",
-    "via": "form index",
     "word": "w:მოინახულებს",
     "sense": 1,
-    "gram": "Pluperfect 3pl"
+    "gram": "Pluperfect 3pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ნაფ-ნაფი",
-    "via": "name",
-    "name": "Naf-Naf, one of the three pigs"
+    "name": "Naf-Naf, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "სახლს",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "რამოდენიმე",
-    "via": "headword",
     "word": "w:რამოდენიმე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დღე",
-    "via": "headword",
     "word": "143",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ქვებისაგან",
-    "via": "form index",
     "word": "2078",
     "sense": 1,
-    "gram": "from.gen.pl"
+    "gram": "from.gen.pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "თიხისაგან",
-    "via": "form index",
     "word": "w:თიხა",
     "sense": 1,
-    "gram": "from.gen"
+    "gram": "from.gen",
+    "via": "form index"
    },
    {
     "form": "აშენებდა",
-    "via": "form index",
     "word": "483",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "მან",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "სახლს",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "მუხის",
-    "via": "form index",
     "word": "w:მუხა",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "მძიმე",
-    "via": "headword",
     "word": "443",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კარი",
-    "via": "headword",
     "word": "331",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩამოკიდა",
-    "via": "form index",
     "word": "w:ჩამოკიდებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ურდულიც",
-    "via": "form index",
     "word": "w:ურდული",
     "sense": 1,
-    "gram": "too"
+    "gram": "too",
+    "via": "form index"
    },
    {
     "form": "დაადო",
-    "via": "form index",
     "word": "w:დაადებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მეზობელი",
-    "via": "headword",
     "word": "396",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ტყიდან",
-    "via": "form index",
     "word": "2029",
     "sense": 1,
-    "gram": "from.nom"
+    "gram": "from.nom",
+    "via": "form index"
    },
    {
     "form": "მგელს",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ვერ",
-    "via": "form index",
     "word": "4190",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "შემოეღწია",
-    "via": "form index",
     "word": "w:შემოაღწევს",
     "sense": 1,
-    "gram": "Pluperfect 3sg"
+    "gram": "Pluperfect 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ნიფ-ნიფმა",
-    "via": "name",
-    "name": "Nif-Nif (ergative)"
+    "name": "Nif-Nif (ergative)",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ნუფ-ნუფმა",
-    "via": "name",
-    "name": "Nuf-Nuf (ergative)"
+    "name": "Nuf-Nuf (ergative)",
+    "via": "name"
    },
    {
     "form": "სახლის",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "დანახვაზე",
-    "via": "form index",
     "word": "w:დანახვა",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "გაკვირვებულმა",
-    "via": "form index",
     "word": "w:გაკვირვებული",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "ერთხმად",
-    "via": "headword",
     "word": "w:ერთხმად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "წამოიძახეს",
-    "via": "form index",
     "word": "w:წამოიძახებს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ეს",
-    "via": "headword",
     "word": "207",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭის",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "სახლია",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "+ is"
+    "gram": "+ is",
+    "via": "form index"
    },
    {
     "form": "თუ",
-    "via": "form index",
     "word": "283",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ციხე-სიმაგრე",
-    "via": "headword",
     "word": "w:ციხე-სიმაგრე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "სახლი",
-    "via": "headword",
     "word": "1967",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ციხე-სიმაგრე",
-    "via": "headword",
     "word": "w:ციხე-სიმაგრე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უნდა",
-    "via": "override",
     "word": "w:უნდა",
     "sense": 1,
+    "via": "override",
     "comment": "\"სახლი ციხე-სიმაგრე უნდა იყოს\" — the modal, not the 3sg of \"to want\""
    },
    {
     "form": "იყოს",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Optative 3sg"
+    "gram": "Optative 3sg",
+    "via": "form index"
    },
    {
     "form": "უპასუხა",
-    "via": "form index",
     "word": "5935",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნაფ-ნაფმა",
-    "via": "name",
-    "name": "Naf-Naf (ergative)"
+    "name": "Naf-Naf (ergative)",
+    "via": "name"
    }
   ],
   [
    {
     "form": "ნიფ-ნიფი",
-    "via": "name",
-    "name": "Nif-Nif, one of the three pigs"
+    "name": "Nif-Nif, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ნუფ-ნუფი",
-    "via": "name",
-    "name": "Nuf-Nuf, one of the three pigs"
+    "name": "Nuf-Nuf, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "უკან",
-    "via": "headword",
     "word": "w:უკან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაბრუნდნენ",
-    "via": "form index",
     "word": "w:ბრუნდება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "უცებ",
-    "via": "headword",
     "word": "w:უცებ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მათ",
-    "via": "form index",
     "word": "302",
     "sense": 1,
-    "gram": "erg/dat"
+    "gram": "erg/dat",
+    "via": "form index"
    },
    {
     "form": "დაინახეს",
-    "via": "form index",
     "word": "2429",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ნამდვილი",
-    "via": "headword",
     "word": "2463",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცოცხალი",
-    "via": "headword",
     "word": "2408",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "ძმებს",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "ჟრუანტელმა",
-    "via": "form index",
     "word": "w:ჟრუანტელი",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "დაუარა",
-    "via": "form index",
     "word": "w:დაუარებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "კუდები",
-    "via": "form index",
     "word": "w:კუდი",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "აუცახცახდათ",
-    "via": "form index",
     "word": "w:აცახცახდება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "საბრალო",
-    "via": "headword",
     "word": "w:საბრალო",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭები",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "შიშისაგან",
-    "via": "form index",
     "word": "2128",
     "sense": 1,
-    "gram": "from.gen"
+    "gram": "from.gen",
+    "via": "form index"
    },
    {
     "form": "გაშეშდნენ",
-    "via": "form index",
     "word": "w:გაშეშდება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ბოროტი",
-    "via": "headword",
     "word": "w:ბოროტი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭებს",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "გამოეკიდა",
-    "via": "form index",
     "word": "w:გამოეკიდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "გოჭები",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "უცებ",
-    "via": "headword",
     "word": "w:უცებ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გონს",
-    "via": "form index",
     "word": "w:გონი",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "მოვიდნენ",
-    "via": "form index",
     "word": "w:მოდის",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "თავთავიანთი",
-    "via": "headword",
     "word": "w:თავთავიანთი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სახლებისკენ",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "towards.gen.pl"
+    "gram": "towards.gen.pl",
+    "via": "form index"
    },
    {
     "form": "მოკურცხლეს",
-    "via": "form index",
     "word": "w:მოკურცხლავს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ნიფ-ნიფმა",
-    "via": "name",
-    "name": "Nif-Nif (ergative)"
+    "name": "Nif-Nif (ergative)",
+    "via": "name"
    },
    {
     "form": "პირველმა",
-    "via": "form index",
     "word": "w:პირველი",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "მიირბინა",
-    "via": "form index",
     "word": "w:მიირბენს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "თავის",
-    "via": "form index",
     "word": "252",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ლერწმის",
-    "via": "form index",
     "word": "w:ლერწამი",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "ქოხთან",
-    "via": "form index",
     "word": "w:ქოხი",
     "sense": 1,
-    "gram": "with"
+    "gram": "with",
+    "via": "form index"
    },
    {
     "form": "ძლივს",
-    "via": "headword",
     "word": "w:ძლივს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეასწრო",
-    "via": "form index",
     "word": "w:შეასწრებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "შინ",
-    "via": "headword",
     "word": "w:შინ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "მგელს",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "კარი",
-    "via": "headword",
     "word": "331",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცხვრიწინ",
-    "via": "form index",
     "word": "w:ცხვირწინ",
     "sense": 1,
-    "gram": "as spelled in the story"
+    "gram": "as spelled in the story",
+    "via": "form index"
    },
    {
     "form": "მიუხურა",
-    "via": "form index",
     "word": "w:მიუხურავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "სული",
-    "via": "headword",
     "word": "4304",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შებერვა",
-    "via": "headword",
     "word": "w:შებერვა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიწყო",
-    "via": "form index",
     "word": "w:იწყებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სახლის",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "სახურავიდან",
-    "via": "form index",
     "word": "1968",
     "sense": 1,
-    "gram": "from"
+    "gram": "from",
+    "via": "form index"
    },
    {
     "form": "აფრინდნენ",
-    "via": "form index",
     "word": "w:აფრინდება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ლერწმის",
-    "via": "form index",
     "word": "w:ლერწამი",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "რტოები",
-    "via": "form index",
     "word": "w:რტო",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "სახლის",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "კედლები",
-    "via": "form index",
     "word": "335",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "აჭრიალდა",
-    "via": "form index",
     "word": "w:აჭრიალდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "მეორედაც",
-    "via": "form index",
     "word": "w:მეორედ",
     "sense": 1,
-    "gram": "too"
+    "gram": "too",
+    "via": "form index"
    },
    {
     "form": "შეუბერა",
-    "via": "form index",
     "word": "w:უბერავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სული",
-    "via": "headword",
     "word": "4304",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "როცა",
-    "via": "headword",
     "word": "w:როცა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მესამედ",
-    "via": "headword",
     "word": "w:მესამედ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეუბერა",
-    "via": "form index",
     "word": "w:უბერავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სახლის",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "ნარჩენები",
-    "via": "form index",
     "word": "w:ნარჩენი",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "სხვადასხვა",
-    "via": "headword",
     "word": "2621",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მხარეს",
-    "via": "form index",
     "word": "2453",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "გაფრინდა",
-    "via": "form index",
     "word": "w:გაფრინდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "თითქოს",
-    "via": "headword",
     "word": "w:თითქოს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ქარიშხალი",
-    "via": "headword",
     "word": "w:ქარიშხალი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დატყდომოდა",
-    "via": "form index",
     "word": "w:დაატყდება",
     "sense": 1,
-    "gram": "Pluperfect 3sg"
+    "gram": "Pluperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "თავს",
-    "via": "form index",
     "word": "261",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ნიფ-ნიფი",
-    "via": "name",
-    "name": "Nif-Nif, one of the three pigs"
+    "name": "Nif-Nif, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "მოხერხებულად",
-    "via": "headword",
     "word": "w:მოხერხებულად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაუძვრა",
-    "via": "form index",
     "word": "w:დაუძვრება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მგელს",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ხელიდან",
-    "via": "form index",
     "word": "2233",
     "sense": 1,
-    "gram": "from"
+    "gram": "from",
+    "via": "form index"
    },
    {
     "form": "გაიქცა",
-    "via": "form index",
     "word": "w:გარბის",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "უმალ",
-    "via": "headword",
     "word": "w:უმალ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ნუფნუფის",
-    "via": "name",
-    "name": "Nuf-Nuf's (written without the hyphen here)"
+    "name": "Nuf-Nuf's (written without the hyphen here)",
+    "via": "name"
    },
    {
     "form": "კართან",
-    "via": "form index",
     "word": "331",
     "sense": 1,
-    "gram": "with"
+    "gram": "with",
+    "via": "form index"
    },
    {
     "form": "მიირბინა",
-    "via": "form index",
     "word": "w:მიირბენს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ძმებმა",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "erg.pl"
+    "gram": "erg.pl",
+    "via": "form index"
    },
    {
     "form": "კარის",
-    "via": "form index",
     "word": "331",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "დაკეტვა",
-    "via": "headword",
     "word": "w:დაკეტვა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძლივს",
-    "via": "headword",
     "word": "w:ძლივს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოასწრეს",
-    "via": "form index",
     "word": "w:მოასწრებს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგლის",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "ხმაც",
-    "via": "form index",
     "word": "2236",
     "sense": 1,
-    "gram": "too"
+    "gram": "too",
+    "via": "form index"
    },
    {
     "form": "მოისმა",
-    "via": "form index",
     "word": "w:მოისმის",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ახლა",
-    "via": "headword",
     "word": "94",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ორივეს",
-    "via": "form index",
     "word": "w:ორივე",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "გადაგსანსლავთ",
-    "via": "form index",
     "word": "w:გადასანსლავს",
     "sense": 1,
-    "gram": "Future 1sg > 2pl"
+    "gram": "Future 1sg > 2pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ნიფ-ნიფმა",
-    "via": "name",
-    "name": "Nif-Nif (ergative)"
+    "name": "Nif-Nif (ergative)",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ნუფ-ნუფმა",
-    "via": "name",
-    "name": "Nuf-Nuf (ergative)"
+    "name": "Nuf-Nuf (ergative)",
+    "via": "name"
    },
    {
     "form": "შიშით",
-    "via": "form index",
     "word": "2128",
     "sense": 1,
-    "gram": "inst"
+    "gram": "inst",
+    "via": "form index"
    },
    {
     "form": "გადახედეს",
-    "via": "form index",
     "word": "w:გადახედავს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ერთმანეთს",
-    "via": "form index",
     "word": "527",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძალიან",
-    "via": "headword",
     "word": "w:ძალიან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაღლილი",
-    "via": "headword",
     "word": "w:დაღლილი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "გადაწყვიტა",
-    "via": "form index",
     "word": "w:წყვეტს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ხერხი",
-    "via": "headword",
     "word": "w:ხერხი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ეხმარა",
-    "via": "form index",
     "word": "w:ხმარობს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "გადავიფიქრე",
-    "via": "form index",
     "word": "w:გადაიფიქრებს",
     "sense": 1,
-    "gram": "Aorist 1sg"
+    "gram": "Aorist 1sg",
+    "via": "form index"
    },
    {
     "form": "გოჭების",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "gen.pl"
+    "gram": "gen.pl",
+    "via": "form index"
    },
    {
     "form": "გასაგონად",
-    "via": "headword",
     "word": "w:გასაგონად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "განგებ",
-    "via": "headword",
     "word": "w:განგებ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თქვა",
-    "via": "form index",
     "word": "68",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ხმამაღლა",
-    "via": "headword",
     "word": "w:ხმამაღლა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შევჭამ",
-    "via": "form index",
     "word": "w:შეჭამს",
     "sense": 1,
-    "gram": "Future 1sg"
+    "gram": "Future 1sg",
+    "via": "form index"
    },
    {
     "form": "ამ",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "obl"
+    "gram": "obl",
+    "via": "form index"
    },
    {
     "form": "გაჩხიკინებულ",
-    "via": "form index",
     "word": "w:გაჩხიკინებული",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "გოჭებს",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "სჯობს",
-    "via": "form index",
     "word": "6072",
     "sense": 1,
-    "gram": "Present 3sg"
+    "gram": "Present 3sg",
+    "via": "form index"
    },
    {
     "form": "სახლში",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "წავიდე",
-    "via": "form index",
     "word": "w:მიდის",
     "sense": 1,
-    "gram": "Optative 1sg"
+    "gram": "Optative 1sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "გაიგონე",
-    "via": "form index",
     "word": "w:გაიგონებს",
     "sense": 1,
-    "gram": "Aorist 2sg"
+    "gram": "Aorist 2sg",
+    "via": "form index"
    },
    {
     "form": "ჰკითხა",
-    "via": "form index",
     "word": "w:ჰკითხავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნიფ-ნიფმა",
-    "via": "name",
-    "name": "Nif-Nif (ergative)"
+    "name": "Nif-Nif (ergative)",
+    "via": "name"
    },
    {
     "form": "ნუფ-ნუფს",
-    "via": "name",
-    "name": "Nuf-Nuf (dative)"
+    "name": "Nuf-Nuf (dative)",
+    "via": "name"
    },
    {
     "form": "თქვა",
-    "via": "form index",
     "word": "68",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეგვჭამს",
-    "via": "form index",
     "word": "w:შეჭამს",
     "sense": 1,
-    "gram": "Future 3sg > 1pl"
+    "gram": "Future 3sg > 1pl",
+    "via": "form index"
    },
    {
     "form": "ჩვენ",
-    "via": "headword",
     "word": "2147",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გაჩხიკინებულები",
-    "via": "form index",
     "word": "w:გაჩხიკინებული",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "ვართ",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Present 1pl"
+    "gram": "Present 1pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ძალიანაც",
-    "via": "form index",
     "word": "w:ძალიან",
     "sense": 1,
-    "gram": "too"
+    "gram": "too",
+    "via": "form index"
    },
    {
     "form": "კარგი",
-    "via": "headword",
     "word": "330",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თქვა",
-    "via": "form index",
     "word": "68",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნუფ-ნუფმა",
-    "via": "name",
-    "name": "Nuf-Nuf (ergative)"
+    "name": "Nuf-Nuf (ergative)",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "მაშინვე",
-    "via": "form index",
     "word": "w:მაშინ",
     "sense": 1,
-    "gram": "same"
+    "gram": "same",
+    "via": "form index"
    },
    {
     "form": "შეწყვიტა",
-    "via": "form index",
     "word": "w:შეწყვეტს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "კანკალი",
-    "via": "headword",
     "word": "w:კანკალი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "ძმები",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "ძალიან",
-    "via": "headword",
     "word": "w:ძალიან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გახალისდნენ",
-    "via": "form index",
     "word": "w:გახალისდება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "თითქოს",
-    "via": "headword",
     "word": "w:თითქოს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არაფერი",
-    "via": "headword",
     "word": "77",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მომხდარიყოს",
-    "via": "form index",
     "word": "6209",
     "sense": 1,
-    "gram": "Perfect subjunctive 3sg"
+    "gram": "Perfect subjunctive 3sg",
+    "via": "form index"
    },
    {
     "form": "სიმღერა",
-    "via": "headword",
     "word": "1976",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შემოსძახეს",
-    "via": "form index",
     "word": "w:შემოსძახებს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩვენ",
-    "via": "headword",
     "word": "2147",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "რას",
-    "via": "form index",
     "word": "1907",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "დაგვაკლებს",
-    "via": "form index",
     "word": "w:დააკლებს",
     "sense": 1,
-    "gram": "Future 3sg > 1pl"
+    "gram": "Future 3sg > 1pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "თითსაც",
-    "via": "form index",
     "word": "4292",
     "sense": 1,
-    "gram": "too.dat"
+    "gram": "too.dat",
+    "via": "form index"
    },
    {
     "form": "ვერ",
-    "via": "form index",
     "word": "4190",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "დაგვაკარებს",
-    "via": "form index",
     "word": "w:დააკარებს",
     "sense": 1,
-    "gram": "Future 3sg > 1pl"
+    "gram": "Future 3sg > 1pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "რუხი",
-    "via": "headword",
     "word": "w:რუხი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცბიერი",
-    "via": "headword",
     "word": "w:ცბიერი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "დადის",
-    "via": "form index",
     "word": "188",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ტყე-ტყე",
-    "via": "headword",
     "word": "w:ტყე-ტყე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მშიერი",
-    "via": "headword",
     "word": "w:მშიერი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "მელი",
-    "via": "form index",
     "word": "5749",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "წასვლას",
-    "via": "form index",
     "word": "w:წასვლა",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "სულაც",
-    "via": "form index",
     "word": "w:სულ",
     "sense": 1,
-    "gram": "too"
+    "gram": "too",
+    "via": "form index"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ფიქრობდა",
-    "via": "form index",
     "word": "2365",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "ის",
-    "via": "headword",
     "word": "300",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უბრალოდ",
-    "via": "headword",
     "word": "w:უბრალოდ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გვერდზე",
-    "via": "form index",
     "word": "w:გვერდი",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "გავიდა",
-    "via": "form index",
     "word": "w:გადის",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "დაიმალა",
-    "via": "form index",
     "word": "w:იმალება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ძალიან",
-    "via": "headword",
     "word": "w:ძალიან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ეცინებოდა",
-    "via": "form index",
     "word": "w:ეცინება",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "თავს",
-    "via": "form index",
     "word": "261",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ძლივს",
-    "via": "headword",
     "word": "w:ძლივს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იკავებდა",
-    "via": "form index",
     "word": "w:იკავებს",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ახარხარებულიყო",
-    "via": "form index",
     "word": "w:ახარხარდება",
     "sense": 1,
-    "gram": "Pluperfect 3sg"
+    "gram": "Pluperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "რა",
-    "via": "headword",
     "word": "1907",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მარჯვედ",
-    "via": "headword",
     "word": "w:მარჯვედ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოატყუა",
-    "via": "form index",
     "word": "w:ატყუებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ეს",
-    "via": "headword",
     "word": "207",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ორი",
-    "via": "headword",
     "word": "w:ორი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სულელი",
-    "via": "headword",
     "word": "w:სულელი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "პატარა",
-    "via": "headword",
     "word": "1895",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭი",
-    "via": "headword",
     "word": "510",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "როცა",
-    "via": "headword",
     "word": "w:როცა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭები",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "სავსებით",
-    "via": "headword",
     "word": "w:სავსებით",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დამშვიდდნენ",
-    "via": "form index",
     "word": "w:მშვიდდება",
     "sense": 1,
-    "gram": "Optative 3pl"
+    "gram": "Optative 3pl",
+    "via": "form index"
    },
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "ცხვრის",
-    "via": "form index",
     "word": "2174",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "ქურქი",
-    "via": "headword",
     "word": "w:ქურქი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აიღო",
-    "via": "form index",
     "word": "990",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ფრთხილად",
-    "via": "headword",
     "word": "w:ფრთხილად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მიუახლოვდა",
-    "via": "form index",
     "word": "w:უახლოვდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სახლს",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "კარებთან",
-    "via": "form index",
     "word": "331",
     "sense": 1,
-    "gram": "with.pl"
+    "gram": "with.pl",
+    "via": "form index"
    },
    {
     "form": "ქურქში",
-    "via": "form index",
     "word": "w:ქურქი",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "გაეხვია",
-    "via": "form index",
     "word": "w:ეხვევა",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "წყნარად",
-    "via": "form index",
     "word": "2423",
     "sense": 1,
-    "gram": "adv"
+    "gram": "adv",
+    "via": "form index"
    },
    {
     "form": "დააკაკუნა",
-    "via": "form index",
     "word": "w:აკაკუნებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ნიფ-ნიფი",
-    "via": "name",
-    "name": "Nif-Nif, one of the three pigs"
+    "name": "Nif-Nif, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ნუფ-ნუფი",
-    "via": "name",
-    "name": "Nuf-Nuf, one of the three pigs"
+    "name": "Nuf-Nuf, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "ძლიერ",
-    "via": "headword",
     "word": "6413",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეშინდნენ",
-    "via": "form index",
     "word": "w:შეშინდება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ვინ",
-    "via": "headword",
     "word": "231",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არის",
-    "via": "form index",
     "word": "148",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "იკითხეს",
-    "via": "form index",
     "word": "w:იკითხავს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "მათ",
-    "via": "form index",
     "word": "302",
     "sense": 1,
-    "gram": "erg/dat"
+    "gram": "erg/dat",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "კუდები",
-    "via": "form index",
     "word": "w:კუდი",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "ისევ",
-    "via": "headword",
     "word": "w:ისევ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აუცახცახდათ",
-    "via": "form index",
     "word": "w:აცახცახდება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ეს",
-    "via": "headword",
     "word": "207",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მე-ე-ე",
-    "via": "form index",
     "word": "40",
     "sense": 1,
-    "gram": "drawn out, as the wolf bleats it"
+    "gram": "drawn out, as the wolf bleats it",
+    "via": "form index"
    },
    {
     "form": "ვარ",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Present 1sg"
+    "gram": "Present 1sg",
+    "via": "form index"
    },
    {
     "form": "საწყალი",
-    "via": "headword",
     "word": "w:საწყალი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "პატარა",
-    "via": "headword",
     "word": "1895",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ბეკეკა",
-    "via": "headword",
     "word": "w:ბეკეკა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიწრიპინა",
-    "via": "form index",
     "word": "w:დაიწრიპინებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "წვრილი",
-    "via": "headword",
     "word": "2420",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უცხო",
-    "via": "headword",
     "word": "2047",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ხმით",
-    "via": "form index",
     "word": "2236",
     "sense": 1,
-    "gram": "inst"
+    "gram": "inst",
+    "via": "form index"
    },
    {
     "form": "შემომიშვით",
-    "via": "form index",
     "word": "w:შემოუშვებს",
     "sense": 1,
-    "gram": "Imperative 2pl > 1sg"
+    "gram": "Imperative 2pl > 1sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ღამე",
-    "via": "headword",
     "word": "2089",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გამათენებინეთ",
-    "via": "form index",
     "word": "w:გაათენებინებს",
     "sense": 1,
-    "gram": "Imperative 2pl > 1sg"
+    "gram": "Imperative 2pl > 1sg",
+    "via": "form index"
    },
    {
     "form": "ფარას",
-    "via": "form index",
     "word": "w:ფარა",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ჩამოვრჩი",
-    "via": "form index",
     "word": "w:ჩამორჩება",
     "sense": 1,
-    "gram": "Aorist 1sg"
+    "gram": "Aorist 1sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ძალიან",
-    "via": "headword",
     "word": "w:ძალიან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაღლილი",
-    "via": "headword",
     "word": "w:დაღლილი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვარ",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Present 1sg"
+    "gram": "Present 1sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "შემოვუშვათ",
-    "via": "form index",
     "word": "w:შემოუშვებს",
     "sense": 1,
-    "gram": "Optative 1pl"
+    "gram": "Optative 1pl",
+    "via": "form index"
    },
    {
     "form": "ჰკითხა",
-    "via": "form index",
     "word": "w:ჰკითხავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ძმას",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "კეთილმა",
-    "via": "form index",
     "word": "336",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "ნიფ-ნიფმა",
-    "via": "name",
-    "name": "Nif-Nif (ergative)"
+    "name": "Nif-Nif (ergative)",
+    "via": "name"
    }
   ],
   [
    {
     "form": "ბეკეკას",
-    "via": "form index",
     "word": "w:ბეკეკა",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "შემოშვება",
-    "via": "headword",
     "word": "w:შემოშვება",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეიძლება",
-    "via": "form index",
     "word": "2389",
     "sense": 1,
-    "gram": "Present 3sg"
+    "gram": "Present 3sg",
+    "via": "form index"
    },
    {
     "form": "დათანხმდა",
-    "via": "form index",
     "word": "w:დათანხმდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნუფ-ნუფი",
-    "via": "name",
-    "name": "Nuf-Nuf, one of the three pigs"
+    "name": "Nuf-Nuf, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "ბეკეკა",
-    "via": "headword",
     "word": "w:ბეკეკა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ხომ",
-    "via": "headword",
     "word": "w:ხომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არის",
-    "via": "form index",
     "word": "148",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    }
   ],
   [
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "როცა",
-    "via": "headword",
     "word": "w:როცა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭებმა",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "erg.pl"
+    "gram": "erg.pl",
+    "via": "form index"
    },
    {
     "form": "კარი",
-    "via": "headword",
     "word": "331",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გამოაღეს",
-    "via": "form index",
     "word": "w:გამოაღებს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "იქ",
-    "via": "headword",
     "word": "303",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ბეკეკა",
-    "via": "headword",
     "word": "w:ბეკეკა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არა",
-    "via": "headword",
     "word": "147",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კბილებდაკრეჭილი",
-    "via": "headword",
     "word": "w:კბილებდაკრეჭილი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იდგა",
-    "via": "form index",
     "word": "196",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ძმებმა",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "erg.pl"
+    "gram": "erg.pl",
+    "via": "form index"
    },
    {
     "form": "სასწრაფოდ",
-    "via": "headword",
     "word": "w:სასწრაფოდ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მიაჯახუნეს",
-    "via": "form index",
     "word": "w:მიაჯახუნებს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "კარები",
-    "via": "form index",
     "word": "331",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "მთელი",
-    "via": "headword",
     "word": "5762",
-    "sense": 2
+    "sense": 2,
+    "via": "headword"
    },
    {
     "form": "ძალით",
-    "via": "form index",
     "word": "w:ძალა",
     "sense": 1,
-    "gram": "inst"
+    "gram": "inst",
+    "via": "form index"
    },
    {
     "form": "მიაწვნენ",
-    "via": "form index",
     "word": "w:აწვება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "საშიში",
-    "via": "headword",
     "word": "2581",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მხეცი",
-    "via": "headword",
     "word": "w:მხეცი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შემოვარდნილიყო",
-    "via": "form index",
     "word": "w:შემოვარდება",
     "sense": 1,
-    "gram": "Pluperfect 3sg"
+    "gram": "Pluperfect 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძალიან",
-    "via": "headword",
     "word": "w:ძალიან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გაბრაზდა",
-    "via": "form index",
     "word": "w:გაბრაზდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "გოჭების",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "gen.pl"
+    "gram": "gen.pl",
+    "via": "form index"
    },
    {
     "form": "მოტყუება",
-    "via": "headword",
     "word": "w:მოტყუება",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვერ",
-    "via": "form index",
     "word": "4190",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "შეძლო",
-    "via": "form index",
     "word": "w:შეძლებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ცხვრის",
-    "via": "form index",
     "word": "2174",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "ქურქი",
-    "via": "headword",
     "word": "w:ქურქი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოისროლა",
-    "via": "form index",
     "word": "w:მოისვრის",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "დაიღრიალა",
-    "via": "form index",
     "word": "w:დაიღრიალებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "აბა",
-    "via": "override",
     "word": "1013",
     "sense": 2,
+    "via": "override",
     "comment": "the wolf threatening the pigs, not egging anyone on — 57:0 is the same spelling in its other sense"
    },
    {
     "form": "დამაცადეთ",
-    "via": "form index",
     "word": "w:დააცადებს",
     "sense": 1,
-    "gram": "Imperative 2pl > 1sg"
+    "gram": "Imperative 2pl > 1sg",
+    "via": "form index"
    },
    {
     "form": "ამ",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "obl"
+    "gram": "obl",
+    "via": "form index"
    },
    {
     "form": "სახლისაგან",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "from.gen"
+    "gram": "from.gen",
+    "via": "form index"
    },
    {
     "form": "აღარაფერი",
-    "via": "headword",
     "word": "w:აღარაფერი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დარჩება",
-    "via": "form index",
     "word": "5973",
     "sense": 1,
-    "gram": "Future 3sg"
+    "gram": "Future 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "სულის",
-    "via": "form index",
     "word": "w:სულ",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "შებერვა",
-    "via": "headword",
     "word": "w:შებერვა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიწყო",
-    "via": "form index",
     "word": "w:იწყებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სახლი",
-    "via": "headword",
     "word": "1967",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ოდნავ",
-    "via": "headword",
     "word": "w:ოდნავ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეირხა",
-    "via": "form index",
     "word": "w:შეირხევა",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "შეუბერა",
-    "via": "form index",
     "word": "w:უბერავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მეორედ",
-    "via": "headword",
     "word": "w:მეორედ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მესამედ",
-    "via": "headword",
     "word": "w:მესამედ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მეოთხედ",
-    "via": "headword",
     "word": "w:მეოთხედ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "სახურავიდან",
-    "via": "form index",
     "word": "1968",
     "sense": 1,
-    "gram": "from"
+    "gram": "from",
+    "via": "form index"
    },
    {
     "form": "აფრინდნენ",
-    "via": "form index",
     "word": "w:აფრინდება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ფოთლები",
-    "via": "form index",
     "word": "2059",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "აჭრიალდნენ",
-    "via": "form index",
     "word": "w:აჭრიალდება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "კედლები",
-    "via": "form index",
     "word": "335",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სახლი",
-    "via": "headword",
     "word": "1967",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჯერ",
-    "via": "headword",
     "word": "w:ჯერ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კიდევ",
-    "via": "headword",
     "word": "w:კიდევ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იდგა",
-    "via": "form index",
     "word": "196",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "როცა",
-    "via": "headword",
     "word": "w:როცა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "მეხუთეჯერ",
-    "via": "headword",
     "word": "w:მეხუთეჯერ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეუბერა",
-    "via": "form index",
     "word": "w:უბერავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სული",
-    "via": "headword",
     "word": "4304",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სახლი",
-    "via": "headword",
     "word": "1967",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიშალა",
-    "via": "form index",
     "word": "w:დაიშლება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მხოლოდ",
-    "via": "headword",
     "word": "w:მხოლოდ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კარი",
-    "via": "headword",
     "word": "331",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იდგა",
-    "via": "form index",
     "word": "196",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "რამოდენიმე",
-    "via": "headword",
     "word": "w:რამოდენიმე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ხანს",
-    "via": "form index",
     "word": "2228",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ნანგრევებს",
-    "via": "form index",
     "word": "w:ნანგრევი",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "შორის",
-    "via": "headword",
     "word": "w:შორის",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "გულგახეთქილი",
-    "via": "headword",
     "word": "w:გულგახეთქილი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭები",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "თავქუდმოგლეჯილნი",
-    "via": "form index",
     "word": "w:თავქუდმოგლეჯილი",
     "sense": 1,
-    "gram": "pl"
+    "gram": "pl",
+    "via": "form index"
    },
    {
     "form": "გაიქცნენ",
-    "via": "form index",
     "word": "w:გარბის",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "შიშისგან",
-    "via": "form index",
     "word": "2128",
     "sense": 1,
-    "gram": "from.gen"
+    "gram": "from.gen",
+    "via": "form index"
    },
    {
     "form": "მუხლები",
-    "via": "form index",
     "word": "2444",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "ეკვეთებოდათ",
-    "via": "form index",
     "word": "w:ეკვეთება",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "ყველა",
-    "via": "headword",
     "word": "2101",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ნაკვთი",
-    "via": "headword",
     "word": "w:ნაკვთი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უკრთოდათ",
-    "via": "form index",
     "word": "w:უკრთის",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "ცხვირები",
-    "via": "form index",
     "word": "2175",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "გამოუშრათ",
-    "via": "form index",
     "word": "w:გამოუშრება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ძმები",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "ნაფ-ნაფის",
-    "via": "name",
-    "name": "Naf-Naf's"
+    "name": "Naf-Naf's",
+    "via": "name"
    },
    {
     "form": "სახლისაკენ",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "towards.gen"
+    "gram": "towards.gen",
+    "via": "form index"
    },
    {
     "form": "გარბოდნენ",
-    "via": "form index",
     "word": "w:გარბის",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უზარმაზარი",
-    "via": "headword",
     "word": "w:უზარმაზარი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ნაბიჯებით",
-    "via": "form index",
     "word": "w:ნაბიჯი",
     "sense": 1,
-    "gram": "inst.pl"
+    "gram": "inst.pl",
+    "via": "form index"
    },
    {
     "form": "მისდევდათ",
-    "via": "form index",
     "word": "w:მისდევს",
     "sense": 1,
-    "gram": "Imperfect 3sg > 3pl"
+    "gram": "Imperfect 3sg > 3pl",
+    "via": "form index"
    },
    {
     "form": "ერთხელ",
-    "via": "headword",
     "word": "206",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ნიფ-ნიფს",
-    "via": "name",
-    "name": "Nif-Nif (dative)"
+    "name": "Nif-Nif (dative)",
+    "via": "name"
    },
    {
     "form": "უკანა",
-    "via": "headword",
     "word": "w:უკანა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ფეხშიც",
-    "via": "form index",
     "word": "2056",
     "sense": 1,
-    "gram": "too.in"
+    "gram": "too.in",
+    "via": "form index"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სწვდა",
-    "via": "form index",
     "word": "w:სწვდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ის",
-    "via": "headword",
     "word": "300",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დროულად",
-    "via": "headword",
     "word": "w:დროულად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გათავისუფლა",
-    "via": "form index",
     "word": "w:ათავისუფლებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მგლის",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "კლანჭებისაგან",
-    "via": "form index",
     "word": "w:კლანჭი",
     "sense": 1,
-    "gram": "from.gen.pl"
+    "gram": "from.gen.pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ფეხს",
-    "via": "form index",
     "word": "2056",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "აუჩქარა",
-    "via": "form index",
     "word": "w:აჩქარებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ფეხს",
-    "via": "form index",
     "word": "2056",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "აუჩქარა",
-    "via": "form index",
     "word": "w:აჩქარებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მგელმაც",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "too.erg"
+    "gram": "too.erg",
+    "via": "form index"
    },
    {
     "form": "ის",
-    "via": "headword",
     "word": "300",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დარწმუნებული",
-    "via": "headword",
     "word": "w:დარწმუნებული",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭები",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "ვეღარ",
-    "via": "headword",
     "word": "w:ვეღარ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაუსხლტებოდნენ",
-    "via": "form index",
     "word": "w:დაუსხლტება",
     "sense": 1,
-    "gram": "Conditional 3pl"
+    "gram": "Conditional 3pl",
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არც",
-    "via": "headword",
     "word": "5359",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ამჯერად",
-    "via": "headword",
     "word": "w:ამჯერად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გაუმართლა",
-    "via": "form index",
     "word": "w:გაუმართლებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "გოჭებმა",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "erg.pl"
+    "gram": "erg.pl",
+    "via": "form index"
    },
    {
     "form": "სწრაფად",
-    "via": "headword",
     "word": "2348",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩაუქროლეს",
-    "via": "form index",
     "word": "w:ჩაუქროლებს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ვაშლის",
-    "via": "form index",
     "word": "219",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "ხეს",
-    "via": "form index",
     "word": "2232",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ისე",
-    "via": "headword",
     "word": "585",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არც",
-    "via": "headword",
     "word": "5359",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეხებიან",
-    "via": "form index",
     "word": "w:ეხება",
     "sense": 1,
-    "gram": "Perfect 3pl"
+    "gram": "Perfect 3pl",
+    "via": "form index"
    },
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თავი",
-    "via": "headword",
     "word": "261",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვეღარ",
-    "via": "headword",
     "word": "w:ვეღარ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეიკავა",
-    "via": "form index",
     "word": "w:შეიკავებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "პირდაპირ",
-    "via": "headword",
     "word": "6345",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ხეს",
-    "via": "form index",
     "word": "2232",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "შეეჯახა",
-    "via": "form index",
     "word": "w:შეეჯახება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ხიდან",
-    "via": "form index",
     "word": "2232",
     "sense": 1,
-    "gram": "from"
+    "gram": "from",
+    "via": "form index"
    },
    {
     "form": "უამრავი",
-    "via": "headword",
     "word": "w:უამრავი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვაშლი",
-    "via": "headword",
     "word": "219",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩამოცვივდა",
-    "via": "form index",
     "word": "w:ჩამოცვივა",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ერთი",
-    "via": "headword",
     "word": "46",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მაგარი",
-    "via": "headword",
     "word": "369",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვაშლი",
-    "via": "headword",
     "word": "219",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელს",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "თვალებს",
-    "via": "form index",
     "word": "265",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "შუა",
-    "via": "headword",
     "word": "2133",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაეცა",
-    "via": "form index",
     "word": "5567",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "შუბლზე",
-    "via": "form index",
     "word": "2137",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "უზარმაზარი",
-    "via": "headword",
     "word": "w:უზარმაზარი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კოპი",
-    "via": "headword",
     "word": "w:კოპი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დააჯდა",
-    "via": "form index",
     "word": "w:დააჯდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ცოცხალ-მკვდარი",
-    "via": "headword",
     "word": "w:ცოცხალ-მკვდარი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ნიფ-ნიფი",
-    "via": "name",
-    "name": "Nif-Nif, one of the three pigs"
+    "name": "Nif-Nif, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ნუფ-ნუფი",
-    "via": "name",
-    "name": "Nuf-Nuf, one of the three pigs"
+    "name": "Nuf-Nuf, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ამასობაში",
-    "via": "headword",
     "word": "w:ამასობაში",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ნაფ-ნაფის",
-    "via": "name",
-    "name": "Naf-Naf's"
+    "name": "Naf-Naf's",
+    "via": "name"
    },
    {
     "form": "სახლთან",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "with"
+    "gram": "with",
+    "via": "form index"
    },
    {
     "form": "მიიჭრნენ",
-    "via": "form index",
     "word": "w:მიიჭრება",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ძმამ",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "სახლში",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "შეიყვანა",
-    "via": "form index",
     "word": "w:შეიყვანს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "საბრალო",
-    "via": "headword",
     "word": "w:საბრალო",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭები",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "ისე",
-    "via": "headword",
     "word": "585",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეშინებულიყვნენ",
-    "via": "form index",
     "word": "w:შეშინდება",
     "sense": 1,
-    "gram": "Pluperfect 3pl"
+    "gram": "Pluperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ხმას",
-    "via": "form index",
     "word": "2236",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ვერ",
-    "via": "form index",
     "word": "4190",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "იღებდნენ",
-    "via": "form index",
     "word": "990",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "ნაფ-ნაფი",
-    "via": "name",
-    "name": "Naf-Naf, one of the three pigs"
+    "name": "Naf-Naf, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "მაშინვე",
-    "via": "form index",
     "word": "w:მაშინ",
     "sense": 1,
-    "gram": "same"
+    "gram": "same",
+    "via": "form index"
    },
    {
     "form": "მიხვდა",
-    "via": "form index",
     "word": "w:მიხვდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძმებს",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოსდევდათ",
-    "via": "form index",
     "word": "w:მისდევს",
     "sense": 1,
-    "gram": "Imperfect 3sg > 3pl"
+    "gram": "Imperfect 3sg > 3pl",
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თავის",
-    "via": "form index",
     "word": "252",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ქვის",
-    "via": "form index",
     "word": "2078",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "სახლში",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "მას",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "არაფრისა",
-    "via": "form index",
     "word": "77",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "ეშინოდა",
-    "via": "form index",
     "word": "w:ეშინია",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "სწრაფად",
-    "via": "headword",
     "word": "2348",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გადაკეტა",
-    "via": "form index",
     "word": "w:გადაკეტავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ურდული",
-    "via": "headword",
     "word": "w:ურდული",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სკამზე",
-    "via": "form index",
     "word": "1982",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "ჩამოჯდა",
-    "via": "form index",
     "word": "w:ჩამოჯდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ხმამაღლა",
-    "via": "headword",
     "word": "w:ხმამაღლა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შემოსძახა",
-    "via": "form index",
     "word": "w:შემოსძახებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩვენ",
-    "via": "headword",
     "word": "2147",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "რას",
-    "via": "form index",
     "word": "1907",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "დაგვაკლებს",
-    "via": "form index",
     "word": "w:დააკლებს",
     "sense": 1,
-    "gram": "Future 3sg > 1pl"
+    "gram": "Future 3sg > 1pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "თითსაც",
-    "via": "form index",
     "word": "4292",
     "sense": 1,
-    "gram": "too.dat"
+    "gram": "too.dat",
+    "via": "form index"
    },
    {
     "form": "ვერ",
-    "via": "form index",
     "word": "4190",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "დაგვაკარებს",
-    "via": "form index",
     "word": "w:დააკარებს",
     "sense": 1,
-    "gram": "Future 3sg > 1pl"
+    "gram": "Future 3sg > 1pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "რუხი",
-    "via": "headword",
     "word": "w:რუხი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცბიერი",
-    "via": "headword",
     "word": "w:ცბიერი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "დადის",
-    "via": "form index",
     "word": "188",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ტყე-ტყე",
-    "via": "headword",
     "word": "w:ტყე-ტყე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მშიერი",
-    "via": "headword",
     "word": "w:მშიერი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ზუსტად",
-    "via": "headword",
     "word": "4362",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ამ",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "obl"
+    "gram": "obl",
+    "via": "form index"
    },
    {
     "form": "დროს",
-    "via": "form index",
     "word": "141",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "კარზე",
-    "via": "form index",
     "word": "331",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "კაკუნი",
-    "via": "headword",
     "word": "w:კაკუნი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოისმა",
-    "via": "form index",
     "word": "w:მოისმის",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ვინ",
-    "via": "headword",
     "word": "231",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არის",
-    "via": "form index",
     "word": "148",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "მშვიდად",
-    "via": "form index",
     "word": "5819",
     "sense": 1,
-    "gram": "adv"
+    "gram": "adv",
+    "via": "form index"
    },
    {
     "form": "ჰკითხა",
-    "via": "form index",
     "word": "w:ჰკითხავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნანფ-ნაფმა",
-    "via": "name",
-    "name": "Naf-Naf (ergative; spelled ნანფ- here)"
+    "name": "Naf-Naf (ergative; spelled ნანფ- here)",
+    "via": "name"
    }
   ],
   [
    {
     "form": "ბევრს",
-    "via": "form index",
     "word": "115",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ნუ",
-    "via": "headword",
     "word": "w:ნუ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ლაპარაკობ",
-    "via": "form index",
     "word": "361",
     "sense": 1,
-    "gram": "Present 2sg"
+    "gram": "Present 2sg",
+    "via": "form index"
    },
    {
     "form": "კარი",
-    "via": "headword",
     "word": "331",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გამიღე",
-    "via": "form index",
     "word": "w:გააღებს",
     "sense": 1,
-    "gram": "Imperative 2sg > 1sg"
+    "gram": "Imperative 2sg > 1sg",
+    "via": "form index"
    },
    {
     "form": "მოისმა",
-    "via": "form index",
     "word": "w:მოისმის",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მგლის",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "უხეში",
-    "via": "headword",
     "word": "w:უხეში",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ხმა",
-    "via": "headword",
     "word": "2236",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "რას",
-    "via": "form index",
     "word": "1907",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "მელაპარაკები",
-    "via": "form index",
     "word": "w:ელაპარაკება",
     "sense": 1,
-    "gram": "Present 2sg > 1sg"
+    "gram": "Present 2sg > 1sg",
+    "via": "form index"
    },
    {
     "form": "არც",
-    "via": "headword",
     "word": "5359",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვიფიქრებ",
-    "via": "form index",
     "word": "2365",
     "sense": 1,
-    "gram": "Future 1sg"
+    "gram": "Future 1sg",
+    "via": "form index"
    },
    {
     "form": "მტკიცედ",
-    "via": "form index",
     "word": "w:მტკიცე",
     "sense": 1,
-    "gram": "adv"
+    "gram": "adv",
+    "via": "form index"
    },
    {
     "form": "მიუგო",
-    "via": "form index",
     "word": "w:მიუგებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნაფ-ნაფმა",
-    "via": "name",
-    "name": "Naf-Naf (ergative)"
+    "name": "Naf-Naf (ergative)",
+    "via": "name"
    }
   ],
   [
    {
     "form": "აჰ",
-    "via": "headword",
     "word": "w:აჰ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ასე",
-    "via": "headword",
     "word": "471",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ხომ",
-    "via": "headword",
     "word": "w:ხომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აბა",
-    "via": "override",
     "word": "1013",
     "sense": 2,
+    "via": "override",
     "comment": "the wolf threatening again"
    },
    {
     "form": "დამაცადე",
-    "via": "form index",
     "word": "w:დააცადებს",
     "sense": 1,
-    "gram": "Imperative 2sg > 1sg"
+    "gram": "Imperative 2sg > 1sg",
+    "via": "form index"
    },
    {
     "form": "ახლავე",
-    "via": "headword",
     "word": "5388",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სამივეს",
-    "via": "form index",
     "word": "w:სამივე",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "შეგსანსლავთ",
-    "via": "form index",
     "word": "w:შესანსლავს",
     "sense": 1,
-    "gram": "Future 1sg > 2pl"
+    "gram": "Future 1sg > 2pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "აბა",
-    "via": "headword",
     "word": "1013",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მიდი",
-    "via": "form index",
     "word": "w:მიდის",
     "sense": 1,
-    "gram": "Imperative 2sg"
+    "gram": "Imperative 2sg",
+    "via": "form index"
    },
    {
     "form": "უპასუხა",
-    "via": "form index",
     "word": "5935",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნაფ-ნაფმა",
-    "via": "name",
-    "name": "Naf-Naf (ergative)"
+    "name": "Naf-Naf (ergative)",
+    "via": "name"
    },
    {
     "form": "ისე",
-    "via": "headword",
     "word": "585",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სკამზე",
-    "via": "form index",
     "word": "1982",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "არც",
-    "via": "headword",
     "word": "5359",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შენძრეულა",
-    "via": "form index",
     "word": "w:შეინძრევა",
     "sense": 1,
-    "gram": "Perfect 3sg"
+    "gram": "Perfect 3sg",
+    "via": "form index"
    },
    {
     "form": "მან",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "იცოდა",
-    "via": "form index",
     "word": "308",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მტკიცე",
-    "via": "headword",
     "word": "w:მტკიცე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ქვის",
-    "via": "form index",
     "word": "2078",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "სახლში",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "არც",
-    "via": "headword",
     "word": "5359",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მას",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "არც",
-    "via": "headword",
     "word": "5359",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მის",
-    "via": "form index",
     "word": "408",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ძმებს",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "საშიშროება",
-    "via": "headword",
     "word": "w:საშიშროება",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ელოდათ",
-    "via": "form index",
     "word": "202",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "მაშინ",
-    "via": "headword",
     "word": "w:მაშინ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "ღრმად",
-    "via": "headword",
     "word": "w:ღრმად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩაისუნთქა",
-    "via": "form index",
     "word": "w:ჩაისუნთქავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "სულის",
-    "via": "form index",
     "word": "w:სულ",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "ბერვა",
-    "via": "headword",
     "word": "w:ბერვა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიწყო",
-    "via": "form index",
     "word": "w:იწყებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "რამდენიც",
-    "via": "form index",
     "word": "1909",
     "sense": 1,
-    "gram": "too"
+    "gram": "too",
+    "via": "form index"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უბერა",
-    "via": "form index",
     "word": "w:უბერავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ერთ",
-    "via": "form index",
     "word": "46",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "პატარა",
-    "via": "headword",
     "word": "1895",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ქვასაც",
-    "via": "form index",
     "word": "2078",
     "sense": 1,
-    "gram": "too.dat"
+    "gram": "too.dat",
+    "via": "form index"
    },
    {
     "form": "ვერ",
-    "via": "form index",
     "word": "4190",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "უყო",
-    "via": "form index",
     "word": "w:უყოფს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ძვრა",
-    "via": "headword",
     "word": "w:ძვრა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სულ",
-    "via": "headword",
     "word": "w:სულ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გალურჯდა",
-    "via": "form index",
     "word": "w:გალურჯდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სახლი",
-    "via": "headword",
     "word": "1967",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ციხე-სიმაგრესავით",
-    "via": "form index",
     "word": "w:ციხე-სიმაგრე",
     "sense": 1,
-    "gram": "like.dat"
+    "gram": "like.dat",
+    "via": "form index"
    },
    {
     "form": "იდგა",
-    "via": "form index",
     "word": "196",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მაშინ",
-    "via": "headword",
     "word": "w:მაშინ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "კარებს",
-    "via": "form index",
     "word": "331",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "დაუწყო",
-    "via": "form index",
     "word": "w:დაუწყებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ჯაჯგური",
-    "via": "headword",
     "word": "w:ჯაჯგური",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არც",
-    "via": "headword",
     "word": "5359",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კარი",
-    "via": "headword",
     "word": "331",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაემორჩილა",
-    "via": "form index",
     "word": "w:ემორჩილება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "გააფთრებულმა",
-    "via": "form index",
     "word": "w:გააფთრებული",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "სახლის",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "კედლების",
-    "via": "form index",
     "word": "335",
     "sense": 1,
-    "gram": "gen.pl"
+    "gram": "gen.pl",
+    "via": "form index"
    },
    {
     "form": "ფხაჭნა",
-    "via": "headword",
     "word": "w:ფხაჭნა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ქვების",
-    "via": "form index",
     "word": "2078",
     "sense": 1,
-    "gram": "gen.pl"
+    "gram": "gen.pl",
+    "via": "form index"
    },
    {
     "form": "ღრღნა",
-    "via": "headword",
     "word": "w:ღრღნა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიწყო",
-    "via": "form index",
     "word": "w:იწყებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ამით",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "inst"
+    "gram": "inst",
+    "via": "form index"
    },
    {
     "form": "მხოლოდ",
-    "via": "headword",
     "word": "w:მხოლოდ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კლანჭები",
-    "via": "form index",
     "word": "w:კლანჭი",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "კბილები",
-    "via": "form index",
     "word": "334",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "დაიმტვრია",
-    "via": "form index",
     "word": "w:დაიმტვრევს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მშიერ",
-    "via": "form index",
     "word": "w:მშიერი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ბოროტ",
-    "via": "form index",
     "word": "w:ბოროტი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "მგელს",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ისღა",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "only"
+    "gram": "only",
+    "via": "form index"
    },
    {
     "form": "დარჩენოდა",
-    "via": "form index",
     "word": "5973",
     "sense": 1,
-    "gram": "Pluperfect 3sg"
+    "gram": "Pluperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კუდამოძუებული",
-    "via": "headword",
     "word": "w:კუდამოძუებული",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ტყეში",
-    "via": "form index",
     "word": "2029",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "დაბრუნებულიყო",
-    "via": "form index",
     "word": "w:ბრუნდება",
     "sense": 1,
-    "gram": "Pluperfect 3sg"
+    "gram": "Pluperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უცებ",
-    "via": "headword",
     "word": "w:უცებ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სახურავზე",
-    "via": "form index",
     "word": "1968",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "თვალი",
-    "via": "headword",
     "word": "265",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოჰკრა",
-    "via": "form index",
     "word": "w:მოჰკრავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "დიდ",
-    "via": "form index",
     "word": "41",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "განიერ",
-    "via": "form index",
     "word": "w:განიერი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "მილს",
-    "via": "form index",
     "word": "w:მილი",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "აჰა",
-    "via": "headword",
     "word": "w:აჰა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აი",
-    "via": "headword",
     "word": "4186",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ამ",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "obl"
+    "gram": "obl",
+    "via": "form index"
    },
    {
     "form": "მილით",
-    "via": "form index",
     "word": "w:მილი",
     "sense": 1,
-    "gram": "inst"
+    "gram": "inst",
+    "via": "form index"
    },
    {
     "form": "მოვხვდები",
-    "via": "form index",
     "word": "w:მოხვდება",
     "sense": 1,
-    "gram": "Future 1sg"
+    "gram": "Future 1sg",
+    "via": "form index"
    },
    {
     "form": "სახლში",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "გაუხარდა",
-    "via": "form index",
     "word": "w:გაუხარდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მგელს",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ის",
-    "via": "headword",
     "word": "300",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ფრთხილად",
-    "via": "headword",
     "word": "w:ფრთხილად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აძვრა",
-    "via": "form index",
     "word": "w:აძვრება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სახურავზე",
-    "via": "form index",
     "word": "1968",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "მიაყურადა",
-    "via": "form index",
     "word": "w:მიაყურადებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სახლში",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "სიწყნარე",
-    "via": "headword",
     "word": "w:სიწყნარე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "დღეს",
-    "via": "headword",
     "word": "6248",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აუცილებლად",
-    "via": "headword",
     "word": "768",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შევჭამ",
-    "via": "form index",
     "word": "w:შეჭამს",
     "sense": 1,
-    "gram": "Future 1sg"
+    "gram": "Future 1sg",
+    "via": "form index"
    },
    {
     "form": "ამ",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "obl"
+    "gram": "obl",
+    "via": "form index"
    },
    {
     "form": "გოჭებს",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "გაიფიქრა",
-    "via": "form index",
     "word": "w:გაიფიქრებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "მილში",
-    "via": "form index",
     "word": "w:მილი",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "ჩაძვრა",
-    "via": "form index",
     "word": "w:ჩაძვრება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "როგორც",
-    "via": "headword",
     "word": "w:როგორც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მილში",
-    "via": "form index",
     "word": "w:მილი",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "ჩასვლა",
-    "via": "headword",
     "word": "w:ჩასვლა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიწყო",
-    "via": "form index",
     "word": "w:იწყებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "გოჭებმა",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "erg.pl"
+    "gram": "erg.pl",
+    "via": "form index"
    },
    {
     "form": "ხმაური",
-    "via": "headword",
     "word": "2787",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გაიგეს",
-    "via": "form index",
     "word": "w:იგებს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "როცა",
-    "via": "headword",
     "word": "w:როცა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ბუხარში",
-    "via": "form index",
     "word": "w:ბუხარი",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "ცეცხლზე",
-    "via": "form index",
     "word": "w:ცეცხლი",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "შემოდგმული",
-    "via": "headword",
     "word": "w:შემოდგმული",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ქვაბის",
-    "via": "form index",
     "word": "2373",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "სახურავზე",
-    "via": "form index",
     "word": "1968",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "ჭვარტლი",
-    "via": "headword",
     "word": "w:ჭვარტლი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიყარა",
-    "via": "form index",
     "word": "w:დაიყრება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ჭკვიანი",
-    "via": "headword",
     "word": "2223",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ნაფ-ნაფი",
-    "via": "name",
-    "name": "Naf-Naf, one of the three pigs"
+    "name": "Naf-Naf, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "მაშინვე",
-    "via": "form index",
     "word": "w:მაშინ",
     "sense": 1,
-    "gram": "same"
+    "gram": "same",
+    "via": "form index"
    },
    {
     "form": "მიხვდა",
-    "via": "form index",
     "word": "w:მიხვდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "რაშიც",
-    "via": "form index",
     "word": "1907",
     "sense": 1,
-    "gram": "too.in"
+    "gram": "too.in",
+    "via": "form index"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "საქმე",
-    "via": "headword",
     "word": "1958",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სწრაფად",
-    "via": "headword",
     "word": "2348",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მივარდა",
-    "via": "form index",
     "word": "w:მივარდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ქვაბს",
-    "via": "form index",
     "word": "2373",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "რომელშიც",
-    "via": "form index",
     "word": "1927",
     "sense": 1,
-    "gram": "too.in"
+    "gram": "too.in",
+    "via": "form index"
    },
    {
     "form": "წყალი",
-    "via": "headword",
     "word": "2215",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დუღდა",
-    "via": "form index",
     "word": "w:დუღს",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "სახურავი",
-    "via": "headword",
     "word": "1968",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გადახადა",
-    "via": "form index",
     "word": "w:გადახდის",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "მობრძანდით",
-    "via": "form index",
     "word": "w:მობრძანდება",
     "sense": 1,
-    "gram": "Imperative 2pl"
+    "gram": "Imperative 2pl",
+    "via": "form index"
    },
    {
     "form": "თქვა",
-    "via": "form index",
     "word": "68",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნაფ-ნაფმა",
-    "via": "name",
-    "name": "Naf-Naf (ergative)"
+    "name": "Naf-Naf (ergative)",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ძმებს",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "თვალი",
-    "via": "headword",
     "word": "265",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩაუკრა",
-    "via": "form index",
     "word": "w:ჩაუკრავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნიფ-ნიფი",
-    "via": "name",
-    "name": "Nif-Nif, one of the three pigs"
+    "name": "Nif-Nif, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ნუფ-ნუფი",
-    "via": "name",
-    "name": "Nuf-Nuf, one of the three pigs"
+    "name": "Nuf-Nuf, one of the three pigs",
+    "via": "name"
    },
    {
     "form": "უკვე",
-    "via": "headword",
     "word": "w:უკვე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სრულიად",
-    "via": "headword",
     "word": "w:სრულიად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაწყნარებულიყვნენ",
-    "via": "form index",
     "word": "w:დაწყნარდება",
     "sense": 1,
-    "gram": "Pluperfect 3pl"
+    "gram": "Pluperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ბედნიერი",
-    "via": "headword",
     "word": "790",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ღიმილით",
-    "via": "form index",
     "word": "w:ღიმილი",
     "sense": 1,
-    "gram": "inst"
+    "gram": "inst",
+    "via": "form index"
    },
    {
     "form": "შესცქეროდნენ",
-    "via": "form index",
     "word": "w:შესცქერის",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "თავიანთ",
-    "via": "form index",
     "word": "5598",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "გონიერ",
-    "via": "form index",
     "word": "w:გონიერი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "მამაც",
-    "via": "form index",
     "word": "w:მამაცი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ძამიკოს",
-    "via": "form index",
     "word": "w:ძამიკო",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "გოჭებს",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "dat.pl"
+    "gram": "dat.pl",
+    "via": "form index"
    },
    {
     "form": "დიდხანს",
-    "via": "headword",
     "word": "849",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცდა",
-    "via": "headword",
     "word": "w:ცდა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დასჭირვებიათ",
-    "via": "form index",
     "word": "6071",
     "sense": 1,
-    "gram": "Perfect 3pl"
+    "gram": "Perfect 3pl",
+    "via": "form index"
    },
    {
     "form": "ბუხრისმწმენდელივით",
-    "via": "form index",
     "word": "w:ბუხრისმწმენდელი",
     "sense": 1,
-    "gram": "like"
+    "gram": "like",
+    "via": "form index"
    },
    {
     "form": "გამურულმა",
-    "via": "form index",
     "word": "w:გამურული",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "მგელმა",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "პირდაპირ",
-    "via": "headword",
     "word": "6345",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აქვარქვარებულ",
-    "via": "form index",
     "word": "w:აქვარქვარებული",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "წყალში",
-    "via": "form index",
     "word": "2215",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "მოადინა",
-    "via": "form index",
     "word": "w:მოადენს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ტყაპანი",
-    "via": "headword",
     "word": "w:ტყაპანი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სიმწრისაგან",
-    "via": "form index",
     "word": "w:სიმწრე",
     "sense": 1,
-    "gram": "from.gen"
+    "gram": "from.gen",
+    "via": "form index"
    },
    {
     "form": "თვალები",
-    "via": "form index",
     "word": "265",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "შუბლზე",
-    "via": "form index",
     "word": "2137",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "აუხტა",
-    "via": "form index",
     "word": "w:ახტება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მთელი",
-    "via": "headword",
     "word": "5762",
-    "sense": 2
+    "sense": 2,
+    "via": "headword"
    },
    {
     "form": "კანი",
-    "via": "headword",
     "word": "w:კანი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაეფუფქა",
-    "via": "form index",
     "word": "w:დაეფუფქება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "საზარელი",
-    "via": "headword",
     "word": "w:საზარელი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ბღავილით",
-    "via": "form index",
     "word": "w:ბღავილი",
     "sense": 1,
-    "gram": "inst"
+    "gram": "inst",
+    "via": "form index"
    },
    {
     "form": "მგელი",
-    "via": "headword",
     "word": "432",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უკან",
-    "via": "headword",
     "word": "w:უკან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ავარდა",
-    "via": "form index",
     "word": "w:ავარდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სახურავზე",
-    "via": "form index",
     "word": "1968",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "იქიდან",
-    "via": "form index",
     "word": "303",
     "sense": 1,
-    "gram": "from.nom"
+    "gram": "from.nom",
+    "via": "form index"
    },
    {
     "form": "ძირს",
-    "via": "headword",
     "word": "w:ძირს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩაგორდა",
-    "via": "form index",
     "word": "w:ჩაგორდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "სამ-ოთხჯერ",
-    "via": "headword",
     "word": "w:სამ-ოთხჯერ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გადაკოტრიალდა",
-    "via": "form index",
     "word": "w:გადაკოტრიალდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ჩარაზულ",
-    "via": "form index",
     "word": "w:ჩარაზული",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "კარებთანაც",
-    "via": "form index",
     "word": "331",
     "sense": 1,
-    "gram": "too.with.pl"
+    "gram": "too.with.pl",
+    "via": "form index"
    },
    {
     "form": "გაგორდა",
-    "via": "form index",
     "word": "w:გაგორდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ტყეში",
-    "via": "form index",
     "word": "2029",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "მოკურცხლა",
-    "via": "form index",
     "word": "w:მოკურცხლავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "სამი",
-    "via": "headword",
     "word": "w:სამი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძმა",
-    "via": "headword",
     "word": "2188",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სამი",
-    "via": "headword",
     "word": "w:სამი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭი",
-    "via": "headword",
     "word": "510",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეჰყურებდნენ",
-    "via": "form index",
     "word": "w:შეჰყურებს",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "უხაროდათ",
-    "via": "form index",
     "word": "2048",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ასე",
-    "via": "headword",
     "word": "471",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მარჯვედ",
-    "via": "headword",
     "word": "w:მარჯვედ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ასწავლეს",
-    "via": "form index",
     "word": "w:ასწავლის",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ჭკუა",
-    "via": "headword",
     "word": "w:ჭკუა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ბოროტ",
-    "via": "form index",
     "word": "w:ბოროტი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ყაჩაღ",
-    "via": "form index",
     "word": "w:ყაჩაღი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "მგელს",
-    "via": "form index",
     "word": "432",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "შემდეგ",
-    "via": "headword",
     "word": "w:შემდეგ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თავიანთი",
-    "via": "headword",
     "word": "5598",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მხიარული",
-    "via": "headword",
     "word": "2456",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სიმღერა",
-    "via": "headword",
     "word": "1976",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შემოსძახეს",
-    "via": "form index",
     "word": "w:შემოსძახებს",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ცის",
-    "via": "form index",
     "word": "4417",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "კიდემდე",
-    "via": "form index",
     "word": "w:კიდე",
     "sense": 1,
-    "gram": "until"
+    "gram": "until",
+    "via": "form index"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იარო",
-    "via": "form index",
     "word": "188",
     "sense": 1,
-    "gram": "Optative 2sg"
+    "gram": "Optative 2sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "მოიარო",
-    "via": "form index",
     "word": "w:მოივლის",
     "sense": 1,
-    "gram": "Optative 2sg"
+    "gram": "Optative 2sg",
+    "via": "form index"
    },
    {
     "form": "მთა",
-    "via": "headword",
     "word": "415",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ველი",
-    "via": "form index",
     "word": "w:ველი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ჩვენი",
-    "via": "headword",
     "word": "2148",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სახლის",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "მსგავს",
-    "via": "form index",
     "word": "5801",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "მაგარ",
-    "via": "form index",
     "word": "369",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "სახლს",
-    "via": "form index",
     "word": "1967",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ვერსად",
-    "via": "headword",
     "word": "w:ვერსად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვერსად",
-    "via": "headword",
     "word": "w:ვერსად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვერ",
-    "via": "form index",
     "word": "4190",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "შეხვდებით",
-    "via": "override",
     "word": "2434",
     "sense": 2,
     "gram": "Future 2pl",
+    "via": "override",
     "comment": "\"ვერსად ვერ შეხვდებით\" — you will not meet one anywhere; the entry's other sense is \"understands\""
    }
   ],
   [
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გვაშინებს",
-    "via": "form index",
     "word": "w:აშინებს",
     "sense": 1,
-    "gram": "Present 3sg > 1pl"
+    "gram": "Present 3sg > 1pl",
+    "via": "form index"
    },
    {
     "form": "ელვა",
-    "via": "headword",
     "word": "w:ელვა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ქარი",
-    "via": "headword",
     "word": "2076",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    }
   ],
   [
    {
     "form": "არც",
-    "via": "headword",
     "word": "5359",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მხეცების",
-    "via": "form index",
     "word": "w:მხეცი",
     "sense": 1,
-    "gram": "gen.pl"
+    "gram": "gen.pl",
+    "via": "form index"
    },
    {
     "form": "გვეშინია",
-    "via": "form index",
     "word": "w:ეშინია",
     "sense": 1,
-    "gram": "Present 1pl"
+    "gram": "Present 1pl",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ჩვენი",
-    "via": "headword",
     "word": "2148",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სახლი",
-    "via": "headword",
     "word": "1967",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ხომ",
-    "via": "headword",
     "word": "w:ხომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ქვის",
-    "via": "form index",
     "word": "2078",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "არის",
-    "via": "form index",
     "word": "148",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ზედ",
-    "via": "headword",
     "word": "w:ზედ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ურდული",
-    "via": "headword",
     "word": "w:ურდული",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აყენია",
-    "via": "form index",
     "word": "w:აყენია",
     "sense": 1,
-    "gram": "Present 3sg"
+    "gram": "Present 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ამის",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "შემდეგ",
-    "via": "headword",
     "word": "w:შემდეგ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძმები",
-    "via": "form index",
     "word": "2188",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "მეგობრულად",
-    "via": "headword",
     "word": "w:მეგობრულად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცხოვრობდნენ",
-    "via": "form index",
     "word": "2177",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "ერთ",
-    "via": "form index",
     "word": "46",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ჭერქვეშ",
-    "via": "form index",
     "word": "2219",
     "sense": 1,
-    "gram": "under"
+    "gram": "under",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "აი",
-    "via": "headword",
     "word": "4186",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სულ",
-    "via": "headword",
     "word": "w:სულ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ეს",
-    "via": "headword",
     "word": "207",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არის",
-    "via": "form index",
     "word": "148",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "რაც",
-    "via": "headword",
     "word": "w:რაც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სამი",
-    "via": "headword",
     "word": "w:სამი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "პატარა",
-    "via": "headword",
     "word": "1895",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოჭის",
-    "via": "form index",
     "word": "510",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "ნიფ-ნიფის",
-    "via": "name",
-    "name": "Nif-Nif's"
+    "name": "Nif-Nif's",
+    "via": "name"
    },
    {
     "form": "ნუფ-ნუფისა",
-    "via": "name",
-    "name": "Nuf-Nuf's"
+    "name": "Nuf-Nuf's",
+    "via": "name"
    },
    {
     "form": "და",
-    "via": "override",
     "word": "38",
     "sense": 1,
+    "via": "override",
     "comment": "the lexicon holds both და* (and) and და (sister); in this story it is always the conjunction"
    },
    {
     "form": "ნაფ-ნაფის",
-    "via": "name",
-    "name": "Naf-Naf's"
+    "name": "Naf-Naf's",
+    "via": "name"
    },
    {
     "form": "შესახებ",
-    "via": "headword",
     "word": "w:შესახებ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვიცით",
-    "via": "form index",
     "word": "308",
     "sense": 1,
-    "gram": "Present 1pl"
+    "gram": "Present 1pl",
+    "via": "form index"
    }
   ]
  ]
