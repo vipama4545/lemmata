@@ -23,6 +23,9 @@ dist-ssr
 .cache
 *.tsbuildinfo
 
+# Local operational notes — deploy runbook, registry names, host specifics
+*.local.md
+
 # Local data-build scripts
 scripts
 
