@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import type { ImperativeForms, Screeve, ScreeveKey, Verb, VerbMorphemes } from '@georgian/shared/types';
-import { PERSONS as persons, SCREEVES as screeves, SERIES as series } from '@georgian/shared/grammar';
-import { morphemeData, verbData } from '../content/store';
+import type { ImperativeForms, Screeve, ScreeveKey, KaVerb, KaVerbMorphemes } from '@georgian/shared/types';
+import { PERSONS as persons, SCREEVES as screeves, SERIES as series } from '@georgian/shared/grammar/ka';
+import { kaVerbData, lang, morphemeData } from '../content/store';
 import { MORPHEME_PARTS, segmentForm } from '../utils/verbMorphology';
 import Icon from './Icon';
 
@@ -32,12 +32,12 @@ function VerbDetail() {
     localStorage.setItem('verbMorphemes', highlight ? 'on' : 'off');
   }, [highlight]);
 
-  const { groups, verbs } = verbData();
+  const { groups, verbs } = kaVerbData();
 
   const { verb, index } = useMemo(() => {
     const i = verbs.findIndex(v => v.id === verbId);
     // findIndex returns -1 for an unknown id, so this really can come back empty.
-    return { verb: verbs[i] as Verb | undefined, index: i };
+    return { verb: verbs[i] as KaVerb | undefined, index: i };
   }, [verbId, verbs]);
 
   const lex = verbId ? morphemeData().verbs[verbId] : undefined;
@@ -47,22 +47,22 @@ function VerbDetail() {
       <div className="main-content">
         <div className="not-found">
           <h2>Verb not found</h2>
-          <Link to="/verbs">← Back to verbs</Link>
+          <Link to={`/${lang()}/verbs`}>← Back to verbs</Link>
         </div>
       </div>
     );
   }
 
   const group = groups.find(g => g.id === verb.groupId);
-  const previous: Verb | undefined = verbs[index - 1];
-  const next: Verb | undefined = verbs[index + 1];
+  const previous: KaVerb | undefined = verbs[index - 1];
+  const next: KaVerb | undefined = verbs[index + 1];
 
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/categories">← Categories</Link>
+        <Link to={`/${lang()}/categories`}>← Categories</Link>
         <span className="breadcrumb-sep">/</span>
-        <Link to="/verbs">Verbs</Link>
+        <Link to={`/${lang()}/verbs`}>Verbs</Link>
         <span className="breadcrumb-sep">/</span>
         <span>{verb.english}</span>
       </div>
@@ -146,12 +146,12 @@ function VerbDetail() {
       <div className="verb-detail-footer">
         <div className="verb-nav">
           {previous && (
-            <Link to={`/verbs/${previous.id}`} className="verb-nav-link">
+            <Link to={`/${lang()}/verbs/${previous.id}`} className="verb-nav-link">
               <Icon name="arrow-left" /> {previous.english}
             </Link>
           )}
           {next && (
-            <Link to={`/verbs/${next.id}`} className="verb-nav-link verb-nav-next">
+            <Link to={`/${lang()}/verbs/${next.id}`} className="verb-nav-link verb-nav-next">
               {next.english} <Icon name="arrow-right" />
             </Link>
           )}
@@ -174,7 +174,7 @@ function MorphemeKey({
   highlight,
   onToggle,
 }: {
-  lex: VerbMorphemes;
+  lex: KaVerbMorphemes;
   highlight: boolean;
   onToggle: () => void;
 }) {
@@ -236,7 +236,7 @@ function VerbForm({
   screeve,
 }: {
   form: string;
-  lex: VerbMorphemes | null | undefined;
+  lex: KaVerbMorphemes | null | undefined;
   screeve: string;
 }): ReactNode {
   if (!lex) return form;
@@ -255,7 +255,7 @@ function ConjugationTable({
   lex,
 }: {
   rows: ConjugationRow[];
-  lex: VerbMorphemes | null | undefined;
+  lex: KaVerbMorphemes | null | undefined;
 }) {
   return (
     <div className="conj-table-wrap">

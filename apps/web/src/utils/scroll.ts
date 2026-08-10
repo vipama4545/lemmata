@@ -1,3 +1,4 @@
+import { lang } from '../content/store';
 // Where a link lands on the page it opens.
 //
 // A link that names one entry — a search result, a word in a story, the day's word — should
@@ -14,7 +15,11 @@ export const FOCUS_PARAM = 'w';
 
 /** A link to `path` that lands on one particular entry rather than at the top of the page. */
 export function focusHref(path: string, id: string): string {
-  return `${path}?${FOCUS_PARAM}=${encodeURIComponent(id)}`;
+  // The language goes on here rather than at the twenty call sites, all of which pass a bare
+  // `/category/...`. Every link this builds is a link within the dictionary being read, so
+  // there has never been a caller that meant anything else.
+  const prefixed = path.startsWith('/') ? `/${lang()}${path}` : path;
+  return `${prefixed}?${FOCUS_PARAM}=${encodeURIComponent(id)}`;
 }
 
 /** The entry the current location is aiming at, or '' when it names none. */

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import Icon from './Icon';
 import { groupedGrammarTopics, grammarTopics } from '../data/grammar';
+import { lang } from '../content/store';
 
 // The landing page for the reference section: every topic as a card, grouped the same way
 // the sidebar groups them.
@@ -24,7 +25,7 @@ function GrammarIndex() {
           <h2 className="grammar-group-title">{group.label}</h2>
           <div className="grammar-card-grid">
             {group.topics.map(topic => (
-              <Link key={topic.id} to={`/grammar/${topic.id}`} className="grammar-card">
+              <Link key={topic.id} to={`/${lang()}/grammar/${topic.id}`} className="grammar-card">
                 <span className="grammar-card-icon">
                   <Icon name={topic.icon} size={20} />
                 </span>

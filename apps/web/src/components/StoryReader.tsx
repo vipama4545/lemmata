@@ -14,6 +14,7 @@ import { forgetItem, markUnseenKnown, readingMastery, setItemMastery, useProgres
 import type { Progress } from "../study/store";
 import { MasteryPicker } from "./Mastery";
 import Icon from "./Icon";
+import { lang } from '../content/store';
 
 // Only ever rendered for an admin who has turned editing on, so it rides in the admin chunk
 // rather than in the one every reader downloads.
@@ -151,7 +152,7 @@ function StoryReader() {
     return (
       <div className="main-content">
         <div className="breadcrumb">
-          <Link to="/stories">← Stories</Link>
+          <Link to={`/${lang()}/stories`}>← Stories</Link>
         </div>
         <p className="empty-note">
           {loading
@@ -254,7 +255,7 @@ function StoryReader() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/stories">← Stories</Link>
+        <Link to={`/${lang()}/stories`}>← Stories</Link>
         <span className="breadcrumb-sep">/</span>
         <span>{story.titleEnglish || story.title}</span>
       </div>
@@ -617,7 +618,7 @@ function GlossCard({
         </p>
       )}
 
-      {item.word?.georgianDefinition && <p className="gloss-definition">{item.word.georgianDefinition}</p>}
+      {item.word?.definition && <p className="gloss-definition">{item.word.definition}</p>}
 
       {token.alts && token.alts.length > 0 && (
         <p className="gloss-alts">

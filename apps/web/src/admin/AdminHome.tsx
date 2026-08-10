@@ -10,7 +10,7 @@ import { Link, Navigate } from 'react-router-dom';
 import type { AdminUser } from '@georgian/shared/contract';
 import { api, useSession } from '../api/client';
 import Icon from '../components/Icon';
-import { storySummaries, verbData, wordData } from '../content/store';
+import { storySummaries, kaVerbData, wordData } from '../content/store';
 import { searchWords } from './search';
 import { useEdit, useIsAdmin } from './useAdmin';
 
@@ -34,7 +34,7 @@ export function AdminGate({ children }: { children: ReactNode }) {
 
 export function AdminHome() {
   const { words, categories } = wordData();
-  const verbs = verbData().verbs;
+  const verbs = kaVerbData().verbs;
   const stories = storySummaries();
 
   const needsCheck = words.filter(word => word.check).length;
@@ -164,7 +164,7 @@ export function WordList() {
         {shown.map(word => (
           <li key={word.id}>
             <Link to={`/admin/words/${encodeURIComponent(word.id)}`} className="admin-row-link">
-              <span className="admin-row-geo">{word.georgian}</span>
+              <span className="admin-row-geo">{word.headword}</span>
               <span className="admin-row-en">{word.english}</span>
               <span className="admin-row-meta">
                 {word.senses.length > 1 && <span className="admin-badge">{word.senses.length} senses</span>}
@@ -184,7 +184,7 @@ export function WordList() {
 /* -------------------------------------------------------------------- verbs */
 
 export function VerbList() {
-  const verbs = verbData().verbs;
+  const verbs = kaVerbData().verbs;
   const [term, setTerm] = useState('');
 
   const shown = useMemo(() => {

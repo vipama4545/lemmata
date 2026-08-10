@@ -36,6 +36,7 @@ function card(overrides: Partial<StudyCardWire> & { card: string }): StudyCardWi
   return {
     item,
     side: side as StudyCardWire['side'],
+    lang: 'ka',
     level: 3,
     interval: 2,
     ease: 2.5,

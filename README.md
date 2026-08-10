@@ -169,8 +169,8 @@ every "and" in every story linked to the wrong word and said "a guess" underneat
 `apps/analyser/` is a small Python service that answers the one question a spelling cannot:
 what part of speech is this word, _here_. It runs [Stanza](https://stanfordnlp.github.io/stanza/)
 with the Georgian `glc` models — the UD_Georgian-GLC treebank, the only one that exists for
-Georgian — and returns a UPOS tag and a lemma per token. The resolver uses it three ways, all
-of them conservative:
+Georgian — and the Russian `syntagrus` ones, and returns a UPOS tag and a lemma per token.
+The resolver uses it three ways, all of them conservative:
 
 - **To choose between entries that spell the same.** და tagged `CCONJ` picks the conjunction
   over the noun, and the link stops being a guess. This is the whole of the ambiguity in the
@@ -189,6 +189,14 @@ It is **optional at every call site**. With `ANALYSER_URL` unset, the container 
 request slow, `analyse()` returns null and linking behaves exactly as it did before any of
 this existed. Nothing depends on it, and it is never called with a database transaction open.
 
+It is also optional **per language**, which is not the same thing. The two halves deploy
+separately, and sending `lang: "ru"` to an image built before Russian was added would not
+fail — the unknown field is ignored, the Georgian pipeline runs, and every Russian word comes
+back confidently mistagged. That is worse than no tagger at all, because the resolver would
+believe it. So the server asks `GET /languages` first, caches the answer, and links without
+tags in a language the deployed image does not have. An image old enough to have no
+`/languages` falls back to `/health`, which names the one language it was built for.
+
 The server sends **prose**, not tokens. Georgian welds its postpositions onto the noun, and
 only Stanza's own tokeniser can cut them apart: the MWT layer that does it runs inside the
 tokeniser and cannot run on pretokenised input at all. Sending prose also gives the tagger
@@ -197,11 +205,20 @@ had thrown away.
 
 What that costs is the guarantee pretokenised input gave for free — that the reply has as
 many entries as the caller has tokens. A token's position is its identity in
-`data/stories/*.json`, `story_tokens` and `storyOverrides.json`, so the count may not move.
-So `main.py` re-cuts the same prose with the *same* regex as `tokenise.ts`, aligns Stanza's
-words onto those tokens by character offset, and returns one tag per token. Splits survive
-as `parts`; `lemma` is the head alone. `სახლში` comes back `NOUN/სახლი` with parts
+`data/<lang>/stories/*.json`, `story_tokens` and `storyOverrides.json`, so the count may not
+move. So `main.py` re-cuts the same prose with the *same* regex as `tokenise.ts`, aligns
+Stanza's words onto those tokens by character offset, and returns one tag per token. Splits
+survive as `parts`; `lemma` is the head alone. `სახლში` comes back `NOUN/სახლი` with parts
 `[სახლი, ში]` — and `სახლი` is a headword, where `სახლში` is a headword nowhere.
+
+The regex, not Stanza, is what defines a token, and that is deliberate: the browser has to
+re-cut the same prose to paint the links back over it and has no tagger to do it with, and a
+story must still link when the analyser is down. There is one pattern per language, written
+out in three places — `tokenise.ts`, `apps/web/src/utils/story.ts` and `main.py` — and they
+have to agree. Russian keeps hyphens inside a word (`кто-то`, `из-за`) and admits a combining
+acute after a letter, because prose written for learners marks its stresses and `де́лать` must
+not come apart; the mark stays in the stored spelling and is folded away only when a word is
+looked up.
 
 That alignment is an agreement between two regexes in two languages, so `analyse()` checks
 the length of every paragraph and discards the whole reply if any disagrees. Across the 1,740
@@ -220,6 +237,37 @@ every one is tagged `CCONJ`, so the model has never seen the noun: in `ჩემ
 ("my sister came home") it still says "and". It has replaced a wrong answer everywhere with a
 right answer nearly everywhere, which is worth having, but the sentence that needs "sister"
 still needs a person.
+
+### Russian stories resolve the other way round
+
+Same screens, same tokens table, same pins — and a matcher of a different shape, because the
+two lexicons are different in a way that decides the design.
+
+The Georgian matcher is a cascade: five steps in falling order of confidence, first hit wins,
+and the form index goes first because a person typed it in. Russian's was generated. 13,169 of
+the nouns arrived from the import with their whole declension, and `conjugate()` expands 8,583
+verbs into something over 200,000 forms from a class and two stems. Neither is hand-confirmed,
+and neither outranks the other: `стали` is the genitive of сталь "steel" and the past plural of
+стать "become", both machine-derived, and ordering them would be picking a winner by which
+query ran first.
+
+So the exact indexes — headword, declension, paradigm — are consulted **together**, and the
+tag chooses between what they return. A reading nothing contradicts is not flagged; two
+readings the tag cannot separate are. Below that sits a small adjectival peeler, for the 5,311
+adjectives that are stored as a headword and nothing else and for participles, which
+`conjugate()` produces only in the nominative; and below that the tagger's lemma. SynTagRus
+lemmatises a verb to its infinitive and a nominal to its nominative singular, which is exactly
+how the lexicon files both.
+
+Three things are folded away before anything is looked up, and all three earn it. **Case**,
+because Russian capitalises the first word of every sentence and that is one word in fifteen.
+**The stress mark**, because the dictionary keeps it in a column of its own — `headword` is
+делать and `accented` is де́лать. And **ё**, because almost nobody writes it: the lexicon has
+ещё, её and всё with the letter and ordinary prose spells all three with е, as does Stanza's
+lemmatiser. Folding it merges the odd genuine pair (не́бо "sky", нёбо "palate"), which is a case
+the matcher already handles by flagging a key two entries claim rather than guessing.
+
+On _Колобок_, 177 tokens: **85.3%** linked with no tagger, **94.4%** with one.
 
 ## The snapshot
 

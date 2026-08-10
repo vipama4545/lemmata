@@ -16,7 +16,7 @@ import type { WordInput } from '@georgian/shared/contract';
 import type { Word } from '@georgian/shared/types';
 import { api } from '../api/client';
 import Icon from '../components/Icon';
-import { verbData, wordData } from '../content/store';
+import { kaVerbData, lang, wordData } from '../content/store';
 import { useEdit } from './useAdmin';
 
 /** The part-of-speech tags already in use, so the field offers them rather than free text. */
@@ -25,10 +25,11 @@ function usedPartsOfSpeech(words: Word[]): string[] {
 }
 
 interface Draft {
-  georgian: string;
+  headword: string;
   english: string;
-  georgianDefinition: string;
-  level: 'A1' | 'A2' | '';
+  definition: string;
+  accented: string;
+  level: 'A1' | 'A2' | 'B1' | '';
   partOfSpeech: string;
   categoryId: string;
   defaultSense: number | null;
@@ -42,9 +43,10 @@ interface Draft {
 function draftFrom(word: Word | null, fallbackCategory: string): Draft {
   if (!word) {
     return {
-      georgian: '',
+      headword: '',
       english: '',
-      georgianDefinition: '',
+      definition: '',
+      accented: '',
       level: '',
       partOfSpeech: '',
       // Where the offline pipeline files a hand-written lemma too, so a word added here and
@@ -60,10 +62,11 @@ function draftFrom(word: Word | null, fallbackCategory: string): Draft {
   }
 
   return {
-    georgian: word.georgian,
+    headword: word.headword,
+    accented: word.accented ?? '',
     english: word.english,
-    georgianDefinition: word.georgianDefinition,
-    level: word.level,
+    definition: word.definition,
+    level: word.level as '' | 'A1' | 'A2' | 'B1',
     partOfSpeech: word.partOfSpeech,
     categoryId: word.categoryId,
     defaultSense: word.defaultSense ?? null,
@@ -92,7 +95,7 @@ function WordEditor() {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const partsOfSpeech = useMemo(() => usedPartsOfSpeech(words), [words]);
-  const paradigm = draft.verbId ? verbData().verbs.find(verb => verb.id === draft.verbId) ?? null : null;
+  const paradigm = draft.verbId ? kaVerbData().verbs.find(verb => verb.id === draft.verbId) ?? null : null;
 
   if (wordId && !existing) {
     return (
@@ -108,14 +111,19 @@ function WordEditor() {
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) => setDraft(current => ({ ...current, [key]: value }));
 
   const senses = draft.senses.map(sense => sense.trim()).filter(Boolean);
-  const canSave = draft.georgian.trim() !== '' && senses.length > 0 && draft.categoryId !== '';
+  const canSave = draft.headword.trim() !== '' && senses.length > 0 && draft.categoryId !== '';
 
   const save = async () => {
     const payload: WordInput = {
       ...(existing ? { id: existing.id } : {}),
-      georgian: draft.georgian.trim(),
+      // The dictionary currently loaded. An editor only ever sees one at a time, so there is
+      // nothing to choose here — but the server needs it told, since the id it mints and the
+      // snapshot it invalidates both follow from it.
+      lang: lang(),
+      headword: draft.headword.trim(),
+      accented: draft.accented.trim(),
       english: draft.english.trim(),
-      georgianDefinition: draft.georgianDefinition.trim(),
+      definition: draft.definition.trim(),
       level: draft.level,
       partOfSpeech: draft.partOfSpeech.trim(),
       categoryId: draft.categoryId,
@@ -124,9 +132,10 @@ function WordEditor() {
       check: draft.check,
       note: draft.note.trim() || null,
       senses,
+      ru: null,
       forms: draft.forms
         .filter(form => form.form.trim())
-        .map(form => ({ form: form.form.trim(), gram: form.gram.trim(), english: form.english.trim() })),
+        .map(form => ({ form: form.form.trim(), gram: form.gram.trim(), english: form.english.trim(), accented: '' })),
     };
 
     const result = await run(() => api.admin.saveWord(payload));
@@ -144,11 +153,11 @@ function WordEditor() {
       <div className="breadcrumb">
         <Link to="/admin/words">← Words</Link>
         <span className="breadcrumb-sep">/</span>
-        <span>{existing ? existing.georgian : 'New word'}</span>
+        <span>{existing ? existing.headword : 'New word'}</span>
       </div>
 
       <header className="admin-head">
-        <h1 className="admin-title">{existing ? existing.georgian : 'New word'}</h1>
+        <h1 className="admin-title">{existing ? existing.headword : 'New word'}</h1>
         {existing && (
           <p className="admin-sub">
             <code>{existing.id}</code> ·{' '}
@@ -171,8 +180,8 @@ function WordEditor() {
             <span className="admin-label">Georgian</span>
             <input
               className="admin-input admin-input-geo"
-              value={draft.georgian}
-              onChange={event => set('georgian', event.target.value)}
+              value={draft.headword}
+              onChange={event => set('headword', event.target.value)}
               placeholder="მგელი"
             />
             <span className="admin-hint">
@@ -244,8 +253,8 @@ function WordEditor() {
             <span className="admin-label">Georgian definition</span>
             <input
               className="admin-input admin-input-geo"
-              value={draft.georgianDefinition}
-              onChange={event => set('georgianDefinition', event.target.value)}
+              value={draft.definition}
+              onChange={event => set('definition', event.target.value)}
             />
           </label>
         </div>
@@ -425,7 +434,7 @@ function WordEditor() {
         )}
         {existing && confirmDelete && (
           <span className="admin-confirm">
-            Delete “{existing.georgian}”?
+            Delete “{existing.headword}”?
             <button type="button" className="admin-danger-btn" disabled={busy} onClick={remove}>
               Yes, delete
             </button>
@@ -442,7 +451,7 @@ function WordEditor() {
 /** A search over the paradigms, by their English or their 3sg. */
 function ParadigmPicker({ onPick }: { onPick: (id: string) => void }) {
   const [term, setTerm] = useState('');
-  const verbs = verbData().verbs;
+  const verbs = kaVerbData().verbs;
 
   const results = useMemo(() => {
     const needle = term.trim().toLowerCase();

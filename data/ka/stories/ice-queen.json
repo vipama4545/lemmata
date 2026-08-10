@@ -1,18 +1,19 @@
 {
- "note": "",
+ "note": "Reading data for one story: the prose in \"paragraphs\", and one record per word occurrence in \"tokens\" — an array per paragraph, in reading order, so a record's position in it is the position of the word in the text. A record carries no meaning of its own: \"word\" is a words.json id and \"sense\" is a 1-based index into that entry's senses, which is how one spelling can mean different things in different lines. \"gram\" is how the form differs from the headword, \"via\" how the link was reached, \"check\" marks a guess worth a human eye, and \"name\" is a proper noun glossed here rather than added to the dictionary. Corrections go in scripts/storyOverrides.json, NOT here, or the next build will drop them. Regenerate with: node scripts/buildStoryData.cjs",
  "id": "ice-queen",
+ "lang": "ka",
  "title": "ყინულის დედოფალი",
- "titleEnglish": "Ice Queen",
- "level": "A2",
+ "titleEnglish": "",
+ "level": "",
  "source": "",
  "stats": {
-  "names": 10,
   "tokens": 896,
-  "covered": 643,
-  "flagged": 222,
-  "coverage": 71.8,
-  "unresolved": 253,
-  "distinctForms": 570
+  "distinctForms": 570,
+  "covered": 605,
+  "coverage": 67.5,
+  "names": 0,
+  "unresolved": 291,
+  "flagged": 55
  },
  "paragraphs": [
   "ერთ სუსხიან, ზამთრის საღამოს, კაიმ, ძილის წინ, გარეთ გახედვა გადაწყვიტა, ფანჯარაში გაიჭყიტა და და თვალი ერთ უმშვენიერეს, თოვლის ფანტელებით მოქსოვილ კაბაში ჩაცმულ ქალწულს მოჰკრა. ქალი ყინულისა იყო, თვალები კი,მოციმციმე ვარსკვლავებივით უბრწყინავდა, თუმცა მათში სითბო არ იგრძნობოდა. ყინულის ქალმა ბიჭს თავი დაუკრა და ყინულის მტვერი შეაფრქვია.",
@@ -46,9 +47,9 @@
   [
    {
     "form": "ერთ",
-    "via": "form index",
     "word": "46",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "სუსხიან",
@@ -56,45 +57,42 @@
    },
    {
     "form": "ზამთრის",
-    "via": "-gen, syncope",
     "word": "234",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "საღამოს",
-    "via": "headword",
     "word": "w:საღამოს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კაიმ",
-    "via": "-erg",
     "word": "w:კაი",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ძილის",
-    "via": "-gen",
     "word": "2186",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "წინ",
-    "via": "headword",
     "word": "w:წინ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გარეთ",
-    "via": "headword",
     "word": "161",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გახედვა",
@@ -102,18 +100,17 @@
    },
    {
     "form": "გადაწყვიტა",
-    "via": "form index",
     "word": "w:წყვეტს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ფანჯარაში",
-    "via": "-in",
     "word": "2051",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გაიჭყიტა",
@@ -121,39 +118,41 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "თვალი",
-    "via": "headword",
     "word": "265",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ერთ",
-    "via": "form index",
     "word": "46",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "უმშვენიერეს",
@@ -161,11 +160,10 @@
    },
    {
     "form": "თოვლის",
-    "via": "-gen",
     "word": "273",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ფანტელებით",
@@ -177,11 +175,10 @@
    },
    {
     "form": "კაბაში",
-    "via": "-in",
     "word": "313",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ჩაცმულ",
@@ -189,52 +186,50 @@
    },
    {
     "form": "ქალწულს",
-    "via": "-dat",
     "word": "w:ქალწული",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მოჰკრა",
-    "via": "form index",
     "word": "w:მოჰკრავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ქალი",
-    "via": "headword",
     "word": "2071",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყინულისა",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "თვალები",
-    "via": "form index",
     "word": "265",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოციმციმე",
@@ -242,11 +237,10 @@
    },
    {
     "form": "ვარსკვლავებივით",
-    "via": "-like -nom -pl",
     "word": "228",
     "sense": 1,
     "gram": "like.nom.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "უბრწყინავდა",
@@ -254,17 +248,16 @@
    },
    {
     "form": "თუმცა",
-    "via": "headword",
     "word": "w:თუმცა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მათში",
-    "via": "-in",
     "word": "373",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "სითბო",
@@ -272,9 +265,9 @@
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იგრძნობოდა",
@@ -282,32 +275,30 @@
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ქალმა",
-    "via": "form index",
     "word": "2071",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "ბიჭს",
-    "via": "-dat",
     "word": "120",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "თავი",
-    "via": "headword",
     "word": "261",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაუკრა",
@@ -315,29 +306,29 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
-   },
-   {
-    "form": "ყინულის",
-    "via": "-gen",
-    "word": "2685",
-    "sense": 1,
-    "gram": "gen",
+    ],
+    "via": "headword",
     "check": true
    },
    {
+    "form": "ყინულის",
+    "word": "2685",
+    "sense": 1,
+    "gram": "gen",
+    "via": "form index"
+   },
+   {
     "form": "მტვერი",
-    "via": "headword",
     "word": "5804",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეაფრქვია",
@@ -347,9 +338,9 @@
   [
    {
     "form": "ვაი",
-    "via": "headword",
     "word": "11350",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "წამოიყვირა",
@@ -357,19 +348,17 @@
    },
    {
     "form": "კაიმ",
-    "via": "-erg",
     "word": "w:კაი",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გულში",
-    "via": "-in",
     "word": "179",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "რაღაცამ",
@@ -381,36 +370,33 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "თვალშიც",
-    "via": "-too -in",
     "word": "265",
     "sense": 1,
     "gram": "too.in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "რაღაც",
-    "via": "headword",
     "word": "w:რაღაც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩამივარდა",
-    "via": "lemma მივარდება",
-    "word": "w:მივარდება",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "შეშინებულმა",
@@ -422,11 +408,10 @@
    },
    {
     "form": "თვალებში",
-    "via": "-in -pl",
     "word": "265",
     "sense": 1,
     "gram": "in.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ჩახედა",
@@ -434,27 +419,27 @@
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იქ",
-    "via": "headword",
     "word": "303",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვერაფერი",
-    "via": "headword",
     "word": "224",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვერ",
-    "via": "form index",
     "word": "4190",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "აღმოაჩინა",
@@ -464,9 +449,9 @@
   [
    {
     "form": "ალბათ",
-    "via": "headword",
     "word": "461",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ამოვარდა",
@@ -474,99 +459,95 @@
    },
    {
     "form": "თქვა",
-    "via": "form index",
     "word": "68",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ბიჭმა",
-    "via": "-erg",
     "word": "120",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ეს",
-    "via": "headword",
     "word": "207",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ასე",
-    "via": "headword",
     "word": "471",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ბიჭს",
-    "via": "-dat",
     "word": "120",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გულსა",
-    "via": "-dat",
     "word": "179",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "თვალში",
-    "via": "-in",
     "word": "265",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ნატეხი",
-    "via": "headword",
     "word": "w:ნატეხი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩაუვარდა",
@@ -574,82 +555,76 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "თბილი",
-    "via": "headword",
     "word": "255",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გული",
-    "via": "headword",
     "word": "179",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყინულივით",
-    "via": "-like",
     "word": "2685",
     "sense": 1,
     "gram": "like",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ცივი",
-    "via": "headword",
     "word": "2162",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გაუხდა",
-    "via": "lemma უხდება",
-    "word": "2358",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    }
   ],
   [
    {
     "form": "ამ",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "obl"
+    "gram": "obl",
+    "via": "form index"
    },
    {
     "form": "ამბის",
-    "via": "lemma ამბავი",
-    "word": "67",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "შემდეგ",
-    "via": "headword",
     "word": "w:შემდეგ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძალიან",
-    "via": "headword",
     "word": "w:ძალიან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეიცვალა",
@@ -661,110 +636,105 @@
    },
    {
     "form": "რომელიც",
-    "via": "headword",
     "word": "w:რომელიც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ასე",
-    "via": "headword",
     "word": "471",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძალიან",
-    "via": "headword",
     "word": "w:ძალიან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უყვარდა",
-    "via": "paradigm",
     "word": "2045",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "ხშირად",
-    "via": "headword",
     "word": "4867",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აბრაზებდა",
-    "via": "lemma აბრაზებს",
-    "word": "1017",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
-   },
-   {
-    "form": "გულსა",
-    "via": "-dat",
-    "word": "179",
-    "sense": 1,
-    "gram": "dat",
+    ],
+    "via": "headword",
     "check": true
    },
    {
+    "form": "გულსა",
+    "word": "179",
+    "sense": 1,
+    "gram": "dat",
+    "via": "form index"
+   },
+   {
     "form": "სტკენდა",
-    "via": "paradigm",
     "word": "6054",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "ერთ",
-    "via": "form index",
     "word": "46",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "დღეს",
-    "via": "headword",
     "word": "6248",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ეზოში",
-    "via": "headword",
     "word": "w:ეზოში",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მოედანზე",
-    "via": "-on",
     "word": "417",
     "sense": 1,
     "gram": "on",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ციგით",
@@ -776,25 +746,23 @@
    },
    {
     "form": "უცებ",
-    "via": "headword",
     "word": "w:უცებ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოედანზე",
-    "via": "-on",
     "word": "417",
     "sense": 1,
     "gram": "on",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "თეთრად",
-    "via": "-adv",
     "word": "262",
     "sense": 1,
     "gram": "adv",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "შეღებილი",
@@ -802,9 +770,9 @@
    },
    {
     "form": "დიდი",
-    "via": "headword",
     "word": "41",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მარხილი",
@@ -812,31 +780,30 @@
    },
    {
     "form": "გამოჩნდა",
-    "via": "paradigm",
     "word": "6176",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "რომელშიც",
-    "via": "form index",
     "word": "1927",
     "sense": 1,
-    "gram": "too.in"
+    "gram": "too.in",
+    "via": "form index"
    },
    {
     "form": "თეთრ",
-    "via": "restored",
     "word": "262",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ქურქში",
-    "via": "form index",
     "word": "w:ქურქი",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "გახვეული",
@@ -844,30 +811,29 @@
    },
    {
     "form": "ვიღაც",
-    "via": "headword",
     "word": "233",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იჯდა",
-    "via": "paradigm",
     "word": "248",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "კაიმ",
-    "via": "-erg",
     "word": "w:კაი",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "სწრაფად",
-    "via": "headword",
     "word": "2348",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მიაბა",
@@ -879,9 +845,9 @@
    },
    {
     "form": "თავისი",
-    "via": "headword",
     "word": "252",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ციგა",
@@ -889,27 +855,28 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "მასთან",
-    "via": "headword",
     "word": "w:მასთან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ერთად",
-    "via": "headword",
     "word": "205",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გასრიალდა",
@@ -921,11 +888,10 @@
    },
    {
     "form": "სიჩქარეს",
-    "via": "-dat",
     "word": "w:სიჩქარე",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მოუმატა",
@@ -933,27 +899,28 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თავისი",
-    "via": "headword",
     "word": "252",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ციგიანად",
@@ -961,11 +928,10 @@
    },
    {
     "form": "მოედნიდან",
-    "via": "-from -nom, syncope",
     "word": "417",
     "sense": 1,
     "gram": "from.nom",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გაიტაცა",
@@ -973,24 +939,23 @@
    },
    {
     "form": "როცა",
-    "via": "headword",
     "word": "w:როცა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ქალაქიდან",
-    "via": "-from",
     "word": "2070",
     "sense": 1,
     "gram": "from",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გავიდნენ",
-    "via": "paradigm",
     "word": "w:გადის",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "მარხილი",
@@ -998,30 +963,24 @@
    },
    {
     "form": "გაჩერდა",
-    "via": "lemma ჩერდება",
-    "word": "w:ჩერდება",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "მასში",
-    "via": "split იგი+ში",
-    "word": "5627",
-    "sense": 1,
-    "gram": "ში",
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "მჯდომი",
@@ -1029,58 +988,53 @@
    },
    {
     "form": "ფეხზე",
-    "via": "-on",
     "word": "2056",
     "sense": 1,
     "gram": "on",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "წამოდგა",
-    "via": "lemma დგება",
-    "word": "199",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "ეს",
-    "via": "headword",
     "word": "207",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ულამაზესი",
-    "via": "headword",
     "word": "w:ულამაზესი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფალი",
-    "via": "headword",
     "word": "517",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მან",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "შეშინებული",
@@ -1088,9 +1042,9 @@
    },
    {
     "form": "ბიჭი",
-    "via": "headword",
     "word": "120",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მარხილში",
@@ -1102,27 +1056,28 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "თავისი",
-    "via": "headword",
     "word": "252",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ქურქი",
-    "via": "headword",
     "word": "w:ქურქი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შემოახვია",
@@ -1130,18 +1085,17 @@
    },
    {
     "form": "დედოფალმა",
-    "via": "-erg",
     "word": "517",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "შუბლზე",
-    "via": "form index",
     "word": "2137",
     "sense": 1,
-    "gram": "on"
+    "gram": "on",
+    "via": "form index"
    },
    {
     "form": "აკოცა",
@@ -1149,41 +1103,37 @@
    },
    {
     "form": "ყინულივით",
-    "via": "-like",
     "word": "2685",
     "sense": 1,
     "gram": "like",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ცივმა",
-    "via": "-erg",
     "word": "2162",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "კოცნამ",
-    "via": "-erg",
     "word": "620",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ბიჭს",
-    "via": "-dat",
     "word": "120",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ყველაფერი",
-    "via": "headword",
     "word": "4382",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაავიწყა",
@@ -1195,44 +1145,41 @@
    },
    {
     "form": "თოვლის",
-    "via": "-gen",
     "word": "273",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფალი",
-    "via": "headword",
     "word": "517",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მასთან",
-    "via": "headword",
     "word": "w:მასთან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ერთად",
-    "via": "headword",
     "word": "205",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შავ",
-    "via": "restored",
     "word": "w:შავი",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ღრუბლებში",
-    "via": "-in -pl, syncope",
     "word": "2097",
     "sense": 1,
     "gram": "in.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "აიჭრა",
@@ -1240,65 +1187,62 @@
    },
    {
     "form": "ისინი",
-    "via": "headword",
     "word": "302",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მთელი",
-    "via": "headword",
     "word": "5762",
-    "sense": 2
+    "sense": 2,
+    "via": "headword"
    },
    {
     "form": "ღამის",
-    "via": "-gen",
     "word": "2089",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "განმავლობაში",
-    "via": "headword",
     "word": "w:განმავლობაში",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ტყეების",
-    "via": "-gen -pl",
     "word": "2029",
     "sense": 1,
     "gram": "gen.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ტბების",
-    "via": "-gen -pl",
     "word": "2009",
     "sense": 1,
     "gram": "gen.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ზღვების",
-    "via": "-gen -pl",
     "word": "244",
     "sense": 1,
     "gram": "gen.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ხმელეთის",
@@ -1306,11 +1250,10 @@
    },
    {
     "form": "თავზე",
-    "via": "-on",
     "word": "261",
     "sense": 1,
     "gram": "on",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მიფრინავდნენ",
@@ -1322,40 +1265,36 @@
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მგზავრობისაგან",
-    "via": "-from -gen",
     "word": "973",
     "sense": 1,
     "gram": "from.gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დაღლილ",
-    "via": "restored",
     "word": "w:დაღლილი",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ბიჭს",
-    "via": "-dat",
     "word": "120",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედიფლის",
@@ -1373,22 +1312,22 @@
   [
    {
     "form": "დადგა",
-    "via": "form index",
     "word": "199",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "გაზაფხული",
-    "via": "headword",
     "word": "134",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სად",
-    "via": "headword",
     "word": "1936",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიკარგა",
@@ -1396,37 +1335,36 @@
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არავინ",
-    "via": "headword",
     "word": "76",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იცოდა",
-    "via": "form index",
     "word": "308",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "ამბობდნენ",
-    "via": "paradigm",
     "word": "68",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "მდინარეში",
-    "via": "-in",
     "word": "394",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დაიღრჩოო",
@@ -1438,73 +1376,65 @@
    },
    {
     "form": "ახალი",
-    "via": "headword",
     "word": "92",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ფეხსაცმელები",
-    "via": "-nom -pl",
     "word": "2057",
     "sense": 1,
     "gram": "nom.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ჩაიცვა",
-    "via": "paradigm",
     "word": "306",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "მდინარესთან",
-    "via": "-with -dat",
     "word": "394",
     "sense": 1,
     "gram": "with.dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მივიდა",
-    "via": "lemma მიდის",
-    "word": "w:მიდის",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    }
   ],
   [
    {
     "form": "მართალია",
-    "via": "split მართალი+არის",
-    "word": "380",
-    "sense": 1,
-    "gram": "არის",
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შენ",
-    "via": "headword",
     "word": "2119",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "წაიყვანე",
@@ -1512,9 +1442,9 @@
    },
    {
     "form": "ჩემი",
-    "via": "headword",
     "word": "45",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძმობილი",
@@ -1526,32 +1456,31 @@
    },
    {
     "form": "გერდა",
-    "via": "name",
-    "name": "Gerda"
+    "via": "unresolved"
    },
    {
     "form": "მე",
-    "via": "headword",
     "word": "40",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შენ",
-    "via": "headword",
     "word": "2119",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩემს",
-    "via": "headword",
     "word": "w:ჩემს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "წითელ",
-    "via": "form index",
     "word": "w:წითელი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "წაღებს",
@@ -1563,25 +1492,23 @@
    },
    {
     "form": "თუ",
-    "via": "form index",
     "word": "283",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "კაის",
-    "via": "-gen",
     "word": "w:კაი",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "უკანვე",
-    "via": "-same",
     "word": "w:უკან",
     "sense": 1,
     "gram": "same",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დამიბრუნებ",
@@ -1601,22 +1528,23 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "წყალში",
-    "via": "form index",
     "word": "2215",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "გადაყარა",
@@ -1624,29 +1552,29 @@
    },
    {
     "form": "მოულოდნელად",
-    "via": "headword",
     "word": "w:მოულოდნელად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "წყალში",
-    "via": "form index",
     "word": "2215",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "ნავი",
-    "via": "headword",
     "word": "727",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გამოჩნდა",
-    "via": "paradigm",
     "word": "6176",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "გერდამ",
@@ -1658,23 +1586,23 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ნავში",
-    "via": "-in",
     "word": "727",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ჩახტა",
@@ -1682,11 +1610,10 @@
    },
    {
     "form": "ნავს",
-    "via": "-dat",
     "word": "727",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ზვირთები",
@@ -1694,33 +1621,34 @@
    },
    {
     "form": "სულ",
-    "via": "headword",
     "word": "w:სულ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უფრო",
-    "via": "headword",
     "word": "w:უფრო",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "შორს",
-    "via": "headword",
     "word": "2132",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მიაქროლებდნენ",
@@ -1728,26 +1656,24 @@
    },
    {
     "form": "შეიძლება",
-    "via": "form index",
     "word": "2389",
     "sense": 1,
-    "gram": "Present 3sg"
+    "gram": "Present 3sg",
+    "via": "form index"
    },
    {
     "form": "ნავს",
-    "via": "-dat",
     "word": "727",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "კაისთან",
-    "via": "-with -gen",
     "word": "w:კაი",
     "sense": 1,
     "gram": "with.gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მივყავარ",
@@ -1755,10 +1681,10 @@
    },
    {
     "form": "გაიფიქრა",
-    "via": "form index",
     "word": "w:გაიფიქრებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "გოგონამ",
@@ -1766,48 +1692,44 @@
    },
    {
     "form": "ნავი",
-    "via": "headword",
     "word": "727",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ერთ",
-    "via": "form index",
     "word": "46",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "დიდ",
-    "via": "form index",
     "word": "41",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "მდელოსთან",
-    "via": "-with -dat",
     "word": "w:მდელო",
     "sense": 1,
     "gram": "with.dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გაჩერდა",
-    "via": "lemma ჩერდება",
-    "word": "w:ჩერდება",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "სადაც",
-    "via": "headword",
     "word": "w:სადაც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იქვე",
-    "via": "headword",
     "word": "w:იქვე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შორი-ახლოს",
@@ -1815,15 +1737,15 @@
    },
    {
     "form": "დიდი",
-    "via": "headword",
     "word": "41",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შავი",
-    "via": "headword",
     "word": "w:შავი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყვავი",
@@ -1845,24 +1767,24 @@
    },
    {
     "form": "ადამიანის",
-    "via": "form index",
     "word": "52",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "ხმით",
-    "via": "form index",
     "word": "2236",
     "sense": 1,
-    "gram": "inst"
+    "gram": "inst",
+    "via": "form index"
    },
    {
     "form": "მიესალმა",
-    "via": "paradigm",
     "word": "874",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ყვავი",
@@ -1870,15 +1792,16 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "შეეკითხა",
@@ -1886,9 +1809,9 @@
    },
    {
     "form": "რად",
-    "via": "headword",
     "word": "11609",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაეხეტებოდა",
@@ -1896,9 +1819,9 @@
    },
    {
     "form": "მარტო",
-    "via": "headword",
     "word": "w:მარტო",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოგონამ",
@@ -1910,15 +1833,15 @@
    },
    {
     "form": "თავისი",
-    "via": "headword",
     "word": "252",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თავგადასავალი",
-    "via": "headword",
     "word": "w:თავგადასავალი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უამბო",
@@ -1926,21 +1849,22 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ბოლოს",
-    "via": "headword",
     "word": "6284",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეეკითხა",
@@ -1948,15 +1872,15 @@
    },
    {
     "form": "ხომ",
-    "via": "headword",
     "word": "w:ხომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ენახა",
@@ -1964,9 +1888,9 @@
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყვავი",
@@ -1978,9 +1902,9 @@
    },
    {
     "form": "თავი",
-    "via": "headword",
     "word": "261",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაუქნია",
@@ -1988,28 +1912,29 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "უთხრა",
-    "via": "form index",
     "word": "w:ეუბნება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მგონი",
-    "via": "headword",
     "word": "w:მგონი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვნახე",
@@ -2017,9 +1942,9 @@
    },
    {
     "form": "მგონი",
-    "via": "headword",
     "word": "w:მგონი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვნახე",
@@ -2041,16 +1966,15 @@
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაკარგულ",
-    "via": "restored",
     "word": "5496",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ძმობილს",
@@ -2068,16 +1992,14 @@
    },
    {
     "form": "გერდა",
-    "via": "name",
-    "name": "Gerda"
+    "via": "unresolved"
    },
    {
     "form": "სასახლესთან",
-    "via": "-with -dat",
     "word": "w:სასახლე",
     "sense": 1,
     "gram": "with.dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მიიყვანა",
@@ -2085,55 +2007,55 @@
    },
    {
     "form": "ამ",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "obl"
+    "gram": "obl",
+    "via": "form index"
    },
    {
     "form": "სასახლეში",
-    "via": "-in",
     "word": "w:სასახლე",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ახალგაზრდა",
-    "via": "headword",
     "word": "486",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "პრინცი",
-    "via": "headword",
     "word": "w:პრინცი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "პრინცესა",
-    "via": "headword",
     "word": "w:პრინცესა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცხოვრობდნენ",
-    "via": "form index",
     "word": "2177",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "ყვავს",
@@ -2141,59 +2063,59 @@
    },
    {
     "form": "სწორედ",
-    "via": "headword",
     "word": "w:სწორედ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "პრინცი",
-    "via": "headword",
     "word": "w:პრინცი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ეგონა",
-    "via": "form index",
     "word": "6232",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ეს",
-    "via": "headword",
     "word": "207",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ასე",
-    "via": "headword",
     "word": "471",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "გერდამ",
@@ -2201,49 +2123,48 @@
    },
    {
     "form": "პრინცს",
-    "via": "-dat",
     "word": "w:პრინცი",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
-   },
-   {
-    "form": "პრინცესას",
-    "via": "-dat",
-    "word": "w:პრინცესა",
-    "sense": 1,
-    "gram": "dat",
+    ],
+    "via": "headword",
     "check": true
    },
    {
+    "form": "პრინცესას",
+    "word": "w:პრინცესა",
+    "sense": 1,
+    "gram": "dat",
+    "via": "form index"
+   },
+   {
     "form": "მთელი",
-    "via": "headword",
     "word": "5762",
-    "sense": 2
+    "sense": 2,
+    "via": "headword"
    },
    {
     "form": "თავისი",
-    "via": "headword",
     "word": "252",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ისტორია",
-    "via": "headword",
     "word": "328",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მოუყვა",
@@ -2253,40 +2174,41 @@
   [
    {
     "form": "პრინცი",
-    "via": "headword",
     "word": "w:პრინცი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ადგა",
-    "via": "paradigm",
     "word": "199",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "თავისი",
-    "via": "headword",
     "word": "252",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "საწოლი",
-    "via": "headword",
     "word": "1962",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გერდას",
@@ -2300,15 +2222,15 @@
   [
    {
     "form": "მეორე",
-    "via": "headword",
     "word": "669",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დღეს",
-    "via": "headword",
     "word": "6248",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გერდას",
@@ -2316,21 +2238,21 @@
    },
    {
     "form": "ახალი",
-    "via": "headword",
     "word": "92",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძვირფასი",
-    "via": "headword",
     "word": "w:ძვირფასი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ტანსაცმელი",
-    "via": "headword",
     "word": "2005",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩააცვეს",
@@ -2338,37 +2260,34 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "სთხოვეს",
-    "via": "lemma სთხოვს",
-    "word": "6040",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "სასახლეში",
-    "via": "-in",
     "word": "w:სასახლე",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დარჩენილიყო",
-    "via": "paradigm",
     "word": "5973",
     "sense": 1,
-    "gram": "Pluperfect 3sg"
+    "gram": "Pluperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "გერდამ",
@@ -2376,50 +2295,48 @@
    },
    {
     "form": "სასახლეში",
-    "via": "-in",
     "word": "w:სასახლე",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "რამდენიმე",
-    "via": "headword",
     "word": "2510",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დღე",
-    "via": "headword",
     "word": "143",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გაატარა",
-    "via": "paradigm",
     "word": "82",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კაიზე",
-    "via": "-on",
     "word": "w:კაი",
     "sense": 1,
     "gram": "on",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ფიქრი",
-    "via": "headword",
     "word": "2364",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძველებურად",
@@ -2435,10 +2352,10 @@
    },
    {
     "form": "დადგა",
-    "via": "form index",
     "word": "199",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "დამშვიდობების",
@@ -2446,37 +2363,36 @@
    },
    {
     "form": "დღე",
-    "via": "headword",
     "word": "143",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "პრინცმა",
-    "via": "-erg",
     "word": "w:პრინცი",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "პრინცესამ",
-    "via": "-erg",
     "word": "w:პრინცესა",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გოგონას",
@@ -2484,15 +2400,15 @@
    },
    {
     "form": "თბილი",
-    "via": "headword",
     "word": "255",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ტანსაცმელი",
-    "via": "headword",
     "word": "2005",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "აჩუქეს",
@@ -2500,10 +2416,10 @@
    },
    {
     "form": "კარებთან",
-    "via": "form index",
     "word": "331",
     "sense": 1,
-    "gram": "with.pl"
+    "gram": "with.pl",
+    "via": "form index"
    },
    {
     "form": "ოქროსფერი",
@@ -2519,29 +2435,24 @@
    },
    {
     "form": "ეტლი",
-    "via": "headword",
     "word": "w:ეტლი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩამოდგა",
-    "via": "lemma დგება",
-    "word": "199",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "გერდა",
-    "via": "name",
-    "name": "Gerda"
+    "via": "unresolved"
    },
    {
     "form": "ეტლში",
-    "via": "-in",
     "word": "w:ეტლი",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ჩასვეს",
@@ -2549,23 +2460,23 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "კაის",
-    "via": "-gen",
     "word": "w:კაი",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მოძებნა",
@@ -2577,9 +2488,9 @@
    },
    {
     "form": "პატარა",
-    "via": "headword",
     "word": "1895",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გერდას",
@@ -2595,15 +2506,16 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ნაღვლიანი",
@@ -2611,11 +2523,10 @@
    },
    {
     "form": "მანამ",
-    "via": "-erg",
     "word": "w:მანა",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "იქნევდა",
@@ -2623,29 +2534,28 @@
    },
    {
     "form": "ფრთებს",
-    "via": "-dat -pl",
     "word": "w:ფრთა",
     "sense": 1,
     "gram": "dat.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "სანამ",
-    "via": "headword",
     "word": "w:სანამ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ეტლი",
-    "via": "headword",
     "word": "w:ეტლი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გაუჩინარდა",
@@ -2655,11 +2565,10 @@
   [
    {
     "form": "ეტლს",
-    "via": "-dat",
     "word": "w:ეტლი",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "უღრანი",
@@ -2667,16 +2576,16 @@
    },
    {
     "form": "ტყე",
-    "via": "headword",
     "word": "2029",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უნდა",
-    "via": "form index",
     "word": "w:უნდა",
     "sense": 1,
-    "gram": "Present 3sg"
+    "gram": "Present 3sg",
+    "via": "form index"
    },
    {
     "form": "გაევლო",
@@ -2684,9 +2593,9 @@
    },
    {
     "form": "სადაც",
-    "via": "headword",
     "word": "w:სადაც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ავაზაკები",
@@ -2694,17 +2603,17 @@
    },
    {
     "form": "ცხოვრობდნენ",
-    "via": "form index",
     "word": "2177",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "მათ",
-    "via": "form index",
     "word": "302",
     "sense": 1,
-    "gram": "erg/dat"
+    "gram": "erg/dat",
+    "via": "form index"
    },
    {
     "form": "შეიპყრეს",
@@ -2712,9 +2621,9 @@
    },
    {
     "form": "ეტლი",
-    "via": "headword",
     "word": "w:ეტლი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დახოცეს",
@@ -2726,20 +2635,20 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "გერდა",
-    "via": "name",
-    "name": "Gerda"
+    "via": "unresolved"
    },
    {
     "form": "გადმოათრიეს",
@@ -2747,24 +2656,23 @@
    },
    {
     "form": "ყაჩაღებსაც",
-    "via": "-too -dat -pl",
     "word": "w:ყაჩაღი",
     "sense": 1,
     "gram": "too.dat.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ჰყავდათ",
-    "via": "paradigm",
     "word": "6235",
     "sense": 1,
-    "gram": "Imperfect 3pl"
+    "gram": "Imperfect 3pl",
+    "via": "form index"
    },
    {
     "form": "პატარა",
-    "via": "headword",
     "word": "1895",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოგონა",
@@ -2772,9 +2680,9 @@
    },
    {
     "form": "რომელიც",
-    "via": "headword",
     "word": "w:რომელიც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გერდას",
@@ -2786,59 +2694,54 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "არავის",
-    "via": "lemma არავინ",
-    "word": "76",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "აძლევდა",
-    "via": "paradigm",
     "word": "91",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "მისთვის",
-    "via": "headword",
     "word": "w:მისთვის",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ზედმეტის",
-    "via": "-gen",
     "word": "w:ზედმეტი",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "თქმის",
-    "via": "-gen",
     "word": "6323",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "უფლებას",
-    "via": "-dat",
     "word": "2043",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    }
   ],
   [
@@ -2856,9 +2759,9 @@
    },
    {
     "form": "როგორ",
-    "via": "headword",
     "word": "1923",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაიკარგა",
@@ -2866,56 +2769,55 @@
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "მეგობრის",
-    "via": "-gen, syncope",
     "word": "395",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ძებნაში",
-    "via": "-in",
     "word": "w:ძებნა",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "რა",
-    "via": "headword",
     "word": "1907",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გადახდა",
-    "via": "headword",
     "word": "6285",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თავს",
-    "via": "form index",
     "word": "261",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ყაჩაღანამ",
@@ -2939,15 +2841,16 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "დაბმული",
@@ -2955,9 +2858,9 @@
    },
    {
     "form": "ირემი",
-    "via": "headword",
     "word": "299",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ანახა",
@@ -2965,11 +2868,10 @@
    },
    {
     "form": "ისინიც",
-    "via": "-too",
     "word": "302",
     "sense": 1,
     "gram": "too",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ისმენდნენ",
@@ -2985,9 +2887,9 @@
    },
    {
     "form": "უცებ",
-    "via": "headword",
     "word": "w:უცებ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მტრედებმა",
@@ -2999,9 +2901,9 @@
    },
    {
     "form": "ჩვენ",
-    "via": "headword",
     "word": "2147",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ვნახეთ",
@@ -3009,31 +2911,29 @@
    },
    {
     "form": "შენი",
-    "via": "headword",
     "word": "2120",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მეგობარი",
-    "via": "headword",
     "word": "395",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფლის",
-    "via": "-gen, syncope",
     "word": "517",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მარხილში",
@@ -3041,23 +2941,23 @@
    },
    {
     "form": "იჯდა",
-    "via": "paradigm",
     "word": "248",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ისინი",
-    "via": "headword",
     "word": "302",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ტყეში",
-    "via": "form index",
     "word": "2029",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "მიჰქროდნენ",
@@ -3065,17 +2965,16 @@
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფალი",
-    "via": "headword",
     "word": "517",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ლაფლანდიაში",
@@ -3083,56 +2982,53 @@
    },
    {
     "form": "ცხოვრობს",
-    "via": "paradigm",
     "word": "2177",
     "sense": 1,
-    "gram": "Present 3sg"
+    "gram": "Present 3sg",
+    "via": "paradigm"
    },
    {
     "form": "სადაც",
-    "via": "headword",
     "word": "w:სადაც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მუდმივად",
-    "via": "headword",
     "word": "w:მუდმივად",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თოვლი",
-    "via": "headword",
     "word": "273",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ყინვაა",
-    "via": "split ყინვა+არის",
-    "word": "2105",
-    "sense": 1,
-    "gram": "არის",
-    "check": true
+    "via": "unresolved"
    }
   ],
   [
    {
     "form": "შესანიშნავი",
-    "via": "headword",
     "word": "3808",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ადგილია",
@@ -3144,63 +3040,60 @@
    },
    {
     "form": "ირემმა",
-    "via": "-erg",
     "word": "299",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "იქ",
-    "via": "headword",
     "word": "303",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არის",
-    "via": "form index",
     "word": "148",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "თოვლის",
-    "via": "-gen",
     "word": "273",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფლის",
-    "via": "-gen, syncope",
     "word": "517",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "საზაფხულო",
-    "via": "headword",
     "word": "w:საზაფხულო",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სასახლე",
-    "via": "headword",
     "word": "w:სასახლე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ხოლო",
-    "via": "headword",
     "word": "w:ხოლო",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მუდმივი",
-    "via": "headword",
     "word": "w:მუდმივი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ადგილსამყოფელი",
@@ -3208,10 +3101,9 @@
    },
    {
     "form": "ჩრდილოეთ",
-    "via": "restored",
     "word": "2404",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "პოლუსთან",
@@ -3219,33 +3111,33 @@
    },
    {
     "form": "არის",
-    "via": "form index",
     "word": "148",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ახლოს",
-    "via": "headword",
     "word": "7",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იქ",
-    "via": "headword",
     "word": "303",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სადაც",
-    "via": "headword",
     "word": "w:სადაც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მე",
-    "via": "headword",
     "word": "40",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დავიბადე",
@@ -3253,51 +3145,51 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "გავიზარდე",
-    "via": "paradigm",
     "word": "w:იზრდება",
     "sense": 1,
-    "gram": "Aorist 1sg"
+    "gram": "Aorist 1sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "საღამოს",
-    "via": "headword",
     "word": "w:საღამოს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "როცა",
-    "via": "headword",
     "word": "w:როცა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყველამ",
-    "via": "-erg",
     "word": "2101",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დაიძინა",
-    "via": "form index",
     "word": "w:იძინებს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ყაჩაღანამ",
@@ -3309,33 +3201,31 @@
    },
    {
     "form": "ირემზე",
-    "via": "-on",
     "word": "299",
     "sense": 1,
     "gram": "on",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "შესვა",
-    "via": "paradigm",
     "word": "1972",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "საჭმელიც",
-    "via": "-too",
     "word": "1963",
     "sense": 1,
     "gram": "too",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მისცა",
-    "via": "paradigm",
     "word": "91",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მადლიერი",
@@ -3347,9 +3237,9 @@
    },
    {
     "form": "პატარა",
-    "via": "headword",
     "word": "1895",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყაჩაღანას",
@@ -3361,29 +3251,28 @@
    },
    {
     "form": "ჩრდილოეთის",
-    "via": "-gen",
     "word": "2404",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ირემი",
-    "via": "headword",
     "word": "299",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "რამდენიმე",
-    "via": "headword",
     "word": "2510",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დღე",
-    "via": "headword",
     "word": "143",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეუჩერებლად",
@@ -3395,15 +3284,15 @@
    },
    {
     "form": "სანამ",
-    "via": "headword",
     "word": "w:სანამ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ისინი",
-    "via": "headword",
     "word": "302",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ლაფლანდიადე",
@@ -3411,22 +3300,19 @@
    },
    {
     "form": "ჩააღწევდნენ",
-    "via": "lemma აღწევს",
-    "word": "w:აღწევს",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "ისინი",
-    "via": "headword",
     "word": "302",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ერთი",
-    "via": "headword",
     "word": "46",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ღარიბული",
@@ -3434,17 +3320,16 @@
    },
    {
     "form": "ქოხის",
-    "via": "-gen",
     "word": "w:ქოხი",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "წინ",
-    "via": "headword",
     "word": "w:წინ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეჩერდნენ",
@@ -3452,23 +3337,22 @@
    },
    {
     "form": "ქოხში",
-    "via": "-in",
     "word": "w:ქოხი",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მხოლოდ",
-    "via": "headword",
     "word": "w:მხოლოდ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ერთი",
-    "via": "headword",
     "word": "46",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ლაფლანდიელი",
@@ -3480,26 +3364,21 @@
    },
    {
     "form": "დახვდათ",
-    "via": "lemma ხვდება",
-    "word": "2434",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "ირემმა",
-    "via": "-erg",
     "word": "299",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ქალს",
-    "via": "-dat",
     "word": "2071",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გერდას",
@@ -3507,15 +3386,15 @@
    },
    {
     "form": "მთელი",
-    "via": "headword",
     "word": "5762",
-    "sense": 2
+    "sense": 2,
+    "via": "headword"
    },
    {
     "form": "თავგადასავალი",
-    "via": "headword",
     "word": "w:თავგადასავალი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უამბო",
@@ -3529,11 +3408,10 @@
    },
    {
     "form": "ირემს",
-    "via": "-dat",
     "word": "299",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "უჩურჩულა",
@@ -3541,23 +3419,22 @@
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მართლაც",
-    "via": "headword",
     "word": "w:მართლაც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფალთანაა",
@@ -3565,41 +3442,38 @@
    },
    {
     "form": "მაგრამ",
-    "via": "headword",
     "word": "948",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იგი",
-    "via": "headword",
     "word": "5627",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძალზე",
-    "via": "headword",
     "word": "w:ძალზე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კმაყოფილია",
-    "via": "split კმაყოფილი+არის",
-    "word": "w:კმაყოფილი",
-    "sense": 1,
-    "gram": "არის",
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "მიაჩნია",
@@ -3607,32 +3481,29 @@
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უკეთეს",
-    "via": "restored",
     "word": "2635",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ბედს",
-    "via": "-dat",
     "word": "w:ბედი",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ვერც",
-    "via": "-too",
     "word": "4190",
     "sense": 1,
     "gram": "too",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ინატრებს",
@@ -3640,78 +3511,72 @@
    },
    {
     "form": "ამის",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "მიზეზი",
-    "via": "headword",
     "word": "w:მიზეზი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჯადოსნური",
-    "via": "headword",
     "word": "w:ჯადოსნური",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ნატეხებია",
-    "via": "split ნატეხი+არის",
-    "word": "w:ნატეხი",
-    "sense": 1,
-    "gram": "არის",
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "გულსა",
-    "via": "-dat",
     "word": "179",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
-   },
-   {
-    "form": "თვალში",
-    "via": "-in",
-    "word": "265",
-    "sense": 1,
-    "gram": "in",
+    ],
+    "via": "headword",
     "check": true
    },
    {
+    "form": "თვალში",
+    "word": "265",
+    "sense": 1,
+    "gram": "in",
+    "via": "form index"
+   },
+   {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩაუვარდა",
@@ -3719,16 +3584,16 @@
    },
    {
     "form": "თუ",
-    "via": "form index",
     "word": "283",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "მას",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "გოგონამ",
@@ -3736,9 +3601,9 @@
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უშველა",
@@ -3746,27 +3611,24 @@
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფლის",
-    "via": "-gen, syncope",
     "word": "517",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ტყვეობიდან",
-    "via": "-from -nom",
     "word": "w:ტყვეობა",
     "sense": 1,
     "gram": "from.nom",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ვერასოდეს",
@@ -3778,56 +3640,57 @@
    },
    {
     "form": "გერდა",
-    "via": "name",
-    "name": "Gerda"
+    "via": "unresolved"
    },
    {
     "form": "ძალიან",
-    "via": "headword",
     "word": "w:ძალიან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძლიერი",
-    "via": "headword",
     "word": "2187",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "მამაცი",
-    "via": "headword",
     "word": "w:მამაცი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "კეთილი",
-    "via": "headword",
     "word": "336",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოგონაა",
@@ -3835,35 +3698,36 @@
    },
    {
     "form": "მას",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ყველა",
-    "via": "headword",
     "word": "2101",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სიხარულით",
-    "via": "form index",
     "word": "2340",
     "sense": 1,
-    "gram": "inst"
+    "gram": "inst",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "თავდადებით",
@@ -3871,51 +3735,50 @@
    },
    {
     "form": "ეხმარებიან",
-    "via": "paradigm",
     "word": "212",
     "sense": 1,
-    "gram": "Present 3pl"
+    "gram": "Present 3pl",
+    "via": "form index"
    },
    {
     "form": "ადამიანებიც",
-    "via": "-too -nom -pl",
     "word": "52",
     "sense": 1,
     "gram": "too.nom.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
-   },
-   {
-    "form": "ცხოველებიც",
-    "via": "-too -nom -pl",
-    "word": "2176",
-    "sense": 1,
-    "gram": "too.nom.pl",
+    ],
+    "via": "headword",
     "check": true
    },
    {
+    "form": "ცხოველებიც",
+    "word": "2176",
+    "sense": 1,
+    "gram": "too.nom.pl",
+    "via": "form index"
+   },
+   {
     "form": "მან",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "ხომ",
-    "via": "headword",
     "word": "w:ხომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ფეხშიშველმა",
@@ -3923,9 +3786,9 @@
    },
    {
     "form": "ნახევარი",
-    "via": "headword",
     "word": "1863",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ქვეყნიერება",
@@ -3941,15 +3804,15 @@
    },
    {
     "form": "სიძლიერე",
-    "via": "headword",
     "word": "w:სიძლიერე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მის",
-    "via": "form index",
     "word": "408",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "მოსიყვარულე",
@@ -3957,23 +3820,19 @@
    },
    {
     "form": "გულშია",
-    "via": "split გული+ში+არის",
-    "word": "179",
-    "sense": 1,
-    "gram": "ში.არის",
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "რადგან",
-    "via": "headword",
     "word": "w:რადგან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იგი",
-    "via": "headword",
     "word": "5627",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უმანკო",
@@ -3981,21 +3840,22 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "კეთილი",
-    "via": "headword",
     "word": "336",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გოგონაა",
@@ -4003,80 +3863,74 @@
    },
    {
     "form": "მან",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "უნდა",
-    "via": "form index",
     "word": "w:უნდა",
     "sense": 1,
-    "gram": "Present 3sg"
+    "gram": "Present 3sg",
+    "via": "form index"
    },
    {
     "form": "შეაღწიოს",
-    "via": "lemma აღწევს",
-    "word": "w:აღწევს",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "სასახლეში",
-    "via": "-in",
     "word": "w:სასახლე",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ნატეხებისაგან",
-    "via": "-from -gen -pl",
     "word": "w:ნატეხი",
     "sense": 1,
     "gram": "from.gen.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ჯადოსნური",
-    "via": "headword",
     "word": "w:ჯადოსნური",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სიტყვა",
-    "via": "headword",
     "word": "1979",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მარადისობა",
@@ -4084,10 +3938,10 @@
    },
    {
     "form": "უნდა",
-    "via": "form index",
     "word": "w:უნდა",
     "sense": 1,
-    "gram": "Present 3sg"
+    "gram": "Present 3sg",
+    "via": "form index"
    },
    {
     "form": "ააწყოს",
@@ -4095,21 +3949,21 @@
    },
    {
     "form": "სწორედ",
-    "via": "headword",
     "word": "w:სწორედ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ეს",
-    "via": "headword",
     "word": "207",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სიტყვა",
-    "via": "headword",
     "word": "1979",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იხსნის",
@@ -4117,11 +3971,10 @@
    },
    {
     "form": "კაის",
-    "via": "-gen",
     "word": "w:კაი",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    }
   ],
   [
@@ -4135,17 +3988,16 @@
    },
    {
     "form": "დახმარებისათვის",
-    "via": "-for -gen",
     "word": "4898",
     "sense": 1,
     "gram": "for.gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მადლობა",
-    "via": "headword",
     "word": "371",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გადაუხადა",
@@ -4153,11 +4005,10 @@
    },
    {
     "form": "ირმის",
-    "via": "-gen, syncope",
     "word": "299",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ზურგზე",
@@ -4169,52 +4020,47 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ცხოველიც",
-    "via": "-too",
     "word": "2176",
     "sense": 1,
     "gram": "too",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "იმ",
-    "via": "lemma ის",
-    "word": "300",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "წამსვე",
-    "via": "-same -dat",
     "word": "2192",
     "sense": 1,
     "gram": "same.dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მთელი",
-    "via": "headword",
     "word": "5762",
-    "sense": 2
+    "sense": 2,
+    "via": "headword"
    },
    {
     "form": "სისწრაფით",
-    "via": "-inst",
     "word": "w:სისწრაფე",
     "sense": 1,
     "gram": "inst",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გავარდა",
@@ -4222,35 +4068,35 @@
    },
    {
     "form": "წინ",
-    "via": "headword",
     "word": "w:წინ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
-   },
-   {
-    "form": "მანამ",
-    "via": "-erg",
-    "word": "w:მანა",
-    "sense": 1,
-    "gram": "erg",
+    ],
+    "via": "headword",
     "check": true
    },
    {
+    "form": "მანამ",
+    "word": "w:მანა",
+    "sense": 1,
+    "gram": "erg",
+    "via": "form index"
+   },
+   {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეჩერებულა",
@@ -4258,39 +4104,36 @@
    },
    {
     "form": "სანამ",
-    "via": "headword",
     "word": "w:სანამ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფლის",
-    "via": "-gen, syncope",
     "word": "517",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დარბაზებს",
-    "via": "-dat -pl",
     "word": "859",
     "sense": 1,
     "gram": "dat.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მიადგა",
@@ -4300,49 +4143,45 @@
   [
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფლის",
-    "via": "-gen, syncope",
     "word": "517",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "სასახლის",
-    "via": "-gen",
     "word": "w:სასახლე",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "კედლები",
-    "via": "form index",
     "word": "335",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "ყინულისაგან",
-    "via": "-from -gen",
     "word": "2685",
     "sense": 1,
     "gram": "from.gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ნაშენები",
@@ -4350,59 +4189,56 @@
    },
    {
     "form": "უზარმაზარ",
-    "via": "restored",
     "word": "w:უზარმაზარი",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დარბაზებს",
-    "via": "-dat -pl",
     "word": "859",
     "sense": 1,
     "gram": "dat.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ჩრდილოეთის",
-    "via": "-gen",
     "word": "2404",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "შუქი",
-    "via": "headword",
     "word": "w:შუქი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ანათებდა",
-    "via": "paradigm",
     "word": "5341",
     "sense": 1,
-    "gram": "Imperfect 3sg"
+    "gram": "Imperfect 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "დედოფალი",
-    "via": "headword",
     "word": "517",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შინ",
-    "via": "headword",
     "word": "w:შინ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "არ",
-    "via": "headword",
     "word": "146",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იმყოფებოდა",
@@ -4410,44 +4246,39 @@
    },
    {
     "form": "ის",
-    "via": "headword",
     "word": "300",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "რამდენიმე",
-    "via": "headword",
     "word": "2510",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დღით",
-    "via": "-inst",
     "word": "143",
     "sense": 1,
     "gram": "inst",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "თბილ",
-    "via": "form index",
     "word": "255",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "ქვეყნებში",
-    "via": "split ქვეყანა+ში",
-    "word": "2079",
-    "sense": 1,
-    "gram": "ში",
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "წასული",
@@ -4457,38 +4288,35 @@
   [
    {
     "form": "დარბაზის",
-    "via": "-gen",
     "word": "859",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "შუაში",
-    "via": "headword",
     "word": "w:შუაში",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ბრტყელ",
-    "via": "restored",
     "word": "w:ბრტყელი",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მჭრელ",
@@ -4500,49 +4328,41 @@
    },
    {
     "form": "ნატეხებს",
-    "via": "-dat -pl",
     "word": "w:ნატეხი",
     "sense": 1,
     "gram": "dat.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ერთმანეთზე",
-    "via": "-on",
     "word": "527",
     "sense": 1,
     "gram": "on",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "აწყობდა",
-    "via": "lemma აწყობს",
-    "word": "5385",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    }
   ],
   [
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "სასახლეს",
-    "via": "-dat",
     "word": "w:სასახლე",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გერდა",
-    "via": "name",
-    "name": "Gerda"
+    "via": "unresolved"
    },
    {
     "form": "მიადგა",
@@ -4554,158 +4374,154 @@
    },
    {
     "form": "უზარმაზარ",
-    "via": "restored",
     "word": "w:უზარმაზარი",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ცარიელ",
-    "via": "restored",
     "word": "2154",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დარბაზში",
-    "via": "-in",
     "word": "859",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "შევიდა",
-    "via": "paradigm",
     "word": "w:შედის",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაინახა",
-    "via": "form index",
     "word": "2429",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "მან",
-    "via": "form index",
     "word": "300",
     "sense": 1,
-    "gram": "erg"
+    "gram": "erg",
+    "via": "form index"
    },
    {
     "form": "უმალვე",
-    "via": "-same",
     "word": "w:უმალ",
     "sense": 1,
     "gram": "same",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "იცნო",
-    "via": "paradigm",
     "word": "6183",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ბიჭი",
-    "via": "headword",
     "word": "120",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ის",
-    "via": "headword",
     "word": "300",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "წყნარად",
-    "via": "form index",
     "word": "2423",
     "sense": 1,
-    "gram": "adv"
+    "gram": "adv",
+    "via": "form index"
    },
    {
     "form": "მიუახლოვდა",
-    "via": "form index",
     "word": "w:უახლოვდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "ბიჭს",
-    "via": "-dat",
     "word": "120",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მის",
-    "via": "form index",
     "word": "408",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "გვერდით",
-    "via": "headword",
     "word": "184",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩამოჯდა",
-    "via": "form index",
     "word": "w:ჩამოჯდება",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
-   },
-   {
-    "form": "ნატეხებისაგან",
-    "via": "-from -gen -pl",
-    "word": "w:ნატეხი",
-    "sense": 1,
-    "gram": "from.gen.pl",
+    ],
+    "via": "headword",
     "check": true
    },
    {
+    "form": "ნატეხებისაგან",
+    "word": "w:ნატეხი",
+    "sense": 1,
+    "gram": "from.gen.pl",
+    "via": "form index"
+   },
+   {
     "form": "სიტყვა",
-    "via": "headword",
     "word": "1979",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მარადისობა",
@@ -4713,16 +4529,13 @@
    },
    {
     "form": "დაწერა",
-    "via": "lemma წერს",
-    "word": "2196",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "შეკრთა",
@@ -4730,15 +4543,15 @@
    },
    {
     "form": "თითქოს",
-    "via": "headword",
     "word": "w:თითქოს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "რაღაც",
-    "via": "headword",
     "word": "w:რაღაც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გაახსენდა",
@@ -4746,16 +4559,14 @@
    },
    {
     "form": "გერდა",
-    "via": "name",
-    "name": "Gerda"
+    "via": "unresolved"
    },
    {
     "form": "ყელზე",
-    "via": "-on",
     "word": "2383",
     "sense": 1,
     "gram": "on",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "შემოეხვია",
@@ -4763,11 +4574,10 @@
    },
    {
     "form": "გულში",
-    "via": "-in",
     "word": "179",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ჩაიკრა",
@@ -4775,15 +4585,16 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "აღტაცებით",
@@ -4795,44 +4606,39 @@
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჩემო",
-    "via": "-voc",
     "word": "45",
     "sense": 1,
     "gram": "voc",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ძვირფასო",
-    "via": "-voc",
     "word": "w:ძვირფასი",
     "sense": 1,
     "gram": "voc",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "როგორც",
-    "via": "headword",
     "word": "w:როგორც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იქნა",
-    "via": "lemma არის",
-    "word": "148",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "გიპოვნე",
@@ -4842,42 +4648,41 @@
   [
    {
     "form": "ბიჭი",
-    "via": "headword",
     "word": "120",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ისევ",
-    "via": "headword",
     "word": "w:ისევ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "უძრავად",
-    "via": "-adv",
     "word": "w:უძრავი",
     "sense": 1,
     "gram": "adv",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "იჯდა",
-    "via": "paradigm",
     "word": "248",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "თითქოს",
-    "via": "headword",
     "word": "w:თითქოს",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "რაღაცას",
@@ -4889,14 +4694,13 @@
    },
    {
     "form": "მაშინ",
-    "via": "headword",
     "word": "w:მაშინ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გერდა",
-    "via": "name",
-    "name": "Gerda"
+    "via": "unresolved"
    },
    {
     "form": "მდუღარე",
@@ -4904,11 +4708,10 @@
    },
    {
     "form": "ცრემლებით",
-    "via": "-inst -pl",
     "word": "w:ცრემლი",
     "sense": 1,
     "gram": "inst.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ატირდა",
@@ -4916,55 +4719,48 @@
    },
    {
     "form": "ცხელი",
-    "via": "headword",
     "word": "2172",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცრემლები",
-    "via": "-nom -pl",
     "word": "w:ცრემლი",
     "sense": 1,
     "gram": "nom.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "კაის",
-    "via": "-gen",
     "word": "w:კაი",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მკერდზე",
-    "via": "-on",
     "word": "4619",
     "sense": 1,
     "gram": "on",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დაეცა",
-    "via": "form index",
     "word": "5567",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "გულში",
-    "via": "-in",
     "word": "179",
     "sense": 1,
     "gram": "in",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "შეაღწია",
-    "via": "lemma აღწევს",
-    "word": "w:აღწევს",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "გაყინული",
@@ -4972,9 +4768,9 @@
    },
    {
     "form": "გული",
-    "via": "headword",
     "word": "179",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გაულღო",
@@ -4982,41 +4778,41 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "მასთან",
-    "via": "headword",
     "word": "w:მასთან",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ერთად",
-    "via": "headword",
     "word": "205",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ჯადოსნური",
-    "via": "headword",
     "word": "w:ჯადოსნური",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სარკის",
-    "via": "-gen",
     "word": "1952",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ნამსხვრევებიც",
@@ -5024,18 +4820,17 @@
    },
    {
     "form": "ბიჭმა",
-    "via": "-erg",
     "word": "120",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "შეხედა",
-    "via": "form index",
     "word": "w:შეხედავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "გერდას",
@@ -5043,43 +4838,43 @@
    },
    {
     "form": "თვალები",
-    "via": "form index",
     "word": "265",
     "sense": 1,
-    "gram": "nom.pl"
+    "gram": "nom.pl",
+    "via": "form index"
    },
    {
     "form": "ცრემლებით",
-    "via": "-inst -pl",
     "word": "w:ცრემლი",
     "sense": 1,
     "gram": "inst.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "აევსო",
-    "via": "paradigm",
     "word": "5328",
     "sense": 1,
-    "gram": "Pluperfect 3sg"
+    "gram": "Pluperfect 3sg",
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ისე",
-    "via": "headword",
     "word": "585",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცხარედ",
@@ -5091,47 +4886,43 @@
    },
    {
     "form": "რომ",
-    "via": "headword",
     "word": "w:რომ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ცრემლებთან",
-    "via": "-with -pl",
     "word": "w:ცრემლი",
     "sense": 1,
     "gram": "with.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ერთად",
-    "via": "headword",
     "word": "205",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "თვალებიდან",
-    "via": "-from -nom -pl",
     "word": "265",
     "sense": 1,
     "gram": "from.nom.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ნატეხებიც",
-    "via": "-too -nom -pl",
     "word": "w:ნატეხი",
     "sense": 1,
     "gram": "too.nom.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გადმოუვარდა",
@@ -5139,36 +4930,35 @@
    },
    {
     "form": "კაიმ",
-    "via": "-erg",
     "word": "w:კაი",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ახლა",
-    "via": "headword",
     "word": "94",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "კი",
-    "via": "headword",
     "word": "340",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "იცნო",
-    "via": "paradigm",
     "word": "6183",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "თავისი",
-    "via": "headword",
     "word": "252",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დობილი",
@@ -5182,19 +4972,17 @@
    },
    {
     "form": "კაის",
-    "via": "-gen",
     "word": "w:კაი",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ლოყებზე",
-    "via": "-on -pl",
     "word": "366",
     "sense": 1,
     "gram": "on.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "აკოცა",
@@ -5202,43 +4990,42 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ორივე",
-    "via": "headword",
     "word": "w:ორივე",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ლოყა",
-    "via": "headword",
     "word": "366",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "წამსვე",
-    "via": "-same -dat",
     "word": "2192",
     "sense": 1,
     "gram": "same.dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "წითლად",
-    "via": "-adv, syncope",
     "word": "w:წითელი",
     "sense": 1,
     "gram": "adv",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "აუღაჟღაჟდა",
@@ -5250,31 +5037,30 @@
    },
    {
     "form": "თვალებში",
-    "via": "-in -pl",
     "word": "265",
     "sense": 1,
     "gram": "in.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "თვალებშიც",
-    "via": "-too -in -pl",
     "word": "265",
     "sense": 1,
     "gram": "too.in.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ძველებური",
@@ -5290,9 +5076,9 @@
    },
    {
     "form": "შემდეგ",
-    "via": "headword",
     "word": "w:შემდეგ",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ხელ-ფეხი",
@@ -5304,31 +5090,30 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ისინიც",
-    "via": "-too",
     "word": "302",
     "sense": 1,
     "gram": "too",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ხელად",
-    "via": "-adv",
     "word": "2233",
     "sense": 1,
     "gram": "adv",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გათბნენ",
@@ -5336,79 +5121,76 @@
    },
    {
     "form": "თოვლის",
-    "via": "-gen",
     "word": "273",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფალმა",
-    "via": "-erg",
     "word": "517",
     "sense": 1,
     "gram": "erg",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "თავისი",
-    "via": "headword",
     "word": "252",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "გავლენა",
-    "via": "headword",
     "word": "w:გავლენა",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დაკარგა",
-    "via": "paradigm",
     "word": "w:კარგავს",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    },
    {
     "form": "კაიზე",
-    "via": "-on",
     "word": "w:კაი",
     "sense": 1,
     "gram": "on",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ამის",
-    "via": "form index",
     "word": "207",
     "sense": 1,
-    "gram": "gen"
+    "gram": "gen",
+    "via": "form index"
    },
    {
     "form": "საბუთი",
-    "via": "headword",
     "word": "w:საბუთი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ბრწყინავი",
@@ -5416,11 +5198,10 @@
    },
    {
     "form": "ნატეხებით",
-    "via": "-inst -pl",
     "word": "w:ნატეხი",
     "sense": 1,
     "gram": "inst.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დაწერილი",
@@ -5428,9 +5209,9 @@
    },
    {
     "form": "სიტყვა",
-    "via": "headword",
     "word": "1979",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მარადისობა",
@@ -5438,35 +5219,35 @@
    },
    {
     "form": "იყო",
-    "via": "form index",
     "word": "148",
     "sense": 1,
-    "gram": "Aorist 3sg"
+    "gram": "Aorist 3sg",
+    "via": "form index"
    }
   ],
   [
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "გერდა",
-    "via": "name",
-    "name": "Gerda"
+    "via": "unresolved"
    },
    {
     "form": "ყინულოვანი",
@@ -5474,11 +5255,10 @@
    },
    {
     "form": "დარბაზიდან",
-    "via": "-from",
     "word": "859",
     "sense": 1,
     "gram": "from",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ხელიხელ",
@@ -5490,88 +5270,80 @@
    },
    {
     "form": "გამოვიდნენ",
-    "via": "paradigm",
     "word": "158",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "სასახლის",
-    "via": "-gen",
     "word": "w:სასახლე",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "შესასვლელთან",
-    "via": "-with",
     "word": "2391",
     "sense": 1,
     "gram": "with",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მათ",
-    "via": "form index",
     "word": "302",
     "sense": 1,
-    "gram": "erg/dat"
+    "gram": "erg/dat",
+    "via": "form index"
    },
    {
     "form": "ჩრდილოეთის",
-    "via": "-gen",
     "word": "2404",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ირემი",
-    "via": "headword",
     "word": "299",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ელოდებოდათ",
-    "via": "lemma ელოდება",
-    "word": "202",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "რამდენიმე",
-    "via": "headword",
     "word": "2510",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დღეში",
-    "via": "form index",
     "word": "143",
     "sense": 1,
-    "gram": "in"
+    "gram": "in",
+    "via": "form index"
    },
    {
     "form": "ისინი",
-    "via": "headword",
     "word": "302",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "მშობლიურ",
-    "via": "restored",
     "word": "5821",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ქალაქს",
-    "via": "-dat",
     "word": "2070",
     "sense": 1,
     "gram": "dat",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "მიადგნენ",
@@ -5579,25 +5351,23 @@
    },
    {
     "form": "ბედნიერები",
-    "via": "-nom",
     "word": "5406",
     "sense": 1,
     "gram": "nom",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ნაცნობ",
-    "via": "form index",
     "word": "w:ნაცნობი",
-    "sense": 1
+    "sense": 1,
+    "via": "form index"
    },
    {
     "form": "კიბეებს",
-    "via": "-dat -pl",
     "word": "342",
     "sense": 1,
     "gram": "dat.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "აუყვნენ",
@@ -5605,42 +5375,42 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
-   },
-   {
-    "form": "ოთახში",
-    "via": "-in",
-    "word": "1876",
-    "sense": 1,
-    "gram": "in",
+    ],
+    "via": "headword",
     "check": true
    },
    {
+    "form": "ოთახში",
+    "word": "1876",
+    "sense": 1,
+    "gram": "in",
+    "via": "form index"
+   },
+   {
     "form": "შევიდნენ",
-    "via": "paradigm",
     "word": "w:შედის",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "სადაც",
-    "via": "headword",
     "word": "w:სადაც",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ყველაფერი",
-    "via": "headword",
     "word": "4382",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "ძველებურად",
@@ -5648,70 +5418,64 @@
    },
    {
     "form": "დახვდათ",
-    "via": "lemma ხვდება",
-    "word": "2434",
-    "sense": 1,
-    "check": true
+    "via": "unresolved"
    },
    {
     "form": "კაი",
-    "via": "headword",
     "word": "w:კაი",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "გერდა",
-    "via": "name",
-    "name": "Gerda"
+    "via": "unresolved"
    },
    {
     "form": "თავთავიანთ",
-    "via": "restored",
     "word": "w:თავთავიანთი",
     "sense": 1,
-    "check": true
+    "via": "form index"
    },
    {
     "form": "სკამებზე",
-    "via": "-on -pl",
     "word": "1982",
     "sense": 1,
     "gram": "on.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დასხდნენ",
-    "via": "paradigm",
     "word": "6272",
     "sense": 1,
-    "gram": "Aorist 3pl"
+    "gram": "Aorist 3pl",
+    "via": "form index"
    },
    {
     "form": "ერთმანეთს",
-    "via": "form index",
     "word": "527",
     "sense": 1,
-    "gram": "dat"
+    "gram": "dat",
+    "via": "form index"
    },
    {
     "form": "ხელები",
-    "via": "-nom -pl",
     "word": "2233",
     "sense": 1,
     "gram": "nom.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ჩასჭიდეს",
@@ -5719,31 +5483,30 @@
    },
    {
     "form": "და",
-    "via": "headword, tagged CCONJ",
-    "word": "38",
+    "word": "53",
     "sense": 1,
     "alts": [
      {
-      "word": "53",
-      "english": "sister"
+      "word": "38",
+      "english": "and"
      }
-    ]
+    ],
+    "via": "headword",
+    "check": true
    },
    {
     "form": "ყინულის",
-    "via": "-gen",
     "word": "2685",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დედოფლის",
-    "via": "-gen, syncope",
     "word": "517",
     "sense": 1,
     "gram": "gen",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "გაყინული",
@@ -5751,35 +5514,33 @@
    },
    {
     "form": "ცარიელი",
-    "via": "headword",
     "word": "2154",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "დარბაზები",
-    "via": "-nom -pl",
     "word": "859",
     "sense": 1,
     "gram": "nom.pl",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "ცუდი",
-    "via": "headword",
     "word": "2168",
-    "sense": 1
+    "sense": 1,
+    "via": "headword"
    },
    {
     "form": "სიზმარივით",
-    "via": "-like",
     "word": "w:სიზმარი",
     "sense": 1,
     "gram": "like",
-    "check": true
+    "via": "form index"
    },
    {
     "form": "დაავიწყდათ",
-    "via": "override: unlinked"
+    "via": "unresolved"
    }
   ]
  ]

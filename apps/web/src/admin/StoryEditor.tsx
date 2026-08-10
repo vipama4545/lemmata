@@ -10,10 +10,24 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { StoryLinkResult } from '@georgian/shared/contract';
+import type { Lang } from '@georgian/shared/grammar';
 import { api } from '../api/client';
 import Icon from '../components/Icon';
-import { storySummaries } from '../content/store';
+import { lang, langName, storySummaries } from '../content/store';
 import { useEdit } from './useAdmin';
+
+/**
+ * What to put in an empty textarea, per language.
+ *
+ * The placeholder is doing more work than a placeholder usually does: it is the only place
+ * the shape of the input is *shown* rather than described, and "first line is the title,
+ * blank line, then the prose" reads much faster as two lines of a story than as a sentence
+ * about them.
+ */
+const PLACEHOLDER: Record<Lang, { text: string; translation: string }> = {
+  ka: { text: 'სამი გოჭი\n\nიყო და არა იყო რა…', translation: 'The Three Little Pigs\n\nOnce upon a time…' },
+  ru: { text: 'Колобо́к\n\nЖил-был стари́к со стару́хой…', translation: 'The Little Round Bun\n\nOnce upon a time…' },
+};
 
 interface Draft {
   title: string;
@@ -79,6 +93,7 @@ function StoryEditor() {
     const result = await run(() =>
       api.admin.saveStory({
         ...(storyId ? { id: storyId } : {}),
+        lang: lang(),
         title: draft.title.trim(),
         titleEnglish: draft.titleEnglish.trim(),
         level: draft.level.trim(),
@@ -138,7 +153,7 @@ function StoryEditor() {
         <h2 className="admin-section-title">About it</h2>
         <div className="admin-grid">
           <label className="admin-field">
-            <span className="admin-label">Georgian title</span>
+            <span className="admin-label">{langName()} title</span>
             <input
               className="admin-input admin-input-geo"
               value={draft.title}
@@ -190,8 +205,9 @@ function StoryEditor() {
         <h2 className="admin-section-title">The text</h2>
         <p className="admin-note">
           First line is the title, blank lines separate paragraphs, a lone “-” is a rule and is dropped —
-          the same reading a <code>.txt</code> under <code>data/stories/</code> has always had. A translation
-          must have one paragraph per Georgian paragraph, because the side-by-side view pairs them by position.
+          the same reading a <code>.txt</code> under <code>data/{lang()}/stories/</code> has always had. A
+          translation must have one paragraph per {langName()} paragraph, because the side-by-side view pairs
+          them by position.
         </p>
 
         {storyId && !loadedText ? (
@@ -202,14 +218,14 @@ function StoryEditor() {
           <div className="admin-grid admin-grid-prose">
             <label className="admin-field">
               <span className="admin-label">
-                Georgian <span className="admin-count">{Math.max(paragraphCount, 0)} paragraph(s)</span>
+                {langName()} <span className="admin-count">{Math.max(paragraphCount, 0)} paragraph(s)</span>
               </span>
               <textarea
                 className="admin-input admin-textarea admin-textarea-tall admin-input-geo"
                 rows={16}
                 value={draft.text}
                 onChange={event => set('text', event.target.value)}
-                placeholder={'სამი გოჭი\n\nიყო და არა იყო რა…'}
+                placeholder={PLACEHOLDER[lang()].text}
               />
             </label>
 
@@ -225,7 +241,7 @@ function StoryEditor() {
                 rows={16}
                 value={draft.translation}
                 onChange={event => set('translation', event.target.value)}
-                placeholder={'The Three Little Pigs\n\nOnce upon a time…'}
+                placeholder={PLACEHOLDER[lang()].translation}
               />
             </label>
           </div>
@@ -233,7 +249,7 @@ function StoryEditor() {
 
         {mismatched && (
           <p className="admin-warning">
-            The translation has {translationCount} paragraph(s) and the Georgian has {paragraphCount}. The
+            The translation has {translationCount} paragraph(s) and the {langName()} has {paragraphCount}. The
             side-by-side view pairs them by position, so they would drift out of step.
           </p>
         )}

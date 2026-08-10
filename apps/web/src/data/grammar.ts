@@ -10,9 +10,9 @@
 // set them in the larger, heavier face the rest of the app uses for Georgian.
 
 import type { IconName } from '../components/Icon';
-import type { Screeve, ScreeveKey, Verb } from '@georgian/shared/types';
-import { SCREEVES, SERIES } from '@georgian/shared/grammar';
-import { derived } from '../content/store';
+import type { Screeve, ScreeveKey, KaVerb } from '@georgian/shared/types';
+import { SCREEVES, SERIES } from '@georgian/shared/grammar/ka';
+import { derived, kaGroupsOf, kaVerbsOf } from '../content/store';
 
 /** A table in a section. `georgianColumns` holds the indices of the Georgian columns. */
 export interface GrammarTable {
@@ -532,12 +532,28 @@ const screeveByKey = Object.fromEntries(
   SCREEVES.map(s => [s.key, s]),
 ) as Record<ScreeveKey, Screeve>;
 
+/**
+ * A verb with nothing in it, for when there are no Georgian verbs to pick from.
+ *
+ * Every one of these topics is *Georgian* grammar, so on the Russian dictionary there is no
+ * example to carry and `grammarTopics` below hands back nothing at all. This exists so that
+ * the builders above it can still run to completion in the moment before that check, rather
+ * than reading `.verbalNoun` off undefined — which is precisely how this took the site down:
+ * the sidebar builds the topic list on *every* page, so one missing example blanked the whole
+ * app rather than just the grammar section.
+ */
+const NO_VERB: KaVerb = {
+  id: '', english: '', senses: [], transitivity: '', verbalNoun: '', group: '', groupId: '',
+  present3sg: '', forms: {}, imperative: null, prohibitive: null, url: '',
+  synonymsEnglish: [], synonymsGeorgian: [],
+};
+
 // One real verb carried across all three tables, so the example column reads as a single
 // paradigm rather than eleven unrelated forms. The verb with the fewest gaps wins.
-const exampleVerb = derived<Verb>(content => {
-  let best = content.verbs.verbs[0];
+const exampleVerb = derived<KaVerb>(content => {
+  let best = kaVerbsOf(content)[0] ?? NO_VERB;
   let bestFilled = -1;
-  for (const verb of content.verbs.verbs) {
+  for (const verb of kaVerbsOf(content)) {
     const filled = SCREEVES.filter(s => verb.forms[s.key]?.['1sg']).length;
     if (filled > bestFilled) {
       best = verb;
@@ -601,7 +617,7 @@ const verbGroups = derived<GrammarTopic>(content => ({
       ],
     },
     {
-      groups: content.verbs.groups.map(group => ({
+      groups: kaGroupsOf(content).map(group => ({
         label: group.label,
         name: group.name,
         count: group.verbCount,
@@ -676,7 +692,13 @@ const sentenceBasics: GrammarTopic = {
 
 // A function rather than an array, because two of the ten are built from the dictionary and
 // cannot exist before it has loaded. The rest are plain prose and are the same either way.
-export const grammarTopics = derived<GrammarTopic[]>(() => [
+//
+// All ten are Georgian: the alphabet, the seven cases, the eleven screeves. None of it
+// describes Russian even loosely, so the Russian dictionary gets an empty list rather than a
+// section of confidently wrong grammar — and the sidebar, which asks for this on every page,
+// simply renders no grammar group. Russian grammar is a thing to write, not to derive.
+export const grammarTopics = derived<GrammarTopic[]>(content =>
+  content.verbs.kind !== 'ka' ? [] : [
   alphabet,
   nounCases,
   pluralsAdjectives,

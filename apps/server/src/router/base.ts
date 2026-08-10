@@ -56,15 +56,31 @@ export const adminOnly = os.middleware(async ({ context, next }) => {
     throw new ORPCError('UNAUTHORIZED', { message: 'Sign in first.' });
   }
 
+  if (!(await isAdminSession(context))) {
+    throw new ORPCError('FORBIDDEN', { message: 'That is an administrator action.' });
+  }
+
+  return next({ context: { ...context, user: sessionUser } });
+});
+
+/**
+ * Whether the caller is a signed-in administrator, as a question rather than a gate.
+ *
+ * `adminOnly` refuses; this answers. The content router needs the answer, because being an
+ * admin there changes what a procedure *returns* — an unreleased language is served and
+ * listed, or it is not — rather than whether the call is allowed at all.
+ *
+ * Same re-read from the `user` table, and for the same reason: see the note above.
+ */
+export async function isAdminSession(context: AppContext): Promise<boolean> {
+  const sessionUser = context.session?.user;
+  if (!sessionUser) return false;
+
   const [row] = await db
     .select({ isAdmin: schema.user.isAdmin })
     .from(schema.user)
     .where(eq(schema.user.id, sessionUser.id))
     .limit(1);
 
-  if (!row?.isAdmin) {
-    throw new ORPCError('FORBIDDEN', { message: 'That is an administrator action.' });
-  }
-
-  return next({ context: { ...context, user: sessionUser } });
-});
+  return row?.isAdmin === true;
+}

@@ -1,6 +1,7 @@
 {
  "note": "Reading data for one story: the prose in \"paragraphs\", and one record per word occurrence in \"tokens\" — an array per paragraph, in reading order, so a record's position in it is the position of the word in the text. A record carries no meaning of its own: \"word\" is a words.json id and \"sense\" is a 1-based index into that entry's senses, which is how one spelling can mean different things in different lines. \"gram\" is how the form differs from the headword, \"via\" how the link was reached, \"check\" marks a guess worth a human eye, and \"name\" is a proper noun glossed here rather than added to the dictionary. Corrections go in scripts/storyOverrides.json, NOT here, or the next build will drop them. Regenerate with: node scripts/buildStoryData.cjs",
  "id": "three-little-pigs",
+ "lang": "ka",
  "title": "სამი გოჭი",
  "titleEnglish": "The Three Little Pigs",
  "level": "A2",

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { LevelFilter } from '@georgian/shared/types';
-import { wordData as allData } from '../content/store';
+import { lang, wordData as allData } from '../content/store';
 import { focusHref } from '../utils/scroll';
 import { useEntryState } from '../utils/entryState';
 import Icon from './Icon';
@@ -18,9 +18,9 @@ function WordSearch() {
     const lower = searchTerm.toLowerCase();
     return allData().words
       .filter(w => {
-        const matchesSearch = w.georgian.toLowerCase().includes(lower) ||
+        const matchesSearch = w.headword.toLowerCase().includes(lower) ||
           w.english.toLowerCase().includes(lower) ||
-          (w.georgianDefinition && w.georgianDefinition.toLowerCase().includes(lower));
+          (w.definition && w.definition.toLowerCase().includes(lower));
         const matchesLevel = selectedLevel === 'all' || w.level === selectedLevel;
         const matchesCategory = selectedCategory === 'all' || w.categoryId === selectedCategory;
         return matchesSearch && matchesLevel && matchesCategory;
@@ -31,7 +31,7 @@ function WordSearch() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/">← Home</Link>
+        <Link to={`/${lang()}`}>← Home</Link>
         <span className="breadcrumb-sep">/</span>
         <span>Word Search</span>
       </div>
@@ -92,10 +92,10 @@ function WordSearch() {
               <span className="pos-tag">{word.partOfSpeech}</span>
             </div>
             <div className="word-card-center">
-              <span className="word-georgian">{word.georgian}</span>
+              <span className="word-georgian">{word.headword}</span>
               <span className="word-english">{word.english}</span>
-              {word.georgianDefinition && (
-                <span className="word-definition">{word.georgianDefinition}</span>
+              {word.definition && (
+                <span className="word-definition">{word.definition}</span>
               )}
             </div>
             <div className="word-card-right">

@@ -16,14 +16,23 @@ const DB_NAME = 'georgian-dict';
 const DB_VERSION = 1;
 const STORE = 'progress';
 
+import type { Lang } from '@georgian/shared/grammar';
+
 /**
  * Which direction of a card a record scores. The two are learned separately — recognising
  * მგელი and producing it from "wolf" are different skills, and Anki would call them two
  * cards off one note — so each carries its own level and its own due date.
  */
-export type Side = 'ka' | 'en';
+/**
+ * Which direction of a card a record scores. 'target' is the language being learned.
+ *
+ * It said 'ka' while there was only one language it could be. Records written under the old
+ * value are rewritten on read — see `migrateSide` in ./store — because a card key is
+ * `${item}|${side}` and changing what `side` says changes the key.
+ */
+export type Side = 'target' | 'en';
 
-export const SIDES: Side[] = ['ka', 'en'];
+export const SIDES: Side[] = ['target', 'en'];
 
 /**
  * What first created the record.
@@ -43,6 +52,14 @@ export interface CardRecord extends Review {
   /** The study item this scores: `w:6938` for a word, `v:abandon-vt` for a bare paradigm. */
   item: string;
   side: Side;
+  /**
+   * Which dictionary this card belongs to.
+   *
+   * Derivable from `item`, whose ids are minted per language and never collide — but stored,
+   * because the deck filters on it and a review session must never mix scripts. Records
+   * written before there was a second language have none, and are read as Georgian.
+   */
+  lang: Lang;
   level: Mastery;
   /** When the record was first written, epoch ms. */
   created: number;

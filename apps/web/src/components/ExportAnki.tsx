@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import type { Category, Level, LevelFilter, Word } from '@georgian/shared/types';
-import { PERSONS, SCREEVES } from '@georgian/shared/grammar';
-import { derived, verbData } from '../content/store';
+import { PERSONS, SCREEVES } from '@georgian/shared/grammar/ka';
+import { derived, kaVerbData, kaVerbsOf, lang } from '../content/store';
 import { getWordImage } from '../utils/images';
 import CategoryThumb from './CategoryThumb';
 import Icon from './Icon';
@@ -13,7 +13,7 @@ import Icon from './Icon';
  * Only the fields a card actually prints are required, so a verb does not have to be
  * dressed up as a full lexicon entry to be exported.
  */
-type ExportWord = Pick<Word, 'id' | 'georgian' | 'english' | 'georgianDefinition' | 'partOfSpeech' | 'category' | 'categoryId'>
+type ExportWord = Pick<Word, 'id' | 'headword' | 'english' | 'definition' | 'partOfSpeech' | 'category' | 'categoryId'>
   & { level: Level | '' };
 
 // Verbs join the ordinary export as one more category, carrying only their headword: the
@@ -21,21 +21,22 @@ type ExportWord = Pick<Word, 'id' | 'georgian' | 'english' | 'georgianDefinition
 // paradigm is far too wide for a flashcard and has its own download below.
 const verbCategory = derived<Category>(content => ({
   id: 'verbs',
+  lang: content.lang,
   name: 'Verbs',
-  nameGeorgian: 'ზმნები',
-  wordCount: content.verbs.verbs.length,
+  nameNative: 'ზმნები',
+  wordCount: kaVerbsOf(content).length,
 }));
 
 const verbsAsWords = derived<ExportWord[]>(content =>
-  content.verbs.verbs.map(verb => ({
+  kaVerbsOf(content).map(verb => ({
     id: `verb-${verb.id}`,
-    georgian: verb.verbalNoun,
+    headword: verb.verbalNoun,
     english: verb.english,
     level: '',
     partOfSpeech: 'verb',
     category: verbCategory().name,
     categoryId: verbCategory().id,
-    georgianDefinition: verb.present3sg,
+    definition: verb.present3sg,
   })),
 );
 
@@ -102,7 +103,7 @@ function ExportAnki() {
   return (
     <div className="main-content export-page">
       <div className="breadcrumb">
-        <Link to="/">← Home</Link>
+        <Link to={`/${lang()}`}>← Home</Link>
         <span className="breadcrumb-sep">/</span>
         <span>Export for Anki</span>
       </div>
@@ -210,7 +211,7 @@ function ExportAnki() {
           <div className="preview-list">
             {filteredWords.slice(0, 10).map(w => (
               <div key={w.id} className="preview-item">
-                <span className="preview-geo">{w.georgian}</span>
+                <span className="preview-geo">{w.headword}</span>
                 <span className="preview-arrow">→</span>
                 <span className="preview-eng">{w.english}</span>
                 {w.level && <span className={`level-badge ${w.level.toLowerCase()}`}>{w.level}</span>}
@@ -269,7 +270,7 @@ function ExportAnki() {
         <div className="export-preview">
           <div className="preview-header">
             <h3><Icon name="list" /> Contents</h3>
-            <span className="word-count">{verbData().verbs.length} verbs</span>
+            <span className="word-count">{kaVerbData().verbs.length} verbs</span>
           </div>
           <ul className="export-columns">
             <li>{SCREEVES.length} screeves × {PERSONS.length} persons</li>
@@ -281,7 +282,7 @@ function ExportAnki() {
 
         <div className="export-actions">
           <button className="export-btn anki-btn" onClick={exportVerbConjugations}>
-            <Icon name="download" /> Export all {verbData().verbs.length} verb conjugations
+            <Icon name="download" /> Export all {kaVerbData().verbs.length} verb conjugations
           </button>
         </div>
       </div>
@@ -292,7 +293,7 @@ function ExportAnki() {
 // One row per verb, one column per person-and-screeve — the shape the spreadsheet has,
 // flattened so a column header names exactly what is under it ("Aorist 3sg").
 function buildVerbConjugationCsv() {
-  const { verbs } = verbData();
+  const { verbs } = kaVerbData();
   const screeves = SCREEVES;
   const persons = PERSONS;
 
@@ -334,12 +335,12 @@ function exportVerbConjugations() {
 function exportAsCSV(words: ExportWord[]) {
   const headers = ['Georgian', 'English', 'Level', 'Part of Speech', 'Category', 'Georgian Definition', 'Image URL'];
   const rows = words.map(w => [
-    w.georgian,
+    w.headword,
     w.english,
     w.level,
     w.partOfSpeech,
     w.category,
-    w.georgianDefinition,
+    w.definition,
     // Words with no matched image get an empty cell rather than a URL that 404s.
     getWordImage(w)?.url || '',
   ]);
@@ -358,7 +359,7 @@ function exportAsAnkiTxt(words: ExportWord[]) {
   const lines = words.map(w => {
     const image = getWordImage(w);
     const front =
-      `<div style="font-size:2em;text-align:center;padding:20px;">${w.georgian}</div>` +
+      `<div style="font-size:2em;text-align:center;padding:20px;">${w.headword}</div>` +
       `<div style="text-align:center;color:#666;">${w.level} &bull; ${w.partOfSpeech}</div>`;
 
     // A card only carries a picture when one was actually matched to the word, and it
@@ -371,7 +372,7 @@ function exportAsAnkiTxt(words: ExportWord[]) {
 
     const back =
       `<div style="font-size:1.5em;text-align:center;padding:20px;">${w.english}</div>` +
-      `<div style="text-align:center;color:#666;">${w.georgianDefinition}</div>` +
+      `<div style="text-align:center;color:#666;">${w.definition}</div>` +
       picture;
 
     return `${front}\t${back}`;

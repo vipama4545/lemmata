@@ -17,7 +17,7 @@ function CategoryThumb({ category, className = '' }: CategoryThumbProps) {
   const classes = `category-thumb ${className}`.trim();
 
   if (!image) {
-    const initial = (category.nameGeorgian || category.name || '').trim().charAt(0);
+    const initial = (category.nameNative || category.name || '').trim().charAt(0);
     return (
       <span className={`${classes} category-thumb-letter`} aria-hidden="true">
         {initial}

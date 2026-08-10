@@ -22,6 +22,7 @@ import { api } from '../api/client';
 import type { CardRecord } from './db';
 import { splitCardId } from './db';
 import { mergeFromAccount, progressNow, watchWrites } from './store';
+import { lang } from '../content/store';
 
 /** How long to sit on a change before sending it, so a burst of answers is one request. */
 const FLUSH_DELAY = 2_000;
@@ -33,6 +34,7 @@ function toWire(record: CardRecord): StudyCardWire {
     card: record.card,
     item: record.item,
     side: record.side,
+    lang: record.lang,
     level: record.level,
     interval: record.interval,
     ease: record.ease,
@@ -61,6 +63,10 @@ function tombstone(card: string): StudyCardWire {
     card,
     item,
     side,
+    // A tombstone is a claim that a card is gone, and the card key does not say which
+    // dictionary it came from. The language currently loaded is the only answer available
+    // and is harmless either way: nothing filters a deleted card by language.
+    lang: lang(),
     level: 1,
     interval: 0,
     ease: 2.5,
@@ -82,6 +88,7 @@ function fromWire(wire: StudyCardWire): { record: CardRecord; deleted: boolean }
       card: wire.card,
       item: wire.item,
       side: wire.side,
+      lang: wire.lang,
       level: wire.level,
       interval: wire.interval,
       ease: wire.ease,

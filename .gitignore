@@ -39,3 +39,8 @@ scripts
 *.njsproj
 *.sln
 *.sw?
+
+# Database dumps — carry user emails, session tokens and study progress
+backups/
+*.dump
+*.sql.gz

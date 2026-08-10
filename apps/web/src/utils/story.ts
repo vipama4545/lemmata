@@ -1,23 +1,48 @@
 // Turning a story's prose back into clickable words, and resolving what each one means.
 //
-// The story file records one entry per word *occurrence*, in reading order, so the reader
-// has to cut a paragraph into exactly the tokens the build script counted and then count
-// to the same place. That regex is duplicated from scripts/buildStoryData.cjs rather than
-// shared, because the script is CommonJS; if one changes the other has to follow. A drift
-// between them would silently shift every meaning in a paragraph one word to the left,
-// which is why `at` checks the recorded spelling before believing the position.
+// The story records one entry per word *occurrence*, in reading order, so the reader has to
+// cut a paragraph into exactly the tokens the server counted and then count to the same
+// place. Those patterns are duplicated from apps/server/src/story/tokenise.ts rather than
+// shared, because this one splits with a capturing group to keep the punctuation and that
+// one only scans; if one changes the other has to follow. A drift between them would
+// silently shift every meaning in a paragraph one word to the left, which is why `at`
+// checks the recorded spelling before believing the position.
 
-import type { Sense, Story, StoryToken, Verb, VerbMorphemes, Word } from '@georgian/shared/types';
-import { derived, morphemeData } from '../content/store';
+import type { Lang } from '@georgian/shared/grammar';
+import type { Sense, Story, StoryToken, KaVerb, KaVerbMorphemes, Word } from '@georgian/shared/types';
+import { derived, kaVerbsOf, lang, morphemeData } from '../content/store';
 import { focusHref } from './scroll';
 
-// No /g on either: these are handed to String.split and String.test, and a global flag on
-// a shared regex is a standing invitation to the lastIndex bug.
-const TOKEN_RE = /([ა-ჿ]+(?:-[ა-ჿ]+)*)/;
-const WHOLE_TOKEN_RE = /^[ა-ჿ]+(?:-[ა-ჿ]+)*$/;
+// No /g on any of them: these are handed to String.split and String.test, and a global flag
+// on a shared regex is a standing invitation to the lastIndex bug.
+//
+// Hyphens are kept inside a word in both languages — ნიფ-ნიფმა is one word to decline, and
+// so are кто-то and из-за — and Russian admits the combining acute after a letter, because
+// prose written for learners marks its stresses and де́лать must not come apart.
+const TOKEN_RE: Record<Lang, RegExp> = {
+  ka: /([ა-ჿ]+(?:-[ა-ჿ]+)*)/,
+  ru: /((?:[а-яёА-ЯЁ]́?)+(?:-(?:[а-яёА-ЯЁ]́?)+)*)/,
+};
+
+const WHOLE_TOKEN_RE: Record<Lang, RegExp> = {
+  ka: /^[ა-ჿ]+(?:-[ა-ჿ]+)*$/,
+  ru: /^(?:[а-яёА-ЯЁ]́?)+(?:-(?:[а-яёА-ЯЁ]́?)+)*$/,
+};
 
 const wordsById = derived(content => new Map(content.words.words.map(word => [word.id, word])));
-const verbsById = derived(content => new Map(content.verbs.verbs.map(verb => [verb.id, verb])));
+const verbsById = derived(content => new Map(kaVerbsOf(content).map(verb => [verb.id, verb])));
+
+/**
+ * The Russian paradigms, as ids only.
+ *
+ * A Russian verb entry has a `verbId` exactly as a Georgian one does, but there is no
+ * `RuVerb` on the card to show: the popover prints a screeve grid's worth of Georgian
+ * morphology and nothing equivalent for Russian, which conjugates by rule on its own page.
+ * So all this is asked for is whether the link would land anywhere.
+ */
+const ruVerbIds = derived(
+  content => new Set(content.verbs.kind === 'ru' ? content.verbs.verbs.map(verb => verb.id) : []),
+);
 
 // What an inflected form means, keyed by the entry it belongs to and the spelling. Built
 // once: a linear scan of every entry's forms per hovered word would be 2,095 entries for
@@ -47,12 +72,13 @@ export interface Piece {
  * exactly — spacing and punctuation included. Only the words are numbered.
  */
 export function pieces(paragraph: string): Piece[] {
+  const of = lang();
   let index = 0;
   return paragraph
-    .split(TOKEN_RE)
+    .split(TOKEN_RE[of])
     .filter(Boolean)
     .map(text => {
-      const word = WHOLE_TOKEN_RE.test(text);
+      const word = WHOLE_TOKEN_RE[of].test(text);
       return { text, word, index: word ? index++ : -1 };
     });
 }
@@ -73,9 +99,9 @@ export interface Reading {
   /** The dictionary entry, when the occurrence is bound to one. */
   word?: Word;
   /** The paradigm behind that entry, for the verbs that have one. */
-  verb?: Verb;
+  verb?: KaVerb;
   /** The verb's morphemes, for colouring the form the way the verb pages do. */
-  lex?: VerbMorphemes;
+  lex?: KaVerbMorphemes;
   /** Where "full entry" goes, when there is one to go to. */
   href?: string;
   /** The part of speech, from whichever source knows it. */
@@ -107,6 +133,7 @@ export function reading(token: StoryToken): Reading {
   const index = (token.sense ?? 1) - 1;
   const sense = word.senses[index] ?? word.senses[0] ?? null;
   const verb = word.verbId ? verbsById().get(word.verbId) : undefined;
+  const paradigm = Boolean(verb) || Boolean(word.verbId && ruVerbIds().has(word.verbId));
 
   return {
     token,
@@ -115,8 +142,10 @@ export function reading(token: StoryToken): Reading {
     lex: verb ? morphemeData().verbs[verb.id] ?? undefined : undefined,
     // The paradigm is the more useful page when there is one: it is where the form the
     // reader is looking at actually appears. Otherwise it is the word's category, opened
-    // at the word rather than at the top of a list the word is somewhere inside.
-    href: verb ? `/verbs/${verb.id}` : focusHref(`/category/${word.categoryId}`, word.id),
+    // at the word rather than at the top of a list the word is somewhere inside. Checked
+    // against the loaded paradigms either way — a `verbId` naming one the snapshot does not
+    // have would be a link to a page that says "there is no verb with that id".
+    href: paradigm ? `/${lang()}/verbs/${word.verbId}` : focusHref(`/category/${word.categoryId}`, word.id),
     pos: word.partOfSpeech || (verb?.transitivity ?? ''),
     sense,
     otherSenses: word.senses.filter((_, i) => i !== index).map(s => s.english),
@@ -132,7 +161,7 @@ export function meaning(item: Reading): string {
 /** The headword to show the form under, if it differs from the form itself. */
 export function headword(item: Reading): string {
   if (!item.word) return '';
-  return item.word.georgian.split('/')[0].trim().replace(/\*+$/, '').replace(/\d+$/, '');
+  return item.word.headword.split('/')[0].trim().replace(/\*+$/, '').replace(/\d+$/, '');
 }
 
 /** True when the occurrence carries something worth offering — the rest stays plain text. */

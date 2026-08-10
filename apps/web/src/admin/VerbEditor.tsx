@@ -12,12 +12,12 @@
 
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import type { VerbInput } from '@georgian/shared/contract';
-import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar';
-import type { PersonKey, ScreeveKey, Verb } from '@georgian/shared/types';
+import type { KaVerbInput } from '@georgian/shared/contract';
+import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar/ka';
+import type { PersonKey, ScreeveKey, KaVerb } from '@georgian/shared/types';
 import { api } from '../api/client';
 import Icon from '../components/Icon';
-import { verbData } from '../content/store';
+import { kaVerbData } from '../content/store';
 import { useEdit } from './useAdmin';
 
 type Cells = Record<string, Record<string, string>>;
@@ -40,7 +40,7 @@ interface Draft {
 /** The persons the imperative and prohibitive have: you cannot command yourself. */
 const COMMAND_PERSONS = PERSONS.filter(person => person.key !== '1sg');
 
-function draftFrom(verb: Verb | null): Draft {
+function draftFrom(verb: KaVerb | null): Draft {
   if (!verb) {
     return {
       english: '',
@@ -91,7 +91,7 @@ function lines(text: string): string[] {
 function VerbEditor() {
   const { verbId } = useParams<{ verbId: string }>();
   const navigate = useNavigate();
-  const { verbs, groups } = verbData();
+  const { verbs, groups } = kaVerbData();
   const { busy, error, run } = useEdit();
 
   const existing = useMemo(() => verbs.find(verb => verb.id === verbId) ?? null, [verbs, verbId]);
@@ -128,7 +128,7 @@ function VerbEditor() {
     });
 
   const save = async () => {
-    const payload: VerbInput = {
+    const payload: KaVerbInput = {
       ...(existing ? { id: existing.id } : {}),
       english: draft.english.trim(),
       senses: lines(draft.senses),
@@ -144,13 +144,13 @@ function VerbEditor() {
       prohibitive: draft.prohibitive,
     };
 
-    const result = await run(() => api.admin.saveVerb(payload));
+    const result = await run(() => api.admin.saveKaVerb(payload));
     if (result) navigate(`/admin/verbs/${encodeURIComponent(result.id)}`, { replace: true });
   };
 
   const remove = async () => {
     if (!existing) return;
-    const result = await run(() => api.admin.deleteVerb({ id: existing.id }));
+    const result = await run(() => api.admin.deleteVerb({ lang: 'ka', id: existing.id }));
     if (result) navigate('/admin/verbs', { replace: true });
   };
 

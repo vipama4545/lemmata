@@ -26,6 +26,7 @@ function toWire(row: Row): StudyCardWire {
     card: row.card,
     item: row.item,
     side: row.side as StudyCardWire['side'],
+    lang: row.lang,
     level: row.level as StudyCardWire['level'],
     interval: row.interval,
     ease: row.ease,

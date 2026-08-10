@@ -6,7 +6,9 @@
   "exports": {
     "./types": "./src/types.ts",
     "./contract": "./src/contract.ts",
-    "./grammar": "./src/grammar.ts",
+    "./grammar": "./src/grammar/index.ts",
+    "./grammar/ka": "./src/grammar/ka.ts",
+    "./grammar/ru": "./src/grammar/ru.ts",
     "./schema": "./src/schema.ts"
   },
   "scripts": {

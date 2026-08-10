@@ -7,7 +7,7 @@
 // Slot order in a Georgian verb:
 //   preverb · person marker · version vowel · ROOT · PFSF · stem marker · screeve marker · ending
 
-import type { VerbMorphemes } from '@georgian/shared/types';
+import type { KaVerbMorphemes } from '@georgian/shared/types';
 
 /**
  * What a stretch of a form was identified as. The first seven are the slots proper and
@@ -139,7 +139,7 @@ export function isAffixString(text: string): boolean {
 // to the rule of thumb that Series I present-group screeves are preverbless.
 const PREVERBLESS_SCREEVES = ['present', 'imperfect', 'presentSubjunctive'];
 
-function prefixSlots(lex: VerbMorphemes | null | undefined, screeve: string | undefined): Slot[] {
+function prefixSlots(lex: KaVerbMorphemes | null | undefined, screeve: string | undefined): Slot[] {
   let preverbs: string[];
   if (!lex || !lex.preverbs) {
     preverbs = PREVERBS;
@@ -163,7 +163,7 @@ function prefixSlots(lex: VerbMorphemes | null | undefined, screeve: string | un
 
 // The PFSF slot proper is the only suffix slot with a per-verb preference; the doniani -დ-
 // slot shares its colour but must keep its own single option.
-function suffixSlots(lex: VerbMorphemes | null | undefined): Slot[] {
+function suffixSlots(lex: KaVerbMorphemes | null | undefined): Slot[] {
   const pfsf = lex?.pfsf;
   if (!pfsf) return SUFFIX_SLOTS;
   return SUFFIX_SLOTS.map(slot =>
@@ -220,7 +220,7 @@ function bestParse(text: string, slots: Slot[], known: Set<string>): Segment[] |
 
 const EMPTY_PREFERENCE = new Set<string>();
 
-function rootCandidates(lex: VerbMorphemes | null | undefined): string[] {
+function rootCandidates(lex: KaVerbMorphemes | null | undefined): string[] {
   return [
     ...new Set([lex?.root, ...(lex?.roots || [])].filter((root): root is string => Boolean(root))),
   ].sort((a, b) => b.length - a.length);
@@ -247,7 +247,7 @@ function beatsBest(candidate: TokenSplit, best: TokenSplit): boolean {
 // occurs and keeps the split whose prefix and suffix both parse cleanly.
 function segmentToken(
   token: string,
-  lex: VerbMorphemes | null | undefined,
+  lex: KaVerbMorphemes | null | undefined,
   screeve: string | undefined,
 ): Required<SegmentedForm> {
   // The verb's own morphemes, used to break ties between two otherwise valid parses.
@@ -294,7 +294,7 @@ function segmentToken(
  */
 export function segmentForm(
   form: string | null | undefined,
-  lex: VerbMorphemes | null | undefined,
+  lex: KaVerbMorphemes | null | undefined,
   screeve?: string,
 ): SegmentedForm {
   if (!form || !lex) return { segments: [{ text: form || '', part: 'other' }], complete: false };

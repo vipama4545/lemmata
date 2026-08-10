@@ -19,9 +19,11 @@
 import { randomUUID } from 'node:crypto';
 import { ORPCError } from '@orpc/server';
 import { and, asc, count, eq, inArray, ne, sql as raw } from 'drizzle-orm';
-import type { StoryLinkResult, VerbInput, WordInput } from '@georgian/shared/contract';
-import { PERSONS, SCREEVES } from '@georgian/shared/grammar';
-import type { Story, StoryToken } from '@georgian/shared/types';
+import type { RuVerbInput, StoryLinkResult, KaVerbInput, WordInput } from '@georgian/shared/contract';
+import type { Lang } from '@georgian/shared/grammar';
+import { PERSONS, SCREEVES } from '@georgian/shared/grammar/ka';
+import { RU_CLASS_BY_ID, RU_SLOT_KEYS } from '@georgian/shared/grammar/ru';
+import type { RuClassId, RuSlotKey, Story, StoryToken } from '@georgian/shared/types';
 import { db, schema } from '../db/index.ts';
 import type { Tx } from '../db/index.ts';
 import { analyse, type Tags } from '../story/analyser.ts';
@@ -56,9 +58,27 @@ function slug(text: string, fallback: string): string {
   return base || fallback;
 }
 
+/**
+ * Cyrillic to Latin, for minting a Russian verb id.
+ *
+ * `slug` above strips everything that is not a–z, which would reduce делать to nothing at
+ * all — so Cyrillic is transliterated first rather than discarded. The table is the plain
+ * BGN-ish one and its output is never read by anybody; what matters is only that it is
+ * *stable*, because an id, once minted, is cited by study records and story tokens.
+ */
+const CYRILLIC: Record<string, string> = {
+  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i', й: 'y',
+  к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f',
+  х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya',
+};
+
+function slugCyrillic(text: string): string {
+  return [...text.toLowerCase()].map(letter => CYRILLIC[letter] ?? letter).join('');
+}
+
 /** `${base}`, then `${base}-2`, until nothing has it. */
 async function freeId(tx: Tx, table: 'verbs' | 'stories', base: string): Promise<string> {
-  const target = table === 'verbs' ? schema.verbs : schema.stories;
+  const target = table === 'verbs' ? schema.kaVerbs : schema.stories;
   for (let n = 1; n < 500; n += 1) {
     const id = n === 1 ? base : `${base}-${n}`;
     const [taken] = await tx.select({ id: target.id }).from(target).where(eq(target.id, id)).limit(1);
@@ -68,7 +88,10 @@ async function freeId(tx: Tx, table: 'verbs' | 'stories', base: string): Promise
 }
 
 /** The next free position, so a new row lands at the end of the list rather than at 0. */
-async function nextPosition(tx: Tx, table: typeof schema.words | typeof schema.verbs): Promise<number> {
+async function nextPosition(
+  tx: Tx,
+  table: typeof schema.words | typeof schema.kaVerbs | typeof schema.ruVerbs,
+): Promise<number> {
   const [row] = await tx.select({ max: raw<number | null>`max(${table.position})` }).from(table);
   return (row?.max ?? -1) + 1;
 }
@@ -104,17 +127,17 @@ async function recountVerbGroups(tx: Tx, groupIds: (string | null)[]): Promise<v
   if (!ids.length) return;
 
   const counts = await tx
-    .select({ groupId: schema.verbs.groupId, total: count() })
-    .from(schema.verbs)
-    .where(inArray(schema.verbs.groupId, ids))
-    .groupBy(schema.verbs.groupId);
+    .select({ groupId: schema.kaVerbs.groupId, total: count() })
+    .from(schema.kaVerbs)
+    .where(inArray(schema.kaVerbs.groupId, ids))
+    .groupBy(schema.kaVerbs.groupId);
 
   const byId = new Map(counts.map(row => [row.groupId, Number(row.total)]));
   for (const id of ids) {
     await tx
-      .update(schema.verbGroups)
+      .update(schema.kaVerbGroups)
       .set({ verbCount: byId.get(id) ?? 0 })
-      .where(eq(schema.verbGroups.id, id));
+      .where(eq(schema.kaVerbGroups.id, id));
   }
 }
 
@@ -138,9 +161,9 @@ async function writeWord(tx: Tx, input: WordInput): Promise<string> {
 
   if (input.verbId) {
     const [verb] = await tx
-      .select({ id: schema.verbs.id })
-      .from(schema.verbs)
-      .where(eq(schema.verbs.id, input.verbId))
+      .select({ id: schema.kaVerbs.id })
+      .from(schema.kaVerbs)
+      .where(eq(schema.kaVerbs.id, input.verbId))
       .limit(1);
     if (!verb) fail(`There is no paradigm "${input.verbId}".`);
   }
@@ -164,19 +187,23 @@ async function writeWord(tx: Tx, input: WordInput): Promise<string> {
   // A new lemma gets `w:<headword>`, which is what scripts/lexicon.json has always minted
   // for a hand-written entry — so a word added here and one added there are indistinguishable
   // afterwards, and re-running the offline pipeline over an exported file finds its own ids.
-  const id = existing?.id ?? `w:${input.georgian.trim()}`;
+  // Namespaced per language, because ids are single-column and global: `w:` has always been
+  // the Georgian convention and a Russian entry cannot be allowed to collide with it.
+  const id = existing?.id ?? `${input.lang === 'ka' ? 'w' : `${input.lang}-w`}:${input.headword.trim()}`;
   if (!existing) {
     const [clash] = await tx.select({ id: schema.words.id }).from(schema.words).where(eq(schema.words.id, id)).limit(1);
-    if (clash) fail(`There is already an entry for "${input.georgian}". Edit that one instead.`);
+    if (clash) fail(`There is already an entry for "${input.headword}". Edit that one instead.`);
   }
 
   const row = {
-    georgian: input.georgian,
+    lang: input.lang,
+    headword: input.headword,
+    accented: input.accented,
     // The headline gloss is the first sense unless somebody typed something else. 2,095 of
     // the 2,096 scraped entries hold exactly that, so defaulting to it is the convention
     // rather than a guess.
     english: input.english || input.senses[0],
-    georgianDefinition: input.georgianDefinition,
+    definition: input.definition,
     level: input.level,
     partOfSpeech: input.partOfSpeech,
     category: category.name,
@@ -219,8 +246,24 @@ async function writeWord(tx: Tx, input: WordInput): Promise<string> {
         form: form.form,
         gram: form.gram || null,
         english: form.english || null,
+        accented: form.accented,
       }));
     if (rows.length) await tx.insert(schema.wordForms).values(rows);
+  }
+
+  // The Russian side table, written whole or removed. A word that stops being Russian — or
+  // that never was — must not keep a gender row behind it, so the delete is unconditional
+  // and the insert is not.
+  await tx.delete(schema.ruWordGrammar).where(eq(schema.ruWordGrammar.wordId, id));
+  if (input.lang === 'ru' && input.ru) {
+    await tx.insert(schema.ruWordGrammar).values({
+      wordId: id,
+      gender: input.ru.gender || null,
+      animacy: input.ru.animacy || null,
+      declension: input.ru.declension || null,
+      stressPattern: input.ru.stressPattern || null,
+      needsCheck: input.ru.check,
+    });
   }
 
   await recountCategories(tx, [category.id, existing?.categoryId ?? '']);
@@ -237,12 +280,12 @@ async function writeWord(tx: Tx, input: WordInput): Promise<string> {
  * screeve missing those persons is one that does not inflect for them. Only a screeve with
  * nothing in it at all is dropped, which is how a defective paradigm stays short.
  */
-async function writeVerb(tx: Tx, input: VerbInput): Promise<string> {
+async function writeKaVerb(tx: Tx, input: KaVerbInput): Promise<string> {
   if (input.groupId) {
     const [group] = await tx
-      .select({ id: schema.verbGroups.id, label: schema.verbGroups.label })
-      .from(schema.verbGroups)
-      .where(eq(schema.verbGroups.id, input.groupId))
+      .select({ id: schema.kaVerbGroups.id, label: schema.kaVerbGroups.label })
+      .from(schema.kaVerbGroups)
+      .where(eq(schema.kaVerbGroups.id, input.groupId))
       .limit(1);
     if (!group) fail(`There is no conjugation group "${input.groupId}".`);
   }
@@ -250,9 +293,9 @@ async function writeVerb(tx: Tx, input: VerbInput): Promise<string> {
   const existing = input.id
     ? (
         await tx
-          .select({ id: schema.verbs.id, groupId: schema.verbs.groupId })
-          .from(schema.verbs)
-          .where(eq(schema.verbs.id, input.id))
+          .select({ id: schema.kaVerbs.id, groupId: schema.kaVerbs.groupId })
+          .from(schema.kaVerbs)
+          .where(eq(schema.kaVerbs.id, input.id))
           .limit(1)
       )[0]
     : undefined;
@@ -261,9 +304,9 @@ async function writeVerb(tx: Tx, input: VerbInput): Promise<string> {
 
   const [group] = input.groupId
     ? await tx
-        .select({ label: schema.verbGroups.label })
-        .from(schema.verbGroups)
-        .where(eq(schema.verbGroups.id, input.groupId))
+        .select({ label: schema.kaVerbGroups.label })
+        .from(schema.kaVerbGroups)
+        .where(eq(schema.kaVerbGroups.id, input.groupId))
         .limit(1)
     : [undefined];
 
@@ -285,9 +328,9 @@ async function writeVerb(tx: Tx, input: VerbInput): Promise<string> {
   };
 
   if (existing) {
-    await tx.update(schema.verbs).set(row).where(eq(schema.verbs.id, id));
+    await tx.update(schema.kaVerbs).set(row).where(eq(schema.kaVerbs.id, id));
   } else {
-    await tx.insert(schema.verbs).values({ id, position: await nextPosition(tx, schema.verbs), ...row });
+    await tx.insert(schema.kaVerbs).values({ id, position: await nextPosition(tx, schema.kaVerbs), ...row });
   }
 
   const cells: { verbId: string; screeve: string; person: string; form: string }[] = [];
@@ -308,8 +351,8 @@ async function writeVerb(tx: Tx, input: VerbInput): Promise<string> {
   addScreeve('imperative', input.imperative);
   addScreeve('prohibitive', input.prohibitive);
 
-  await tx.delete(schema.verbForms).where(eq(schema.verbForms.verbId, id));
-  if (cells.length) await tx.insert(schema.verbForms).values(cells);
+  await tx.delete(schema.kaVerbForms).where(eq(schema.kaVerbForms.verbId, id));
+  if (cells.length) await tx.insert(schema.kaVerbForms).values(cells);
 
   await recountVerbGroups(tx, [input.groupId, existing?.groupId ?? null]);
   return id;
@@ -347,18 +390,18 @@ async function readPinned(tx: Tx, storyId: string): Promise<Pinned> {
 }
 
 /**
- * A story's prose, read before any transaction is opened, so the tagger can be asked about
- * it. Fails the request if there is no such story, which is the same check the caller's own
- * transaction repeats against a consistent snapshot.
+ * A story's language and prose, read before any transaction is opened, so the tagger can be
+ * asked about it. Fails the request if there is no such story, which is the same check the
+ * caller's own transaction repeats against a consistent snapshot.
  */
-async function storyProse(storyId: string): Promise<string[]> {
+async function storyProse(storyId: string): Promise<{ lang: Lang; paragraphs: string[] }> {
   const [story] = await db
-    .select({ paragraphs: schema.stories.paragraphs })
+    .select({ lang: schema.stories.lang, paragraphs: schema.stories.paragraphs })
     .from(schema.stories)
     .where(eq(schema.stories.id, storyId))
     .limit(1);
   if (!story) fail('There is no such story.');
-  return story.paragraphs;
+  return { lang: story.lang, paragraphs: story.paragraphs };
 }
 
 /**
@@ -371,8 +414,8 @@ async function storyProse(storyId: string): Promise<string[]> {
  * write: the tags describe the prose, and if the prose changes underneath them linkStory
  * notices the token counts disagree and links without them.
  */
-async function tagsFor(paragraphs: string[]): Promise<Tags | null> {
-  return analyse(paragraphs);
+async function tagsFor(lang: Lang, paragraphs: string[]): Promise<Tags | null> {
+  return analyse(lang, paragraphs);
 }
 
 /**
@@ -383,13 +426,14 @@ async function tagsFor(paragraphs: string[]): Promise<Tags | null> {
  */
 async function relink(
   tx: Tx,
+  lang: Lang,
   storyId: string,
   paragraphs: string[],
   pinned: Pinned,
   tags: Tags | null,
 ): Promise<{ unresolved: { form: string; count: number }[]; flagged: { form: string; count: number }[] }> {
-  const indexes = await buildIndexes();
-  const report = linkStory(paragraphs, indexes, pinned, tags);
+  const indexes = await buildIndexes(lang);
+  const report = linkStory(lang, paragraphs, indexes, pinned, tags);
 
   // A pin may cite a word that has since been deleted. Better a token that falls back to
   // plain text than a write that fails on a foreign key and loses the whole edit.
@@ -503,6 +547,99 @@ async function listUsers(tx: Tx | typeof db) {
   return rows.map(({ createdAt, ...row }) => ({ ...row, createdAt: createdAt.getTime() }));
 }
 
+/* ------------------------------------------------------------ Russian verbs */
+
+/**
+ * Creates or updates one Russian verb — which is to say one *rule*, plus whatever cells the
+ * rule cannot reach.
+ *
+ * The contrast with `writeKaVerb` above is the whole point of the two-table design. That one
+ * writes up to 66 rows and has to reason about which cells the editor left blank; this one
+ * writes a single row of stems and a handful of exceptions, and the twenty-odd forms follow
+ * from it in the browser. Correcting a Russian paradigm means correcting one stem.
+ *
+ * `classId` and the slot keys are validated here rather than in the contract's Zod schema, so
+ * that grammar/ru.ts stays the only place the closed sets are written down. See the note on
+ * `paradigmInput`, which makes the same trade for the Georgian screeves.
+ */
+async function writeRuVerb(tx: Tx, input: RuVerbInput): Promise<string> {
+  if (!RU_CLASS_BY_ID.has(input.classId as RuClassId)) {
+    fail(`"${input.classId}" is not a conjugation class. See RU_CLASSES in grammar/ru.ts.`);
+  }
+
+  const slots = new Set<string>(RU_SLOT_KEYS);
+  for (const slot of Object.keys(input.overrides)) {
+    if (!slots.has(slot)) fail(`"${slot}" is not one of this verb's cells.`);
+  }
+
+  const [existing] = input.id
+    ? await tx.select().from(schema.ruVerbs).where(eq(schema.ruVerbs.id, input.id)).limit(1)
+    : [];
+
+  if (input.id && !existing) fail(`There is no verb "${input.id}".`);
+
+  // Slugged from the infinitive and the aspect together, because делать and сделать are two
+  // records and would otherwise want the same id.
+  const id = existing?.id ?? `ru-${slug(slugCyrillic(input.infinitive), 'verb')}-${input.aspect}`;
+  if (!existing) {
+    const [clash] = await tx.select({ id: schema.ruVerbs.id }).from(schema.ruVerbs).where(eq(schema.ruVerbs.id, id)).limit(1);
+    if (clash) fail(`There is already a ${input.aspect === 'pf' ? 'perfective' : 'imperfective'} "${input.infinitive}".`);
+  }
+
+  const row = {
+    infinitive: input.infinitive,
+    accented: input.accented,
+    english: input.english,
+    senses: input.senses,
+    aspect: input.aspect,
+    pairId: input.pairId,
+    classId: input.classId,
+    stemPresent: input.stemPresent,
+    stemPresent1sg: input.stemPresent1sg,
+    stemImperative: input.stemImperative,
+    stemPast: input.stemPast,
+    stemPastM: input.stemPastM,
+    stressPresent: input.stressPresent,
+    stressPast: input.stressPast,
+    stemStress: input.stemStress,
+    stressInfinitive: input.stressInfinitive,
+    reflexive: input.reflexive,
+    transitivity: input.transitivity,
+    government: input.government,
+    motion: input.motion,
+    level: input.level,
+    needsCheck: input.check,
+    note: input.note,
+  };
+
+  if (existing) {
+    await tx.update(schema.ruVerbs).set(row).where(eq(schema.ruVerbs.id, id));
+  } else {
+    await tx.insert(schema.ruVerbs).values({ id, position: await nextPosition(tx, schema.ruVerbs), ...row });
+  }
+
+  // The pair is a link in both directions, and the editor only ever names one end of it.
+  // Writing the reverse here is what stops сделать from being paired with делать while делать
+  // is paired with nothing.
+  if (input.pairId) {
+    await tx.update(schema.ruVerbs).set({ pairId: id }).where(eq(schema.ruVerbs.id, input.pairId));
+  }
+
+  // Replaced wholesale rather than merged: an override the editor removed has to disappear,
+  // and there is no other way to say so. An empty string is *kept*, because that is how the
+  // data says a verb has no such form at all — see the note in the seed.
+  await tx.delete(schema.ruVerbForms).where(eq(schema.ruVerbForms.verbId, id));
+  const overrides = Object.entries(input.overrides).map(([slot, form]) => ({
+    verbId: id,
+    slot: slot as RuSlotKey,
+    form,
+    accented: '',
+  }));
+  if (overrides.length) await tx.insert(schema.ruVerbForms).values(overrides);
+
+  return id;
+}
+
 /* -------------------------------------------------------------------- routes */
 
 export const adminRouter = os.admin.router({
@@ -511,14 +648,19 @@ export const adminRouter = os.admin.router({
   saveWord: os.admin.saveWord.use(adminOnly).handler(async ({ input }) =>
     db.transaction(async tx => {
       const id = await writeWord(tx, input);
-      return { id, version: await bumpContentVersion(tx) };
+      return { id, version: await bumpContentVersion(tx, input.lang) };
     }),
   ),
 
   deleteWord: os.admin.deleteWord.use(adminOnly).handler(async ({ input }) =>
     db.transaction(async tx => {
       const [word] = await tx
-        .select({ id: schema.words.id, georgian: schema.words.georgian, categoryId: schema.words.categoryId })
+        .select({
+          id: schema.words.id,
+          lang: schema.words.lang,
+          headword: schema.words.headword,
+          categoryId: schema.words.categoryId,
+        })
         .from(schema.words)
         .where(eq(schema.words.id, input.id))
         .limit(1);
@@ -534,87 +676,131 @@ export const adminRouter = os.admin.router({
 
       if (citing.length) {
         const where = citing.map(row => `${row.storyId} (${row.total})`).join(', ');
-        fail(`"${word.georgian}" is still used by ${where}. Re-point those words first.`);
+        fail(`"${word.headword}" is still used by ${where}. Re-point those words first.`);
       }
 
       await tx.delete(schema.words).where(eq(schema.words.id, input.id));
       await recountCategories(tx, [word.categoryId]);
-      return { version: await bumpContentVersion(tx) };
+      return { version: await bumpContentVersion(tx, word.lang) };
     }),
   ),
 
   /* ---- the paradigms ---- */
 
-  saveVerb: os.admin.saveVerb.use(adminOnly).handler(async ({ input }) =>
+  saveKaVerb: os.admin.saveKaVerb.use(adminOnly).handler(async ({ input }) =>
     db.transaction(async tx => {
-      const id = await writeVerb(tx, input);
-      return { id, version: await bumpContentVersion(tx) };
+      const id = await writeKaVerb(tx, input);
+      return { id, version: await bumpContentVersion(tx, 'ka') };
+    }),
+  ),
+
+  saveRuVerb: os.admin.saveRuVerb.use(adminOnly).handler(async ({ input }) =>
+    db.transaction(async tx => {
+      const id = await writeRuVerb(tx, input);
+      return { id, version: await bumpContentVersion(tx, 'ru') };
     }),
   ),
 
   deleteVerb: os.admin.deleteVerb.use(adminOnly).handler(async ({ input }) =>
     db.transaction(async tx => {
-      const [verb] = await tx
-        .select({ id: schema.verbs.id, english: schema.verbs.english, groupId: schema.verbs.groupId })
-        .from(schema.verbs)
-        .where(eq(schema.verbs.id, input.id))
-        .limit(1);
-      if (!verb) fail('There is no such paradigm.');
-
+      // Whichever language it is, no paradigm may be deleted while a headword still claims
+      // it: `words.verb_id` carries no foreign key — it points into two different tables
+      // depending on the row's language — so nothing in the database would stop this, and the
+      // result would be entries offering a conjugation table that no longer exists.
       const claiming = await tx
-        .select({ georgian: schema.words.georgian })
+        .select({ headword: schema.words.headword })
         .from(schema.words)
-        .where(eq(schema.words.verbId, input.id))
+        .where(and(eq(schema.words.lang, input.lang), eq(schema.words.verbId, input.id)))
         .limit(5);
 
       if (claiming.length) {
         fail(
-          `${claiming.map(word => word.georgian).join(', ')} still claim this paradigm. ` +
+          `${claiming.map(word => word.headword).join(', ')} still claim this paradigm. ` +
             'Clear the paradigm link on those entries first.',
         );
       }
 
-      await tx.delete(schema.verbs).where(eq(schema.verbs.id, input.id));
-      await recountVerbGroups(tx, [verb.groupId]);
-      return { version: await bumpContentVersion(tx) };
+      if (input.lang === 'ka') {
+        const [verb] = await tx
+          .select({ groupId: schema.kaVerbs.groupId })
+          .from(schema.kaVerbs)
+          .where(eq(schema.kaVerbs.id, input.id))
+          .limit(1);
+        if (!verb) fail('There is no such paradigm.');
+
+        await tx.delete(schema.kaVerbs).where(eq(schema.kaVerbs.id, input.id));
+        await recountVerbGroups(tx, [verb.groupId]);
+      } else {
+        const [verb] = await tx
+          .select({ id: schema.ruVerbs.id })
+          .from(schema.ruVerbs)
+          .where(eq(schema.ruVerbs.id, input.id))
+          .limit(1);
+        if (!verb) fail('There is no such verb.');
+
+        // The other half of the aspect pair keeps a link to this one, and the column has no
+        // foreign key to clear it. Cutting it here is what stops делать pointing at a
+        // сделать that is gone.
+        await tx
+          .update(schema.ruVerbs)
+          .set({ pairId: null })
+          .where(eq(schema.ruVerbs.pairId, input.id));
+        await tx.delete(schema.ruVerbs).where(eq(schema.ruVerbs.id, input.id));
+      }
+
+      return { version: await bumpContentVersion(tx, input.lang) };
     }),
   ),
 
   /* ---- the stories ---- */
 
   saveStory: os.admin.saveStory.use(adminOnly).handler(async ({ input }) => {
-    const georgian = readLines(input.text);
-    const paragraphs = georgian.paragraphs;
+    const native = readLines(input.text);
+    const paragraphs = native.paragraphs;
     if (!paragraphs.length) fail('There is no story text — a title on its own is not a story.');
 
     const english = input.translation.trim() ? readLines(input.translation) : null;
     const translation = english?.paragraphs ?? [];
     if (translation.length && translation.length !== paragraphs.length) {
       fail(
-        `The translation has ${translation.length} paragraph(s) and the Georgian has ${paragraphs.length}. ` +
+        `The translation has ${translation.length} paragraph(s) and the text has ${paragraphs.length}. ` +
           'The side-by-side view pairs them by position, so they would drift out of step.',
       );
     }
 
     // Before the transaction, and on the text as submitted — this is the one path where the
     // prose is new, so there is nothing in the database to read it from anyway.
-    const tags = await tagsFor(paragraphs);
+    const tags = await tagsFor(input.lang, paragraphs);
 
     const result = await db.transaction(async tx => {
       const existing = input.id
-        ? (await tx.select({ id: schema.stories.id }).from(schema.stories).where(eq(schema.stories.id, input.id)).limit(1))[0]
+        ? (await tx.select({ id: schema.stories.id, lang: schema.stories.lang }).from(schema.stories).where(eq(schema.stories.id, input.id)).limit(1))[0]
         : undefined;
+
+      // A story does not change language. Refusing is not pedantry: the tokens are already
+      // cut by one language's rules and linked against one language's lexicon, and an edit
+      // arriving under the other is a switcher left on the wrong dictionary rather than
+      // anything anybody meant.
+      if (existing && existing.lang !== input.lang) {
+        fail(`That story is ${existing.lang}, not ${input.lang}. Switch language and edit it there.`);
+      }
 
       // The title comes from the first line of the text, the way a .txt file has always
       // given it, unless the form set one explicitly.
-      const title = input.title || georgian.title;
+      const title = input.title || native.title;
       const titleEnglish = input.titleEnglish || english?.title || '';
 
-      const id =
-        existing?.id ??
-        (await freeId(tx, 'stories', slug(titleEnglish || title, 'story')));
+      // Slugged from the English title where there is one, and otherwise from the story's
+      // own — through the transliteration table, because `slug` keeps only a–z and would
+      // reduce Колобо́к to nothing at all. Namespaced per language for the same reason a
+      // Russian verb id is: story ids are one flat column, and two languages will sooner or
+      // later both have a Cinderella.
+      const base = titleEnglish || title;
+      const stem = input.lang === 'ka' ? slug(base, 'story') : `${input.lang}-${slug(slugCyrillic(base), 'story')}`;
+      const id = existing?.id ?? (await freeId(tx, 'stories', stem));
 
       const row = {
+        lang: input.lang,
         title,
         titleEnglish,
         level: input.level,
@@ -634,8 +820,8 @@ export const adminRouter = os.admin.router({
       // spelling — so editing the prose drops the pins the edit moved rather than sliding
       // them onto whatever words now stand in those positions.
       const pinned = existing ? await readPinned(tx, id) : new Map();
-      const report = await relink(tx, id, paragraphs, pinned, tags);
-      await bumpContentVersion(tx);
+      const report = await relink(tx, input.lang, id, paragraphs, pinned, tags);
+      await bumpContentVersion(tx, input.lang);
       return { id, report };
     });
 
@@ -645,7 +831,7 @@ export const adminRouter = os.admin.router({
   deleteStory: os.admin.deleteStory.use(adminOnly).handler(async ({ input }) =>
     db.transaction(async tx => {
       const [story] = await tx
-        .select({ id: schema.stories.id })
+        .select({ id: schema.stories.id, lang: schema.stories.lang })
         .from(schema.stories)
         .where(eq(schema.stories.id, input.id))
         .limit(1);
@@ -654,24 +840,25 @@ export const adminRouter = os.admin.router({
       // The tokens cascade, and here that is right: they are this story's and nothing else
       // points at them.
       await tx.delete(schema.stories).where(eq(schema.stories.id, input.id));
-      return { version: await bumpContentVersion(tx) };
+      return { version: await bumpContentVersion(tx, story.lang) };
     }),
   ),
 
   relinkStory: os.admin.relinkStory.use(adminOnly).handler(async ({ input }) => {
-    const tags = await tagsFor(await storyProse(input.id));
+    const prose = await storyProse(input.id);
+    const tags = await tagsFor(prose.lang, prose.paragraphs);
 
     const report = await db.transaction(async tx => {
       const [story] = await tx
-        .select({ id: schema.stories.id, paragraphs: schema.stories.paragraphs })
+        .select({ id: schema.stories.id, lang: schema.stories.lang, paragraphs: schema.stories.paragraphs })
         .from(schema.stories)
         .where(eq(schema.stories.id, input.id))
         .limit(1);
       if (!story) fail('There is no such story.');
 
       const pinned = await readPinned(tx, input.id);
-      const result = await relink(tx, input.id, story.paragraphs, pinned, tags);
-      await bumpContentVersion(tx);
+      const result = await relink(tx, story.lang, input.id, story.paragraphs, pinned, tags);
+      await bumpContentVersion(tx, story.lang);
       return result;
     });
 
@@ -681,7 +868,7 @@ export const adminRouter = os.admin.router({
   setStoryToken: os.admin.setStoryToken.use(adminOnly).handler(async ({ input }) => {
     await db.transaction(async tx => {
       const [story] = await tx
-        .select({ id: schema.stories.id, paragraphs: schema.stories.paragraphs })
+        .select({ id: schema.stories.id, lang: schema.stories.lang, paragraphs: schema.stories.paragraphs })
         .from(schema.stories)
         .where(eq(schema.stories.id, input.storyId))
         .limit(1);
@@ -712,11 +899,17 @@ export const adminRouter = os.admin.router({
 
       if (input.wordId) {
         const [word] = await tx
-          .select({ id: schema.words.id })
+          .select({ id: schema.words.id, lang: schema.words.lang })
           .from(schema.words)
           .where(eq(schema.words.id, input.wordId))
           .limit(1);
         if (!word) fail('There is no such entry in the dictionary.');
+        // Reachable only from a picker searching the wrong snapshot, but the failure it
+        // prevents is a token in a Russian story pointing at a Georgian headword, which
+        // nothing downstream would notice and no reader could make sense of.
+        if (word.lang !== story.lang) {
+          fail(`That entry is ${word.lang} and this story is ${story.lang}.`);
+        }
 
         const [senses] = await tx
           .select({ total: count() })
@@ -757,18 +950,19 @@ export const adminRouter = os.admin.router({
 
       await tx.update(schema.storyTokens).set(set).where(where);
       await recountStory(tx, input.storyId, story.paragraphs);
-      await bumpContentVersion(tx);
+      await bumpContentVersion(tx, story.lang);
     });
 
     return linkResult(input.storyId, { unresolved: [], flagged: [] });
   }),
 
   resetStoryToken: os.admin.resetStoryToken.use(adminOnly).handler(async ({ input }) => {
-    const tags = await tagsFor(await storyProse(input.storyId));
+    const prose = await storyProse(input.storyId);
+    const tags = await tagsFor(prose.lang, prose.paragraphs);
 
     const report = await db.transaction(async tx => {
       const [story] = await tx
-        .select({ id: schema.stories.id, paragraphs: schema.stories.paragraphs })
+        .select({ id: schema.stories.id, lang: schema.stories.lang, paragraphs: schema.stories.paragraphs })
         .from(schema.stories)
         .where(eq(schema.stories.id, input.storyId))
         .limit(1);
@@ -786,8 +980,8 @@ export const adminRouter = os.admin.router({
         pinned.delete(pinKey(input.paragraph, input.position, input.form));
       }
 
-      const result = await relink(tx, input.storyId, story.paragraphs, pinned, tags);
-      await bumpContentVersion(tx);
+      const result = await relink(tx, story.lang, input.storyId, story.paragraphs, pinned, tags);
+      await bumpContentVersion(tx, story.lang);
       return result;
     });
 

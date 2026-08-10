@@ -14,8 +14,8 @@
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar';
-import type { ImageMap, MorphemeData, Story, VerbData, WordData } from '@georgian/shared/types';
+import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar/ka';
+import type { ImageMap, KaMorphemeData, Story, KaVerbData, WordData } from '@georgian/shared/types';
 import { buildSnapshotFromDatabase, loadStory } from '../router/content.ts';
 import { sql } from './index.ts';
 
@@ -70,16 +70,24 @@ function diff(actual: unknown, expected: unknown, path: string, out: string[]): 
 
 /* ------------------------------------------------------------------- run */
 
-const words = read<WordData>('words.json');
-const verbs = read<VerbData>('verbs.json');
-const morphemes = read<MorphemeData>('verbMorphemes.json');
-const images = read<ImageMap>('images.json');
-const categoryImages = read<ImageMap>('categoryImages.json');
-const stories = readdirSync(`${DATA}stories`)
+// Georgian only, and deliberately so. This check exists to prove that the *assembly* — the
+// same code path the server serves from — reproduces the generated files field for field, and
+// data/ka/ is where those files come from. Russian has no build pipeline to disagree with:
+// data/ru/verbs.json is hand-maintained and is the source rather than an output, so there is
+// nothing for a round trip to be faithful to. `npm run verify:ru` is its counterpart, and it
+// checks something else entirely — that the conjugation rules produce the right forms.
+const words = read<WordData>('ka/words.json');
+const verbs = read<KaVerbData>('ka/verbs.json');
+const morphemes = read<KaMorphemeData>('ka/verbMorphemes.json');
+const images = read<ImageMap>('ka/images.json');
+const categoryImages = read<ImageMap>('ka/categoryImages.json');
+const stories = readdirSync(`${DATA}ka/stories`)
   .filter(name => name.endsWith('.json'))
-  .map(name => read<Story>(`stories/${name}`));
+  .map(name => read<Story>(`ka/stories/${name}`));
 
-const snapshot = await buildSnapshotFromDatabase();
+const snapshot = await buildSnapshotFromDatabase('ka');
+if (snapshot.verbs.kind !== 'ka') throw new Error('The Georgian snapshot came back with Russian verbs in it.');
+const kaVerbs = snapshot.verbs;
 
 const checks: { label: string; actual: unknown; expected: unknown }[] = [
   { label: 'words.categories', actual: snapshot.words.categories, expected: words.categories },
@@ -90,9 +98,9 @@ const checks: { label: string; actual: unknown; expected: unknown }[] = [
   { label: 'grammar.PERSONS', actual: PERSONS, expected: verbs.persons },
   { label: 'grammar.SCREEVES', actual: SCREEVES, expected: verbs.screeves },
   { label: 'grammar.SERIES', actual: SERIES, expected: verbs.series },
-  { label: 'verbs.groups', actual: snapshot.verbs.groups, expected: verbs.groups },
-  { label: 'verbs.verbs', actual: snapshot.verbs.verbs, expected: verbs.verbs },
-  { label: 'morphemes.verbs', actual: snapshot.morphemes.verbs, expected: morphemes.verbs },
+  { label: 'verbs.groups', actual: kaVerbs.groups, expected: verbs.groups },
+  { label: 'verbs.verbs', actual: kaVerbs.verbs, expected: verbs.verbs },
+  { label: 'morphemes.verbs', actual: kaVerbs.morphemes.verbs, expected: morphemes.verbs },
   { label: 'images', actual: snapshot.images, expected: images },
   { label: 'categoryImages', actual: snapshot.categoryImages, expected: categoryImages },
 ];

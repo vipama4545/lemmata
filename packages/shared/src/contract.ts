@@ -9,37 +9,81 @@
 
 import { oc, type } from '@orpc/contract';
 import { z } from 'zod';
+import { LANGS } from './grammar/index.ts';
 import type {
   ImageMap,
-  MorphemeData,
+  KaMorphemeData,
+  KaVerb,
+  KaVerbGroup,
+  Lang,
+  Language,
   Mastery,
+  RuVerb,
   Side,
   Story,
   StorySummary,
   StudyCardWire,
-  VerbData,
   WordData,
 } from './types.ts';
 
 /* ---------------------------------------------------------------- content */
 
+/** Every language id, as something the wire can validate against. */
+export const LANG = z.enum(LANGS as unknown as [Lang, ...Lang[]]);
+
 /**
- * The paradigms, as they cross the wire.
+ * The Georgian paradigms, as they cross the wire.
  *
  * `persons`, `screeves` and `series` are missing on purpose: they are fixed facts about
- * Georgian, they live as constants in ./grammar.ts, and the client already has them before
- * it makes a single request. Sending them would be sending the client its own source code.
- * The web app puts the two halves back together into a whole `VerbData`.
+ * Georgian, they live as constants in ./grammar/ka.ts, and the client already has them
+ * before it makes a single request. Sending them would be sending the client its own source
+ * code. The web app puts the two halves back together.
  */
-export type VerbContent = Omit<VerbData, 'persons' | 'screeves' | 'series'>;
+export interface KaVerbContent {
+  kind: 'ka';
+  source: string;
+  groups: KaVerbGroup[];
+  verbs: KaVerb[];
+  /** Georgian-only, so it hangs off the Georgian payload rather than the snapshot. */
+  morphemes: KaMorphemeData;
+}
 
-/** Everything the app needs to render anything, minus the stories' own text. */
+/**
+ * The Russian verbs, as they cross the wire — which is to say the *rules*, not the forms.
+ *
+ * There is no field here holding twenty conjugated forms per verb, and that is the point:
+ * `conjugate()` in grammar/ru.ts expands each rule in the browser, and the class definitions
+ * it needs are already in the bundle. A dictionary of 500 verbs crosses as 500 short records
+ * rather than 10,000 strings.
+ */
+export interface RuVerbContent {
+  kind: 'ru';
+  source: string;
+  verbs: RuVerb[];
+}
+
+/**
+ * A discriminated union rather than one shape with everything optional.
+ *
+ * It means a component that reads `verbs.groups` will not compile until it has established
+ * that it is looking at Georgian — which is the guarantee worth having, because the failure
+ * it prevents is a Russian verb page silently rendering an empty eleven-screeve grid.
+ */
+export type VerbContent = KaVerbContent | RuVerbContent;
+
+/** Everything the app needs to render one language, minus the stories' own text. */
 export interface ContentSnapshot {
   /** Opaque. The client stores it and sends it back; only equality is ever checked. */
   version: string;
+  /** Which dictionary this is. Every id inside it belongs to this language. */
+  lang: Lang;
+  /**
+   * Every language on offer, not just this one — the switcher has to list the others in
+   * order to switch to them. The only field here that is not about `lang`.
+   */
+  languages: Language[];
   words: WordData;
   verbs: VerbContent;
-  morphemes: MorphemeData;
   images: ImageMap;
   categoryImages: ImageMap;
   stories: StorySummary[];
@@ -48,23 +92,29 @@ export interface ContentSnapshot {
 /**
  * What `content.snapshot` answers.
  *
- * The client sends the version it has cached and gets four bytes back when nothing has
- * changed, which is the common case for every visit after the first.
+ * The client sends the version it has cached and gets a few bytes back when nothing has
+ * changed, which is the common case for every visit after the first. Versions are per
+ * language, so a Russian edit never costs a Georgian learner a re-download.
  */
 export type SnapshotResponse =
-  | { upToDate: true; version: string }
+  | { upToDate: true; lang: Lang; version: string }
   | ({ upToDate: false } & ContentSnapshot);
 
 const contentContract = {
-  /** The current version on its own, for a cheap check without the payload. */
-  version: oc.output(type<{ version: string }>()),
+  /** The current version of one language, for a cheap check without the payload. */
+  version: oc
+    .input(z.object({ lang: LANG }))
+    .output(type<{ lang: Lang; version: string }>()),
 
   snapshot: oc
-    .input(z.object({ known: z.string().optional() }))
+    .input(z.object({ lang: LANG, known: z.string().optional() }))
     .output(type<SnapshotResponse>()),
 
   /** One story with its text and every token. Null when there is no such story. */
   story: oc.input(z.object({ id: z.string().min(1).max(128) })).output(type<Story | null>()),
+
+  /** The switcher's list, for the shell to draw before any dictionary has loaded. */
+  languages: oc.output(type<{ languages: Language[] }>()),
 };
 
 /* ------------------------------------------------------------------ study */
@@ -97,7 +147,7 @@ const MASTERY = z.union([
   z.literal(6),
 ]) satisfies z.ZodType<Mastery>;
 
-const SIDE = z.enum(['ka', 'en']) satisfies z.ZodType<Side>;
+const SIDE = z.enum(['target', 'en']) satisfies z.ZodType<Side>;
 
 /**
  * One card on its way up.
@@ -111,6 +161,7 @@ export const studyCardInput = z.object({
   card: z.string().min(3).max(160),
   item: z.string().min(1).max(128),
   side: SIDE,
+  lang: LANG,
   level: MASTERY,
   interval: z.number().min(0).max(365),
   ease: z.number().min(1).max(5),
@@ -178,35 +229,54 @@ const senseInput = z.string().trim().min(1).max(500);
 /** One inflected form under a headword. */
 const wordFormInput = z.object({
   form: z.string().trim().min(1).max(120),
-  /** "erg", "dat.pl", "Aorist 3sg". Empty for the headword spelling itself. */
+  /** "erg", "dat.pl", "gen.sg", "Aorist 3sg". Empty for the headword spelling itself. */
   gram: z.string().trim().max(80).default(''),
   /** What the form itself means, where the headword's meaning does not say it. */
   english: z.string().trim().max(300).default(''),
+  /** The form with its stress written in, for Russian. */
+  accented: z.string().trim().max(140).default(''),
 });
 
 export const wordInput = z.object({
   /**
    * Absent to create. A new lemma is given an id of `w:<headword>`, which is the same
    * convention scripts/lexicon.json has always used for a hand-written entry, so a word
-   * added here and one added there are indistinguishable afterwards.
+   * added here and one added there are indistinguishable afterwards. A Russian one is
+   * minted under `ru-`, which is what keeps the two languages' ids from ever colliding.
    */
   id: z.string().min(1).max(128).optional(),
-  georgian: z.string().trim().min(1).max(200),
+  lang: LANG,
+  /** Unaccented, always. This is what the story resolver and the search box match on. */
+  headword: z.string().trim().min(1).max(200),
+  /** The headword with its stress written in, for Russian. Display only. */
+  accented: z.string().trim().max(200).default(''),
   /** The headline gloss. Filled from the first sense when left blank. */
   english: z.string().trim().max(500).default(''),
-  georgianDefinition: z.string().trim().max(2000).default(''),
-  level: z.enum(['A1', 'A2', '']).default(''),
+  /** The definition in the language being learned. */
+  definition: z.string().trim().max(2000).default(''),
+  level: z.enum(['A1', 'A2', 'B1', '']).default(''),
   partOfSpeech: z.string().trim().max(60).default(''),
   categoryId: z.string().trim().min(1).max(128),
   /** 1-based. Which sense to lead with where nothing pins one. */
   defaultSense: z.number().int().min(1).max(50).nullable().default(null),
-  /** The verbs.json paradigm this headword claims. */
+  /** The paradigm this headword claims — a ka_verbs id or a ru_verbs id, per `lang`. */
   verbId: z.string().trim().max(128).nullable().default(null),
   /** The meaning itself is a guess and wants verifying. */
   check: z.boolean().default(false),
   note: z.string().trim().max(2000).nullable().default(null),
   senses: z.array(senseInput).min(1).max(50),
   forms: z.array(wordFormInput).max(400).default([]),
+  /** Russian nominal grammar. Ignored, and expected absent, when `lang` is not 'ru'. */
+  ru: z
+    .object({
+      gender: z.enum(['m', 'f', 'n', 'pl', '']).default(''),
+      animacy: z.enum(['anim', 'inanim', '']).default(''),
+      declension: z.enum(['1', '2', '3', 'indecl', 'adj', '']).default(''),
+      stressPattern: z.string().trim().max(4).default(''),
+      check: z.boolean().default(false),
+    })
+    .nullable()
+    .default(null),
 });
 
 export type WordInput = z.infer<typeof wordInput>;
@@ -221,7 +291,7 @@ export type WordInput = z.infer<typeof wordInput>;
  */
 const paradigmInput = z.record(z.string().max(40), z.record(z.string().max(10), z.string().trim().max(200)));
 
-export const verbInput = z.object({
+export const kaVerbInput = z.object({
   /** Absent to create. A new paradigm's id is slugged from its English. */
   id: z.string().min(1).max(128).optional(),
   english: z.string().trim().min(1).max(300),
@@ -242,7 +312,58 @@ export const verbInput = z.object({
   prohibitive: z.record(z.string().max(10), z.string().trim().max(200)).default({}),
 });
 
-export type VerbInput = z.infer<typeof verbInput>;
+export type KaVerbInput = z.infer<typeof kaVerbInput>;
+
+/**
+ * A Russian verb, as the editor sends it — a rule, not a paradigm.
+ *
+ * Which is why this is so much shorter than its Georgian counterpart above despite covering
+ * more cells: the editor picks a class and types two or three stems, and the twenty-odd
+ * forms follow. `overrides` is the escape hatch, and for a regular verb it stays empty.
+ *
+ * `classId` and the two stress fields are loosely typed here and checked against
+ * `RU_CLASSES` on the server rather than pinned as Zod unions, for the same reason
+ * `paradigmInput` above is loose: a union of seventeen literals would be a second copy of
+ * grammar/ru.ts that could silently disagree with it.
+ */
+export const ruVerbInput = z.object({
+  /** Absent to create. A new verb's id is slugged from its infinitive and aspect. */
+  id: z.string().min(1).max(128).optional(),
+  infinitive: z.string().trim().min(1).max(120),
+  accented: z.string().trim().max(140).default(''),
+  english: z.string().trim().min(1).max(300),
+  senses: z.array(z.string().trim().min(1).max(300)).max(20).default([]),
+
+  aspect: z.enum(['impf', 'pf']),
+  /** The other half of the pair. The server writes the reverse link on the partner too. */
+  pairId: z.string().trim().max(128).nullable().default(null),
+
+  classId: z.string().trim().min(1).max(8),
+  stemPresent: z.string().trim().max(80).default(''),
+  stemPresent1sg: z.string().trim().max(80).nullable().default(null),
+  stemImperative: z.string().trim().max(80).nullable().default(null),
+  stemPast: z.string().trim().max(80).nullable().default(null),
+  stemPastM: z.string().trim().max(80).nullable().default(null),
+
+  stressPresent: z.enum(['stem', 'ending', 'shift']).default('stem'),
+  stressPast: z.enum(['stem', 'ending', 'fem']).default('stem'),
+  /** Vowel indices, so bounded by the longest plausible word rather than left open. */
+  stemStress: z.number().int().min(0).max(12).nullable().default(null),
+  stressInfinitive: z.number().int().min(0).max(12).nullable().default(null),
+
+  reflexive: z.boolean().default(false),
+  transitivity: z.enum(['tr', 'intr', '']).default(''),
+  government: z.array(z.string().trim().min(1).max(8)).max(4).default([]),
+  motion: z.enum(['uni', 'multi', '']).default(''),
+  level: z.enum(['A1', 'A2', 'B1', '']).default(''),
+
+  /** Slot → form, for the cells the rule cannot reach. Empty for a regular verb. */
+  overrides: z.record(z.string().max(30), z.string().trim().max(120)).default({}),
+  check: z.boolean().default(false),
+  note: z.string().trim().max(2000).nullable().default(null),
+});
+
+export type RuVerbInput = z.infer<typeof ruVerbInput>;
 
 /**
  * A story, as prose.
@@ -253,8 +374,9 @@ export type VerbInput = z.infer<typeof verbInput>;
  * disagree about where a paragraph ends, and the token positions are counted from that.
  */
 export const storyInput = z.object({
-  /** Absent to create; slugged from the English title, or the Georgian one. */
+  /** Absent to create; slugged from the English title, or the one in the target language. */
   id: z.string().trim().max(128).optional(),
+  lang: LANG,
   title: z.string().trim().max(300).default(''),
   titleEnglish: z.string().trim().max(300).default(''),
   level: z.string().trim().max(20).default(''),
@@ -369,9 +491,15 @@ const adminContract = {
 
   /* -- the paradigms -- */
 
-  saveVerb: oc.input(verbInput).output(type<{ id: string; version: string }>()),
+  // Two procedures rather than one taking a `lang`, because the two carry genuinely
+  // different payloads: one is 66 cells and the other is a rule. A single procedure would
+  // have to accept a union and re-narrow it server-side, which is the same work with the
+  // type safety taken out.
+
+  saveKaVerb: oc.input(kaVerbInput).output(type<{ id: string; version: string }>()),
+  saveRuVerb: oc.input(ruVerbInput).output(type<{ id: string; version: string }>()),
   deleteVerb: oc
-    .input(z.object({ id: z.string().min(1).max(128) }))
+    .input(z.object({ lang: LANG, id: z.string().min(1).max(128) }))
     .output(type<{ version: string }>()),
 
   /* -- the stories -- */

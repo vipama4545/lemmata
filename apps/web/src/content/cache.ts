@@ -12,11 +12,25 @@
 // a working app; it just fetches the snapshot on every visit.
 
 import type { ContentSnapshot } from '@georgian/shared/contract';
+import type { Lang } from '@georgian/shared/grammar';
 
 const DB_NAME = 'georgian-dict-content';
 const DB_VERSION = 1;
 const STORE = 'snapshot';
-const KEY = 'current';
+
+/**
+ * One entry per language, so that opening the Russian dictionary does not evict the Georgian
+ * one. They are fetched separately and versioned separately; caching them under a single key
+ * would mean every switch paid the full download again, which is the whole cost this file
+ * exists to avoid.
+ *
+ * The store itself is unchanged and needs no version bump: an old single-key entry under
+ * 'current' is simply never read again, and is replaced the first time either language is
+ * fetched.
+ */
+function keyFor(lang: Lang): string {
+  return `snapshot:${lang}`;
+}
 
 let opening: Promise<IDBDatabase | null> | null = null;
 
@@ -47,19 +61,43 @@ function open(): Promise<IDBDatabase | null> {
 }
 
 /** The cached snapshot, or null when there is none and when anything at all goes wrong. */
-export async function read(): Promise<ContentSnapshot | null> {
+export async function read(lang: Lang): Promise<ContentSnapshot | null> {
   const db = await open();
   if (!db) return null;
 
   return new Promise(resolve => {
     let request: IDBRequest<ContentSnapshot | undefined>;
     try {
-      request = db.transaction(STORE, 'readonly').objectStore(STORE).get(KEY);
+      request = db.transaction(STORE, 'readonly').objectStore(STORE).get(keyFor(lang));
     } catch {
       return resolve(null);
     }
     request.onsuccess = () => resolve(request.result ?? null);
     request.onerror = () => resolve(null);
+  });
+}
+
+/**
+ * Forgets one language's copy.
+ *
+ * Only used when the server refuses to serve that language — an unreleased dictionary this
+ * browser was allowed to read last week and is not allowed to read today. Keeping the copy
+ * would make the refusal cosmetic.
+ */
+export async function drop(lang: Lang): Promise<void> {
+  const db = await open();
+  if (!db) return;
+
+  return new Promise(resolve => {
+    try {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+      tx.onabort = () => resolve();
+      tx.objectStore(STORE).delete(keyFor(lang));
+    } catch {
+      resolve();
+    }
   });
 }
 
@@ -77,7 +115,7 @@ export async function write(snapshot: ContentSnapshot): Promise<void> {
       tx.oncomplete = () => resolve();
       tx.onerror = () => resolve();
       tx.onabort = () => resolve();
-      tx.objectStore(STORE).put(snapshot, KEY);
+      tx.objectStore(STORE).put(snapshot, keyFor(snapshot.lang));
     } catch {
       resolve();
     }

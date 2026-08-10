@@ -5,6 +5,13 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleDetection": "force",
+    // Modules here import each other by their real filenames, and `conjugate` is a value
+    // rather than a type, so the extension has to be allowed rather than only tolerated on
+    // type-only imports. The server already runs this way; see apps/server/tsconfig.json.
+    "allowImportingTsExtensions": true,
+    // For grammar/ru.verify.ts, which is a script rather than library code: it reads
+    // data/ru/verbs.json off disk and prints what it finds.
+    "types": ["node"],
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true,
     "isolatedModules": true,

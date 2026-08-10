@@ -6,6 +6,7 @@ import type {
   GrammarTable as GrammarTableData,
   GrammarTopic as GrammarTopicData,
 } from '../data/grammar';
+import { lang } from '../content/store';
 
 // One reference topic. A section may carry prose, a table, a bullet list, examples, a
 // closing note, or — for the conjugation groups — a list of named blocks; each part is
@@ -19,7 +20,7 @@ function GrammarTopic() {
       <div className="main-content">
         <div className="not-found">
           <h2>Topic not found</h2>
-          <Link to="/grammar">← Back to grammar</Link>
+          <Link to={`/${lang()}/grammar`}>← Back to grammar</Link>
         </div>
       </div>
     );
@@ -34,9 +35,9 @@ function GrammarTopic() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/">← Home</Link>
+        <Link to={`/${lang()}`}>← Home</Link>
         <span className="breadcrumb-sep">/</span>
-        <Link to="/grammar">Grammar</Link>
+        <Link to={`/${lang()}/grammar`}>Grammar</Link>
         <span className="breadcrumb-sep">/</span>
         <span>{topic.title}</span>
       </div>
@@ -106,12 +107,12 @@ function GrammarTopic() {
 
       <div className="grammar-footer">
         {previous ? (
-          <Link to={`/grammar/${previous.id}`} className="verb-nav-link">
+          <Link to={`/${lang()}/grammar/${previous.id}`} className="verb-nav-link">
             <Icon name="arrow-left" /> {previous.title}
           </Link>
         ) : <span />}
         {next && (
-          <Link to={`/grammar/${next.id}`} className="verb-nav-link verb-nav-next">
+          <Link to={`/${lang()}/grammar/${next.id}`} className="verb-nav-link verb-nav-next">
             {next.title} <Icon name="arrow-right" />
           </Link>
         )}

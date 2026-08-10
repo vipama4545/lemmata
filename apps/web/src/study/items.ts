@@ -10,8 +10,8 @@
 // So the key is the *headword's* wherever there is one. `verbKey` does that resolution, and
 // is the only thing the verb pages need to know about any of this.
 
-import type { Verb, Word } from '@georgian/shared/types';
-import { derived } from '../content/store';
+import type { KaVerb, Word } from '@georgian/shared/types';
+import { derived, kaVerbsOf, lang } from '../content/store';
 import { focusHref } from '../utils/scroll';
 
 /** Which file the item came from, which is only ever a display concern. */
@@ -25,12 +25,12 @@ export interface StudyItem {
   /** The id in the file it came from. */
   id: string;
   /** The Georgian face of the card. */
-  georgian: string;
+  headword: string;
   /**
    * A second Georgian line: for a verb, the third person singular present, because the
    * headword is the verbal noun and the 3sg is the form you actually meet in a sentence.
    */
-  georgianSub: string;
+  sub: string;
   /** The English face. */
   english: string;
   /** Every meaning, the first of which is `english`. */
@@ -58,7 +58,7 @@ export interface StudyItem {
 /** The category bare paradigms are filed under, mirroring the card on the category grid. */
 export const VERB_CATEGORY_ID = 'verbs';
 
-const verbsById = derived(content => new Map(content.verbs.verbs.map(verb => [verb.id, verb])));
+const verbsById = derived(content => new Map(kaVerbsOf(content).map(verb => [verb.id, verb])));
 
 /** verbId → the lexicon id that claims it, for the 165 paradigms a headword covers. */
 const claimedBy = derived(content => {
@@ -90,31 +90,31 @@ function fromWord(word: Word): StudyItem {
     key: wordKey(word.id),
     kind: 'word',
     id: word.id,
-    georgian: word.georgian,
+    headword: word.headword,
     // Only worth a second line when it says something the headword does not.
-    georgianSub: verb && verb.present3sg && verb.present3sg !== word.georgian ? verb.present3sg : '',
+    sub: verb && verb.present3sg && verb.present3sg !== word.headword ? verb.present3sg : '',
     english: word.english,
     senses: senses.length > 0 ? senses : word.englishFull,
-    definition: word.georgianDefinition,
+    definition: word.definition,
     partOfSpeech: word.partOfSpeech,
     cefr: word.level,
     categoryId: word.categoryId,
     category: word.category,
     isVerb: Boolean(word.verbId) || word.partOfSpeech === 'Verb',
     verbId: word.verbId ?? '',
-    href: word.verbId ? `/verbs/${word.verbId}` : focusHref(`/category/${word.categoryId}`, word.id),
+    href: word.verbId ? `/${lang()}/verbs/${word.verbId}` : focusHref(`/category/${word.categoryId}`, word.id),
     imageId: word.id,
   };
 }
 
-function fromVerb(verb: Verb): StudyItem {
+function fromVerb(verb: KaVerb): StudyItem {
   const headword = verb.verbalNoun || verb.present3sg;
   return {
     key: `v:${verb.id}`,
     kind: 'verb',
     id: verb.id,
-    georgian: headword,
-    georgianSub: verb.present3sg && verb.present3sg !== headword ? verb.present3sg : '',
+    headword: headword,
+    sub: verb.present3sg && verb.present3sg !== headword ? verb.present3sg : '',
     english: verb.english,
     senses: [verb.english, ...verb.senses].filter(Boolean),
     definition: '',
@@ -124,7 +124,7 @@ function fromVerb(verb: Verb): StudyItem {
     category: 'Verbs',
     isVerb: true,
     verbId: verb.id,
-    href: `/verbs/${verb.id}`,
+    href: `/${lang()}/verbs/${verb.id}`,
     imageId: '',
   };
 }
@@ -136,7 +136,7 @@ function fromVerb(verb: Verb): StudyItem {
  */
 export const studyItems = derived<StudyItem[]>(content => [
   ...content.words.words.map(fromWord),
-  ...content.verbs.verbs.filter(verb => !claimedBy().has(verb.id)).map(fromVerb),
+  ...kaVerbsOf(content).filter(verb => !claimedBy().has(verb.id)).map(fromVerb),
 ]);
 
 export const itemsByKey = derived(() => new Map(studyItems().map(item => [item.key, item])));

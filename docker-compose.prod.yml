@@ -184,14 +184,17 @@ services:
       interval: 60s
       timeout: 15s
       retries: 3
-      start_period: 90s
+      # /health warms every language, so a cold container reads ~400 MB off disk before it
+      # answers. Two languages, twice the wait.
+      start_period: 180s
     deploy:
       resources:
         limits:
-          # Measured at 580 MB resident with the models loaded and a 975-token story just
-          # tagged. The ceiling is well clear of that, and it is here so that a leak in a
-          # service nothing depends on cannot take Postgres down with it.
-          memory: 2G
+          # Measured at 580 MB resident with the Georgian models loaded and a 975-token
+          # story just tagged; Russian warmed alongside it roughly doubles that. The ceiling
+          # is well clear of both, and it is here so that a leak in a service nothing
+          # depends on cannot take Postgres down with it.
+          memory: 3G
 
   web:
     build:

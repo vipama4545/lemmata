@@ -12,8 +12,13 @@
 //
 // The gloss on each screeve uses "abandon" because the paradigms are alphabetical and that
 // is the first verb in the source; it is a worked example, not a translation of anything.
+//
+// Its Russian counterpart is ./ru.ts, and the two are deliberately not made to share an
+// abstraction: an eleven-screeve × six-person grid and an aspect pair with a gender-marked
+// past have nothing in common but the word "verb". ./index.ts holds the registry that lets
+// the app pick between them without either knowing the other exists.
 
-import type { Person, Screeve, Series } from './types.ts';
+import type { Person, Screeve, Series } from '../types.ts';
 
 export const PERSONS: readonly Person[] = [
   { key: '1sg', label: '1sg', pronoun: 'მე', english: 'I' },

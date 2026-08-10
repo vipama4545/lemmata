@@ -21,6 +21,7 @@ import { GRADES, GRADE_LABEL, KNOWN, formatDue, formatInterval, isDue, nextInter
 import { creditLine, getWordImage } from '../utils/images';
 import MasteryBadge from './Mastery';
 import Icon from './Icon';
+import { lang } from '../content/store';
 
 // The review session.
 //
@@ -43,12 +44,12 @@ import Icon from './Icon';
 type Mode = Side | 'both';
 
 const MODES: { id: Mode; label: string; hint: string }[] = [
-  { id: 'ka', label: 'Georgian → English', hint: 'See the Georgian, recall the meaning' },
-  { id: 'en', label: 'English → Georgian', hint: 'See the meaning, recall the Georgian' },
+  { id: 'target', label: 'Target → English', hint: 'See the word, recall the meaning' },
+  { id: 'en', label: 'English → Target', hint: 'See the meaning, recall the word' },
   { id: 'both', label: 'Both sides', hint: 'Both directions in one pool, one at a time' },
 ];
 
-const SIDE_LABEL: Record<Side, string> = { ka: 'Georgian → English', en: 'English → Georgian' };
+const SIDE_LABEL: Record<Side, string> = { target: 'Target → English', en: 'English → Target' };
 
 /** The sides a mode deals. */
 function sidesFor(mode: Mode): Side[] {
@@ -73,7 +74,7 @@ interface Settings {
 }
 
 const DEFAULTS: Settings = {
-  mode: 'ka',
+  mode: 'target',
   deck: 'all',
   cefr: 'all',
   categoryId: 'all',
@@ -342,7 +343,7 @@ function FlashcardMode() {
   return (
     <div className="main-content flashcard-page">
       <div className="breadcrumb">
-        <Link to="/">← Home</Link>
+        <Link to={`/${lang()}`}>← Home</Link>
         <span className="breadcrumb-sep">/</span>
         <span>Flashcards</span>
       </div>
@@ -560,16 +561,16 @@ interface StudyCardProps {
 function StudyCard({ item, side, record, revealed, image, onReveal, onAnswer, onKnown }: StudyCardProps) {
   // The question, then the answer under it. Which is which is the whole difference between
   // the two directions, so it is the only thing the card branches on.
-  const order: Side[] = side === 'en' ? ['en', 'ka'] : ['ka', 'en'];
+  const order: Side[] = side === 'en' ? ['en', 'target'] : ['target', 'en'];
 
   const face = (face: Side) => {
     if (face !== side && !revealed) return null;
     return (
       <div key={face} className={`study-face${face === side ? '' : ' is-second'}`}>
-        {face === 'ka' ? (
+        {face === 'target' ? (
           <>
-            <p className="study-georgian">{item.georgian}</p>
-            {item.georgianSub && <p className="study-georgian-sub">{item.georgianSub}</p>}
+            <p className="study-georgian">{item.headword}</p>
+            {item.sub && <p className="study-georgian-sub">{item.sub}</p>}
           </>
         ) : (
           <>

@@ -40,8 +40,10 @@ services:
       # development and cannot reach a compose network by service name.
       - '8000:8000'
     healthcheck:
-      # /health builds the pipeline, so passing it means the models are loaded and the
-      # first real request will not pay for a cold start.
+      # /health builds every language's pipeline, so passing it means the models are loaded
+      # and the first real request will not pay for a cold start — in either language.
+      # /languages answers the same question without touching a model, and is what the
+      # server asks before it sends anything.
       test:
         [
           'CMD',
@@ -52,8 +54,8 @@ services:
       interval: 30s
       timeout: 15s
       retries: 3
-      # Reading ~200 MB of models off disk, once, on a cold container.
-      start_period: 60s
+      # Reading ~400 MB of models off disk, once, on a cold container.
+      start_period: 120s
 
 volumes:
   db-data:

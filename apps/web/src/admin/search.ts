@@ -21,7 +21,7 @@ export function searchWords(words: Word[], term: string, limit = 40): Word[] {
   const contains: Word[] = [];
 
   for (const word of words) {
-    const georgian = word.georgian.toLowerCase();
+    const georgian = word.headword.toLowerCase();
     const english = word.english.toLowerCase();
 
     if (georgian.startsWith(needle) || english.startsWith(needle)) starts.push(word);

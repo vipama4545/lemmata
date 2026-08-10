@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import type { Screeve, ScreeveForms, Verb } from "@georgian/shared/types";
-import { PERSONS, SCREEVES } from "@georgian/shared/grammar";
-import { derived, verbData } from "../content/store";
+import type { Screeve, ScreeveForms, KaVerb } from "@georgian/shared/types";
+import { PERSONS, SCREEVES } from "@georgian/shared/grammar/ka";
+import { derived, kaVerbData, lang } from '../content/store';
 import { wordForDate, previousDays, isoDay } from "../utils/dailyWord";
 import { getWordImage, creditLine } from "../utils/images";
 import { focusHref } from "../utils/scroll";
@@ -32,17 +32,17 @@ function WordOfTheDay() {
     return {
       today: now,
       word: wordForDate(DAILY_WORDS(), now),
-      verb: wordForDate(verbData().verbs, now),
+      verb: wordForDate(kaVerbData().verbs, now),
       earlierWords: previousDays(DAILY_WORDS(), now, PAST_DAYS).map(({ date, word: past }) => ({
         date,
         to: focusHref(`/category/${past.categoryId}`, past.id),
-        georgian: past.georgian,
+        headword: past.headword,
         english: past.english,
       })),
-      earlierVerbs: previousDays(verbData().verbs, now, PAST_DAYS).map(({ date, word: past }) => ({
+      earlierVerbs: previousDays(kaVerbData().verbs, now, PAST_DAYS).map(({ date, word: past }) => ({
         date,
         to: `/verbs/${past.id}`,
-        georgian: headword(past) || past.english,
+        headword: headword(past) || past.english,
         // The card would otherwise print the English twice for the handful of verbs the
         // spreadsheet gives no Georgian headword at all.
         english: headword(past) ? past.english : "",
@@ -85,9 +85,9 @@ function WordOfTheDay() {
               <span className={`level-badge ${word.level.toLowerCase()}`}>{word.level}</span>
               <span className="pos-tag">{word.partOfSpeech}</span>
             </div>
-            <p className="daily-georgian">{word.georgian}</p>
+            <p className="daily-georgian">{word.headword}</p>
             <p className="daily-english">{word.english}</p>
-            {word.georgianDefinition && <p className="daily-definition">{word.georgianDefinition}</p>}
+            {word.definition && <p className="daily-definition">{word.definition}</p>}
             {word.englishFull.length > 1 && (
               <p className="daily-more">
                 <span>Also</span> {word.englishFull.slice(1).join(" · ")}
@@ -107,19 +107,19 @@ function WordOfTheDay() {
       <EarlierDays id="earlier-verbs-heading" title="Earlier verbs" entries={earlierVerbs} />
 
       <div className="quick-links">
-        <Link to="/categories" className="quick-link categories-link">
+        <Link to={`/${lang()}/categories`} className="quick-link categories-link">
           <Icon name="grid" /> Browse Categories
         </Link>
-        <Link to="/flashcards" className="quick-link flashcard-link">
+        <Link to={`/${lang()}/flashcards`} className="quick-link flashcard-link">
           <Icon name="cards" /> Flashcard Mode
         </Link>
-        <Link to="/search" className="quick-link search-link">
+        <Link to={`/${lang()}/search`} className="quick-link search-link">
           <Icon name="search" /> Word Search
         </Link>
-        <Link to="/export" className="quick-link export-link">
+        <Link to={`/${lang()}/export`} className="quick-link export-link">
           <Icon name="download" /> Export Anki Deck
         </Link>
-        <Link to="/grammar" className="quick-link grammar-link">
+        <Link to={`/${lang()}/grammar`} className="quick-link grammar-link">
           <Icon name="book" /> Grammar Reference
         </Link>
       </div>
@@ -131,7 +131,7 @@ function WordOfTheDay() {
 interface EarlierEntry {
   date: Date;
   to: string;
-  georgian: string;
+  headword: string;
   english: string;
 }
 
@@ -152,7 +152,7 @@ function EarlierDays({ id, title, entries }: { id: string; title: string; entrie
             <time className="earlier-date" dateTime={isoDay(entry.date)}>
               {entry.date.toLocaleDateString(undefined, SHORT_DATE)}
             </time>
-            <span className="earlier-georgian">{entry.georgian}</span>
+            <span className="earlier-georgian">{entry.headword}</span>
             {entry.english && <span className="earlier-english">{entry.english}</span>}
           </Link>
         ))}
@@ -164,7 +164,7 @@ function EarlierDays({ id, title, entries }: { id: string; title: string; entrie
 // The day's verb, under the day's word. It carries no CEFR level and no picture — the
 // conjugation spreadsheet has neither — so what it shows instead is the paradigm: the
 // headword, and one screeve across all six persons. Everything else is a click away.
-function VerbOfTheDay({ verb }: { verb: Verb }) {
+function VerbOfTheDay({ verb }: { verb: KaVerb }) {
   const paradigm = dailyScreeve(verb);
   const name = headword(verb);
 
@@ -209,7 +209,7 @@ function VerbOfTheDay({ verb }: { verb: Verb }) {
           </div>
         )}
 
-        <Link className="daily-category" to={`/verbs/${verb.id}`}>
+        <Link className="daily-category" to={`/${lang()}/verbs/${verb.id}`}>
           Full conjugation
           <Icon name="arrow-right" size={16} />
         </Link>
@@ -223,7 +223,7 @@ function VerbOfTheDay({ verb }: { verb: Verb }) {
  * would list it under, or the third person present for the handful of entries the
  * spreadsheet leaves without one. Empty when it has neither.
  */
-function headword(verb: Verb): string {
+function headword(verb: KaVerb): string {
   return verb.verbalNoun || verb.present3sg;
 }
 
@@ -232,7 +232,7 @@ function headword(verb: Verb): string {
  * lack one — the first screeve the verb does fill in. SCREEVES is in the
  * conventional order, present first, so the search only has to run down it.
  */
-function dailyScreeve(verb: Verb): { screeve: Screeve; forms: ScreeveForms } | null {
+function dailyScreeve(verb: KaVerb): { screeve: Screeve; forms: ScreeveForms } | null {
   for (const screeve of SCREEVES) {
     const forms = verb.forms[screeve.key];
     if (forms) return { screeve, forms };

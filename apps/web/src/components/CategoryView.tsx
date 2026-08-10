@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import type { LevelFilter, Word } from '@georgian/shared/types';
-import { wordData as allData } from '../content/store';
+import { lang, wordData as allData } from '../content/store';
 import { getWordImage, creditLine } from '../utils/images';
 import { focusId } from '../utils/scroll';
 import { useEntryState } from '../utils/entryState';
@@ -39,7 +39,7 @@ function CategoryView() {
     return categoryWords.filter(w => {
       const matchesLevel = localLevel === 'all' || w.level === localLevel;
       const matchesSearch = !localSearch ||
-        w.georgian.toLowerCase().includes(localSearch.toLowerCase()) ||
+        w.headword.toLowerCase().includes(localSearch.toLowerCase()) ||
         w.english.toLowerCase().includes(localSearch.toLowerCase());
       return matchesLevel && matchesSearch;
     });
@@ -50,7 +50,7 @@ function CategoryView() {
       <div className="main-content">
         <div className="not-found">
           <h2>Category not found</h2>
-          <Link to="/categories">← Back to categories</Link>
+          <Link to={`/${lang()}/categories`}>← Back to categories</Link>
         </div>
       </div>
     );
@@ -59,7 +59,7 @@ function CategoryView() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/categories">← Categories</Link>
+        <Link to={`/${lang()}/categories`}>← Categories</Link>
         <span className="breadcrumb-sep">/</span>
         <span>{category.name}</span>
       </div>
@@ -68,7 +68,7 @@ function CategoryView() {
         <CategoryThumb category={category} className="category-thumb-sm" />
         <div className="category-header-text">
           <h1>{category.name}</h1>
-          <p className="category-header-geo">{category.nameGeorgian}</p>
+          <p className="category-header-geo">{category.nameNative}</p>
           <span className="word-count">{filteredWords.length} words</span>
         </div>
       </div>
@@ -125,7 +125,7 @@ function CategoryView() {
               <span className="pos-tag">{word.partOfSpeech}</span>
             </div>
             <div className="word-card-center">
-              <span className="word-georgian">{word.georgian}</span>
+              <span className="word-georgian">{word.headword}</span>
               {showTranslation && (
                 <span className="word-english">{word.english}</span>
               )}
@@ -167,7 +167,7 @@ function WordImageModal({ word, onClose }: { word: Word; onClose: () => void }) 
         <button className="modal-close" onClick={onClose} aria-label="Close">
           <Icon name="close" size={20} />
         </button>
-        <h3>{word.georgian} — {word.english}</h3>
+        <h3>{word.headword} — {word.english}</h3>
         {image && (
           <figure className="modal-image">
             <img src={image.url} alt={word.english} loading="lazy" />
@@ -179,7 +179,7 @@ function WordImageModal({ word, onClose }: { word: Word; onClose: () => void }) 
             </figcaption>
           </figure>
         )}
-        <p className="modal-definition">{word.georgianDefinition}</p>
+        <p className="modal-definition">{word.definition}</p>
         {word.englishFull.length > 1 && (
           <div className="modal-translations">
             <strong>All meanings:</strong>

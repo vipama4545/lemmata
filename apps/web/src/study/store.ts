@@ -15,6 +15,7 @@ import type { CardRecord, Introduced, Side } from './db';
 import { SIDES, cardId, clear, loadAll, remove, save } from './db';
 import type { Grade, Mastery, Review } from './mastery';
 import { KNOWN, applyGrade, applyLevel, isDue } from './mastery';
+import { lang } from '../content/store';
 
 export type { Side } from './db';
 export type { CardRecord, Introduced } from './db';
@@ -47,8 +48,30 @@ function publish(cards: Map<string, CardRecord>, ready = snapshot.ready): void {
  * account has for that card is newer and wins — which is the right way round for a browser
  * that has just signed in for the first time.
  */
+/**
+ * Brings a record read off disk up to the current shape.
+ *
+ * Two migrations, both of which have to happen on *read* rather than in a one-off pass: the
+ * records were written by an older build of this app, in a browser that may not have opened
+ * it since, and there is no moment at which we can be sure every device has run an upgrade.
+ *
+ *   `updatedAt` — added when syncing did. Absent means "as old as its last answer".
+ *   `side`      — said 'ka' when 'ka' could only mean "the side that is not English". A second
+ *                 language made that reading unavailable. The card key is `${item}|${side}`,
+ *                 so the key moves with it; without this every card learned before the change
+ *                 would still be in the database and invisible to every reader of it.
+ */
 function adopt(record: CardRecord): CardRecord {
-  return record.updatedAt ? record : { ...record, updatedAt: record.last ?? record.created ?? 0 };
+  let out = record;
+
+  if ((out.side as string) === 'ka') {
+    out = { ...out, side: 'target', card: cardId(out.item, 'target') };
+  }
+  // Written before there was a language to record. Everything from that era is Georgian.
+  if (!out.lang) out = { ...out, lang: 'ka' };
+  if (!out.updatedAt) out = { ...out, updatedAt: out.last ?? out.created ?? 0 };
+
+  return out;
 }
 
 /** Loads the database once, the first time anything subscribes. */
@@ -56,10 +79,18 @@ function start(): void {
   if (started) return;
   started = true;
   void loadAll().then(records => {
-    // Anything written while the read was in flight wins: it is newer than the disk.
-    const cards = new Map(records.map(record => [record.card, adopt(record)]));
+    // Keyed by the *migrated* card id, not the stored one: a record whose `side` has just been
+    // rewritten lives under a different key, and filing it under the old one would leave every
+    // lookup missing it.
+    const migrated = records.map(adopt);
+    const cards = new Map(migrated.map(record => [record.card, record]));
     for (const [key, record] of snapshot.cards) cards.set(key, record);
     publish(cards, true);
+
+    // Written back, so the rename happens once rather than on every read — and so the sync
+    // sends the new keys up rather than the old ones.
+    const changed = migrated.filter((record, index) => record !== records[index]);
+    if (changed.length) void save(changed);
   });
 }
 
@@ -163,6 +194,7 @@ function build(
   return {
     ...review,
     card: cardId(item, side),
+    lang: lang(),
     item,
     side,
     // How and when a card first appeared is a fact about that moment, not about the last
@@ -192,7 +224,7 @@ export function isUnseen(progress: Progress, item: string): boolean {
  * producing direction is not painted as one you have never met.
  */
 export function readingMastery(progress: Progress, item: string): Mastery | null {
-  return cardOf(progress, item, 'ka')?.level ?? cardOf(progress, item, 'en')?.level ?? null;
+  return cardOf(progress, item, 'target')?.level ?? cardOf(progress, item, 'en')?.level ?? null;
 }
 
 /** How many cards are wanted right now, across everything. What the sidebar counts. */

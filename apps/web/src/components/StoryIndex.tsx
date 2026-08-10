@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { stories } from "../data/stories";
 import Icon from "./Icon";
+import { lang, langName } from '../content/store';
 
 // The list of things to read. Each card leads with the share of its words that resolve to
 // a dictionary entry, because that is what decides whether a story is worth opening yet:
@@ -11,7 +12,7 @@ function StoryIndex() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/">← Home</Link>
+        <Link to={`/${lang()}`}>← Home</Link>
         <span className="breadcrumb-sep">/</span>
         <span>Stories</span>
       </div>
@@ -21,7 +22,7 @@ function StoryIndex() {
           <Icon name="book" size={22} />
           Stories
         </h1>
-        <p className="story-index-sub">Georgian short stories with every word linked back to the dictionary.</p>
+        <p className="story-index-sub">{langName()} short stories with every word linked back to the dictionary.</p>
       </header>
 
       {storyList.length === 0 ? (
@@ -31,7 +32,7 @@ function StoryIndex() {
           {storyList.map((story) => {
             const linked = Math.round(story.stats.coverage);
             return (
-              <Link key={story.id} to={`/stories/${story.id}`} className="story-card">
+              <Link key={story.id} to={`/${lang()}/stories/${story.id}`} className="story-card">
                 <div className="story-card-head">
                   <h2 className="story-card-title">{story.title}</h2>
                   {story.level && <span className={`level-badge ${story.level.toLowerCase()}`}>{story.level}</span>}

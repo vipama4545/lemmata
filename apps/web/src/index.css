@@ -193,18 +193,16 @@ a {
   gap: 12px;
 }
 
-.logo-georgian {
+/* The wordmark. Was `.logo-georgian` while the masthead named the language it was set in;
+   it now names the product, so the rule is named for what it styles. */
+.logo-word {
   font-size: 28px;
   font-weight: 700;
+  letter-spacing: -0.01em;
   background: linear-gradient(135deg, #38bdf8, #818cf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.logo-sub {
-  font-size: 14px;
-  opacity: 0.7;
 }
 
 .header-stats {
@@ -5085,4 +5083,178 @@ a {
 .danger-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* ============================================================ the switcher */
+
+/* The flag and the caret are ours; the <select> on top of them is transparent and does the
+   actual work, so the control keeps native keyboard and touch behaviour while looking like
+   the rest of the header. */
+.lang-switcher {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 26px 0 9px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.lang-switcher:hover { border-color: var(--border-strong); }
+
+.lang-flag {
+  font-size: 1.05rem;
+  line-height: 1;
+  /* Windows has no flag glyphs and falls back to two letters. Fixing the width stops the
+     control jumping between platforms, and between languages on the same one. */
+  min-width: 1.3em;
+  text-align: center;
+}
+
+/* Laid over the whole control so the entire thing is the hit target, and made transparent so
+   what shows through is the flag and caret above. `appearance: none` is what removes the
+   platform chrome without removing the platform behaviour. */
+.lang-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  padding: 0 26px 0 34px;
+  border: 0;
+  border-radius: 8px;
+  appearance: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* The open menu is drawn by the OS, which does not inherit the page's colours — so the
+   options are given them explicitly or a dark theme shows black text on black. */
+.lang-select option {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.lang-select:focus-visible { outline: 2px solid var(--accent, currentColor); outline-offset: 2px; }
+
+.lang-caret {
+  position: absolute;
+  right: 8px;
+  width: 12px;
+  height: 12px;
+  color: var(--text-light);
+  pointer-events: none;
+}
+
+/* ======================================================= the Russian verb page */
+
+.verb-head { margin-bottom: 28px; }
+.verb-title { margin: 0 0 4px; font-size: 2rem; font-weight: 650; }
+.verb-english { margin: 0 0 12px; color: var(--text-secondary); font-size: 1.05rem; }
+
+.verb-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; padding: 0; list-style: none; }
+
+.verb-tag {
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+/* Aspect is the fact the whole page turns on, so it is the one tag that carries colour. */
+.verb-tag.verb-aspect-impf { border-color: #3b82f6; color: #3b82f6; }
+.verb-tag.verb-aspect-pf { border-color: #a855f7; color: #a855f7; }
+
+.verb-pair { margin: 0; font-size: 0.9rem; color: var(--text-secondary); }
+
+.verb-group { margin-bottom: 28px; padding: 16px; border: 1px solid var(--border); border-radius: 10px; }
+.verb-group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.verb-group-toggle {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.verb-group-toggle:hover { color: var(--text); }
+.verb-group-name { margin: 10px 0 4px; font-weight: 600; }
+.verb-group-endings { margin: 0 0 6px; font-family: var(--mono, monospace); color: var(--text-secondary); }
+.verb-group-hint { margin: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+.verb-group-gloss { color: var(--text-light); font-size: 0.85rem; }
+
+.verb-group-facts { display: grid; gap: 10px 24px; margin: 14px 0 0; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.verb-group-facts dt { color: var(--text-light); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.verb-group-facts dd { margin: 2px 0 0; }
+
+.verb-screeve { margin-bottom: 24px; }
+.verb-section-title { margin: 0 0 4px; font-size: 1rem; font-weight: 600; }
+.verb-section-note { margin: 0 0 10px; color: var(--text-secondary); font-size: 0.85rem; }
+
+.verb-grid { display: grid; gap: 8px; margin-top: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.verb-cell { display: flex; align-items: baseline; gap: 8px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; }
+.verb-person { min-width: 66px; color: var(--text-light); font-size: 0.8rem; }
+.verb-form { font-size: 1.05rem; }
+
+/* A cell the rule could not reach. Deliberately visible — an irregular form is the thing on
+   this page most worth noticing. */
+.verb-irregular { margin-left: 5px; color: #f59e0b; text-decoration: none; cursor: help; }
+
+.verb-check, .verb-note { margin: 0 0 20px; padding: 10px 12px; border-left: 3px solid var(--border); color: var(--text-secondary); font-size: 0.88rem; }
+.verb-back { display: inline-block; margin-bottom: 16px; color: var(--text-secondary); font-size: 0.88rem; }
+.verb-missing { color: var(--text-secondary); }
+
+/* ================================================== the Russian verb index */
+
+.verb-list-intro {
+  max-width: 62ch;
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* The same card the Georgian index uses, re-columned. A Russian row carries one headword
+   where a Georgian one carries two, and the space that buys goes to the aspect: делать and
+   сделать are two entries, and which of them you are looking at decides everything else. */
+.verb-list-head-ru,
+.verb-card-ru {
+  grid-template-columns: 76px minmax(0, 1.1fr) minmax(0, 1.7fr) 112px 24px;
+}
+
+.verb-card-ru .verb-col-infinitive {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.verb-card-ru .verb-col-class {
+  color: var(--text-light);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* The aspect filter wears the colours its tags do, so the control and the rows it narrows
+   say the same thing. */
+.level-btn.active.impf { background: #3b82f6; }
+.level-btn.active.pf { background: #a855f7; }
+
+@media (max-width: 768px) {
+  /* Headword and aspect on one line, English and conjugation beneath — the same fold the
+     Georgian index makes, and re-stated here because the rule above is later in the file
+     than that one and would otherwise win at every width. */
+  .verb-card-ru {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 12px;
+  }
+
+  .verb-card-ru .verb-col-infinitive { grid-column: 1; grid-row: 1; }
+  .verb-card-ru .verb-col-aspect { grid-column: 2; grid-row: 1; justify-self: end; }
+  .verb-card-ru .verb-col-class { grid-column: 1 / -1; }
 }

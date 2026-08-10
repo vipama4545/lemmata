@@ -5,6 +5,7 @@ import type { IconName } from './Icon';
 import { groupedGrammarTopics } from '../data/grammar';
 import { dueCount, useProgress } from '../study/store';
 import { useIsAdmin } from '../admin/useAdmin';
+import { lang } from '../content/store';
 
 interface SidebarProps {
   open: boolean;
@@ -111,10 +112,24 @@ interface SidebarLinkProps {
   badge?: number;
 }
 
+/**
+ * Every row, with the language put on the front of its path.
+ *
+ * The `to` values above are written unprefixed — `/verbs`, `/stories` — because that is what
+ * they have always been and what they mean: the verb list *of the dictionary you are in*. The
+ * prefix is added in one place rather than interpolated at fifteen call sites, which is both
+ * shorter and the only version that cannot be forgotten when a row is added.
+ *
+ * Doing it here rather than leaning on the catch-all redirect matters for two reasons. A
+ * single-segment path like `/verbs` matches the `/:lang` route with `lang="verbs"` and never
+ * reaches the redirect at all — it renders the home page instead, which is what broke these.
+ * And `NavLink` compares `to` against the real URL, so an unprefixed link never marks itself
+ * active however well the navigation lands.
+ */
 function SidebarLink({ to, icon, label, end = false, sub = false, badge = 0 }: SidebarLinkProps) {
   return (
     <NavLink
-      to={to}
+      to={`/${lang()}${to === '/' ? '' : to}`}
       end={end}
       className={({ isActive }) =>
         `sidebar-link ${sub ? 'sidebar-link-sub' : ''} ${isActive ? 'active' : ''}`

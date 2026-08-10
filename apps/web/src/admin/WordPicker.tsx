@@ -1,13 +1,14 @@
-// Finding one lexicon entry, by Georgian or by English.
+// Finding one lexicon entry, by headword or by English.
 //
 // Used wherever something has to name a word: pinning a story token to an entry, and pointing
 // a headword at a paradigm. It searches the snapshot rather than the server, because the whole
-// word list is already in this browser — 2,096 entries filtered as you type is instant, and a
-// round trip per keystroke would be slower and could fail.
+// word list is already in this browser — filtered as you type it is instant, and a round trip
+// per keystroke would be slower and could fail. The snapshot is one language's, which is what
+// keeps this from ever offering a Georgian entry to a Russian story.
 
 import { useMemo, useState } from 'react';
 import type { Word } from '@georgian/shared/types';
-import { wordData } from '../content/store';
+import { langName, wordData } from '../content/store';
 import { searchWords } from './search';
 import Icon from '../components/Icon';
 
@@ -50,7 +51,7 @@ function WordPicker({
 
       {value && (
         <p className="admin-picker-current">
-          <span className="admin-picker-geo">{value.georgian}</span>
+          <span className="admin-picker-geo">{value.headword}</span>
           <span className="admin-picker-en">{value.english}</span>
         </p>
       )}
@@ -60,7 +61,7 @@ function WordPicker({
           <span className="admin-hint">Also claimed this spelling</span>
           {suggestions.map(word => (
             <button key={word.id} type="button" className="admin-chip" onClick={() => onPick(word)}>
-              <span className="admin-chip-geo">{word.georgian}</span>
+              <span className="admin-chip-geo">{word.headword}</span>
               <span className="admin-chip-en">{word.english}</span>
             </button>
           ))}
@@ -72,7 +73,7 @@ function WordPicker({
         <input
           type="text"
           className="search-input"
-          placeholder="Search Georgian or English…"
+          placeholder={`Search ${langName()} or English…`}
           value={term}
           autoFocus={autoFocus}
           onChange={event => setTerm(event.target.value)}
@@ -92,7 +93,7 @@ function WordPicker({
                   setTerm('');
                 }}
               >
-                <span className="admin-picker-geo">{word.georgian}</span>
+                <span className="admin-picker-geo">{word.headword}</span>
                 <span className="admin-picker-en">{word.english}</span>
                 {word.partOfSpeech && <span className="admin-picker-pos">{word.partOfSpeech}</span>}
               </button>

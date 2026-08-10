@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { verbData } from '../content/store';
+import { kaVerbData, lang } from '../content/store';
 import { useEntryState } from '../utils/entryState';
 import Icon from './Icon';
 
@@ -17,7 +17,7 @@ function VerbList() {
 
   const filteredVerbs = useMemo(() => {
     const needle = search.trim().toLowerCase();
-    return verbData().verbs.filter(verb => {
+    return kaVerbData().verbs.filter(verb => {
       if (groupId !== 'all' && verb.groupId !== groupId) return false;
       if (!needle) return true;
       return (
@@ -33,7 +33,7 @@ function VerbList() {
   return (
     <div className="main-content">
       <div className="breadcrumb">
-        <Link to="/categories">← Categories</Link>
+        <Link to={`/${lang()}/categories`}>← Categories</Link>
         <span className="breadcrumb-sep">/</span>
         <span>Verbs</span>
       </div>
@@ -61,8 +61,8 @@ function VerbList() {
         <label className="group-select">
           <span className="group-select-label">Group</span>
           <select value={groupId} onChange={(e) => setGroupId(e.target.value)}>
-            <option value="all">All groups ({verbData().verbs.length})</option>
-            {verbData().groups.map(group => (
+            <option value="all">All groups ({kaVerbData().verbs.length})</option>
+            {kaVerbData().groups.map(group => (
               <option key={group.id} value={group.id}>
                 {group.label} — {group.name} ({group.verbCount})
               </option>
@@ -87,7 +87,7 @@ function VerbList() {
         </div>
 
         {filteredVerbs.map(verb => (
-          <Link key={verb.id} to={`/verbs/${verb.id}`} className="verb-card">
+          <Link key={verb.id} to={`/${lang()}/verbs/${verb.id}`} className="verb-card">
             <span className="verb-col-group">
               <span className="group-tag">{verb.group || '—'}</span>
             </span>
