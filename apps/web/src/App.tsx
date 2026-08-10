@@ -234,9 +234,6 @@ function App() {
             {/* On a narrow screen this whole group wraps to its own centred row, and the
                 stats go with it: they are ambient, and worth dropping there. */}
             <div className="flex items-center gap-4 max-md:w-full max-md:flex-wrap max-md:justify-center max-md:gap-2">
-              <div className="flex gap-3 max-md:flex-wrap max-md:justify-center">
-                <Badge variant="onHeader">{verbCount()} verbs</Badge>
-              </div>
               <Button
                 variant="header"
                 size="icon"
