@@ -58,6 +58,19 @@ const formMeanings = derived(
     ),
 );
 
+/**
+ * Where a chapter lives.
+ *
+ * The first chapter has no number in its URL, so a story that never gains a second one has
+ * exactly the address it has always had, and every link to it that exists still works. The
+ * number shown is 1-based: a reader's third chapter is "3", and this is the only place that
+ * translates between that and the 0-based position everything else counts in.
+ */
+export function chapterHref(storyId: string, position: number): string {
+  const base = `/${lang()}/stories/${encodeURIComponent(storyId)}`;
+  return position === 0 ? base : `${base}/${position + 1}`;
+}
+
 /** A run of prose: either one dictionary-sized word, or the punctuation between two. */
 export interface Piece {
   text: string;

@@ -14,7 +14,16 @@ import { useSyncExternalStore } from 'react';
 import type { ContentSnapshot, KaVerbContent, RuVerbContent } from '@georgian/shared/contract';
 import { DEFAULT_LANG, LANG_LABELS, type Lang } from '@georgian/shared/grammar';
 import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar/ka';
-import type { ImageMap, KaVerb, KaVerbData, KaVerbGroup, Language, StorySummary, WordData } from '@georgian/shared/types';
+import type {
+  ImageMap,
+  KaVerb,
+  KaVerbData,
+  KaVerbGroup,
+  Language,
+  StoryCategory,
+  StorySummary,
+  WordData,
+} from '@georgian/shared/types';
 import { api } from '../api/client';
 import * as cache from './cache';
 import { currentLang, rememberLang, swapLang } from './lang';
@@ -277,4 +286,8 @@ export function categoryImageMap(): ImageMap {
 
 export function storySummaries(): StorySummary[] {
   return content().stories;
+}
+
+export function storyCategories(): StoryCategory[] {
+  return content().storyCategories;
 }

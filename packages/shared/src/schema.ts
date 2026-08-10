@@ -532,6 +532,46 @@ export const images = pgTable(
 
 /* ----------------------------------------------------------------- stories */
 
+/**
+ * A shelf to file stories under — "Folk tales", "News", "Children's".
+ *
+ * A separate table from `categories` rather than a `kind` column on it, because the two are
+ * not the same thing wearing different labels. A word's category is *generated*: the scrape
+ * produced it, `word_count` follows the lexicon, and nobody sits down and invents one. A
+ * story's is the opposite — hand-made, named by whoever is filing, and empty until somebody
+ * fills it. Sharing a table would mean one of `word_count` or `story_count` being null on
+ * every row in it, and the word grid listing "Folk tales" as a category with no words in it.
+ */
+export const storyCategories = pgTable(
+  'story_categories',
+  {
+    id: text('id').primaryKey(),
+    lang: text('lang')
+      .notNull()
+      .$type<Lang>()
+      .default('ka')
+      .references(() => languages.id, { onDelete: 'cascade' }),
+    /** Where it sits in the list, which is chosen rather than alphabetical. */
+    position: integer('position').notNull().default(0),
+    name: text('name').notNull(),
+    /** The category's name in the language being learned. Optional, unlike a word's. */
+    nameNative: text('name_native').notNull().default(''),
+    note: text('note').notNull().default(''),
+    /** Maintained by the writers, the way `categories.word_count` is. */
+    storyCount: integer('story_count').notNull().default(0),
+  },
+  table => [index('story_categories_lang_idx').on(table.lang)],
+);
+
+/**
+ * A story: everything true of the whole of it, and none of its prose.
+ *
+ * The prose moved to `story_chapters` when stories stopped being one text each. What stays
+ * here is what a chapter cannot answer on its own — the title on the cover, the level, the
+ * shelf it is filed on — and `stats`, which is the sum over every chapter and is what the
+ * index card shows. A story with one chapter is the ordinary case and is not marked as
+ * anything special: it simply has one row in `story_chapters`.
+ */
 export const stories = pgTable(
   'stories',
   {
@@ -547,13 +587,51 @@ export const stories = pgTable(
     level: text('level').notNull().default(''),
     source: text('source').notNull().default(''),
     note: text('note').notNull().default(''),
-    /** tokens, distinctForms, covered, coverage, names, unresolved, flagged. */
+    /**
+     * Null is a state of its own — "not filed yet" — rather than a category called
+     * "Uncategorised", so deleting a category can empty it without deleting what was in it.
+     * `set null` for the same reason: a shelf is thrown away far more readily than a book.
+     */
+    categoryId: text('category_id').references(() => storyCategories.id, { onDelete: 'set null' }),
+    /** tokens, distinctForms, covered, coverage, names, unresolved, flagged — every chapter. */
+    stats: jsonb('stats').$type<Record<string, number>>().notNull().default({}),
+  },
+  table => [index('stories_lang_idx').on(table.lang), index('stories_category_idx').on(table.categoryId)],
+);
+
+/**
+ * One chapter's prose, and the unit everything about reading is counted in.
+ *
+ * Keyed by `(story_id, position)` rather than by an id of its own. A chapter has no identity
+ * apart from where it stands in its story — nothing outside the story ever cites one, and
+ * the URL says "chapter 3", not a slug — so a surrogate key would be a second name for the
+ * same fact and a chance for the two to disagree. The cost is that reordering rewrites the
+ * positions, which is what `moveChapter` does, in one transaction.
+ *
+ * `stats` is this chapter's alone. The story's is not their sum in every field: two chapters
+ * can share a spelling, so `distinctForms` is recounted across the whole story rather than
+ * added up. See `recountStory`.
+ */
+export const storyChapters = pgTable(
+  'story_chapters',
+  {
+    storyId: text('story_id')
+      .notNull()
+      .references(() => stories.id, { onDelete: 'cascade' }),
+    /** 0-based. The reader's URL shows this plus one. */
+    position: smallint('position').notNull(),
+    /**
+     * Empty for a story that is one text and has no chapters worth naming — which is what
+     * the reader checks before drawing any chapter furniture at all.
+     */
+    title: text('title').notNull().default(''),
+    titleEnglish: text('title_english').notNull().default(''),
     stats: jsonb('stats').$type<Record<string, number>>().notNull().default({}),
     paragraphs: jsonb('paragraphs').$type<string[]>().notNull().default([]),
     /** One entry per paragraph, in the same order. Empty when untranslated. */
     translation: jsonb('translation').$type<string[]>().notNull().default([]),
   },
-  table => [index('stories_lang_idx').on(table.lang)],
+  table => [primaryKey({ columns: [table.storyId, table.position] })],
 );
 
 /**
@@ -576,7 +654,12 @@ export const storyTokens = pgTable(
     storyId: text('story_id')
       .notNull()
       .references(() => stories.id, { onDelete: 'cascade' }),
-    /** 0-based index into `stories.paragraphs`. */
+    /**
+     * Which chapter, 0-based. Part of the key rather than derived from anything: two
+     * chapters both have a paragraph 0 with a word 0 in it.
+     */
+    chapter: smallint('chapter').notNull().default(0),
+    /** 0-based index into that chapter's `paragraphs`. */
     paragraph: smallint('paragraph').notNull(),
     /** 0-based position within that paragraph, in reading order. */
     position: smallint('position').notNull(),
@@ -620,8 +703,19 @@ export const storyTokens = pgTable(
     alts: jsonb('alts').$type<{ word: string; english: string }[]>().notNull().default([]),
     comment: text('comment'),
   },
-  table => [primaryKey({ columns: [table.storyId, table.paragraph, table.position] })],
+  table => [primaryKey({ columns: [table.storyId, table.chapter, table.paragraph, table.position] })],
 );
+
+// There is deliberately no foreign key from `(story_id, chapter)` to `story_chapters`, and
+// it is the one relation in this file that is enforced in code instead. A chapter's position
+// *is* its identity, so reordering a book means writing new positions — and a non-deferrable
+// key cannot be satisfied part-way through a swap in either order: move the chapter row
+// first and its tokens are orphans, move the tokens first and they name a chapter that does
+// not exist yet. The alternatives were a deferrable constraint, which Drizzle cannot declare
+// and so would drift silently from this file, or parking rows to swap through, which is nine
+// statements of ceremony to reorder two chapters. So `deleteChapter` deletes the tokens
+// itself and `moveChapter` carries them along. The key on `story_id` still stands: deleting
+// a story takes everything with it, which is the case that would actually lose data.
 
 /* ======================================================================= auth */
 
@@ -806,6 +900,7 @@ export const languagesRelations = relations(languages, ({ many }) => ({
   categories: many(categories),
   words: many(words),
   stories: many(stories),
+  storyCategories: many(storyCategories),
 }));
 
 export const categoriesRelations = relations(categories, ({ many, one }) => ({
@@ -856,13 +951,29 @@ export const ruWordGrammarRelations = relations(ruWordGrammar, ({ one }) => ({
   word: one(words, { fields: [ruWordGrammar.wordId], references: [words.id] }),
 }));
 
+export const storyCategoriesRelations = relations(storyCategories, ({ many, one }) => ({
+  language: one(languages, { fields: [storyCategories.lang], references: [languages.id] }),
+  stories: many(stories),
+}));
+
 export const storiesRelations = relations(stories, ({ many, one }) => ({
   language: one(languages, { fields: [stories.lang], references: [languages.id] }),
+  category: one(storyCategories, { fields: [stories.categoryId], references: [storyCategories.id] }),
+  chapters: many(storyChapters),
+  tokens: many(storyTokens),
+}));
+
+export const storyChaptersRelations = relations(storyChapters, ({ many, one }) => ({
+  story: one(stories, { fields: [storyChapters.storyId], references: [stories.id] }),
   tokens: many(storyTokens),
 }));
 
 export const storyTokensRelations = relations(storyTokens, ({ one }) => ({
   story: one(stories, { fields: [storyTokens.storyId], references: [stories.id] }),
+  chapter: one(storyChapters, {
+    fields: [storyTokens.storyId, storyTokens.chapter],
+    references: [storyChapters.storyId, storyChapters.position],
+  }),
   word: one(words, { fields: [storyTokens.wordId], references: [words.id] }),
 }));
 

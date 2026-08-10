@@ -1,10 +1,17 @@
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
-import { ArrowRight, Check, Eye, EyeOff, Flag, Layers, Link2, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, Flag, Layers, Link2, SlidersHorizontal } from "lucide-react";
 import type { Story, StoryToken } from "@georgian/shared/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +27,7 @@ import { LevelBadge, PosTag } from "@/components/ui/word-card";
 import { cn } from "@/lib/utils";
 import { useIsAdmin } from "../admin/useAdmin";
 import { replaceStory, useStory } from "../data/stories";
-import { at, headword, isLinked, meaning, pieces, reading } from "../utils/story";
+import { at, chapterHref, headword, isLinked, meaning, pieces, reading } from "../utils/story";
 import type { Reading } from "../utils/story";
 import { segmentForm } from "../utils/verbMorphology";
 import { wordKey } from "../study/items";
@@ -145,10 +152,14 @@ function editableClasses(token: StoryToken, open: boolean) {
 // level as a colour, the card that opens over one can set that level, and the Finish button
 // at the end offers to retire everything you never had to look at.
 function StoryReader() {
-  const { storyId } = useParams<{ storyId: string }>();
-  // The text and its tokens are fetched rather than bundled — 120 KB for this one story,
+  const { storyId, chapter: chapterParam } = useParams<{ storyId: string; chapter: string }>();
+  // 1-based in the URL and 0-based everywhere else: a reader's third chapter is "3", and a
+  // link that said /2 for it would be the one part of this app that counts from zero in
+  // public. Anything unparseable is the first chapter rather than an error.
+  const asked = Math.max((Number(chapterParam) || 1) - 1, 0);
+  // The text and its tokens are fetched rather than bundled — 120 KB for one story's worth,
   // which is not worth carrying around for the visits that never open it.
-  const { story: fetched, loading, error } = useStory(storyId);
+  const { story: fetched, loading, error } = useStory(storyId, asked);
   const progress = useProgress();
   const { isAdmin } = useIsAdmin();
 
@@ -167,18 +178,39 @@ function StoryReader() {
   // shows from then on. Held here rather than pushed back through `useStory`, so the fetch
   // hook stays about fetching.
   const [edited, setEdited] = useState<Story | null>(null);
-  const story = edited ?? fetched;
+  // Only where it is this page's. The effect below clears it on a page turn, but an effect
+  // runs after the render that caused it, and one render of another chapter's tokens over
+  // this chapter's prose is one render too many — see the same reasoning in `useStory`.
+  const story = edited && edited.id === storyId && edited.chapter === asked ? edited : fetched;
 
-  // A different story means the edited copy is not this one's.
+  // A different story — or a different chapter of it — means the edited copy is not this
+  // page's. The edited story carries one chapter's tokens, so keeping it across a page turn
+  // would paint chapter 2's prose with chapter 1's links.
   useEffect(() => {
     setEdited(null);
     setEditingToken(null);
-  }, [storyId]);
+  }, [storyId, asked]);
 
   // Leaving edit mode must take the panel with it, as turning lookup off takes the card.
   useEffect(() => {
     if (!editing) setEditingToken(null);
   }, [editing]);
+
+  // A chapter number past the end of the book answers with the last chapter, which leaves
+  // the address bar naming a page that is not on screen. Correcting it in place — replace,
+  // not push — keeps the back button pointing where the reader came from.
+  //
+  // Safe to act on the moment there is a story, because `useStory` never hands back one that
+  // answers a different question — see the guard at the end of it. Without that, this is the
+  // line that would send a reader who asked for chapter 3 back to chapter 1: for one render
+  // `fetched` would still be the chapter just left, and its number is not this one's.
+  const navigate = useNavigate();
+  const landed = fetched?.chapter;
+  useEffect(() => {
+    if (storyId && landed != null && landed !== asked) {
+      navigate(chapterHref(storyId, landed), { replace: true });
+    }
+  }, [storyId, landed, asked, navigate]);
   // One shared timer: a pending open and a pending close can never both be wanted.
   const timer = useRef<number | undefined>(undefined);
 
@@ -254,6 +286,13 @@ function StoryReader() {
 
   const hasTranslation = story.translation.length > 0;
   const showSplit = split && hasTranslation;
+
+  const multiChapter = story.chapters.length > 1;
+  const here = story.chapters.find(entry => entry.position === story.chapter);
+  // A story of one chapter has the same counts either way, and one with none at all — which
+  // only an admin mid-upload ever sees — has the story's, which are zeroes.
+  const stats = here?.stats ?? story.stats;
+  const next = story.chapters.find(entry => entry.position === story.chapter + 1);
 
   const openLater = (token: StoryToken, key: string, target: HTMLElement) => {
     // Editing counts as a reason to open the card even with lookup switched off: choosing
@@ -344,9 +383,13 @@ function StoryReader() {
         {story.titleEnglish && <p className="mt-1 text-muted-foreground">{story.titleEnglish}</p>}
         <div className="mt-3 flex flex-wrap items-center gap-2.5">
           {story.level && <LevelBadge level={story.level} />}
-          <span className="text-xs text-faint">{story.stats.tokens} words</span>
-          <span className="text-xs text-faint">{story.stats.coverage}% linked</span>
+          {/* This chapter's counts once there is more than one, because they are what the
+              page in front of you is made of. The whole book's are on the index card. */}
+          <span className="text-xs text-faint">{stats.tokens} words</span>
+          <span className="text-xs text-faint">{stats.coverage}% linked</span>
         </div>
+
+        {multiChapter && <ChapterNav story={story} />}
 
         <div className="mt-4 flex flex-wrap items-center gap-2.5">
           <ReaderToggle on={lookup} onClick={() => setLookup((v) => !v)}>
@@ -406,6 +449,18 @@ function StoryReader() {
           showSplit ? "max-w-none" : "max-w-[68ch]",
         )}
       >
+        {/* The chapter's own heading, if it was given one. Inside the article rather than in
+            the page header, because it belongs to the text below it and not to the book —
+            and because that is where it would sit on the printed page. */}
+        {story.chapterTitle && (
+          <header className="mb-6 border-b border-border pb-4">
+            <h2 className="text-2xl font-semibold max-md:text-xl">{story.chapterTitle}</h2>
+            {story.chapterTitleEnglish && (
+              <p className="mt-0.5 text-sm text-muted-foreground">{story.chapterTitleEnglish}</p>
+            )}
+          </header>
+        )}
+
         {showSplit
           ? story.paragraphs.map((paragraph, p) => (
               <div
@@ -425,9 +480,24 @@ function StoryReader() {
             ))}
       </article>
 
+      {/* Reaching the end of a chapter that has another after it is not reaching the end of
+          the story, so the green button says so: carrying on is the expected thing and gets
+          the affirmative colour, and finishing early is still offered beside it. */}
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3.5 rounded-lg border border-dashed border-border-strong p-5">
-        <p className="text-muted-foreground">Reached the end?</p>
-        <Button variant="control" size="auto" className={KNOW_BUTTON} onClick={() => setFinishing(true)}>
+        <p className="text-muted-foreground">{next ? 'End of this chapter.' : 'Reached the end?'}</p>
+        {next && (
+          <Button variant="control" size="auto" className={KNOW_BUTTON} asChild>
+            <Link to={chapterHref(story.id, next.position)}>
+              Next chapter <ArrowRight />
+            </Link>
+          </Button>
+        )}
+        <Button
+          variant="control"
+          size="auto"
+          className={next ? undefined : KNOW_BUTTON}
+          onClick={() => setFinishing(true)}
+        >
           <Flag /> Finish reading
         </Button>
       </div>
@@ -455,6 +525,7 @@ function StoryReader() {
             story={story}
             paragraph={editingToken.paragraph}
             position={editingToken.position}
+            chapter={story.chapter}
             token={editingToken.token}
             onClose={() => setEditingToken(null)}
             onSaved={(result) => {
@@ -474,6 +545,75 @@ function StoryReader() {
 
 /** Prose is set large and loose: it is being read a word at a time, not skimmed. */
 const STORY_PARA = "mb-[18px] text-[19px] leading-[2] last:mb-0 max-md:text-[17px] max-md:leading-[1.9]";
+
+/**
+ * Moving between chapters: a step either way, and a menu for the rest.
+ *
+ * Drawn only for a story that has more than one. A short story is not a book with a single
+ * chapter in it, and putting "Chapter 1 of 1" above one would be furniture describing the
+ * shape of the database rather than anything a reader wants to know.
+ */
+function ChapterNav({ story }: { story: Story }) {
+  const navigate = useNavigate();
+  const previous = story.chapters.find(entry => entry.position === story.chapter - 1);
+  const next = story.chapters.find(entry => entry.position === story.chapter + 1);
+
+  return (
+    <nav className="mt-4 flex flex-wrap items-center gap-2.5" aria-label="Chapters">
+      {/* A real disabled Button at the ends rather than a Link wearing one: `asChild` hands
+          its props to the child, and `disabled` on an anchor is not a thing — it would render
+          as an attribute browsers ignore and screen readers do not announce. */}
+      {previous ? (
+        <Button variant="control" size="auto-sm" asChild>
+          <Link to={chapterHref(story.id, previous.position)}>
+            <ArrowLeft /> Previous
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="control" size="auto-sm" disabled>
+          <ArrowLeft /> Previous
+        </Button>
+      )}
+
+      {/* A select rather than a list of links: forty chapters is a plausible book and forty
+          buttons is not a navigation bar. It carries the titles, which is what makes it
+          worth opening — the numbers are already on the two buttons either side. */}
+      <Select
+        value={String(story.chapter)}
+        onValueChange={value => navigate(chapterHref(story.id, Number(value)))}
+      >
+        <SelectTrigger className="h-8 w-auto min-w-52 text-sm" aria-label="Go to a chapter">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {story.chapters.map(entry => (
+            <SelectItem key={entry.position} value={String(entry.position)}>
+              {entry.title || entry.titleEnglish
+                ? `${entry.position + 1}. ${entry.title || entry.titleEnglish}`
+                : `Chapter ${entry.position + 1}`}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      {next ? (
+        <Button variant="control" size="auto-sm" asChild>
+          <Link to={chapterHref(story.id, next.position)}>
+            Next <ArrowRight />
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="control" size="auto-sm" disabled>
+          Next <ArrowRight />
+        </Button>
+      )}
+
+      <span className="text-xs text-faint">
+        {story.chapter + 1} of {story.chapters.length}
+      </span>
+    </nav>
+  );
+}
 
 /** The affirmative action in this app: green rather than the accent blue. */
 export const KNOW_BUTTON =

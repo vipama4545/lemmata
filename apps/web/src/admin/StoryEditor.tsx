@@ -1,26 +1,37 @@
-// Adding and editing a story, and the report of how well it linked itself.
+// A story: what is true of the whole of it, and the chapters it is made of.
 //
-// Pasting prose in is the whole of adding a story. The server tokenises it and resolves every
-// word against the lexicon — around 95% of them, on the evidence of the one story here — and
-// what comes back is the list of what it could not do: the spellings nothing matched, and the
-// links it reached by a guess. Those two lists are the work, and they are the point of this
-// screen. Everything left over is either a word the dictionary is missing or a proper noun,
-// and the second is fixed in the reader itself, on the word, where you can see the sentence.
+// The prose is not on this screen any more. A story is a container now — a title, a level, a
+// shelf — and the text belongs to its chapters, which are added one at a time on the screen
+// next door. What is left here is the cover and the table of contents.
+//
+// The one exception is creating a story, which still takes prose in one go. A story of a
+// single chapter is the ordinary case, and making it two screens to save one optional field
+// would be charging every short story for a feature only a book uses.
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { StoryLinkResult } from '@georgian/shared/contract';
 import type { Lang } from '@georgian/shared/grammar';
-import { Check, Eye, RotateCcw, Type } from 'lucide-react';
+import type { StoryChapterSummary } from '@georgian/shared/types';
+import { ArrowDown, ArrowUp, Check, Eye, Pencil, Plus, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { KNOW_BUTTON } from '../components/StoryReader';
+import { chapterHref } from '../utils/story';
 import { api } from '../api/client';
-import { lang, langName, storySummaries } from '../content/store';
+import { lang, langName, storyCategories, storySummaries } from '../content/store';
 import {
   ADMIN_INPUT_GEO,
   AdminActions,
+  AdminBadge,
   AdminCount,
   AdminError,
   AdminField,
@@ -31,6 +42,10 @@ import {
   AdminLabel,
   AdminNote,
   AdminPage,
+  AdminRowEn,
+  AdminRowGeo,
+  AdminRowMeta,
+  AdminRows,
   AdminSection,
   AdminSectionTitle,
   AdminSub,
@@ -39,6 +54,7 @@ import {
   AdminWarning,
 } from './ui';
 import { useEdit } from './useAdmin';
+import { LinkReport } from './LinkReport';
 
 /**
  * What to put in an empty textarea, per language.
@@ -53,12 +69,16 @@ const PLACEHOLDER: Record<Lang, { text: string; translation: string }> = {
   ru: { text: 'Колобо́к\n\nЖил-был стари́к со стару́хой…', translation: 'The Little Round Bun\n\nOnce upon a time…' },
 };
 
+/** The value the category picker uses for "not on any shelf". A Select cannot hold null. */
+const UNFILED = '__none__';
+
 interface Draft {
   title: string;
   titleEnglish: string;
   level: string;
   source: string;
   note: string;
+  categoryId: string;
   text: string;
   translation: string;
 }
@@ -68,10 +88,13 @@ function StoryEditor() {
   const navigate = useNavigate();
   const { busy, error, run } = useEdit();
 
-  const summary = useMemo(
-    () => storySummaries().find(story => story.id === storyId) ?? null,
-    [storyId],
-  );
+  // Read straight out of the snapshot on every render rather than memoised on `storyId`.
+  // The chapter list below is edited *in place* — reordered, deleted — and each of those
+  // bumps the content version, which `useEdit` re-fetches and `App`'s `useContent` repaints
+  // from. A memo keyed on the id alone would survive all of that and keep showing the
+  // chapter order from before the click.
+  const summary = storySummaries().find(story => story.id === storyId) ?? null;
+  const categories = storyCategories();
 
   const [draft, setDraft] = useState<Draft>({
     title: summary?.title ?? '',
@@ -79,26 +102,12 @@ function StoryEditor() {
     level: summary?.level ?? '',
     source: summary?.source ?? '',
     note: summary?.note ?? '',
+    categoryId: summary?.categoryId ?? '',
     text: '',
     translation: '',
   });
-  const [loadedText, setLoadedText] = useState(!storyId);
   const [report, setReport] = useState<StoryLinkResult | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
-
-  // The prose is not in the snapshot — only the summary is — so editing an existing story
-  // needs the one extra fetch that the reader makes too.
-  const loadText = async () => {
-    if (!storyId) return;
-    const story = await api.content.story({ id: storyId });
-    if (!story) return;
-    setDraft(current => ({
-      ...current,
-      text: [story.title, ...story.paragraphs].join('\n\n'),
-      translation: story.translation.length ? [story.titleEnglish || story.title, ...story.translation].join('\n\n') : '',
-    }));
-    setLoadedText(true);
-  };
 
   if (storyId && !summary) {
     return (
@@ -123,14 +132,17 @@ function StoryEditor() {
         level: draft.level.trim(),
         source: draft.source.trim(),
         note: draft.note.trim(),
-        text: draft.text,
-        translation: draft.translation,
+        categoryId: draft.categoryId || null,
+        // Only ever sent on the way in. Editing an existing story's prose is a chapter's
+        // business, and the server refuses this field rather than ignoring it.
+        text: storyId ? '' : draft.text,
+        translation: storyId ? '' : draft.translation,
       }),
     );
 
     if (result) {
-      setReport(result);
-      if (!storyId) navigate(`/admin/stories/${encodeURIComponent(result.story.id)}`, { replace: true });
+      setReport(result.report);
+      if (!storyId) navigate(`/admin/stories/${encodeURIComponent(result.id)}`, { replace: true });
     }
   };
 
@@ -144,6 +156,16 @@ function StoryEditor() {
     if (!storyId) return;
     const result = await run(() => api.admin.deleteStory({ id: storyId }));
     if (result) navigate('/admin/stories', { replace: true });
+  };
+
+  const moveChapter = (position: number, direction: 'up' | 'down') => {
+    if (!storyId) return;
+    void run(() => api.admin.moveChapter({ storyId, position, direction }));
+  };
+
+  const removeChapter = (position: number) => {
+    if (!storyId) return;
+    void run(() => api.admin.deleteChapter({ storyId, position }));
   };
 
   const paragraphCount = draft.text.split('\n').map(line => line.trim()).filter(line => line && line !== '-').length - 1;
@@ -165,8 +187,8 @@ function StoryEditor() {
         <AdminTitle>{summary ? summary.title : 'New story'}</AdminTitle>
         {summary && (
           <AdminSub>
-            <code>{summary.id}</code> · {summary.stats.tokens} words · {summary.stats.coverage}% linked ·{' '}
-            {summary.stats.names} name(s)
+            <code>{summary.id}</code> · {summary.chapters.length} chapter(s) · {summary.stats.tokens} words ·{' '}
+            {summary.stats.coverage}% linked · {summary.stats.names} name(s)
           </AdminSub>
         )}
       </AdminHead>
@@ -182,7 +204,7 @@ function StoryEditor() {
               className={ADMIN_INPUT_GEO}
               value={draft.title}
               onChange={event => set('title', event.target.value)}
-              placeholder="Taken from the first line of the text"
+              placeholder={storyId ? '' : 'Taken from the first line of the text'}
             />
           </AdminField>
 
@@ -207,6 +229,39 @@ function StoryEditor() {
           </AdminField>
 
           <AdminField>
+            <AdminLabel>Category</AdminLabel>
+            <Select
+              value={draft.categoryId || UNFILED}
+              onValueChange={value => set('categoryId', value === UNFILED ? '' : value)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={UNFILED}>No category</SelectItem>
+                {categories.map(category => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                    {category.nameNative ? ` · ${category.nameNative}` : ''}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <AdminHint>
+              {categories.length === 0 ? (
+                <>
+                  There are none yet. <Link to="/admin/story-categories">Make one</Link>.
+                </>
+              ) : (
+                <>
+                  The heading it is listed under.{' '}
+                  <Link to="/admin/story-categories">Manage categories</Link>.
+                </>
+              )}
+            </AdminHint>
+          </AdminField>
+
+          <AdminField>
             <AdminLabel>Source</AdminLabel>
             <AdminInput value={draft.source} onChange={event => set('source', event.target.value)} />
           </AdminField>
@@ -218,20 +273,17 @@ function StoryEditor() {
         </AdminField>
       </AdminSection>
 
-      <AdminSection>
-        <AdminSectionTitle>The text</AdminSectionTitle>
-        <AdminNote>
-          First line is the title, blank lines separate paragraphs, a lone “-” is a rule and is dropped —
-          the same reading a <code>.txt</code> under <code>data/{lang()}/stories/</code> has always had. A
-          translation must have one paragraph per {langName()} paragraph, because the side-by-side view pairs
-          them by position.
-        </AdminNote>
+      {/* The prose box exists only before the story does. Once it has an id, its text lives
+          in chapters, and the section below replaces this one. */}
+      {!storyId && (
+        <AdminSection>
+          <AdminSectionTitle>The first chapter</AdminSectionTitle>
+          <AdminNote>
+            First line is the title, blank lines separate paragraphs, a lone “-” is a rule and is dropped.
+            A translation must have one paragraph per {langName()} paragraph, because the side-by-side view
+            pairs them by position. Leave this empty to create the story now and upload its chapters after.
+          </AdminNote>
 
-        {storyId && !loadedText ? (
-          <Button variant="control" size="auto" onClick={loadText}>
-            <Type /> Load the text to edit it
-          </Button>
-        ) : (
           <AdminGrid className="mb-0 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
             <AdminField>
               <AdminLabel>
@@ -262,34 +314,28 @@ function StoryEditor() {
               />
             </AdminField>
           </AdminGrid>
-        )}
 
-        {mismatched && (
-          <AdminWarning>
-            The translation has {translationCount} paragraph(s) and the {langName()} has {paragraphCount}. The
-            side-by-side view pairs them by position, so they would drift out of step.
-          </AdminWarning>
-        )}
-      </AdminSection>
+          {mismatched && (
+            <AdminWarning>
+              The translation has {translationCount} paragraph(s) and the {langName()} has {paragraphCount}.
+              The side-by-side view pairs them by position, so they would drift out of step.
+            </AdminWarning>
+          )}
+        </AdminSection>
+      )}
 
       <AdminActions>
-        <Button
-          variant="control"
-          size="auto"
-          className={KNOW_BUTTON}
-          disabled={busy || draft.text.trim() === '' || (Boolean(storyId) && !loadedText)}
-          onClick={save}
-        >
-          <Check /> {busy ? 'Linking…' : storyId ? 'Save and relink' : 'Create and link'}
+        <Button variant="control" size="auto" className={KNOW_BUTTON} disabled={busy} onClick={save}>
+          <Check /> {busy ? 'Saving…' : storyId ? 'Save' : 'Create'}
         </Button>
 
         {storyId && (
           <>
             <Button variant="control" size="auto" disabled={busy} onClick={relink}>
-              <RotateCcw /> Relink from the lexicon
+              <RotateCcw /> Relink every chapter
             </Button>
             <Button variant="control" size="auto" asChild>
-              <Link to={`/stories/${encodeURIComponent(storyId)}`}>
+              <Link to={chapterHref(storyId, 0)}>
                 <Eye /> Open the reader
               </Link>
             </Button>
@@ -303,7 +349,7 @@ function StoryEditor() {
         )}
         {storyId && confirmDelete && (
           <span className="flex flex-wrap items-center gap-2.5 text-sm">
-            Delete this story and every link in it?
+            Delete this story, every chapter and every link in it?
             <Button variant="dangerOutline" size="auto" disabled={busy} onClick={remove}>
               Yes, delete
             </Button>
@@ -314,98 +360,144 @@ function StoryEditor() {
         )}
       </AdminActions>
 
+      {storyId && summary && (
+        <ChapterList
+          storyId={storyId}
+          chapters={summary.chapters}
+          busy={busy}
+          onMove={moveChapter}
+          onDelete={removeChapter}
+        />
+      )}
+
       {report && <LinkReport result={report} />}
     </AdminPage>
   );
 }
 
-/** Room for a whole story without the textarea having to be dragged open first. */
+/** Room for a whole chapter without the textarea having to be dragged open first. */
 const TALL = 'min-h-80 text-[15px] md:text-[15px]';
 
 /**
- * What linking managed, and what it did not.
+ * The table of contents, and where chapters are added, reordered and removed.
  *
- * Two lists, and they call for different things. An unresolved spelling is usually a word the
- * dictionary does not have — or a proper noun, which is not a dictionary word and never will
- * be. A flagged one did resolve, by a guess, and wants a read-through. Both are fixed on the
- * word itself in the reader, which is where the sentence is.
+ * Reordering is a step at a time rather than a drag: the list is short, a step is
+ * unambiguous on a touch screen, and each one is a request that either worked or did not.
  */
-function LinkReport({ result }: { result: StoryLinkResult }) {
-  const { story, unresolved, flagged } = result;
+function ChapterList({
+  storyId,
+  chapters,
+  busy,
+  onMove,
+  onDelete,
+}: {
+  storyId: string;
+  chapters: StoryChapterSummary[];
+  busy: boolean;
+  onMove: (position: number, direction: 'up' | 'down') => void;
+  onDelete: (position: number) => void;
+}) {
+  const [confirming, setConfirming] = useState<number | null>(null);
 
   return (
     <AdminSection>
-      <AdminSectionTitle>How it linked</AdminSectionTitle>
-
-      <div className="mb-4 flex flex-wrap gap-[18px]">
-        <Stat value={`${story.stats.coverage}%`}>linked</Stat>
-        <Stat value={story.stats.tokens}>words</Stat>
-        <Stat value={story.stats.distinctForms}>spellings</Stat>
-        <Stat value={story.stats.names}>names</Stat>
-        <Stat value={story.stats.unresolved}>unresolved</Stat>
-        <Stat value={story.stats.flagged}>guessed</Stat>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <AdminSectionTitle className="mb-0">Chapters</AdminSectionTitle>
+        <Button variant="control" size="auto" className={KNOW_BUTTON} asChild>
+          <Link to={`/admin/stories/${encodeURIComponent(storyId)}/chapters/new`}>
+            <Plus /> Add a chapter
+          </Link>
+        </Button>
       </div>
 
-      <AdminNote>
-        Fix these in the reader, on the word itself — <Link to={`/stories/${encodeURIComponent(story.id)}`}>open it</Link>{' '}
-        and turn on Edit links. A proper noun is named there and stays out of the dictionary; a missing word
-        is added to the lexicon and every story that uses it picks it up on the next relink.
-      </AdminNote>
-
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5">
-        <TagList title="Nothing matched" items={unresolved} empty="Every word resolved." />
-        <TagList title="Reached by a guess" items={flagged} empty="Nothing was guessed." flagged />
-      </div>
-    </AdminSection>
-  );
-}
-
-function Stat({ value, children }: { value: number | string; children: React.ReactNode }) {
-  return (
-    <span className="text-[13px] text-muted-foreground">
-      <strong className="block text-xl text-foreground">{value}</strong>
-      {children}
-    </span>
-  );
-}
-
-/** One of the two lists of spellings, capped so a badly linked story does not fill the page. */
-function TagList({
-  title,
-  items,
-  empty,
-  flagged = false,
-}: {
-  title: string;
-  items: { form: string; count: number }[];
-  empty: string;
-  flagged?: boolean;
-}) {
-  return (
-    <div>
-      <h3 className="mb-2 text-[13px] font-bold">
-        {title} ({items.length})
-      </h3>
-      {items.length === 0 ? (
-        <AdminHint>{empty}</AdminHint>
+      {chapters.length === 0 ? (
+        <AdminNote>
+          No chapters yet. A story with none has nothing to read — paste the first one in.
+        </AdminNote>
       ) : (
-        <ul className="flex list-none flex-wrap gap-1.5">
-          {items.slice(0, 60).map(item => (
-            <li
-              key={item.form}
-              className={cn(
-                'flex items-baseline gap-[5px] rounded-full px-[9px] py-[3px] text-sm',
-                flagged ? 'bg-[color-mix(in_srgb,var(--m-3)_20%,transparent)]' : 'bg-muted',
-              )}
-            >
-              <span className="text-base">{item.form}</span>
-              {item.count > 1 && <span className="text-[11px] text-faint">{item.count}</span>}
+        <AdminRows>
+          {chapters.map((chapter, index) => (
+            <li key={chapter.position} className="flex flex-wrap items-center gap-3 px-4 py-[11px]">
+              <span className="w-6 shrink-0 text-sm font-semibold text-faint tabular-nums">
+                {chapter.position + 1}
+              </span>
+
+              <Link
+                to={`/admin/stories/${encodeURIComponent(storyId)}/chapters/${chapter.position}`}
+                className="flex min-w-0 flex-1 flex-wrap items-center gap-3 hover:underline"
+              >
+                <AdminRowGeo>{chapter.title || <span className="text-faint">Untitled</span>}</AdminRowGeo>
+                <AdminRowEn>{chapter.titleEnglish}</AdminRowEn>
+                <AdminRowMeta>
+                  <AdminBadge>{chapter.paragraphs} paragraph(s)</AdminBadge>
+                  <AdminBadge>{chapter.stats.tokens} words</AdminBadge>
+                  <AdminBadge flagged={chapter.stats.coverage < 90}>
+                    {chapter.stats.coverage}% linked
+                  </AdminBadge>
+                  {chapter.translated && <AdminBadge>translated</AdminBadge>}
+                </AdminRowMeta>
+              </Link>
+
+              <span className="flex shrink-0 items-center gap-1.5">
+                <Button
+                  variant="control"
+                  size="auto-sm"
+                  aria-label="Move up"
+                  disabled={busy || index === 0}
+                  onClick={() => onMove(chapter.position, 'up')}
+                >
+                  <ArrowUp />
+                </Button>
+                <Button
+                  variant="control"
+                  size="auto-sm"
+                  aria-label="Move down"
+                  disabled={busy || index === chapters.length - 1}
+                  onClick={() => onMove(chapter.position, 'down')}
+                >
+                  <ArrowDown />
+                </Button>
+                <Button variant="control" size="auto-sm" asChild>
+                  <Link
+                    to={`/admin/stories/${encodeURIComponent(storyId)}/chapters/${chapter.position}`}
+                    aria-label="Edit"
+                  >
+                    <Pencil />
+                  </Link>
+                </Button>
+                {confirming === chapter.position ? (
+                  <>
+                    <Button
+                      variant="dangerOutline"
+                      size="auto-sm"
+                      disabled={busy}
+                      onClick={() => {
+                        onDelete(chapter.position);
+                        setConfirming(null);
+                      }}
+                    >
+                      Delete it
+                    </Button>
+                    <Button variant="control" size="auto-sm" onClick={() => setConfirming(null)}>
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    variant="dangerOutline"
+                    size="auto-sm"
+                    disabled={busy}
+                    onClick={() => setConfirming(chapter.position)}
+                  >
+                    Delete
+                  </Button>
+                )}
+              </span>
             </li>
           ))}
-          {items.length > 60 && <AdminHint>…and {items.length - 60} more</AdminHint>}
-        </ul>
+        </AdminRows>
       )}
-    </div>
+    </AdminSection>
   );
 }
 

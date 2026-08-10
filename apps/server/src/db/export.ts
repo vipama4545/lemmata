@@ -26,9 +26,10 @@ import { fileURLToPath } from 'node:url';
 import { asc, eq } from 'drizzle-orm';
 import { LANGS, isLang } from '@georgian/shared/grammar';
 import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar/ka';
-import type { KaVerbData, Lang, RuVerbData, Story, WordData } from '@georgian/shared/types';
-import { buildSnapshotFromDatabase, loadStory } from '../router/content.ts';
+import type { KaVerbData, Lang, RuVerbData, StoryCategory, StoryFile, WordData } from '@georgian/shared/types';
+import { buildSnapshotFromDatabase } from '../router/content.ts';
 import { db, schema, sql } from './index.ts';
+import { loadStoryFile } from './storyFile.ts';
 
 const DATA = fileURLToPath(new URL('../../../../data/', import.meta.url));
 
@@ -150,6 +151,11 @@ for (const lang of langs) {
 
   /* --------------------------------------------------------------- stories */
 
+  // Written even when empty, unlike the story files: an export that left the file alone
+  // could not say whether the shelves were never created or had all been deleted, and the
+  // seed would put deleted ones back.
+  write(lang, 'storyCategories.json', snapshot.storyCategories satisfies StoryCategory[]);
+
   const storyRows = await db
     .select({ id: schema.stories.id })
     .from(schema.stories)
@@ -157,7 +163,7 @@ for (const lang of langs) {
     .orderBy(asc(schema.stories.id));
 
   for (const row of storyRows) {
-    const story = await loadStory(row.id);
+    const story = await loadStoryFile(row.id);
     if (!story) continue;
 
     // A story added in the browser has no .txt beside it, and `build:data` deletes reader data
@@ -169,17 +175,28 @@ for (const lang of langs) {
     // same and diffs completely, which would bury the content changes this export exists to
     // show. The prose is the one thing here a person typed, so it is the one thing not
     // regenerated over.
-    writeSource(lang, `${story.id}.txt`, [story.title, ...story.paragraphs]);
-    if (story.translation.length) {
-      writeSource(lang, `${story.id}.en.txt`, [story.titleEnglish || story.title, ...story.translation]);
-    }
+    //
+    // One .txt per chapter once there is more than one, suffixed by its number. A story of a
+    // single chapter keeps the unsuffixed name it has always had, so nothing in data/ is
+    // renamed by a story simply having been through this.
+    story.chapters.forEach((chapter, index) => {
+      const stem = story.chapters.length > 1 ? `${story.id}.${index + 1}` : story.id;
+      writeSource(lang, `${stem}.txt`, [chapter.title || story.title, ...chapter.paragraphs]);
+      if (chapter.translation.length) {
+        writeSource(lang, `${stem}.en.txt`, [
+          chapter.titleEnglish || chapter.title || story.titleEnglish || story.title,
+          ...chapter.translation,
+        ]);
+      }
+    });
 
-    write(lang, `stories/${story.id}.json`, story satisfies Story);
+    write(lang, `stories/${story.id}.json`, story satisfies StoryFile);
   }
 
+  const chapters = storyRows.length;
   console.log(
-    `  ${storyRows.length} story/stories, ${snapshot.words.words.length} words, ` +
-      `${snapshot.verbs.verbs.length} verbs.`,
+    `  ${chapters} story/stories, ${snapshot.storyCategories.length} story categories, ` +
+      `${snapshot.words.words.length} words, ${snapshot.verbs.verbs.length} verbs.`,
   );
 }
 

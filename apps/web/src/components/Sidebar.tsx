@@ -6,6 +6,7 @@ import {
   Calendar,
   Download,
   LayoutGrid,
+  Library,
   List,
   MessageCircle,
   Search,
@@ -136,6 +137,7 @@ function Sidebar({ open, onClose }: SidebarProps) {
             <SidebarLink to="/admin/words" icon={Type} label="Words" />
             <SidebarLink to="/admin/verbs" icon={Table} label="Verbs" />
             <SidebarLink to="/admin/stories" icon={MessageCircle} label="Stories" />
+            <SidebarLink to="/admin/story-categories" icon={Library} label="Story categories" />
             <SidebarLink to="/admin/users" icon={Users} label="Admins" />
           </SidebarSection>
         )}

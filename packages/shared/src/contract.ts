@@ -21,6 +21,7 @@ import type {
   RuVerb,
   Side,
   Story,
+  StoryCategory,
   StorySummary,
   StudyCardWire,
   WordData,
@@ -87,6 +88,12 @@ export interface ContentSnapshot {
   images: ImageMap;
   categoryImages: ImageMap;
   stories: StorySummary[];
+  /**
+   * The shelves, in the order they were put in. Sent whole even when empty, because the
+   * story editor's category picker has to offer every one of them and the index has to be
+   * able to say "there are none yet" rather than "this story has none".
+   */
+  storyCategories: StoryCategory[];
 }
 
 /**
@@ -110,8 +117,23 @@ const contentContract = {
     .input(z.object({ lang: LANG, known: z.string().optional() }))
     .output(type<SnapshotResponse>()),
 
-  /** One story with its text and every token. Null when there is no such story. */
-  story: oc.input(z.object({ id: z.string().min(1).max(128) })).output(type<Story | null>()),
+  /**
+   * One chapter of one story, with its text and every token, and the list of the story's
+   * other chapters to navigate by. Null when there is no such story.
+   *
+   * A chapter past the end is not an error — it answers with the last one. The reader's
+   * URL carries a chapter number, and a stale bookmark to chapter 9 of a story now eight
+   * long should land on a page rather than on "that story does not exist".
+   */
+  story: oc
+    .input(
+      z.object({
+        id: z.string().min(1).max(128),
+        /** 0-based. Absent is the first. */
+        chapter: z.number().int().min(0).max(999).default(0),
+      }),
+    )
+    .output(type<Story | null>()),
 
   /** The switcher's list, for the shell to draw before any dictionary has loaded. */
   languages: oc.output(type<{ languages: Language[] }>()),
@@ -366,12 +388,14 @@ export const ruVerbInput = z.object({
 export type RuVerbInput = z.infer<typeof ruVerbInput>;
 
 /**
- * A story, as prose.
+ * A story, minus its prose.
  *
- * The text goes up as one string and is cut into paragraphs on the server by the same rule
- * the build script uses on a .txt file — blank lines separate, a lone "-" is a rule and is
- * dropped. Sending pre-split paragraphs instead would let the browser and the server
- * disagree about where a paragraph ends, and the token positions are counted from that.
+ * Everything true of the whole of it and nothing that belongs to a chapter — with one
+ * exception, `text` and `translation`, which are accepted *only when creating*. A story of
+ * one chapter is still the common case, and making it two round trips ("name it", then
+ * "now paste it") to save one optional field would be paying for chapters in the case that
+ * does not have any. Once the story exists the prose is edited on the chapter itself, and
+ * sending it here is refused rather than quietly ignored.
  */
 export const storyInput = z.object({
   /** Absent to create; slugged from the English title, or the one in the target language. */
@@ -382,13 +406,56 @@ export const storyInput = z.object({
   level: z.string().trim().max(20).default(''),
   source: z.string().trim().max(500).default(''),
   note: z.string().trim().max(2000).default(''),
-  /** The Georgian, first line the title. Up to a megabyte, which is a long book. */
-  text: z.string().max(1_000_000),
-  /** The English, one paragraph per Georgian paragraph. Empty when untranslated. */
+  /** The shelf to file it on. Null is "not filed", which is a state and not a mistake. */
+  categoryId: z.string().trim().max(128).nullable().default(null),
+  /** The first chapter's prose, on creation only. Empty to create a story with none yet. */
+  text: z.string().max(1_000_000).default(''),
   translation: z.string().max(1_000_000).default(''),
 });
 
 export type StoryInput = z.infer<typeof storyInput>;
+
+/**
+ * One chapter's prose.
+ *
+ * The text goes up as one string and is cut into paragraphs on the server by the same rule
+ * the build script uses on a .txt file — blank lines separate, a lone "-" is a rule and is
+ * dropped. Sending pre-split paragraphs instead would let the browser and the server
+ * disagree about where a paragraph ends, and the token positions are counted from that.
+ *
+ * The first line of `text` is the chapter's title, exactly as the first line of a story's
+ * .txt has always been the story's. A story of one chapter usually wants no title at all,
+ * which is what `titled` is for: without it there would be no way to say "this whole text
+ * is prose", and the opening sentence would be eaten as a heading.
+ */
+export const storyChapterInput = z.object({
+  storyId: z.string().min(1).max(128),
+  /** Absent to append. 0-based, and an existing position is the chapter it replaces. */
+  position: z.number().int().min(0).max(999).optional(),
+  /** Whether to read the first line of the text as a heading. */
+  titled: z.boolean().default(true),
+  /** Overrides the first line where it is set. */
+  title: z.string().trim().max(300).default(''),
+  titleEnglish: z.string().trim().max(300).default(''),
+  /** Up to a megabyte, which is a long chapter. */
+  text: z.string().max(1_000_000),
+  /** The English, one paragraph per paragraph of `text`. Empty when untranslated. */
+  translation: z.string().max(1_000_000).default(''),
+});
+
+export type StoryChapterInput = z.infer<typeof storyChapterInput>;
+
+/** A shelf to file stories on. Hand-made, unlike a word's category. */
+export const storyCategoryInput = z.object({
+  /** Absent to create; slugged from the name. */
+  id: z.string().trim().max(128).optional(),
+  lang: LANG,
+  name: z.string().trim().min(1).max(120),
+  nameNative: z.string().trim().max(120).default(''),
+  note: z.string().trim().max(2000).default(''),
+});
+
+export type StoryCategoryInput = z.infer<typeof storyCategoryInput>;
 
 /**
  * One hand-made decision about one occurrence in one story.
@@ -414,7 +481,9 @@ export type StoryInput = z.infer<typeof storyInput>;
  */
 export const storyTokenInput = z.object({
   storyId: z.string().min(1).max(128),
-  /** 0-based index into the story's paragraphs. */
+  /** 0-based index into the story's chapters. */
+  chapter: z.number().int().min(0).max(999).default(0),
+  /** 0-based index into that chapter's paragraphs. */
   paragraph: z.number().int().min(0).max(10_000),
   /** 0-based position among the words of that paragraph, in reading order. */
   position: z.number().int().min(0).max(10_000),
@@ -443,13 +512,25 @@ export const storyTokenInput = z.object({
    * the only way to record a doubt would be to leave the wrong link in place.
    */
   check: z.boolean().default(false),
-  /** Apply to every occurrence of this spelling in this story, not just this one. */
+  /**
+   * Apply to every occurrence of this spelling in this story, not just this one.
+   *
+   * The whole story, every chapter — not the chapter it was decided in. და is the
+   * conjunction from the first page to the last, and a decision that stopped at a chapter
+   * boundary would have to be made again on the next one for no reason anybody could name.
+   */
   everywhere: z.boolean().default(false),
 });
 
 export type StoryTokenInput = z.infer<typeof storyTokenInput>;
 
-/** What relinking a story reports back: the story itself, and how well it went. */
+/**
+ * What linking reports back: the story itself, and how well it went.
+ *
+ * `story` is opened at whichever chapter the edit touched, so the screen that asked for the
+ * write can repaint from this one answer. The two lists are the chapters that were linked —
+ * one of them for a chapter save, all of them for a relink.
+ */
 export interface StoryLinkResult {
   story: Story;
   /** Spellings nothing matched, commonest first — the work list for the lexicon. */
@@ -504,21 +585,73 @@ const adminContract = {
 
   /* -- the stories -- */
 
-  /** Writes the story, then links every word in it. The result says how much it managed. */
-  saveStory: oc.input(storyInput).output(type<StoryLinkResult>()),
+  /**
+   * Writes the story's own fields, and its first chapter where prose was sent with them.
+   *
+   * `report` is null when none was — creating a story and uploading its chapters are two
+   * jobs, and only the second has anything to report about linking.
+   */
+  saveStory: oc
+    .input(storyInput)
+    .output(type<{ id: string; version: string; report: StoryLinkResult | null }>()),
   deleteStory: oc
     .input(z.object({ id: z.string().min(1).max(128) }))
     .output(type<{ version: string }>()),
   /**
    * Runs the resolver over an existing story again, keeping every override.
    *
-   * Worth doing after the lexicon changes: a word added today is a link the story could not
-   * have made yesterday. It is not automatic, because editing one word would otherwise
-   * relink every story that might mention it.
+   * Every chapter of it: the lexicon changed, and it changed for all of them. Worth doing
+   * after that happens — a word added today is a link the story could not have made
+   * yesterday. It is not automatic, because editing one word would otherwise relink every
+   * story that might mention it.
    */
   relinkStory: oc
     .input(z.object({ id: z.string().min(1).max(128) }))
     .output(type<StoryLinkResult>()),
+
+  /* -- the chapters -- */
+
+  /**
+   * Writes one chapter's prose and links every word in it, leaving the others alone.
+   *
+   * Appends when `position` is absent and replaces the chapter standing there when it is
+   * not. Replacing keeps the hand-made tokens the new prose still agrees with, by the same
+   * rule that has always governed re-saving a story's text: a pin is matched back by
+   * position *and* spelling, so an edit that moves the words drops the pins it moved
+   * rather than sliding them onto whatever now stands there.
+   */
+  saveChapter: oc.input(storyChapterInput).output(type<StoryLinkResult>()),
+  /** Removes a chapter and closes the gap, so the ones after it move up by one. */
+  deleteChapter: oc
+    .input(z.object({ storyId: z.string().min(1).max(128), position: z.number().int().min(0).max(999) }))
+    .output(type<{ version: string }>()),
+  /**
+   * Swaps a chapter with its neighbour.
+   *
+   * Up and down rather than "move to index n": reordering a book is done a step at a time by
+   * somebody looking at the list, and a position taken from a stale list is a chapter landing
+   * somewhere nobody pointed at.
+   */
+  moveChapter: oc
+    .input(
+      z.object({
+        storyId: z.string().min(1).max(128),
+        position: z.number().int().min(0).max(999),
+        direction: z.enum(['up', 'down']),
+      }),
+    )
+    .output(type<{ version: string }>()),
+
+  /* -- the shelves stories are filed on -- */
+
+  saveStoryCategory: oc.input(storyCategoryInput).output(type<{ id: string; version: string }>()),
+  /**
+   * Deletes a category. The stories in it are not deleted — they come off the shelf and go
+   * back to being unfiled, which is why this needs no "are you sure it is empty" check.
+   */
+  deleteStoryCategory: oc
+    .input(z.object({ id: z.string().min(1).max(128) }))
+    .output(type<{ version: string }>()),
 
   /**
    * Pins one occurrence — to a word and sense, to a name, or to plain text — and hands the
@@ -533,6 +666,7 @@ const adminContract = {
     .input(
       z.object({
         storyId: z.string().min(1).max(128),
+        chapter: z.number().int().min(0).max(999).default(0),
         paragraph: z.number().int().min(0).max(10_000),
         position: z.number().int().min(0).max(10_000),
         form: z.string().trim().min(1).max(200),

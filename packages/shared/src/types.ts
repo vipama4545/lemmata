@@ -510,6 +510,65 @@ export interface StoryToken {
   comment?: string;
 }
 
+/**
+ * How much of a text linked back to the dictionary. Held per chapter and per story.
+ *
+ * A type alias rather than an interface, which is not a stylistic choice: only an alias gets
+ * an implicit index signature, and without one this stops being assignable to the
+ * `Record<string, number>` the `stats` jsonb columns are typed as.
+ */
+export type StoryStats = {
+  tokens: number;
+  distinctForms: number;
+  /** Occurrences that resolved to a dictionary entry or a name. */
+  covered: number;
+  /** `covered` as a percentage of `tokens`, to one decimal place. */
+  coverage: number;
+  names: number;
+  unresolved: number;
+  /** Occurrences reached by a guess rather than confirmed by hand. */
+  flagged: number;
+};
+
+/** A shelf stories are filed on — hand-made, unlike a word's category. */
+export interface StoryCategory {
+  id: string;
+  lang: Lang;
+  name: string;
+  /** The category's name in the language being learned. Often empty. */
+  nameNative: string;
+  note: string;
+  storyCount: number;
+}
+
+/**
+ * One chapter as the navigation knows it: enough to list it and link to it, and no prose.
+ *
+ * Every payload that carries a story carries all of these, because the chapter list is
+ * navigation and has to be drawable before the chapter being navigated to has loaded.
+ */
+export interface StoryChapterSummary {
+  /**
+   * 0-based, and the whole of a chapter's identity — the URL shows this plus one. A chapter
+   * has no id of its own; see the note on the `story_chapters` table.
+   */
+  position: number;
+  /** Empty for a story that is one text and names no chapters. */
+  title: string;
+  titleEnglish: string;
+  paragraphs: number;
+  translated: boolean;
+  stats: StoryStats;
+}
+
+/**
+ * A story, opened at one chapter.
+ *
+ * `paragraphs`, `translation` and `tokens` are that one chapter's — not the whole book's.
+ * A story is unbounded in length now that it has chapters, and sending every chapter to
+ * render one of them would put a novel on the wire to show a page of it. `chapters` is the
+ * list to navigate by and `chapter` says which of them this payload is.
+ */
 export interface Story {
   note: string;
   id: string;
@@ -519,23 +578,22 @@ export interface Story {
   /** A CEFR level as a plain string: stories are not confined to the A1/A2 word list. */
   level: string;
   source: string;
-  stats: {
-    tokens: number;
-    distinctForms: number;
-    /** Occurrences that resolved to a dictionary entry or a name. */
-    covered: number;
-    /** `covered` as a percentage of `tokens`, to one decimal place. */
-    coverage: number;
-    names: number;
-    unresolved: number;
-    /** Occurrences reached by a guess rather than confirmed by hand. */
-    flagged: number;
-  };
+  /** Null when the story has not been filed on any shelf. */
+  categoryId: string | null;
+  /** That category's English name, for a card that would otherwise have to look it up. */
+  category: string;
+  /** Every chapter, every word — what the index card and the story editor report. */
+  stats: StoryStats;
+  /** In reading order. Always at least one: a story with no chapters has no prose. */
+  chapters: StoryChapterSummary[];
+  /** Which chapter the three fields below carry. A 0-based index into `chapters`. */
+  chapter: number;
+  chapterTitle: string;
+  chapterTitleEnglish: string;
   paragraphs: string[];
   /**
-   * The English, one entry per paragraph and in the same order, from the story's
-   * <id>.en.txt. Empty when there is no translation, which is what the reader checks
-   * before offering the split view.
+   * The English, one entry per paragraph and in the same order. Empty when there is no
+   * translation, which is what the reader checks before offering the split view.
    */
   translation: string[];
   /**
@@ -546,13 +604,55 @@ export interface Story {
   tokens: StoryToken[][];
 }
 
-/** A story without its text — what the index page lists, at a fraction of the weight. */
-export type StorySummary = Omit<Story, 'paragraphs' | 'translation' | 'tokens'> & {
-  /** Whether an English translation exists, which is what the index badges. */
+/**
+ * A story without any prose — what the index page lists, at a fraction of the weight.
+ *
+ * `chapters` stays. It is the one part of a story's shape that the index has to know before
+ * anything is fetched: a card says how many chapters there are, and the reader's chapter
+ * menu is drawn from it while the first chapter is still in flight.
+ */
+export type StorySummary = Omit<
+  Story,
+  'paragraphs' | 'translation' | 'tokens' | 'chapter' | 'chapterTitle' | 'chapterTitleEnglish'
+> & {
+  /** Whether an English translation exists for any chapter, which is what the index badges. */
   translated: boolean;
-  /** The opening paragraph, which is the only prose the index card shows. */
+  /** The opening paragraph of the first chapter — the only prose the index card shows. */
   excerpt: string;
 };
+
+/**
+ * A whole story as one file — every chapter, its prose and every token in it.
+ *
+ * Distinct from `Story`, which is one chapter of one, because the two answer different
+ * questions. `Story` is what crosses the wire to paint a page, and carrying forty chapters
+ * to show one of them is the thing chapters exist to avoid. A file is not read a page at a
+ * time: `npm run db:seed` loads the lot and `npm run db:export` writes the lot, and a story
+ * split across forty files would be a directory listing pretending to be a table.
+ */
+export interface StoryFileChapter {
+  title: string;
+  titleEnglish: string;
+  stats: StoryStats;
+  paragraphs: string[];
+  translation: string[];
+  /** One array per paragraph, in reading order. See `Story.tokens`. */
+  tokens: StoryToken[][];
+}
+
+export interface StoryFile {
+  note: string;
+  id: string;
+  lang: Lang;
+  title: string;
+  titleEnglish: string;
+  level: string;
+  source: string;
+  categoryId: string | null;
+  category: string;
+  stats: StoryStats;
+  chapters: StoryFileChapter[];
+}
 
 /* ----------------------------------------------------------------- study */
 

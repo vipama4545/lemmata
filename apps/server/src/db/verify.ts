@@ -15,9 +15,10 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar/ka';
-import type { ImageMap, KaMorphemeData, Story, KaVerbData, WordData } from '@georgian/shared/types';
+import type { ImageMap, KaMorphemeData, KaVerbData, WordData } from '@georgian/shared/types';
 import { buildSnapshotFromDatabase, loadStory } from '../router/content.ts';
 import { sql } from './index.ts';
+import { readStoryFile } from './storyFile.ts';
 
 const DATA = fileURLToPath(new URL('../../../../data/', import.meta.url));
 
@@ -83,7 +84,7 @@ const images = read<ImageMap>('ka/images.json');
 const categoryImages = read<ImageMap>('ka/categoryImages.json');
 const stories = readdirSync(`${DATA}ka/stories`)
   .filter(name => name.endsWith('.json'))
-  .map(name => read<Story>(`ka/stories/${name}`));
+  .map(name => readStoryFile('ka', read<unknown>(`ka/stories/${name}`)));
 
 const snapshot = await buildSnapshotFromDatabase('ka');
 if (snapshot.verbs.kind !== 'ka') throw new Error('The Georgian snapshot came back with Russian verbs in it.');
@@ -121,7 +122,7 @@ for (const check of checks) {
 
 // The stories are fetched one at a time, because that is how the reader gets them: the
 // snapshot carries only their summaries. Both paths are checked — the summary the index
-// lists, and the full text and every token the reader paints.
+// lists, and the full text and every token the reader paints, a chapter at a time.
 for (const story of stories) {
   const out: string[] = [];
 
@@ -131,15 +132,34 @@ for (const story of stories) {
   } else {
     diff(summary.title, story.title, `story(${story.id}).title`, out);
     diff(summary.stats, story.stats, `story(${story.id}).stats`, out);
-    diff(summary.translated, story.translation.length > 0, `story(${story.id}).translated`, out);
-    diff(summary.excerpt, story.paragraphs[0] ?? '', `story(${story.id}).excerpt`, out);
+    diff(summary.categoryId, story.categoryId, `story(${story.id}).categoryId`, out);
+    diff(summary.chapters.length, story.chapters.length, `story(${story.id}).chapters.length`, out);
+    diff(
+      summary.translated,
+      story.chapters.some(chapter => chapter.translation.length > 0),
+      `story(${story.id}).translated`,
+      out,
+    );
+    diff(summary.excerpt, story.chapters[0]?.paragraphs[0] ?? '', `story(${story.id}).excerpt`, out);
   }
 
-  const full = await loadStory(story.id);
-  if (!full) {
-    out.push(`story(${story.id}): content.story returned nothing`);
-  } else {
-    diff(full, story, `story(${story.id})`, out);
+  // Every chapter, through the same call the reader makes for each of them. The prose and
+  // the tokens are the part of a story most likely to be lost in a shape change, and a
+  // check that only ever looked at the first chapter would prove nothing about the rest.
+  for (const [index, chapter] of story.chapters.entries()) {
+    const full = await loadStory(story.id, index);
+    const at = `story(${story.id}).chapters[${index}]`;
+    if (!full) {
+      out.push(`${at}: content.story returned nothing`);
+      continue;
+    }
+    diff(full.chapter, index, `${at}.position`, out);
+    diff(full.chapterTitle, chapter.title, `${at}.title`, out);
+    diff(full.chapterTitleEnglish, chapter.titleEnglish, `${at}.titleEnglish`, out);
+    diff(full.paragraphs, chapter.paragraphs, `${at}.paragraphs`, out);
+    diff(full.translation, chapter.translation, `${at}.translation`, out);
+    diff(full.tokens, chapter.tokens, `${at}.tokens`, out);
+    diff(full.chapters[index]?.stats, chapter.stats, `${at}.stats`, out);
   }
 
   if (out.length === 0) {

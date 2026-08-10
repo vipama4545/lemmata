@@ -13,12 +13,12 @@ import GrammarIndex from "./components/GrammarIndex";
 import GrammarTopic from "./components/GrammarTopic";
 import WordOfTheDay from "./components/WordOfTheDay";
 import StoryIndex from "./components/StoryIndex";
+import StoryCategoryView from "./components/StoryCategoryView";
 import StoryReader from "./components/StoryReader";
 import Sidebar from "./components/Sidebar";
 import ScrollManager from "./components/ScrollManager";
 import Account from "./components/Account";
 import { Menu, Moon, Sun } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from "@/components/ui/page";
 import { LevelTabs } from "@/components/ui/level-tabs";
@@ -144,11 +144,6 @@ function LangGate({ children }: { children: ReactNode }) {
   if (first && !isLang(first)) return <Navigate to={`/${lang()}${pathname}${search}`} replace />;
 
   return <>{children}</>;
-}
-
-/** However many paradigms this dictionary has, whichever kind they are. */
-function verbCount(): number {
-  return content().verbs.verbs.length;
 }
 
 function App() {
@@ -286,7 +281,16 @@ function App() {
                 <Route path="/:lang/export" element={<ExportAnki />} />
                 <Route path="/:lang/search" element={<WordSearch />} />
                 <Route path="/:lang/stories" element={<StoryIndex />} />
+                {/* Above the reader's routes in specificity, not merely in order: a static
+                    third segment outranks `:storyId`, so a shelf can never be mistaken for a
+                    story. `saveStory` refuses to mint "category" as an id, which is the other
+                    half of that guarantee. */}
+                <Route path="/:lang/stories/category" element={<Navigate to={`/${lang()}/stories`} replace />} />
+                <Route path="/:lang/stories/category/:categoryId" element={<StoryCategoryView />} />
                 <Route path="/:lang/stories/:storyId" element={<StoryReader />} />
+                {/* 1-based, and absent for the first: a story that never gains a second
+                    chapter keeps the address it has always had. */}
+                <Route path="/:lang/stories/:storyId/:chapter" element={<StoryReader />} />
                 <Route path="/:lang/grammar" element={<GrammarIndex />} />
                 <Route path="/:lang/grammar/:topicId" element={<GrammarTopic />} />
 

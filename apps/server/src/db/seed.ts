@@ -41,10 +41,11 @@ import type {
   Lang,
   RuSlotKey,
   RuVerbData,
-  Story,
+  StoryCategory,
   WordData,
 } from '@georgian/shared/types';
 import { db, schema, sql } from './index.ts';
+import { readStoryFile } from './storyFile.ts';
 
 const DATA = fileURLToPath(new URL('../../../../data/', import.meta.url));
 
@@ -213,7 +214,11 @@ async function seedLanguage(lang: Lang): Promise<void> {
   const stories = existsSync(storyDir)
     ? readdirSync(storyDir)
         .filter(name => name.endsWith('.json'))
-        .map(name => read<Story>(lang, `stories/${name}`))
+        .map(name => readStoryFile(lang, read<unknown>(lang, `stories/${name}`)))
+    : [];
+
+  const storyCategories = has(lang, 'storyCategories.json')
+    ? read<StoryCategory[]>(lang, 'storyCategories.json')
     : [];
 
   const kaVerbs = lang === 'ka' ? read<KaVerbData>(lang, 'verbs.json') : null;
@@ -228,7 +233,9 @@ async function seedLanguage(lang: Lang): Promise<void> {
    * is the sort of thing that gets run twice while someone is checking whether it worked.
    */
   const version = createHash('sha256')
-    .update(JSON.stringify([words, kaVerbs, kaMorphemes, ruVerbs, images, categoryImages, stories]))
+    .update(
+      JSON.stringify([words, kaVerbs, kaMorphemes, ruVerbs, images, categoryImages, stories, storyCategories]),
+    )
     .digest('hex')
     .slice(0, 16);
 
@@ -315,6 +322,21 @@ async function seedLanguage(lang: Lang): Promise<void> {
 
   const imageRows = [...imageRowsFor('word', images), ...imageRowsFor('category', categoryImages)];
 
+  const storyCategoryRows = storyCategories.map((category, index) => ({
+    id: category.id,
+    lang,
+    position: index,
+    name: category.name,
+    nameNative: category.nameNative ?? '',
+    note: category.note ?? '',
+    storyCount: category.storyCount ?? 0,
+  }));
+
+  // A shelf the file names but does not define would fail the foreign key and take the whole
+  // seed with it. Dropping the filing is the smaller loss: the story is still there, unfiled,
+  // and an admin can put it back on a shelf in one click.
+  const knownShelves = new Set(storyCategoryRows.map(row => row.id));
+
   const storyRows = stories.map(story => ({
     id: story.id,
     lang,
@@ -323,34 +345,49 @@ async function seedLanguage(lang: Lang): Promise<void> {
     level: story.level ?? '',
     source: story.source ?? '',
     note: story.note ?? '',
-    stats: (story.stats ?? {}) as Record<string, number>,
-    paragraphs: story.paragraphs ?? [],
-    translation: story.translation ?? [],
+    categoryId: story.categoryId && knownShelves.has(story.categoryId) ? story.categoryId : null,
+    stats: story.stats as Record<string, number>,
   }));
 
+  const storyChapterRows = stories.flatMap(story =>
+    story.chapters.map((chapter, index) => ({
+      storyId: story.id,
+      position: index,
+      title: chapter.title,
+      titleEnglish: chapter.titleEnglish,
+      stats: chapter.stats as Record<string, number>,
+      paragraphs: chapter.paragraphs,
+      translation: chapter.translation,
+    })),
+  );
+
   const storyTokenRows = stories.flatMap(story =>
-    (story.tokens ?? []).flatMap((paragraph, paragraphIndex) =>
-      paragraph.map((token, position) => ({
-        storyId: story.id,
-        paragraph: paragraphIndex,
-        position,
-        form: token.form,
-        // A token may cite a word the lexicon no longer has, if a story was built against an
-        // older one. Better a token with no link than a seed that will not run.
-        wordId: token.word && knownWords.has(token.word) ? token.word : null,
-        sense: token.sense ?? null,
-        gram: token.gram ?? null,
-        name: token.name ?? null,
-        via: token.via ?? '',
-        needsCheck: token.check === true,
-        alts: token.alts ?? [],
-        comment: token.comment ?? null,
-      })),
+    story.chapters.flatMap((chapter, chapterIndex) =>
+      chapter.tokens.flatMap((paragraph, paragraphIndex) =>
+        paragraph.map((token, position) => ({
+          storyId: story.id,
+          chapter: chapterIndex,
+          paragraph: paragraphIndex,
+          position,
+          form: token.form,
+          // A token may cite a word the lexicon no longer has, if a story was built against
+          // an older one. Better a token with no link than a seed that will not run.
+          wordId: token.word && knownWords.has(token.word) ? token.word : null,
+          sense: token.sense ?? null,
+          gram: token.gram ?? null,
+          name: token.name ?? null,
+          via: token.via ?? '',
+          needsCheck: token.check === true,
+          alts: token.alts ?? [],
+          comment: token.comment ?? null,
+        })),
+      ),
     ),
   );
 
   const droppedTokenLinks = stories
-    .flatMap(story => story.tokens ?? [])
+    .flatMap(story => story.chapters)
+    .flatMap(chapter => chapter.tokens)
     .flat()
     .filter(token => token.word && !knownWords.has(token.word)).length;
 
@@ -515,8 +552,17 @@ async function seedLanguage(lang: Lang): Promise<void> {
     await upsertAll(tx, 'word forms', schema.wordForms, wordFormRows, ['wordId', 'position']);
     await upsertAll(tx, 'noun grammar', schema.ruWordGrammar, ruGrammarRows, ['wordId']);
     await upsertAll(tx, 'images', schema.images, imageRows, ['kind', 'subjectId']);
+    await upsertAll(tx, 'story categories', schema.storyCategories, storyCategoryRows, ['id']);
     await upsertAll(tx, 'stories', schema.stories, storyRows, ['id']);
-    await upsertAll(tx, 'story tokens', schema.storyTokens, storyTokenRows, ['storyId', 'paragraph', 'position'], 5_000);
+    await upsertAll(tx, 'story chapters', schema.storyChapters, storyChapterRows, ['storyId', 'position']);
+    await upsertAll(
+      tx,
+      'story tokens',
+      schema.storyTokens,
+      storyTokenRows,
+      ['storyId', 'chapter', 'paragraph', 'position'],
+      5_000,
+    );
 
     // Last, and on purpose: the version is what a running server compares its cached snapshot
     // against, so a reader must not be able to see the new version before the rows behind it.

@@ -7,7 +7,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { MessageCircle, Table, Type, Users } from 'lucide-react';
+import { Library, MessageCircle, Table, Type, Users } from 'lucide-react';
 import type { AdminUser } from '@georgian/shared/contract';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -24,7 +24,7 @@ import { LevelBadge } from '@/components/ui/word-card';
 import { cn } from '@/lib/utils';
 import { KNOW_BUTTON } from '../components/StoryReader';
 import { api, useSession } from '../api/client';
-import { storySummaries, kaVerbData, wordData } from '../content/store';
+import { storyCategories, storySummaries, kaVerbData, wordData } from '../content/store';
 import { searchWords } from './search';
 import {
   ADMIN_ROW_LINK,
@@ -82,6 +82,8 @@ export function AdminHome() {
   const { words, categories } = wordData();
   const verbs = kaVerbData().verbs;
   const stories = storySummaries();
+  const shelves = storyCategories();
+  const chapters = stories.reduce((total, story) => total + story.chapters.length, 0);
 
   const needsCheck = words.filter(word => word.check).length;
   const withForms = words.filter(word => word.forms?.length).length;
@@ -110,7 +112,10 @@ export function AdminHome() {
           Paradigms and all 66 cells of each
         </HubCard>
         <HubCard to="/admin/stories" icon={MessageCircle} title="Stories" count={stories.length}>
-          Paste prose in and it links itself against the lexicon
+          {chapters} chapters · paste prose in and it links itself against the lexicon
+        </HubCard>
+        <HubCard to="/admin/story-categories" icon={Library} title="Story categories" count={shelves.length}>
+          The headings the story index groups by
         </HubCard>
         <HubCard to="/admin/users" icon={Users} title="Admins" count="—">
           Who else may edit all of this
@@ -342,6 +347,12 @@ export function StoryList() {
               <AdminRowEn>{story.titleEnglish}</AdminRowEn>
               <AdminRowMeta>
                 {story.level && <LevelBadge level={story.level} />}
+                {story.category && <AdminBadge>{story.category}</AdminBadge>}
+                {/* Flagged when there are none, because a story with no chapters has nothing
+                    to read and is the one state this list should make obvious. */}
+                <AdminBadge flagged={story.chapters.length === 0}>
+                  {story.chapters.length} chapter(s)
+                </AdminBadge>
                 <AdminBadge>{story.stats.tokens} words</AdminBadge>
                 <AdminBadge flagged={story.stats.coverage < 90}>{story.stats.coverage}% linked</AdminBadge>
                 {story.stats.unresolved > 0 && (

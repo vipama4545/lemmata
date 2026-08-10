@@ -47,6 +47,8 @@ type Choice = 'word' | 'name' | 'plain';
 
 interface TokenEditorProps {
   story: Story;
+  /** Which chapter the word stands in. The story carries one chapter's tokens at a time. */
+  chapter: number;
   paragraph: number;
   position: number;
   token: StoryToken;
@@ -55,7 +57,7 @@ interface TokenEditorProps {
   onSaved: (result: StoryLinkResult) => void;
 }
 
-function TokenEditor({ story, paragraph, position, token, onClose, onSaved }: TokenEditorProps) {
+function TokenEditor({ story, chapter, paragraph, position, token, onClose, onSaved }: TokenEditorProps) {
   const { words } = wordData();
   const { busy, error, run } = useEdit();
 
@@ -85,12 +87,15 @@ function TokenEditor({ story, paragraph, position, token, onClose, onSaved }: To
     [story, token.form],
   );
 
+  const multiChapter = story.chapters.length > 1;
+
   const handMade = token.via === 'name' || token.via.startsWith('override');
 
   const save = async () => {
     const result = await run(() =>
       api.admin.setStoryToken({
         storyId: story.id,
+        chapter,
         paragraph,
         position,
         form: token.form,
@@ -110,6 +115,7 @@ function TokenEditor({ story, paragraph, position, token, onClose, onSaved }: To
     const result = await run(() =>
       api.admin.resetStoryToken({
         storyId: story.id,
+        chapter,
         paragraph,
         position,
         form: token.form,
@@ -268,6 +274,10 @@ function TokenEditor({ story, paragraph, position, token, onClose, onSaved }: To
           </span>
         </AdminCheck>
 
+        {/* The count is this chapter's, because this chapter's tokens are all the browser
+            has — but the decision is the whole story's, which is why it is not stated as a
+            number. Saying "all 6" of something that turns out to be 41 would be worse than
+            saying neither. */}
         {occurrences > 1 && (
           <AdminCheck className={BOXED}>
             <Checkbox
@@ -275,7 +285,14 @@ function TokenEditor({ story, paragraph, position, token, onClose, onSaved }: To
               checked={everywhere}
               onCheckedChange={value => setEverywhere(value === true)}
             />
-            Apply to all {occurrences} occurrences of “{token.form}” in this story
+            <span>
+              Apply to every occurrence of “{token.form}” in this story
+              <AdminHint>
+                {multiChapter
+                  ? `Every chapter, not just this one — ${occurrences} of them are on this page.`
+                  : `${occurrences} of them.`}
+              </AdminHint>
+            </span>
           </AdminCheck>
         )}
 

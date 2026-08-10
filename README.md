@@ -76,6 +76,37 @@ Georgian paragraph) in `data/stories/`, then `build:data` and `db:seed`. Nothing
 needs editing any more — no module declaration, no list of stories. Or paste it into
 **Admin → Stories → New story**, which does the same work against the live database.
 
+### Stories have chapters
+
+A story is a container: a title, a level, a category, and one or more **chapters** that hold
+the prose. A short story is a story of one chapter and shows no chapter furniture anywhere —
+no heading, no navigation, and the same URL it has always had. A longer one is uploaded a
+chapter at a time under **Admin → Stories → _the story_ → Add a chapter**, and the reader
+gets a Previous/Next pair and a menu of headings.
+
+One chapter is fetched at a time. `Story.paragraphs` is that chapter's prose, not the book's,
+which is what keeps a novel from crossing the wire to paint a page of it; `Story.chapters` is
+the list to navigate by and rides along in the index snapshot as well. A chapter's *position*
+is its whole identity — there is no chapter id — so reordering rewrites positions, and
+`story_tokens` carries a `chapter` column that moves with them.
+
+Everything that was true of a story's links is now true per chapter and unchanged otherwise:
+saving a chapter relinks that chapter alone, **Relink every chapter** does the lot, and a pin
+applied "everywhere" still means the whole story rather than the chapter it was made in — და
+is the conjunction from the first page to the last.
+
+### Stories have categories
+
+Hand-made shelves — "Folk tales", "Children's" — kept in `story_categories` and managed under
+**Admin → Story categories**. A story sits on one or on none, and the index groups by them,
+with anything unfiled under "Everything else". Until a category exists the index is one plain
+list, exactly as before.
+
+They are a separate table from the word `categories` on purpose. A word's category is
+*generated* — the scrape produced it and `word_count` follows the lexicon — while a story's is
+invented by whoever is filing. Deleting one is safe and asks nothing: `stories.category_id` is
+`on delete set null`, so the stories in it come off the shelf rather than going with it.
+
 ### The imported words
 
 The A1–A2 scrape is about 1,800 headwords, which a story exhausts quickly: the chatterbox
@@ -288,9 +319,11 @@ paradigm knows the frame ("I -ed") but not that the past of "build" is "built" �
 written down. Case forms of a nominal get none: `მგელმა` means what `მგელი` means, and the
 `erg` tag says the rest.
 
-Stories are fetched one at a time rather than riding along in the snapshot: the one story
-here is 120 KB of tokens, which is not worth carrying for the visits that never open it. The
-index lists summaries, which do ride along.
+Chapters are fetched one at a time rather than riding along in the snapshot: one story here is
+120 KB of tokens, which is not worth carrying for the visits that never open it, and a book of
+forty chapters is not worth carrying to show one of them. The index lists summaries, which do
+ride along — including each story's chapter list, because the reader's chapter menu has to be
+drawable before the chapter it points at has loaded.
 
 **A word never met has no record at all**, rather than a level of 0. That absence is a state
 in its own right — it is what a story paints as new and what the checkbox at the end of one

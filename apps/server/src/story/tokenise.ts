@@ -89,18 +89,23 @@ export function tokeniseAll(lang: Lang, paragraphs: string[]): string[][] {
 }
 
 /**
- * A pasted story, cut up the way a `.txt` under data/<lang>/stories/ has always been read:
+ * A pasted text, cut up the way a `.txt` under data/<lang>/stories/ has always been read:
  * blank lines separate paragraphs, the first non-blank line is the title, and a lone "-"
  * under it is a typographic rule rather than a paragraph.
  *
- * Applied identically to the story and to its translation, which is what keeps the two
+ * Applied identically to the text and to its translation, which is what keeps the two
  * columns of the split view lined up — the reader pairs them by index and has no other way
  * to tell which English paragraph belongs to which foreign one.
+ *
+ * `titled` is what chapters added. A story's text has always opened with its title, but a
+ * chapter of one often has no heading of its own, and reading the first line as one would
+ * silently eat the opening sentence — a paragraph lost with nothing on screen to say so.
  */
-export function readLines(text: string): { title: string; paragraphs: string[] } {
+export function readLines(text: string, titled = true): { title: string; paragraphs: string[] } {
   const lines = text
     .split('\n')
     .map(line => line.trim())
     .filter(Boolean);
+  if (!titled) return { title: '', paragraphs: lines.filter(line => line !== '-') };
   return { title: lines[0] ?? '', paragraphs: lines.slice(1).filter(line => line !== '-') };
 }

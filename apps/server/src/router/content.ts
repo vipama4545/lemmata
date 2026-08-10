@@ -20,7 +20,7 @@
 
 import { randomUUID } from 'node:crypto';
 import { ORPCError } from '@orpc/server';
-import { asc, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray, sql as raw } from 'drizzle-orm';
 import type {
   Category,
   ImageMap,
@@ -33,6 +33,9 @@ import type {
   RuVerb,
   Sense,
   Story,
+  StoryCategory,
+  StoryChapterSummary,
+  StoryStats,
   StorySummary,
   StoryToken,
   Word,
@@ -151,7 +154,7 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
   // One round trip each, in parallel. Grouping happens below, in JavaScript: Postgres could
   // do it with json_agg, but then the shape of the response would live in a SQL string
   // instead of in the types, and this runs once per deploy.
-  const [metaRow, languageRows, categoryRows, wordRows, storyRows] = await Promise.all([
+  const [metaRow, languageRows, categoryRows, wordRows, storyRows, storyCategoryRows] = await Promise.all([
     db.select().from(schema.contentVersion).where(eq(schema.contentVersion.lang, lang)).limit(1),
     db.select().from(schema.languages).orderBy(asc(schema.languages.position)),
     // Ordered explicitly, everywhere it is an array on the way out. A table has no order of
@@ -164,15 +167,21 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
       .orderBy(asc(schema.categories.position)),
     db.select().from(schema.words).where(eq(schema.words.lang, lang)).orderBy(asc(schema.words.position)),
     db.select().from(schema.stories).where(eq(schema.stories.lang, lang)).orderBy(asc(schema.stories.id)),
+    db
+      .select()
+      .from(schema.storyCategories)
+      .where(eq(schema.storyCategories.lang, lang))
+      .orderBy(asc(schema.storyCategories.position)),
   ]);
 
   const meta = metaRow[0]?.meta ?? {};
   const wordIds = wordRows.map(row => row.id);
+  const storyIds = storyRows.map(row => row.id);
 
   // The children of the rows above. Fetched in a second round rather than joined, and scoped
   // by the ids just found: `word_senses` has no `lang` of its own, and getting one would mean
   // a column that could disagree with the word it hangs off.
-  const [senseRows, formRows, ruGrammarRows, imageRows] = await Promise.all([
+  const [senseRows, formRows, ruGrammarRows, imageRows, chapterRows] = await Promise.all([
     wordIds.length
       ? db
           .select()
@@ -191,6 +200,25 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
       ? db.select().from(schema.ruWordGrammar).where(inArray(schema.ruWordGrammar.wordId, wordIds))
       : [],
     db.select().from(schema.images),
+    // Counted in Postgres rather than fetched and measured here. The snapshot wants how many
+    // paragraphs a chapter has and its opening line, not the chapter — and a story with
+    // forty of them would otherwise put a whole book in a payload that shows a card.
+    storyIds.length
+      ? db
+          .select({
+            storyId: schema.storyChapters.storyId,
+            position: schema.storyChapters.position,
+            title: schema.storyChapters.title,
+            titleEnglish: schema.storyChapters.titleEnglish,
+            stats: schema.storyChapters.stats,
+            paragraphs: raw<number>`jsonb_array_length(${schema.storyChapters.paragraphs})`,
+            translated: raw<boolean>`jsonb_array_length(${schema.storyChapters.translation}) > 0`,
+            opening: raw<string | null>`${schema.storyChapters.paragraphs}->>0`,
+          })
+          .from(schema.storyChapters)
+          .where(inArray(schema.storyChapters.storyId, storyIds))
+          .orderBy(asc(schema.storyChapters.storyId), asc(schema.storyChapters.position))
+      : [],
   ]);
 
   /* -- words ------------------------------------------------------------- */
@@ -293,18 +321,52 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
 
   /* -- stories ----------------------------------------------------------- */
 
-  const stories: StorySummary[] = storyRows.map(row => ({
-    note: row.note,
+  const storyCategories: StoryCategory[] = storyCategoryRows.map(row => ({
     id: row.id,
     lang: row.lang,
-    title: row.title,
-    titleEnglish: row.titleEnglish,
-    level: row.level,
-    source: row.source,
-    stats: row.stats as Story['stats'],
-    translated: row.translation.length > 0,
-    excerpt: row.paragraphs[0] ?? '',
+    name: row.name,
+    nameNative: row.nameNative,
+    note: row.note,
+    storyCount: row.storyCount,
   }));
+
+  const categoryNames = new Map(storyCategoryRows.map(row => [row.id, row.name]));
+
+  const chaptersByStory = new Map<string, StoryChapterSummary[]>();
+  for (const row of chapterRows) {
+    const list = chaptersByStory.get(row.storyId) ?? [];
+    list.push({
+      position: row.position,
+      title: row.title,
+      titleEnglish: row.titleEnglish,
+      paragraphs: Number(row.paragraphs),
+      translated: row.translated,
+      stats: row.stats as StoryStats,
+    });
+    chaptersByStory.set(row.storyId, list);
+  }
+
+  const stories: StorySummary[] = storyRows.map(row => {
+    const chapters = chaptersByStory.get(row.id) ?? [];
+    const opening = chapterRows.find(chapter => chapter.storyId === row.id && chapter.position === 0);
+    return {
+      note: row.note,
+      id: row.id,
+      lang: row.lang,
+      title: row.title,
+      titleEnglish: row.titleEnglish,
+      level: row.level,
+      source: row.source,
+      categoryId: row.categoryId,
+      category: row.categoryId ? categoryNames.get(row.categoryId) ?? '' : '',
+      stats: row.stats as StoryStats,
+      chapters,
+      // Any chapter's, not the first's: a book whose opening chapter is untranslated still
+      // has a translation to offer, and this is what the index badges.
+      translated: chapters.some(chapter => chapter.translated),
+      excerpt: opening?.opening ?? '',
+    };
+  });
 
   const languages: Language[] = languageRows.map(row => ({
     id: row.id,
@@ -314,7 +376,7 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
     enabled: row.enabled,
   }));
 
-  return { version, lang, languages, words: wordData, verbs, images, categoryImages, stories };
+  return { version, lang, languages, words: wordData, verbs, images, categoryImages, stories, storyCategories };
 }
 
 /* ---------------------------------------------------------- Georgian verbs */
@@ -450,18 +512,58 @@ async function assembleRuVerbs(meta: Record<string, string>): Promise<VerbConten
 
 /* ------------------------------------------------------------ one story */
 
-export async function loadStory(id: string): Promise<Story | null> {
+/**
+ * One story, opened at one chapter.
+ *
+ * Only that chapter's prose and tokens are read. A story is a book now, and the alternative
+ * — every chapter in one answer — would mean the reader waiting on chapter forty to paint
+ * chapter one, and would put the whole of it through the cache for each page turn.
+ *
+ * A chapter past the end lands on the last one rather than failing. The number comes out of
+ * a URL, and a bookmark to a chapter that has since been deleted should open the book.
+ */
+export async function loadStory(id: string, chapter = 0): Promise<Story | null> {
   const [row] = await db.select().from(schema.stories).where(eq(schema.stories.id, id)).limit(1);
   if (!row) return null;
 
-  const tokenRows = await db
+  const chapterRows = await db
     .select()
-    .from(schema.storyTokens)
-    .where(eq(schema.storyTokens.storyId, id));
+    .from(schema.storyChapters)
+    .where(eq(schema.storyChapters.storyId, id))
+    .orderBy(asc(schema.storyChapters.position));
+
+  const chapters: StoryChapterSummary[] = chapterRows.map(entry => ({
+    position: entry.position,
+    title: entry.title,
+    titleEnglish: entry.titleEnglish,
+    paragraphs: entry.paragraphs.length,
+    translated: entry.translation.length > 0,
+    stats: entry.stats as StoryStats,
+  }));
+
+  const at = Math.min(Math.max(chapter, 0), Math.max(chapterRows.length - 1, 0));
+  const open = chapterRows[at];
+
+  const categoryName = row.categoryId
+    ? (
+        await db
+          .select({ name: schema.storyCategories.name })
+          .from(schema.storyCategories)
+          .where(eq(schema.storyCategories.id, row.categoryId))
+          .limit(1)
+      )[0]?.name ?? ''
+    : '';
+
+  const tokenRows = open
+    ? await db
+        .select()
+        .from(schema.storyTokens)
+        .where(and(eq(schema.storyTokens.storyId, id), eq(schema.storyTokens.chapter, open.position)))
+    : [];
 
   // One array per paragraph, each in reading order — a token's position in it is the
   // position of the word in the text, so the order is the data and cannot be left to chance.
-  const tokens: StoryToken[][] = row.paragraphs.map(() => []);
+  const tokens: StoryToken[][] = (open?.paragraphs ?? []).map(() => []);
   for (const token of tokenRows) {
     const paragraph = tokens[token.paragraph];
     if (!paragraph) continue;
@@ -484,9 +586,18 @@ export async function loadStory(id: string): Promise<Story | null> {
     titleEnglish: row.titleEnglish,
     level: row.level,
     source: row.source,
-    stats: row.stats as Story['stats'],
-    paragraphs: row.paragraphs,
-    translation: row.translation,
+    categoryId: row.categoryId,
+    category: categoryName,
+    stats: row.stats as StoryStats,
+    chapters,
+    // Whatever was actually opened, not what was asked for. The reader corrects its URL
+    // from this, so a request for chapter 9 of an eight-chapter story does not leave the
+    // address bar claiming a chapter that is not on screen.
+    chapter: open?.position ?? 0,
+    chapterTitle: open?.title ?? '',
+    chapterTitleEnglish: open?.titleEnglish ?? '',
+    paragraphs: open?.paragraphs ?? [],
+    translation: open?.translation ?? [],
     tokens,
   };
 }
@@ -549,7 +660,7 @@ export const contentRouter = os.content.router({
     const lang = await storyLang(input.id);
     if (!lang) return null;
     await assertMayRead(lang, context);
-    return loadStory(input.id);
+    return loadStory(input.id, input.chapter);
   }),
 
   languages: os.content.languages.handler(async ({ context }) => ({

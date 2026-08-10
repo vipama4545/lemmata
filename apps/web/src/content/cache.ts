@@ -19,17 +19,40 @@ const DB_VERSION = 1;
 const STORE = 'snapshot';
 
 /**
+ * The shape of a cached snapshot. **Bump this whenever `ContentSnapshot` gains or loses a
+ * field**, in the same commit that changes it.
+ *
+ * `content_version` cannot do this job, and the day chapters were added is what proved it.
+ * That string says whether the *content* changed — a corrected definition, a new story — and
+ * the server answers "still current" whenever it matches, which is exactly right for content
+ * and exactly wrong for shape. Add a field to `StorySummary` and every browser holding a
+ * cached copy is told it is up to date, keeps a snapshot with no such field in it, and the
+ * first screen to read that field throws. It looks like a broken page rather than a stale
+ * one, and it is unreachable in testing, because a fresh browser has no cache to be stale.
+ *
+ * So the shape is part of the key. Bumping it makes every cached copy unreadable rather than
+ * wrong, and the next visit re-fetches — one download, once, which is the honest cost of
+ * having changed the payload.
+ *
+ *   1 — the original snapshot
+ *   2 — stories gained `chapters`, `categoryId` and `category`; the snapshot gained
+ *       `storyCategories`
+ */
+const SHAPE = 2;
+
+/**
  * One entry per language, so that opening the Russian dictionary does not evict the Georgian
  * one. They are fetched separately and versioned separately; caching them under a single key
  * would mean every switch paid the full download again, which is the whole cost this file
  * exists to avoid.
- *
- * The store itself is unchanged and needs no version bump: an old single-key entry under
- * 'current' is simply never read again, and is replaced the first time either language is
- * fetched.
  */
 function keyFor(lang: Lang): string {
-  return `snapshot:${lang}`;
+  return `snapshot:${SHAPE}:${lang}`;
+}
+
+/** True of a key written by some earlier shape of this file — including the very first one. */
+function stale(key: IDBValidKey): boolean {
+  return typeof key === 'string' && key.startsWith('snapshot') && !key.startsWith(`snapshot:${SHAPE}:`);
 }
 
 let opening: Promise<IDBDatabase | null> | null = null;
@@ -104,6 +127,11 @@ export async function drop(lang: Lang): Promise<void> {
 /**
  * Replaces the cached snapshot. Structured-cloned rather than serialised to a string, which
  * is both faster and means the read side hands back objects rather than re-parsing 3 MB.
+ *
+ * Entries from an earlier `SHAPE` are swept in the same transaction. They can never be read
+ * again — the key no longer matches — so leaving them would be three megabytes per language
+ * sitting in every returning reader's browser forever, on a schedule of once per shape change
+ * and never cleaned up.
  */
 export async function write(snapshot: ContentSnapshot): Promise<void> {
   const db = await open();
@@ -115,7 +143,18 @@ export async function write(snapshot: ContentSnapshot): Promise<void> {
       tx.oncomplete = () => resolve();
       tx.onerror = () => resolve();
       tx.onabort = () => resolve();
-      tx.objectStore(STORE).put(snapshot, keyFor(snapshot.lang));
+
+      const store = tx.objectStore(STORE);
+      store.put(snapshot, keyFor(snapshot.lang));
+
+      // Best-effort, and deliberately not awaited: the write above is the point of this
+      // call, and a browser that will not enumerate its own keys should still get a cache.
+      const keys = store.getAllKeys();
+      keys.onsuccess = () => {
+        for (const key of keys.result) {
+          if (stale(key)) store.delete(key);
+        }
+      };
     } catch {
       resolve();
     }

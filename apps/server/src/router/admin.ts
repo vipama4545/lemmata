@@ -76,11 +76,23 @@ function slugCyrillic(text: string): string {
   return [...text.toLowerCase()].map(letter => CYRILLIC[letter] ?? letter).join('');
 }
 
+/**
+ * Ids a story may not take, because the reader's routes spend them on something else.
+ *
+ * `/stories/category/folk-tales` is a shelf, so a story whose slug came out as "category"
+ * would own a URL that already means something — and would lose, since a static segment
+ * outranks `:storyId`. Treated as "taken" rather than refused: the story is called whatever
+ * it is called, and `category-2` is a better answer than an error about routing.
+ */
+const RESERVED_STORY_IDS = new Set(['category']);
+
 /** `${base}`, then `${base}-2`, until nothing has it. */
-async function freeId(tx: Tx, table: 'verbs' | 'stories', base: string): Promise<string> {
-  const target = table === 'verbs' ? schema.kaVerbs : schema.stories;
+async function freeId(tx: Tx, table: 'verbs' | 'stories' | 'storyCategories', base: string): Promise<string> {
+  const target =
+    table === 'verbs' ? schema.kaVerbs : table === 'stories' ? schema.stories : schema.storyCategories;
   for (let n = 1; n < 500; n += 1) {
     const id = n === 1 ? base : `${base}-${n}`;
+    if (table === 'stories' && RESERVED_STORY_IDS.has(id)) continue;
     const [taken] = await tx.select({ id: target.id }).from(target).where(eq(target.id, id)).limit(1);
     if (!taken) return id;
   }
@@ -361,14 +373,20 @@ async function writeKaVerb(tx: Tx, input: KaVerbInput): Promise<string> {
 /* -------------------------------------------------------------------- stories */
 
 /**
- * Every hand-made token in a story, keyed so a relink can put them back.
+ * Every hand-made token in one chapter, keyed so a relink can put them back.
  *
  * See `story_tokens.via`: a person's decision is a token marked `name` or `override`, and
  * everything else is the resolver's own working. This reads the first kind out before the
  * rows are replaced.
+ *
+ * Scoped to a chapter because a relink is: the key is `paragraph:position:form`, which two
+ * chapters of one story collide on constantly — every chapter has a paragraph 0.
  */
-async function readPinned(tx: Tx, storyId: string): Promise<Pinned> {
-  const rows = await tx.select().from(schema.storyTokens).where(eq(schema.storyTokens.storyId, storyId));
+async function readPinned(tx: Tx, storyId: string, chapter: number): Promise<Pinned> {
+  const rows = await tx
+    .select()
+    .from(schema.storyTokens)
+    .where(and(eq(schema.storyTokens.storyId, storyId), eq(schema.storyTokens.chapter, chapter)));
   const pinned: Pinned = new Map();
 
   for (const row of rows) {
@@ -389,19 +407,32 @@ async function readPinned(tx: Tx, storyId: string): Promise<Pinned> {
   return pinned;
 }
 
+/** One chapter's prose, as everything that links or relinks needs it. */
+interface Chapter {
+  position: number;
+  paragraphs: string[];
+}
+
 /**
- * A story's language and prose, read before any transaction is opened, so the tagger can be
- * asked about it. Fails the request if there is no such story, which is the same check the
- * caller's own transaction repeats against a consistent snapshot.
+ * A story's language and every chapter's prose, read before any transaction is opened, so
+ * the tagger can be asked about it. Fails the request if there is no such story, which is
+ * the same check the caller's own transaction repeats against a consistent snapshot.
  */
-async function storyProse(storyId: string): Promise<{ lang: Lang; paragraphs: string[] }> {
+async function storyProse(storyId: string): Promise<{ lang: Lang; chapters: Chapter[] }> {
   const [story] = await db
-    .select({ lang: schema.stories.lang, paragraphs: schema.stories.paragraphs })
+    .select({ lang: schema.stories.lang })
     .from(schema.stories)
     .where(eq(schema.stories.id, storyId))
     .limit(1);
   if (!story) fail('There is no such story.');
-  return { lang: story.lang, paragraphs: story.paragraphs };
+
+  const chapters = await db
+    .select({ position: schema.storyChapters.position, paragraphs: schema.storyChapters.paragraphs })
+    .from(schema.storyChapters)
+    .where(eq(schema.storyChapters.storyId, storyId))
+    .orderBy(asc(schema.storyChapters.position));
+
+  return { lang: story.lang, chapters };
 }
 
 /**
@@ -419,19 +450,116 @@ async function tagsFor(lang: Lang, paragraphs: string[]): Promise<Tags | null> {
 }
 
 /**
- * Re-resolves a story from the lexicon as it now stands, keeping every hand-made token, and
- * writes the result. The caller supplies the paragraphs so this serves both "the text
+ * A pasted text and its translation, cut into paragraphs and checked against each other.
+ *
+ * The check is the reason this is one function rather than two calls to `readLines`: the
+ * split view pairs the two by position and has no other way to tell which English paragraph
+ * belongs to which, so a translation of a different length is not a translation of this
+ * text. Refusing here is the only place that can be caught — by the time it is rows, the
+ * two are separate columns and nothing looks at them together again.
+ */
+function readChapter(
+  titled: boolean,
+  text: string,
+  translation: string,
+): { title: string; titleEnglish: string; paragraphs: string[]; translation: string[] } {
+  const native = readLines(text, titled);
+  const english = translation.trim() ? readLines(translation, titled) : null;
+
+  if (english && english.paragraphs.length !== native.paragraphs.length) {
+    fail(
+      `The translation has ${english.paragraphs.length} paragraph(s) and the text has ` +
+        `${native.paragraphs.length}. The side-by-side view pairs them by position, so they ` +
+        'would drift out of step.',
+    );
+  }
+
+  return {
+    title: native.title,
+    titleEnglish: english?.title ?? '',
+    paragraphs: native.paragraphs,
+    translation: english?.paragraphs ?? [],
+  };
+}
+
+/**
+ * Moves a chapter to a position nothing occupies, tokens and all.
+ *
+ * The tokens move with it in the same breath, and that pairing is the reason there is no
+ * foreign key between the two tables — see the note under `storyTokens` in schema.ts. Every
+ * caller must leave `to` free: `(story_id, position)` is a primary key, and the update would
+ * otherwise fail rather than overwrite.
+ */
+async function shiftChapter(tx: Tx, storyId: string, from: number, to: number): Promise<void> {
+  await tx
+    .update(schema.storyChapters)
+    .set({ position: to })
+    .where(and(eq(schema.storyChapters.storyId, storyId), eq(schema.storyChapters.position, from)));
+  await tx
+    .update(schema.storyTokens)
+    .set({ chapter: to })
+    .where(and(eq(schema.storyTokens.storyId, storyId), eq(schema.storyTokens.chapter, from)));
+}
+
+/**
+ * The counts of a text with nothing in it.
+ *
+ * Written on insert rather than left as `{}`, because a story or chapter with no prose yet is
+ * a state the screens actually reach — creating a story and uploading its chapters after is
+ * the whole point of the two being separate — and every reader of `stats` would otherwise get
+ * `undefined` where it expects a number. The index card would say "undefined words" and size
+ * its progress bar to `NaN%`.
+ */
+const NO_STATS = {
+  tokens: 0,
+  distinctForms: 0,
+  covered: 0,
+  coverage: 0,
+  names: 0,
+  unresolved: 0,
+  flagged: 0,
+};
+
+/** The two lists a link report hands back, which several signatures below pass around. */
+interface LinkLists {
+  unresolved: { form: string; count: number }[];
+  flagged: { form: string; count: number }[];
+}
+
+/** Merges the reports of several chapters into one, commonest spelling first. */
+function mergeLists(reports: LinkLists[]): LinkLists {
+  const gather = (pick: (report: LinkLists) => { form: string; count: number }[]) => {
+    const totals = new Map<string, number>();
+    for (const report of reports) {
+      for (const entry of pick(report)) totals.set(entry.form, (totals.get(entry.form) ?? 0) + entry.count);
+    }
+    return [...totals]
+      .map(([form, count]) => ({ form, count }))
+      .sort((a, b) => b.count - a.count || a.form.localeCompare(b.form));
+  };
+
+  return { unresolved: gather(report => report.unresolved), flagged: gather(report => report.flagged) };
+}
+
+/**
+ * Re-resolves one chapter from the lexicon as it now stands, keeping every hand-made token,
+ * and writes the result. The caller supplies the paragraphs so this serves both "the text
  * changed" and "the dictionary changed", and the tags because fetching them is not this
  * function's job to do inside a transaction — see `tagsFor`.
+ *
+ * A chapter at a time, and only the chapter named: relinking chapter 3 must not touch the
+ * tokens of chapter 2, and the delete below is scoped accordingly. The story's own stats are
+ * not written here — they are every chapter's together, so `recountStory` does it after.
  */
 async function relink(
   tx: Tx,
   lang: Lang,
   storyId: string,
+  chapter: number,
   paragraphs: string[],
   pinned: Pinned,
   tags: Tags | null,
-): Promise<{ unresolved: { form: string; count: number }[]; flagged: { form: string; count: number }[] }> {
+): Promise<LinkLists> {
   const indexes = await buildIndexes(lang);
   const report = linkStory(lang, paragraphs, indexes, pinned, tags);
 
@@ -439,10 +567,14 @@ async function relink(
   // plain text than a write that fails on a foreign key and loses the whole edit.
   const known = new Set(indexes.byId.keys());
 
-  await tx.delete(schema.storyTokens).where(eq(schema.storyTokens.storyId, storyId));
+  await tx
+    .delete(schema.storyTokens)
+    .where(and(eq(schema.storyTokens.storyId, storyId), eq(schema.storyTokens.chapter, chapter)));
+
   if (report.tokens.length) {
     const rows = report.tokens.map(token => ({
       storyId,
+      chapter,
       paragraph: token.paragraph,
       position: token.position,
       form: token.form,
@@ -462,31 +594,34 @@ async function relink(
     }
   }
 
-  await tx.update(schema.stories).set({ stats: report.stats }).where(eq(schema.stories.id, storyId));
+  await tx
+    .update(schema.storyChapters)
+    .set({ stats: report.stats })
+    .where(and(eq(schema.storyChapters.storyId, storyId), eq(schema.storyChapters.position, chapter)));
 
   return { unresolved: report.unresolved, flagged: report.flagged };
 }
 
-/** The story as the reader wants it, plus what linking it turned up. */
-async function linkResult(
-  storyId: string,
-  extra: { unresolved: { form: string; count: number }[]; flagged: { form: string; count: number }[] },
-): Promise<StoryLinkResult> {
-  const story = await loadStory(storyId);
+/** The story as the reader wants it, opened at one chapter, plus what linking it turned up. */
+async function linkResult(storyId: string, chapter: number, extra: LinkLists): Promise<StoryLinkResult> {
+  const story = await loadStory(storyId, chapter);
   if (!story) fail('That story disappeared while it was being saved.');
   return { story: story as Story, ...extra };
 }
 
 /**
- * Applies one decision to the tokens it covers, in place, without re-resolving anything.
+ * Recounts the story from its tokens, and every chapter with it.
  *
- * Pinning a token is not a relink: the other 975 tokens have not changed and re-deriving
- * them would be a second of work to produce identical rows. The stats are recounted from the
- * table afterwards, because coverage did change.
+ * Two reasons this reads the table rather than adding up what a linker just reported. One is
+ * that pinning a token is not a relink — the other 975 have not changed and re-deriving them
+ * would be a second of work to produce identical rows — so there is no report to add up.
+ * The other is `distinctForms`, which does not sum: two chapters share spellings constantly,
+ * and adding their counts would claim a story has more distinct words than it has words.
  */
-async function recountStory(tx: Tx, storyId: string, paragraphs: string[]): Promise<void> {
+async function recountStory(tx: Tx, storyId: string): Promise<void> {
   const rows = await tx
     .select({
+      chapter: schema.storyTokens.chapter,
       form: schema.storyTokens.form,
       wordId: schema.storyTokens.wordId,
       name: schema.storyTokens.name,
@@ -495,28 +630,63 @@ async function recountStory(tx: Tx, storyId: string, paragraphs: string[]): Prom
     .from(schema.storyTokens)
     .where(eq(schema.storyTokens.storyId, storyId));
 
-  const distinct = new Set(rows.map(row => row.form));
-  const names = rows.filter(row => row.name).length;
-  const linked = rows.filter(row => row.wordId).length;
-  const covered = names + linked;
-  const total = rows.length;
+  const tally = (of: typeof rows) => {
+    const names = of.filter(row => row.name).length;
+    const linked = of.filter(row => row.wordId).length;
+    const covered = names + linked;
+    const total = of.length;
+    return {
+      tokens: total,
+      distinctForms: new Set(of.map(row => row.form)).size,
+      covered,
+      coverage: total ? Number(((covered / total) * 100).toFixed(1)) : 0,
+      names,
+      unresolved: total - covered,
+      flagged: of.filter(row => row.needsCheck).length,
+    };
+  };
 
-  await tx
-    .update(schema.stories)
-    .set({
-      stats: {
-        tokens: total,
-        distinctForms: distinct.size,
-        covered,
-        coverage: total ? Number(((covered / total) * 100).toFixed(1)) : 0,
-        names,
-        unresolved: total - covered,
-        flagged: rows.filter(row => row.needsCheck).length,
-      },
-    })
-    .where(eq(schema.stories.id, storyId));
+  await tx.update(schema.stories).set({ stats: tally(rows) }).where(eq(schema.stories.id, storyId));
 
-  void paragraphs;
+  // Every chapter, including the ones with no tokens at all: a chapter emptied by an edit
+  // has to have its stats cleared, and it has no rows here to be found by.
+  const chapters = await tx
+    .select({ position: schema.storyChapters.position })
+    .from(schema.storyChapters)
+    .where(eq(schema.storyChapters.storyId, storyId));
+
+  for (const chapter of chapters) {
+    await tx
+      .update(schema.storyChapters)
+      .set({ stats: tally(rows.filter(row => row.chapter === chapter.position)) })
+      .where(
+        and(eq(schema.storyChapters.storyId, storyId), eq(schema.storyChapters.position, chapter.position)),
+      );
+  }
+}
+
+/**
+ * Recounts the shelves named, so the list's counts stay true. The same job
+ * `recountCategories` does for words, and for the same reason: both the shelf a story left
+ * and the one it joined have to be counted again.
+ */
+async function recountStoryCategories(tx: Tx, categoryIds: (string | null)[]): Promise<void> {
+  const ids = [...new Set(categoryIds.filter((id): id is string => Boolean(id)))];
+  if (!ids.length) return;
+
+  const counts = await tx
+    .select({ categoryId: schema.stories.categoryId, total: count() })
+    .from(schema.stories)
+    .where(inArray(schema.stories.categoryId, ids))
+    .groupBy(schema.stories.categoryId);
+
+  const byId = new Map(counts.map(row => [row.categoryId, Number(row.total)]));
+  for (const id of ids) {
+    await tx
+      .update(schema.storyCategories)
+      .set({ storyCount: byId.get(id) ?? 0 })
+      .where(eq(schema.storyCategories.id, id));
+  }
 }
 
 /* --------------------------------------------------------------------- users */
@@ -755,27 +925,31 @@ export const adminRouter = os.admin.router({
   /* ---- the stories ---- */
 
   saveStory: os.admin.saveStory.use(adminOnly).handler(async ({ input }) => {
-    const native = readLines(input.text);
-    const paragraphs = native.paragraphs;
-    if (!paragraphs.length) fail('There is no story text — a title on its own is not a story.');
-
-    const english = input.translation.trim() ? readLines(input.translation) : null;
-    const translation = english?.paragraphs ?? [];
-    if (translation.length && translation.length !== paragraphs.length) {
-      fail(
-        `The translation has ${translation.length} paragraph(s) and the text has ${paragraphs.length}. ` +
-          'The side-by-side view pairs them by position, so they would drift out of step.',
-      );
+    // Prose is a chapter's, and a story that exists has chapters to put it in. Refusing is
+    // better than ignoring it: somebody who pasted a chapter into the wrong form should be
+    // told, not left believing it saved.
+    if (input.id && input.text.trim()) {
+      fail('That story already exists. Add the text as a chapter of it.');
     }
+
+    const first = input.text.trim() ? readChapter(true, input.text, input.translation) : null;
 
     // Before the transaction, and on the text as submitted — this is the one path where the
     // prose is new, so there is nothing in the database to read it from anyway.
-    const tags = await tagsFor(input.lang, paragraphs);
+    const tags = first ? await tagsFor(input.lang, first.paragraphs) : null;
 
     const result = await db.transaction(async tx => {
       const existing = input.id
-        ? (await tx.select({ id: schema.stories.id, lang: schema.stories.lang }).from(schema.stories).where(eq(schema.stories.id, input.id)).limit(1))[0]
+        ? (
+            await tx
+              .select({ id: schema.stories.id, lang: schema.stories.lang, categoryId: schema.stories.categoryId })
+              .from(schema.stories)
+              .where(eq(schema.stories.id, input.id))
+              .limit(1)
+          )[0]
         : undefined;
+
+      if (input.id && !existing) fail('There is no such story.');
 
       // A story does not change language. Refusing is not pedantry: the tokens are already
       // cut by one language's rules and linked against one language's lexicon, and an edit
@@ -785,10 +959,23 @@ export const adminRouter = os.admin.router({
         fail(`That story is ${existing.lang}, not ${input.lang}. Switch language and edit it there.`);
       }
 
-      // The title comes from the first line of the text, the way a .txt file has always
-      // given it, unless the form set one explicitly.
-      const title = input.title || native.title;
-      const titleEnglish = input.titleEnglish || english?.title || '';
+      if (input.categoryId) {
+        const [category] = await tx
+          .select({ id: schema.storyCategories.id, lang: schema.storyCategories.lang })
+          .from(schema.storyCategories)
+          .where(eq(schema.storyCategories.id, input.categoryId))
+          .limit(1);
+        if (!category) fail('There is no such category.');
+        if (category.lang !== input.lang) {
+          fail(`That category is ${category.lang} and this story is ${input.lang}.`);
+        }
+      }
+
+      // The title falls back to the first line of the text, the way a .txt file has always
+      // given it, for the one-shot case where a story is created with its prose.
+      const title = input.title || first?.title || '';
+      const titleEnglish = input.titleEnglish || first?.titleEnglish || '';
+      if (!title && !titleEnglish) fail('A story needs a title.');
 
       // Slugged from the English title where there is one, and otherwise from the story's
       // own — through the transliteration table, because `slug` keeps only a–z and would
@@ -801,35 +988,77 @@ export const adminRouter = os.admin.router({
 
       const row = {
         lang: input.lang,
-        title,
+        title: title || titleEnglish,
         titleEnglish,
         level: input.level,
         source: input.source,
         note: input.note,
-        paragraphs,
-        translation,
+        categoryId: input.categoryId,
       };
 
       if (existing) {
         await tx.update(schema.stories).set(row).where(eq(schema.stories.id, id));
       } else {
-        await tx.insert(schema.stories).values({ id, stats: {}, ...row });
+        await tx.insert(schema.stories).values({ id, stats: NO_STATS, ...row });
       }
 
-      // Pins are read before the tokens are replaced, and re-applied by position *and*
-      // spelling — so editing the prose drops the pins the edit moved rather than sliding
-      // them onto whatever words now stand in those positions.
-      const pinned = existing ? await readPinned(tx, id) : new Map();
-      const report = await relink(tx, input.lang, id, paragraphs, pinned, tags);
-      await bumpContentVersion(tx, input.lang);
-      return { id, report };
+      await recountStoryCategories(tx, [existing?.categoryId ?? null, input.categoryId]);
+
+      let report: LinkLists | null = null;
+      if (first) {
+        await tx.insert(schema.storyChapters).values({
+          storyId: id,
+          position: 0,
+          // Left unnamed. A story created in one go is a story of one chapter, and its
+          // first line was its own title — naming the chapter the same thing would put the
+          // title on the page twice.
+          title: '',
+          titleEnglish: '',
+          stats: NO_STATS,
+          paragraphs: first.paragraphs,
+          translation: first.translation,
+        });
+        report = await relink(tx, input.lang, id, 0, first.paragraphs, new Map(), tags);
+        await recountStory(tx, id);
+      }
+
+      const version = await bumpContentVersion(tx, input.lang);
+      return { id, report, version };
     });
 
-    return linkResult(result.id, result.report);
+    return {
+      id: result.id,
+      version: result.version,
+      report: result.report ? await linkResult(result.id, 0, result.report) : null,
+    };
   }),
 
   deleteStory: os.admin.deleteStory.use(adminOnly).handler(async ({ input }) =>
     db.transaction(async tx => {
+      const [story] = await tx
+        .select({ id: schema.stories.id, lang: schema.stories.lang, categoryId: schema.stories.categoryId })
+        .from(schema.stories)
+        .where(eq(schema.stories.id, input.id))
+        .limit(1);
+      if (!story) fail('There is no such story.');
+
+      // The chapters and their tokens cascade, and here that is right: they are this story's
+      // and nothing else points at them.
+      await tx.delete(schema.stories).where(eq(schema.stories.id, input.id));
+      await recountStoryCategories(tx, [story.categoryId]);
+      return { version: await bumpContentVersion(tx, story.lang) };
+    }),
+  ),
+
+  relinkStory: os.admin.relinkStory.use(adminOnly).handler(async ({ input }) => {
+    const prose = await storyProse(input.id);
+    // One call to the tagger per chapter, and all of them before the transaction opens. See
+    // `tagsFor`: a transaction held across an HTTP round trip to the analyser would lock the
+    // stories table for as long as a container somewhere else takes to answer, and a book of
+    // forty chapters would hold it forty times as long.
+    const tags = await Promise.all(prose.chapters.map(chapter => tagsFor(prose.lang, chapter.paragraphs)));
+
+    const report = await db.transaction(async tx => {
       const [story] = await tx
         .select({ id: schema.stories.id, lang: schema.stories.lang })
         .from(schema.stories)
@@ -837,38 +1066,244 @@ export const adminRouter = os.admin.router({
         .limit(1);
       if (!story) fail('There is no such story.');
 
-      // The tokens cascade, and here that is right: they are this story's and nothing else
-      // points at them.
-      await tx.delete(schema.stories).where(eq(schema.stories.id, input.id));
+      const reports: LinkLists[] = [];
+      for (const [index, chapter] of prose.chapters.entries()) {
+        const pinned = await readPinned(tx, input.id, chapter.position);
+        reports.push(
+          await relink(tx, story.lang, input.id, chapter.position, chapter.paragraphs, pinned, tags[index]),
+        );
+      }
+
+      await recountStory(tx, input.id);
+      await bumpContentVersion(tx, story.lang);
+      return mergeLists(reports);
+    });
+
+    return linkResult(input.id, 0, report);
+  }),
+
+  /* ---- the chapters ---- */
+
+  saveChapter: os.admin.saveChapter.use(adminOnly).handler(async ({ input }) => {
+    const chapter = readChapter(input.titled, input.text, input.translation);
+    if (!chapter.paragraphs.length) fail('There is no text — a title on its own is not a chapter.');
+
+    const story = await storyProse(input.storyId);
+    const tags = await tagsFor(story.lang, chapter.paragraphs);
+
+    const result = await db.transaction(async tx => {
+      const [row] = await tx
+        .select({ id: schema.stories.id, lang: schema.stories.lang })
+        .from(schema.stories)
+        .where(eq(schema.stories.id, input.storyId))
+        .limit(1);
+      if (!row) fail('There is no such story.');
+
+      const existing = await tx
+        .select({ position: schema.storyChapters.position })
+        .from(schema.storyChapters)
+        .where(eq(schema.storyChapters.storyId, input.storyId))
+        .orderBy(asc(schema.storyChapters.position));
+
+      // Appending lands after the last one rather than at `existing.length`: the two agree
+      // today, and only one of them stays right if a gap ever appears.
+      const last = existing.length ? existing[existing.length - 1].position : -1;
+      const position = input.position ?? last + 1;
+      const replacing = existing.some(entry => entry.position === position);
+
+      if (!replacing && position !== last + 1) {
+        fail(`Chapter ${position + 1} does not exist yet, and chapters cannot skip a number.`);
+      }
+
+      const values = {
+        title: input.title || chapter.title,
+        titleEnglish: input.titleEnglish || chapter.titleEnglish,
+        paragraphs: chapter.paragraphs,
+        translation: chapter.translation,
+      };
+
+      // Pins are read before the tokens are replaced, and re-applied by position *and*
+      // spelling — so editing the prose drops the pins the edit moved rather than sliding
+      // them onto whatever words now stand in those positions.
+      const pinned = replacing ? await readPinned(tx, input.storyId, position) : new Map();
+
+      if (replacing) {
+        await tx
+          .update(schema.storyChapters)
+          .set(values)
+          .where(
+            and(
+              eq(schema.storyChapters.storyId, input.storyId),
+              eq(schema.storyChapters.position, position),
+            ),
+          );
+      } else {
+        await tx
+          .insert(schema.storyChapters)
+          .values({ storyId: input.storyId, position, stats: NO_STATS, ...values });
+      }
+
+      const report = await relink(tx, row.lang, input.storyId, position, chapter.paragraphs, pinned, tags);
+      await recountStory(tx, input.storyId);
+      await bumpContentVersion(tx, row.lang);
+      return { position, report };
+    });
+
+    return linkResult(input.storyId, result.position, result.report);
+  }),
+
+  deleteChapter: os.admin.deleteChapter.use(adminOnly).handler(async ({ input }) =>
+    db.transaction(async tx => {
+      const [story] = await tx
+        .select({ id: schema.stories.id, lang: schema.stories.lang })
+        .from(schema.stories)
+        .where(eq(schema.stories.id, input.storyId))
+        .limit(1);
+      if (!story) fail('There is no such story.');
+
+      const chapters = await tx
+        .select({ position: schema.storyChapters.position })
+        .from(schema.storyChapters)
+        .where(eq(schema.storyChapters.storyId, input.storyId))
+        .orderBy(asc(schema.storyChapters.position));
+
+      if (!chapters.some(entry => entry.position === input.position)) {
+        fail('There is no such chapter.');
+      }
+
+      // The tokens first, and by hand: nothing in the database ties them to the chapter row,
+      // so this is the statement that stops them being left behind to be inherited by
+      // whichever chapter shifts down into that position. See the note in schema.ts.
+      await tx
+        .delete(schema.storyTokens)
+        .where(
+          and(eq(schema.storyTokens.storyId, input.storyId), eq(schema.storyTokens.chapter, input.position)),
+        );
+      await tx
+        .delete(schema.storyChapters)
+        .where(
+          and(
+            eq(schema.storyChapters.storyId, input.storyId),
+            eq(schema.storyChapters.position, input.position),
+          ),
+        );
+
+      // Close the gap. Positions are a chapter's identity, so leaving a hole would leave
+      // chapter 4 of a three-chapter story — and the reader counts from the list rather
+      // than reading the numbers, so it would show as "chapter 3" and link to nothing.
+      //
+      // Downwards, one at a time: the positions are a primary key, and moving 3→2 while 2
+      // still exists would collide. Sorted ascending, each move is into a hole just vacated.
+      for (const entry of chapters) {
+        if (entry.position <= input.position) continue;
+        await shiftChapter(tx, input.storyId, entry.position, entry.position - 1);
+      }
+
+      await recountStory(tx, input.storyId);
       return { version: await bumpContentVersion(tx, story.lang) };
     }),
   ),
 
-  relinkStory: os.admin.relinkStory.use(adminOnly).handler(async ({ input }) => {
-    const prose = await storyProse(input.id);
-    const tags = await tagsFor(prose.lang, prose.paragraphs);
-
-    const report = await db.transaction(async tx => {
+  moveChapter: os.admin.moveChapter.use(adminOnly).handler(async ({ input }) =>
+    db.transaction(async tx => {
       const [story] = await tx
-        .select({ id: schema.stories.id, lang: schema.stories.lang, paragraphs: schema.stories.paragraphs })
+        .select({ id: schema.stories.id, lang: schema.stories.lang })
         .from(schema.stories)
-        .where(eq(schema.stories.id, input.id))
+        .where(eq(schema.stories.id, input.storyId))
         .limit(1);
       if (!story) fail('There is no such story.');
 
-      const pinned = await readPinned(tx, input.id);
-      const result = await relink(tx, story.lang, input.id, story.paragraphs, pinned, tags);
-      await bumpContentVersion(tx, story.lang);
-      return result;
-    });
+      const chapters = await tx
+        .select({ position: schema.storyChapters.position })
+        .from(schema.storyChapters)
+        .where(eq(schema.storyChapters.storyId, input.storyId))
+        .orderBy(asc(schema.storyChapters.position));
 
-    return linkResult(input.id, report);
-  }),
+      const index = chapters.findIndex(entry => entry.position === input.position);
+      if (index === -1) fail('There is no such chapter.');
+
+      const other = chapters[input.direction === 'up' ? index - 1 : index + 1];
+      // Not an error. The buttons at the ends of the list are disabled, so this is a double
+      // click landing after the list moved, and there is nothing to tell anybody about.
+      if (!other) return { version: await bumpContentVersion(tx, story.lang) };
+
+      // Through a position nothing occupies, because `(story_id, position)` is the key and
+      // the two rows would otherwise collide half way through the swap. Negative, so it can
+      // never be a position a chapter might legitimately take.
+      const parked = -1;
+      await shiftChapter(tx, input.storyId, input.position, parked);
+      await shiftChapter(tx, input.storyId, other.position, input.position);
+      await shiftChapter(tx, input.storyId, parked, other.position);
+
+      return { version: await bumpContentVersion(tx, story.lang) };
+    }),
+  ),
+
+  /* ---- the shelves stories are filed on ---- */
+
+  saveStoryCategory: os.admin.saveStoryCategory.use(adminOnly).handler(async ({ input }) =>
+    db.transaction(async tx => {
+      const existing = input.id
+        ? (
+            await tx
+              .select({ id: schema.storyCategories.id, lang: schema.storyCategories.lang })
+              .from(schema.storyCategories)
+              .where(eq(schema.storyCategories.id, input.id))
+              .limit(1)
+          )[0]
+        : undefined;
+
+      if (input.id && !existing) fail('There is no such category.');
+      if (existing && existing.lang !== input.lang) {
+        fail(`That category is ${existing.lang}, not ${input.lang}. Switch language and edit it there.`);
+      }
+
+      const row = { lang: input.lang, name: input.name, nameNative: input.nameNative, note: input.note };
+
+      let id = existing?.id ?? '';
+      if (existing) {
+        await tx.update(schema.storyCategories).set(row).where(eq(schema.storyCategories.id, id));
+      } else {
+        const stem =
+          input.lang === 'ka'
+            ? slug(input.name, 'shelf')
+            : `${input.lang}-${slug(slugCyrillic(input.name), 'shelf')}`;
+        id = await freeId(tx, 'storyCategories', stem);
+        const [last] = await tx
+          .select({ max: raw<number | null>`max(${schema.storyCategories.position})` })
+          .from(schema.storyCategories)
+          .where(eq(schema.storyCategories.lang, input.lang));
+        await tx
+          .insert(schema.storyCategories)
+          .values({ id, position: (last?.max ?? -1) + 1, storyCount: 0, ...row });
+      }
+
+      return { id, version: await bumpContentVersion(tx, input.lang) };
+    }),
+  ),
+
+  deleteStoryCategory: os.admin.deleteStoryCategory.use(adminOnly).handler(async ({ input }) =>
+    db.transaction(async tx => {
+      const [category] = await tx
+        .select({ id: schema.storyCategories.id, lang: schema.storyCategories.lang })
+        .from(schema.storyCategories)
+        .where(eq(schema.storyCategories.id, input.id))
+        .limit(1);
+      if (!category) fail('There is no such category.');
+
+      // Unlike a word's category, this one is deleted with things still in it. The stories
+      // are not deleted and are not moved: `stories.category_id` is `on delete set null`,
+      // and they come off the shelf and go back to being unfiled. Nothing is lost, which is
+      // why this asks nothing and refuses nothing.
+      await tx.delete(schema.storyCategories).where(eq(schema.storyCategories.id, input.id));
+      return { version: await bumpContentVersion(tx, category.lang) };
+    }),
+  ),
 
   setStoryToken: os.admin.setStoryToken.use(adminOnly).handler(async ({ input }) => {
     await db.transaction(async tx => {
       const [story] = await tx
-        .select({ id: schema.stories.id, lang: schema.stories.lang, paragraphs: schema.stories.paragraphs })
+        .select({ id: schema.stories.id, lang: schema.stories.lang })
         .from(schema.stories)
         .where(eq(schema.stories.id, input.storyId))
         .limit(1);
@@ -880,6 +1315,7 @@ export const adminRouter = os.admin.router({
         .where(
           and(
             eq(schema.storyTokens.storyId, input.storyId),
+            eq(schema.storyTokens.chapter, input.chapter),
             eq(schema.storyTokens.paragraph, input.paragraph),
             eq(schema.storyTokens.position, input.position),
           ),
@@ -938,31 +1374,38 @@ export const adminRouter = os.admin.router({
 
       const where = input.everywhere
         ? // Every occurrence of this spelling in this story — the `forms` block of the
-          // offline overrides file. და is the conjunction all the way through this story.
+          // offline overrides file. და is the conjunction all the way through this story,
+          // and the whole of it: no chapter in the `where`. See the note on `everywhere`.
           and(eq(schema.storyTokens.storyId, input.storyId), eq(schema.storyTokens.form, input.form))
         : // This occurrence alone — the `at` block. აბა is "let's" in one line and "just
           // try" in another, and only a position can tell those apart.
           and(
             eq(schema.storyTokens.storyId, input.storyId),
+            eq(schema.storyTokens.chapter, input.chapter),
             eq(schema.storyTokens.paragraph, input.paragraph),
             eq(schema.storyTokens.position, input.position),
           );
 
       await tx.update(schema.storyTokens).set(set).where(where);
-      await recountStory(tx, input.storyId, story.paragraphs);
+      await recountStory(tx, input.storyId);
       await bumpContentVersion(tx, story.lang);
     });
 
-    return linkResult(input.storyId, { unresolved: [], flagged: [] });
+    return linkResult(input.storyId, input.chapter, { unresolved: [], flagged: [] });
   }),
 
   resetStoryToken: os.admin.resetStoryToken.use(adminOnly).handler(async ({ input }) => {
     const prose = await storyProse(input.storyId);
-    const tags = await tagsFor(prose.lang, prose.paragraphs);
+    // Undoing a pin "everywhere" reaches every chapter, so every chapter is relinked and
+    // every chapter needs its tags. Otherwise only the one the word stands in.
+    const touching = input.everywhere
+      ? prose.chapters
+      : prose.chapters.filter(chapter => chapter.position === input.chapter);
+    const tags = await Promise.all(touching.map(chapter => tagsFor(prose.lang, chapter.paragraphs)));
 
     const report = await db.transaction(async tx => {
       const [story] = await tx
-        .select({ id: schema.stories.id, lang: schema.stories.lang, paragraphs: schema.stories.paragraphs })
+        .select({ id: schema.stories.id, lang: schema.stories.lang })
         .from(schema.stories)
         .where(eq(schema.stories.id, input.storyId))
         .limit(1);
@@ -971,21 +1414,27 @@ export const adminRouter = os.admin.router({
       // Drop the pin, then relink. The token has to go back through the resolver to find out
       // what it would have been without the decision, and there is no cheaper way to know
       // that than to ask — so this one does re-resolve, unlike setting a pin.
-      const pinned = await readPinned(tx, input.storyId);
-      if (input.everywhere) {
-        for (const [key, token] of pinned) {
-          if (token.form === input.form) pinned.delete(key);
+      const reports: LinkLists[] = [];
+      for (const [index, chapter] of touching.entries()) {
+        const pinned = await readPinned(tx, input.storyId, chapter.position);
+        if (input.everywhere) {
+          for (const [key, token] of pinned) {
+            if (token.form === input.form) pinned.delete(key);
+          }
+        } else {
+          pinned.delete(pinKey(input.paragraph, input.position, input.form));
         }
-      } else {
-        pinned.delete(pinKey(input.paragraph, input.position, input.form));
+        reports.push(
+          await relink(tx, story.lang, input.storyId, chapter.position, chapter.paragraphs, pinned, tags[index]),
+        );
       }
 
-      const result = await relink(tx, story.lang, input.storyId, story.paragraphs, pinned, tags);
+      await recountStory(tx, input.storyId);
       await bumpContentVersion(tx, story.lang);
-      return result;
+      return mergeLists(reports);
     });
 
-    return linkResult(input.storyId, report);
+    return linkResult(input.storyId, input.chapter, report);
   }),
 
   /* ---- who else may do all this ---- */

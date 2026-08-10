@@ -11,6 +11,8 @@
 
 import { Route, Routes } from 'react-router-dom';
 import { AdminHome, StoryList, UserList, VerbList, WordList } from './AdminHome';
+import ChapterEditor from './ChapterEditor';
+import StoryCategoryList from './StoryCategoryList';
 import StoryEditor from './StoryEditor';
 import VerbEditor from './VerbEditor';
 import WordEditor from './WordEditor';
@@ -28,6 +30,11 @@ export default function AdminRoutes() {
       <Route path="stories" element={<StoryList />} />
       <Route path="stories/new" element={<StoryEditor />} />
       <Route path="stories/:storyId" element={<StoryEditor />} />
+      {/* "new" before ":position" is only documentation — React Router ranks a static
+          segment above a dynamic one regardless of the order they are written in. */}
+      <Route path="stories/:storyId/chapters/new" element={<ChapterEditor />} />
+      <Route path="stories/:storyId/chapters/:position" element={<ChapterEditor />} />
+      <Route path="story-categories" element={<StoryCategoryList />} />
       <Route path="users" element={<UserList />} />
     </Routes>
   );
