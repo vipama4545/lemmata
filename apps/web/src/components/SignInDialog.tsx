@@ -6,42 +6,36 @@
 // differed would turn this box into a way of asking the server whether a given person has
 // an account — so the only thing `mode` changes is the wording someone reads on the way in.
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { Check, Mail } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { DiscordIcon } from '@/components/ui/discord-icon';
+import { Input } from '@/components/ui/input';
 import { sendSignInLink, signInWithDiscord } from '../api/client';
-import Icon from './Icon';
 
 export type SignInMode = 'signin' | 'signup';
 
 interface SignInDialogProps {
+  open: boolean;
   mode: SignInMode;
   /** Shown on open, for a link that came back rejected. See Account.tsx. */
   initialError?: string | null;
   onClose: () => void;
 }
 
-export default function SignInDialog({ mode, initialError = null, onClose }: SignInDialogProps) {
+export default function SignInDialog({ open, mode, initialError = null, onClose }: SignInDialogProps) {
   const [email, setEmail] = useState('');
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(initialError);
   const [busy, setBusy] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Escape closes it, the same as everywhere else in this app — and for the same reason,
-  // that a keyboard user cannot click the backdrop.
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
-  // The address field is what almost everyone came here to fill in, so the caret starts in
-  // it rather than one tab away.
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -62,40 +56,44 @@ export default function SignInDialog({ mode, initialError = null, onClose }: Sig
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="modal-content signin-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="signin-heading"
-        onClick={event => event.stopPropagation()}
+    <Dialog open={open} onOpenChange={next => { if (!next) onClose(); }}>
+      <DialogContent
+        className="max-w-95 gap-0 rounded-lg p-6"
+        // The address field is what almost everyone came here to fill in, so the caret starts
+        // in it rather than one tab away.
+        onOpenAutoFocus={event => {
+          event.preventDefault();
+          inputRef.current?.focus();
+        }}
       >
-        <button className="modal-close" onClick={onClose} aria-label="Close">
-          <Icon name="close" />
-        </button>
-
-        <h2 id="signin-heading" className="signin-heading">
-          {mode === 'signup' ? 'Create an account' : 'Sign in'}
-        </h2>
-        <p className="signin-lead">
-          {mode === 'signup'
-            ? 'An email address and nothing else. No password to choose, and none to forget.'
-            : 'Your progress is saved in this browser either way. An account is what makes it follow you to another device.'}
-        </p>
+        <DialogHeader className="text-left">
+          <DialogTitle className="text-xl font-bold">
+            {mode === 'signup' ? 'Create an account' : 'Sign in'}
+          </DialogTitle>
+          <DialogDescription className="mb-5 text-[13px] leading-normal">
+            {mode === 'signup'
+              ? 'An email address and nothing else. No password to choose, and none to forget.'
+              : 'Your progress is saved in this browser either way. An account is what makes it follow you to another device.'}
+          </DialogDescription>
+        </DialogHeader>
 
         {sent ? (
           // Nothing left to do here but read a mail, so the form goes away rather than sit
           // there inviting a second send.
-          <div className="signin-sent" role="status">
-            <Icon name="check" size={20} />
+          <div
+            className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded-sm border border-border bg-muted p-4"
+            role="status"
+          >
+            {/* The tick, and nothing else in this block, takes the "it worked" colour. */}
+            <Check className="mt-px size-5 text-m-5" aria-hidden="true" />
             <div>
-              <p className="signin-sent-line">
-                A sign-in link is on its way to <strong>{sent}</strong>.
+              <p className="text-sm leading-normal">
+                A sign-in link is on its way to <strong className="wrap-anywhere">{sent}</strong>.
               </p>
-              <p className="signin-sent-sub">It works once and expires in fifteen minutes.</p>
+              <p className="mt-1 text-xs text-muted-foreground">It works once and expires in fifteen minutes.</p>
             </div>
             <button
-              className="signin-linkish"
+              className="col-start-2 mt-2.5 cursor-pointer justify-self-start p-0 text-xs text-muted-foreground underline hover:text-foreground"
               onClick={() => {
                 setSent(null);
                 setError(null);
@@ -106,30 +104,42 @@ export default function SignInDialog({ mode, initialError = null, onClose }: Sig
           </div>
         ) : (
           <>
+            {/* Discord's own blurple, because a sign-in button that does not look like the
+                service it hands off to is a button people hesitate over. */}
             <button
-              className="signin-discord"
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-[#5865f2] bg-[#5865f2] px-3 py-[11px] text-sm font-semibold text-white transition-colors hover:not-disabled:border-[#4752c4] hover:not-disabled:bg-[#4752c4] disabled:cursor-default disabled:opacity-60"
               disabled={busy}
               onClick={() => {
                 setBusy(true);
                 void signInWithDiscord().catch(() => setBusy(false));
               }}
             >
-              <Icon name="discord" size={18} />
+              <DiscordIcon className="size-[18px]" />
               <span>{busy ? 'Opening Discord…' : 'Continue with Discord'}</span>
             </button>
 
-            <p className="signin-or">
+            {/* A rule with the word sitting in a gap in it, rather than a word above a rule.
+                The two ways in are alternatives and this is the whole of what says so. */}
+            <p className="my-4 flex items-center gap-2.5 text-xs text-faint before:h-px before:flex-1 before:bg-border before:content-[''] after:h-px after:flex-1 after:bg-border after:content-['']">
               <span>or</span>
             </p>
 
-            <form className="signin-form" onSubmit={submit}>
-              <label className="signin-label" htmlFor="signin-email">
+            <form className="flex flex-col gap-[7px]" onSubmit={submit}>
+              <label className="text-xs font-semibold text-muted-foreground" htmlFor="signin-email">
                 Email
               </label>
-              <input
+              <Input
                 ref={inputRef}
                 id="signin-email"
-                className="signin-input"
+                className={[
+                  'h-auto rounded-sm bg-background px-3 py-2.5 text-sm shadow-none md:text-sm',
+                  'focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary-glow',
+                  // The browser's own :invalid fires on the first keystroke, when every
+                  // address is still half-typed. :not(:placeholder-shown) holds it back until
+                  // there is something there, and :not(:focus) until they have moved on.
+                  'user-invalid:not-placeholder-shown:not-focus:border-m-1',
+                  'disabled:opacity-60',
+                ].join(' ')}
                 type="email"
                 name="email"
                 value={email}
@@ -145,13 +155,17 @@ export default function SignInDialog({ mode, initialError = null, onClose }: Sig
                 required
                 disabled={sending}
               />
-              <button className="signin-send" type="submit" disabled={sending || !email.trim()}>
-                <Icon name="mail" size={17} />
+              <button
+                className="mt-[3px] flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-primary bg-primary px-3 py-[11px] text-sm font-semibold text-primary-foreground transition-colors hover:not-disabled:border-primary-dark hover:not-disabled:bg-primary-dark disabled:cursor-default disabled:opacity-60"
+                type="submit"
+                disabled={sending || !email.trim()}
+              >
+                <Mail className="size-[17px]" aria-hidden="true" />
                 <span>{sending ? 'Sending…' : 'Email me a sign-in link'}</span>
               </button>
             </form>
 
-            <p className="signin-hint">
+            <p className="mt-3.5 text-xs leading-normal text-faint">
               {mode === 'signup'
                 ? 'Following the link makes the account. If the address already has one, it signs you into that instead.'
                 : 'No password. If the address is new here, following the link makes the account.'}
@@ -160,11 +174,11 @@ export default function SignInDialog({ mode, initialError = null, onClose }: Sig
         )}
 
         {error ? (
-          <p className="signin-error" role="alert">
+          <p className="mt-3.5 text-xs leading-normal text-m-1" role="alert">
             {error}
           </p>
         ) : null}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

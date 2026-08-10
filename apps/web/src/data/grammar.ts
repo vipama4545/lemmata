@@ -9,7 +9,8 @@
 // `georgianColumns` marks which table columns hold Georgian script so the renderer can
 // set them in the larger, heavier face the rest of the app uses for Georgian.
 
-import type { IconName } from '../components/Icon';
+import type { LucideIcon } from 'lucide-react';
+import { BookOpen, Clock, Hash, Layers, Link2, MessageCircle, Table, Type, Users } from 'lucide-react';
 import type { Screeve, ScreeveKey, KaVerb } from '@georgian/shared/types';
 import { SCREEVES, SERIES } from '@georgian/shared/grammar/ka';
 import { derived, kaGroupsOf, kaVerbsOf } from '../content/store';
@@ -52,7 +53,7 @@ export interface GrammarTopic {
   titleGeorgian: string;
   /** The id of the group in `grammarGroups` this topic belongs under. */
   group: string;
-  icon: IconName;
+  icon: LucideIcon;
   summary: string;
   sections: GrammarSection[];
 }
@@ -78,7 +79,7 @@ const alphabet: GrammarTopic = {
   title: 'The alphabet',
   titleGeorgian: 'ანბანი',
   group: 'writing',
-  icon: 'type',
+  icon: Type,
   summary: 'All 33 letters of Mkhedruli, their names, and the sounds they stand for.',
   sections: [
     {
@@ -145,7 +146,7 @@ const nounCases: GrammarTopic = {
   title: 'Noun cases',
   titleGeorgian: 'ბრუნვები',
   group: 'nouns',
-  icon: 'table',
+  icon: Table,
   summary: 'The seven cases, their endings, and the case each verb series asks for.',
   sections: [
     {
@@ -208,7 +209,7 @@ const pluralsAdjectives: GrammarTopic = {
   title: 'Plurals & adjectives',
   titleGeorgian: 'მრავლობითი და ზედსართავი',
   group: 'nouns',
-  icon: 'layers',
+  icon: Layers,
   summary: 'Forming the plural, and how an adjective agrees with the noun in front of it.',
   sections: [
     {
@@ -271,7 +272,7 @@ const postpositions: GrammarTopic = {
   title: 'Postpositions',
   titleGeorgian: 'თანდებულები',
   group: 'nouns',
-  icon: 'link',
+  icon: Link2,
   summary: 'Georgian puts its prepositions after the noun — and each one governs a case.',
   sections: [
     {
@@ -314,7 +315,7 @@ const pronouns: GrammarTopic = {
   title: 'Pronouns',
   titleGeorgian: 'ნაცვალსახელები',
   group: 'nouns',
-  icon: 'users',
+  icon: Users,
   summary: 'Personal, possessive and demonstrative pronouns, plus the question words.',
   sections: [
     {
@@ -379,7 +380,7 @@ const numbers: GrammarTopic = {
   title: 'Numbers',
   titleGeorgian: 'რიცხვები',
   group: 'nouns',
-  icon: 'hash',
+  icon: Hash,
   summary: 'Counting in twenties: the vigesimal system, ordinals, and counted nouns.',
   sections: [
     {
@@ -445,7 +446,7 @@ const verbBasics: GrammarTopic = {
   title: 'How verbs work',
   titleGeorgian: 'ზმნა',
   group: 'verbs',
-  icon: 'book',
+  icon: BookOpen,
   summary: 'Conjugation classes, person markers, preverbs and version vowels.',
   sections: [
     {
@@ -570,7 +571,7 @@ const screeves = derived<GrammarTopic>(() => {
     title: 'Tenses & screeves',
     titleGeorgian: 'მწკრივები',
     group: 'verbs',
-    icon: 'clock',
+    icon: Clock,
     summary: 'The eleven screeves, grouped into the three series every verb is built on.',
     sections: [
       {
@@ -608,7 +609,7 @@ const verbGroups = derived<GrammarTopic>(content => ({
   title: 'Conjugation groups',
   titleGeorgian: 'ჯგუფები',
   group: 'verbs',
-  icon: 'layers',
+  icon: Layers,
   summary: 'The groups the verb tables are sorted into, and what makes each one different.',
   sections: [
     {
@@ -632,7 +633,7 @@ const sentenceBasics: GrammarTopic = {
   title: 'Sentence basics',
   titleGeorgian: 'წინადადება',
   group: 'sentences',
-  icon: 'message',
+  icon: MessageCircle,
   summary: 'Word order, the verb "to be", negation, and asking questions.',
   sections: [
     {

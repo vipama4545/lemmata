@@ -1,11 +1,16 @@
-import { useState, useMemo, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useMemo } from 'react';
+import { ChevronDown, Download, List } from 'lucide-react';
 import type { Category, Level, LevelFilter, Word } from '@georgian/shared/types';
 import { PERSONS, SCREEVES } from '@georgian/shared/grammar/ka';
+import { Checkbox } from '@/components/ui/checkbox';
+import { LevelTabs } from '@/components/ui/level-tabs';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import { LevelBadge } from '@/components/ui/word-card';
+import { cn } from '@/lib/utils';
 import { derived, kaVerbData, kaVerbsOf, lang } from '../content/store';
 import { getWordImage } from '../utils/images';
 import CategoryThumb from './CategoryThumb';
-import Icon from './Icon';
 
 /**
  * A row in the flashcard export. Verbs are folded in alongside the dictionary words, and
@@ -74,18 +79,6 @@ function ExportAnki() {
   const selectAll = () => setSelectedCategories([]);
   const deselectAll = () => setSelectedCategories(exportCategories().map(c => c.id));
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    if (!categoryDropdownOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (!(e.target as Element | null)?.closest('.multi-select')) {
-        setCategoryDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [categoryDropdownOpen]);
-
   const handleExport = async () => {
     setExporting(true);
     try {
@@ -101,155 +94,145 @@ function ExportAnki() {
   };
 
   return (
-    <div className="main-content export-page">
-      <div className="breadcrumb">
-        <Link to={`/${lang()}`}>← Home</Link>
-        <span className="breadcrumb-sep">/</span>
+    <Page className="max-w-[800px]">
+      <Breadcrumb>
+        <BreadcrumbLink to={`/${lang()}`}>← Home</BreadcrumbLink>
+        <BreadcrumbSeparator />
         <span>Export for Anki</span>
-      </div>
+      </Breadcrumb>
 
-      <h1>Export for Anki</h1>
-      <p className="export-description">
+      <h1 className="mb-2 text-[28px] font-bold">Export for Anki</h1>
+      <p className={LEAD}>
         Select which words to export, then download them as a CSV or tab-separated file
         ready to import into Anki.
       </p>
 
-      <div className="export-card">
-        <div className="export-filters">
-          <div className="filter-group">
-            <label>CEFR Level</label>
-            <div className="level-filter">
-              <button className={`level-btn ${levelFilter === 'all' ? 'active' : ''}`}
-                onClick={() => setLevelFilter('all')}>All</button>
-              <button className={`level-btn ${levelFilter === 'A1' ? 'active a1' : ''}`}
-                onClick={() => setLevelFilter('A1')}>A1</button>
-              <button className={`level-btn ${levelFilter === 'A2' ? 'active a2' : ''}`}
-                onClick={() => setLevelFilter('A2')}>A2</button>
-            </div>
-          </div>
+      <div className={CARD}>
+        <div className="flex flex-col gap-4">
+          <FilterRow label="CEFR Level">
+            <LevelTabs value={levelFilter} onChange={setLevelFilter} />
+          </FilterRow>
 
-          <div className="filter-group">
-            <label>Category</label>
-            <div className="multi-select">
-              <button
-                className="multi-select-trigger"
-                onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+          <FilterRow label="Category">
+            {/* A Popover rather than a hand-rolled dropdown: dismissal, focus return and the
+                Escape key come with it, and the mousedown listener this used to keep on the
+                document goes away with them. */}
+            <Popover open={categoryDropdownOpen} onOpenChange={setCategoryDropdownOpen}>
+              <PopoverTrigger asChild>
+                <button className="flex w-full cursor-pointer items-center justify-between rounded-sm border-2 border-border bg-card px-3 py-2 text-sm transition-colors hover:border-primary">
+                  <span className="truncate">
+                    {allSelected
+                      ? 'All Categories'
+                      : `${selectedCategories.length} categor${selectedCategories.length === 1 ? 'y' : 'ies'} selected`}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      'ml-2 size-[18px] shrink-0 text-faint transition-transform',
+                      categoryDropdownOpen && 'rotate-180',
+                    )}
+                    aria-hidden="true"
+                  />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="start"
+                className="flex max-h-90 w-[var(--radix-popover-trigger-width)] flex-col rounded-sm border-2 p-0 shadow-pop"
               >
-                <span className="multi-select-label">
-                  {allSelected
-                    ? 'All Categories'
-                    : `${selectedCategories.length} categor${selectedCategories.length === 1 ? 'y' : 'ies'} selected`}
-                </span>
-                <Icon name="chevron" className={`multi-select-arrow ${categoryDropdownOpen ? 'open' : ''}`} />
-              </button>
-              {categoryDropdownOpen && (
-                <div className="multi-select-dropdown">
-                  <div className="multi-select-actions">
-                    <button className="multi-select-action" onClick={selectAll}>Select All</button>
-                    <button className="multi-select-action" onClick={deselectAll}>Deselect All</button>
-                  </div>
-                  <div className="multi-select-list">
-                    {exportCategories().map(cat => {
-                      const checked = allSelected || selectedCategories.includes(cat.id);
-                      return (
-                        <label key={cat.id} className={`multi-select-option ${checked ? 'selected' : ''}`}>
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() => toggleCategory(cat.id)}
-                          />
-                          <CategoryThumb category={cat} className="category-thumb-xs" />
-                          <span className="multi-select-name">{cat.name}</span>
-                          <span className="multi-select-count">{cat.wordCount}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
+                <div className="flex shrink-0 gap-2 border-b border-border p-2">
+                  <button className={PICKER_ACTION} onClick={selectAll}>Select All</button>
+                  <button className={PICKER_ACTION} onClick={deselectAll}>Deselect All</button>
                 </div>
-              )}
-            </div>
-          </div>
+                <div className="overflow-y-auto p-1">
+                  {exportCategories().map(cat => {
+                    const checked = allSelected || selectedCategories.includes(cat.id);
+                    return (
+                      <label
+                        key={cat.id}
+                        className={cn(
+                          'flex cursor-pointer items-center gap-2 rounded-[6px] p-2 text-sm transition-colors hover:bg-muted',
+                          checked && 'bg-primary-glow',
+                        )}
+                      >
+                        <Checkbox checked={checked} onCheckedChange={() => toggleCategory(cat.id)} />
+                        <CategoryThumb category={cat} size="xs" />
+                        <span className="flex-1 truncate">{cat.name}</span>
+                        <span className="shrink-0 text-xs text-faint">{cat.wordCount}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
+          </FilterRow>
 
-          <div className="filter-group">
-            <label>Export Format</label>
-            <div className="format-options">
-              <label className="format-option">
-                <input
-                  type="radio"
-                  name="format"
-                  value="csv"
-                  checked={format === 'csv'}
-                  onChange={() => setFormat('csv')}
-                />
-                <div className="format-info">
-                  <strong>CSV</strong>
-                  <span>Comma-separated, best for Anki's File → Import</span>
-                </div>
-              </label>
-              <label className="format-option">
-                <input
-                  type="radio"
-                  name="format"
-                  value="txt"
-                  checked={format === 'txt'}
-                  onChange={() => setFormat('txt')}
-                />
-                <div className="format-info">
-                  <strong>Tab-separated (.txt)</strong>
-                  <span>With HTML formatting for rich Anki cards</span>
-                </div>
-              </label>
+          <FilterRow label="Export Format">
+            <div className="flex flex-wrap gap-4">
+              <FormatOption
+                on={format === 'csv'}
+                onSelect={() => setFormat('csv')}
+                title="CSV"
+                hint="Comma-separated, best for Anki's File → Import"
+              />
+              <FormatOption
+                on={format === 'txt'}
+                onSelect={() => setFormat('txt')}
+                title="Tab-separated (.txt)"
+                hint="With HTML formatting for rich Anki cards"
+              />
             </div>
-          </div>
+          </FilterRow>
         </div>
 
-        <div className="export-preview">
-          <div className="preview-header">
-            <h3><Icon name="list" /> Preview</h3>
-            <span className="word-count">{filteredWords.length} words selected</span>
+        <div className={PANEL}>
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className={PANEL_TITLE}><List className="size-[18px]" aria-hidden="true" /> Preview</h3>
+            <span className="font-medium text-primary">{filteredWords.length} words selected</span>
           </div>
-          <div className="preview-list">
+          <div className="max-h-80 overflow-y-auto rounded-sm border border-border">
             {filteredWords.slice(0, 10).map(w => (
-              <div key={w.id} className="preview-item">
-                <span className="preview-geo">{w.headword}</span>
-                <span className="preview-arrow">→</span>
-                <span className="preview-eng">{w.english}</span>
-                {w.level && <span className={`level-badge ${w.level.toLowerCase()}`}>{w.level}</span>}
+              <div
+                key={w.id}
+                className="flex items-center gap-3 border-b border-border px-4 py-2.5 transition-colors last:border-b-0 hover:bg-muted"
+              >
+                <span className="min-w-[140px] text-lg font-semibold">{w.headword}</span>
+                <span className="text-faint">→</span>
+                <span className="flex-1 text-sm text-muted-foreground">{w.english}</span>
+                {w.level && <LevelBadge level={w.level} />}
               </div>
             ))}
             {filteredWords.length > 10 && (
-              <p className="preview-more">…and {filteredWords.length - 10} more</p>
+              <p className="p-3 text-center text-[13px] text-faint">…and {filteredWords.length - 10} more</p>
             )}
           </div>
         </div>
 
-        <div className="export-actions">
+        <div className="flex justify-center">
           <button
-            className="export-btn anki-btn"
+            className={cn(EXPORT_BUTTON, 'px-8 py-3.5 text-base')}
             onClick={handleExport}
             disabled={exporting || filteredWords.length === 0}
           >
             {exporting
               ? 'Exporting…'
-              : <><Icon name="download" /> Export {filteredWords.length} words</>}
+              : <><Download className="size-[18px]" aria-hidden="true" /> Export {filteredWords.length} words</>}
           </button>
         </div>
 
-        <div className="export-help">
-          <h3>How to import into Anki</h3>
-          <p className="export-note">
+        <div className={PANEL}>
+          <h3 className="mb-3 text-base font-semibold">How to import into Anki</h3>
+          <p className={LEAD}>
             Verbs export as their verbal noun and English, with the third person singular
             of the present in the definition column. Their conjugations are not included —
             use the full verb database below for those.
           </p>
-          <ol>
+          <ol className="list-decimal pl-6 text-sm leading-[1.8] text-muted-foreground [&>li]:mb-1">
             <li>Download the file using the button above.</li>
             <li>Open Anki and choose your deck (or create a new one).</li>
             <li>Go to <strong>File → Import…</strong></li>
             <li>Select the downloaded file.</li>
             <li>
               In the import dialog:
-              <ul>
+              <ul className="mt-1 list-disc pl-5">
                 <li>Set <strong>Type</strong> to the number of fields (2 for CSV: Georgian, English)</li>
                 <li>Enable <strong>Front: Column 1</strong> (Georgian), <strong>Back: Column 2</strong> (English)</li>
               </ul>
@@ -259,20 +242,20 @@ function ExportAnki() {
         </div>
       </div>
 
-      <h2 className="export-section-title">Verb database</h2>
-      <p className="export-description">
+      <h2 className="mt-10 mb-2 text-[22px] font-bold">Verb database</h2>
+      <p className={LEAD}>
         The whole conjugation sheet as one CSV: a row per verb, a column for every person
         of every screeve, plus the imperative, the synonyms and the source link. This is a
         reference dump rather than a flashcard deck.
       </p>
 
-      <div className="export-card export-card-verbs">
-        <div className="export-preview">
-          <div className="preview-header">
-            <h3><Icon name="list" /> Contents</h3>
-            <span className="word-count">{kaVerbData().verbs.length} verbs</span>
+      <div className={CARD}>
+        <div className={PANEL}>
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className={PANEL_TITLE}><List className="size-[18px]" aria-hidden="true" /> Contents</h3>
+            <span className="font-medium text-primary">{kaVerbData().verbs.length} verbs</span>
           </div>
-          <ul className="export-columns">
+          <ul className="flex list-none flex-col gap-1.5 text-sm text-muted-foreground [&>li]:before:mr-2 [&>li]:before:text-faint [&>li]:before:content-['·']">
             <li>{SCREEVES.length} screeves × {PERSONS.length} persons</li>
             <li>Imperative and prohibitive</li>
             <li>Verbal noun and conjugation group</li>
@@ -280,13 +263,70 @@ function ExportAnki() {
           </ul>
         </div>
 
-        <div className="export-actions">
-          <button className="export-btn anki-btn" onClick={exportVerbConjugations}>
-            <Icon name="download" /> Export all {kaVerbData().verbs.length} verb conjugations
+        <div className="flex justify-center">
+          <button className={EXPORT_BUTTON} onClick={exportVerbConjugations}>
+            <Download className="size-[18px]" aria-hidden="true" /> Export all {kaVerbData().verbs.length} verb conjugations
           </button>
         </div>
       </div>
+    </Page>
+  );
+}
+
+const LEAD = 'mb-6 text-muted-foreground';
+const CARD = 'flex flex-col gap-6 rounded-lg border-2 border-border bg-card p-6';
+/* A band inside the card, ruled off from the one above rather than boxed again. */
+const PANEL = 'border-t border-border pt-5';
+const PANEL_TITLE = 'flex items-center gap-2 text-base font-semibold';
+const PICKER_ACTION =
+  'cursor-pointer rounded-[6px] bg-muted px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary-glow';
+/* The one gradient button in the app: downloading is the point of this page, and it is the
+   only control on it that produces a file. */
+const EXPORT_BUTTON =
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-sm bg-[linear-gradient(135deg,#3b82f6,#6366f1)] px-5 py-2.5 text-sm font-medium text-white transition-all ' +
+  'hover:not-disabled:-translate-y-px hover:not-disabled:shadow-card disabled:cursor-not-allowed disabled:opacity-50';
+
+/** One labelled control in the filter stack. */
+function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 max-md:flex-col max-md:items-start max-md:*:w-full">
+      <span className="min-w-25 text-sm font-semibold">{label}</span>
+      <div className="min-w-0 flex-1">{children}</div>
     </div>
+  );
+}
+
+/** A radio in the shape of a card, so the format and what it is for are read together. */
+function FormatOption({
+  on,
+  onSelect,
+  title,
+  hint,
+}: {
+  on: boolean;
+  onSelect: () => void;
+  title: string;
+  hint: string;
+}) {
+  return (
+    <label
+      className={cn(
+        'flex cursor-pointer items-center gap-2 rounded-sm border-2 px-3 py-2 transition-all',
+        on ? 'border-primary bg-primary-glow' : 'border-border',
+      )}
+    >
+      <input
+        type="radio"
+        name="format"
+        checked={on}
+        onChange={onSelect}
+        className="accent-primary"
+      />
+      <span className="flex flex-col gap-0.5">
+        <strong className="text-sm">{title}</strong>
+        <span className="text-xs text-faint">{hint}</span>
+      </span>
+    </label>
   );
 }
 

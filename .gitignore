@@ -32,6 +32,9 @@ scripts
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+# Project-wide editor settings, not personal ones — currently just which Tailwind lint rules
+# this codebase wants off. Tracked so everybody's editor agrees.
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo

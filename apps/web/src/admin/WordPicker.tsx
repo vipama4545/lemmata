@@ -8,9 +8,11 @@
 
 import { useMemo, useState } from 'react';
 import type { Word } from '@georgian/shared/types';
+import { SearchField } from '@/components/ui/search-field';
+import { cn } from '@/lib/utils';
 import { langName, wordData } from '../content/store';
 import { searchWords } from './search';
-import Icon from '../components/Icon';
+import { AdminHint, AdminLabel, AdminLinkButton } from './ui';
 
 interface WordPickerProps {
   /** Called with the chosen entry, or null when the Clear button is used. */
@@ -24,6 +26,12 @@ interface WordPickerProps {
   clearable?: boolean;
   autoFocus?: boolean;
 }
+
+/** The entry currently chosen, outlined in the accent colour: a decision, not an empty field. */
+export const PICKED =
+  'flex flex-wrap items-baseline gap-2.5 rounded-sm border border-primary bg-[color-mix(in_srgb,var(--primary)_6%,var(--card))] px-3 py-2';
+export const PICKED_GEO = 'text-base font-semibold';
+export const PICKED_EN = 'flex-1 text-[13.5px] text-muted-foreground';
 
 function WordPicker({
   onPick,
@@ -39,63 +47,60 @@ function WordPicker({
   const results = useMemo(() => searchWords(words, term), [words, term]);
 
   return (
-    <div className="admin-picker">
-      <div className="admin-field-head">
-        <span className="admin-label">{label}</span>
-        {value && clearable && (
-          <button type="button" className="admin-link-btn" onClick={() => onPick(null)}>
-            Clear
-          </button>
-        )}
+    <div className="mb-2">
+      <div className="flex items-baseline justify-between gap-2">
+        <AdminLabel>{label}</AdminLabel>
+        {value && clearable && <AdminLinkButton onClick={() => onPick(null)}>Clear</AdminLinkButton>}
       </div>
 
       {value && (
-        <p className="admin-picker-current">
-          <span className="admin-picker-geo">{value.headword}</span>
-          <span className="admin-picker-en">{value.english}</span>
+        <p className={PICKED}>
+          <span className={PICKED_GEO}>{value.headword}</span>
+          <span className={PICKED_EN}>{value.english}</span>
         </p>
       )}
 
       {suggestions.length > 0 && !term && (
-        <div className="admin-picker-suggestions">
-          <span className="admin-hint">Also claimed this spelling</span>
+        <div className="mt-2.5 flex flex-wrap items-center gap-2">
+          <AdminHint className="mt-0 inline">Also claimed this spelling</AdminHint>
           {suggestions.map(word => (
-            <button key={word.id} type="button" className="admin-chip" onClick={() => onPick(word)}>
-              <span className="admin-chip-geo">{word.headword}</span>
-              <span className="admin-chip-en">{word.english}</span>
+            <button
+              key={word.id}
+              type="button"
+              className="flex cursor-pointer items-baseline gap-1.5 rounded-full border border-border-strong bg-card px-2.5 py-[5px] font-[inherit] hover:border-primary"
+              onClick={() => onPick(word)}
+            >
+              <span className="text-sm font-semibold">{word.headword}</span>
+              <span className="text-xs text-muted-foreground">{word.english}</span>
             </button>
           ))}
         </div>
       )}
 
-      <div className="search-field admin-picker-field">
-        <Icon name="search" size={16} />
-        <input
-          type="text"
-          className="search-input"
-          placeholder={`Search ${langName()} or English…`}
-          value={term}
-          autoFocus={autoFocus}
-          onChange={event => setTerm(event.target.value)}
-        />
-      </div>
+      <SearchField
+        wrapperClassName="mt-2"
+        placeholder={`Search ${langName()} or English…`}
+        value={term}
+        autoFocus={autoFocus}
+        onChange={event => setTerm(event.target.value)}
+      />
 
       {term.trim() !== '' && (
-        <ul className="admin-picker-results">
-          {results.length === 0 && <li className="admin-picker-empty">Nothing matches “{term}”.</li>}
+        <ul className="mt-2 max-h-65 list-none overflow-y-auto rounded-sm border border-border">
+          {results.length === 0 && <li className="px-3 py-2.5 text-[13px] text-faint">Nothing matches “{term}”.</li>}
           {results.map(word => (
             <li key={word.id}>
               <button
                 type="button"
-                className={`admin-picker-result${value?.id === word.id ? ' is-current' : ''}`}
+                className={cn(RESULT, value?.id === word.id && 'bg-muted')}
                 onClick={() => {
                   onPick(word);
                   setTerm('');
                 }}
               >
-                <span className="admin-picker-geo">{word.headword}</span>
-                <span className="admin-picker-en">{word.english}</span>
-                {word.partOfSpeech && <span className="admin-picker-pos">{word.partOfSpeech}</span>}
+                <span className={PICKED_GEO}>{word.headword}</span>
+                <span className={PICKED_EN}>{word.english}</span>
+                {word.partOfSpeech && <span className="text-[11.5px] text-faint">{word.partOfSpeech}</span>}
               </button>
             </li>
           ))}
@@ -104,5 +109,8 @@ function WordPicker({
     </div>
   );
 }
+
+const RESULT =
+  'flex w-full cursor-pointer flex-wrap items-baseline gap-2.5 border-0 bg-transparent px-3 py-2 text-left font-[inherit] text-foreground hover:bg-muted';
 
 export default WordPicker;

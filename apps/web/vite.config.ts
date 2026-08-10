@@ -1,9 +1,19 @@
+import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      // What shadcn's own components import themselves as. Kept in step with the `paths`
+      // entry in tsconfig.json — Vite resolves the build, TypeScript resolves the editor,
+      // and they have to agree.
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
   server: {
     proxy: {
       // The API is proxied rather than called cross-origin, so the browser sees one origin

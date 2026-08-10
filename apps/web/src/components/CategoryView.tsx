@@ -1,12 +1,24 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
+import { Eye, EyeOff, Image as ImageIcon } from 'lucide-react';
 import type { LevelFilter, Word } from '@georgian/shared/types';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { LevelTabs } from '@/components/ui/level-tabs';
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import { SearchField } from '@/components/ui/search-field';
+import { LevelBadge, PosTag, WordCard, WordCardBody, WordCardTags } from '@/components/ui/word-card';
 import { lang, wordData as allData } from '../content/store';
 import { getWordImage, creditLine } from '../utils/images';
 import { focusId } from '../utils/scroll';
 import { useEntryState } from '../utils/entryState';
 import CategoryThumb from './CategoryThumb';
-import Icon from './Icon';
 
 /** What the category cards on the browse page hand over in the link's router state. */
 interface CategoryViewState {
@@ -47,151 +59,132 @@ function CategoryView() {
 
   if (!category) {
     return (
-      <div className="main-content">
-        <div className="not-found">
-          <h2>Category not found</h2>
-          <Link to={`/${lang()}/categories`}>← Back to categories</Link>
+      <Page>
+        <div className="py-10 text-center">
+          <h2 className="mb-2 text-2xl font-bold">Category not found</h2>
+          <Link to={`/${lang()}/categories`} className="text-primary hover:underline">
+            ← Back to categories
+          </Link>
         </div>
-      </div>
+      </Page>
     );
   }
 
   return (
-    <div className="main-content">
-      <div className="breadcrumb">
-        <Link to={`/${lang()}/categories`}>← Categories</Link>
-        <span className="breadcrumb-sep">/</span>
+    <Page>
+      <Breadcrumb>
+        <BreadcrumbLink to={`/${lang()}/categories`}>← Categories</BreadcrumbLink>
+        <BreadcrumbSeparator />
         <span>{category.name}</span>
+      </Breadcrumb>
+
+      <div className="mb-6 flex items-center gap-4.5">
+        <CategoryThumb category={category} size="sm" />
+        <div>
+          <h1 className="mb-1 text-[28px] font-bold">{category.name}</h1>
+          <p className="text-sm text-faint">{category.nameNative}</p>
+          <span className="font-medium text-primary">{filteredWords.length} words</span>
+        </div>
       </div>
 
-      <div className="category-header">
-        <CategoryThumb category={category} className="category-thumb-sm" />
-        <div className="category-header-text">
-          <h1>{category.name}</h1>
-          <p className="category-header-geo">{category.nameNative}</p>
-          <span className="word-count">{filteredWords.length} words</span>
-        </div>
-      </div>
-
-      <div className="toolbar">
-        <div className="search-field">
-          <Icon name="search" />
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Filter words…"
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
-          />
-        </div>
-        <div className="level-filter">
-          <button
-            className={`level-btn ${localLevel === 'all' ? 'active' : ''}`}
-            onClick={() => setLocalLevel('all')}
-          >
-            All
-          </button>
-          <button
-            className={`level-btn ${localLevel === 'A1' ? 'active a1' : ''}`}
-            onClick={() => setLocalLevel('A1')}
-          >
-            A1
-          </button>
-          <button
-            className={`level-btn ${localLevel === 'A2' ? 'active a2' : ''}`}
-            onClick={() => setLocalLevel('A2')}
-          >
-            A2
-          </button>
-        </div>
-        <button
-          className="toggle-btn"
-          onClick={() => setShowTranslation(!showTranslation)}
-        >
-          <Icon name={showTranslation ? 'eye-off' : 'eye'} />
+      <div className="mb-6 flex flex-wrap items-center gap-4 max-md:flex-col max-md:*:w-full">
+        <SearchField
+          placeholder="Filter words…"
+          value={localSearch}
+          onChange={(e) => setLocalSearch(e.target.value)}
+        />
+        <LevelTabs value={localLevel} onChange={setLocalLevel} />
+        <Button variant="control" size="auto" onClick={() => setShowTranslation(!showTranslation)}>
+          {showTranslation ? <EyeOff /> : <Eye />}
           {showTranslation ? 'Hide translations' : 'Show translations'}
-        </button>
+        </Button>
       </div>
 
-      <div className="word-list">
+      <div className="flex flex-col gap-2">
         {filteredWords.map((word, idx) => (
-          <div
-            key={word.id}
-            data-focus={word.id}
-            className={`word-card${word.id === focusedWord ? ' is-focus-target' : ''}`}
-          >
-            <div className="word-card-left">
-              <span className={`level-badge ${word.level.toLowerCase()}`}>{word.level}</span>
-              <span className="pos-tag">{word.partOfSpeech}</span>
-            </div>
-            <div className="word-card-center">
-              <span className="word-georgian">{word.headword}</span>
+          <WordCard key={word.id} data-focus={word.id} focused={word.id === focusedWord}>
+            <WordCardTags>
+              <LevelBadge level={word.level} />
+              <PosTag>{word.partOfSpeech}</PosTag>
+            </WordCardTags>
+            <WordCardBody>
+              <span className="text-xl font-semibold">{word.headword}</span>
               {showTranslation && (
-                <span className="word-english">{word.english}</span>
+                <span className="text-[15px] text-muted-foreground">{word.english}</span>
               )}
-            </div>
-            <div className="word-card-right">
+            </WordCardBody>
+            <div className="flex shrink-0 items-center">
               {getWordImage(word) && (
                 <button
-                  className="img-btn"
-                  onClick={() => {
-                    setCurrentWordIndex(idx);
-                  }}
+                  className="inline-flex cursor-pointer p-1 text-muted-foreground opacity-60 transition-opacity hover:opacity-100"
+                  onClick={() => setCurrentWordIndex(idx)}
                   title="Show image"
                   aria-label={`Show image for ${word.english}`}
                 >
-                  <Icon name="image" size={20} />
+                  <ImageIcon className="size-5" aria-hidden="true" />
                 </button>
               )}
             </div>
-          </div>
+          </WordCard>
         ))}
       </div>
 
-      {currentWordIndex !== null && (
-        <WordImageModal
-          word={filteredWords[currentWordIndex]}
-          onClose={() => setCurrentWordIndex(null)}
-        />
-      )}
-    </div>
+      <WordImageDialog
+        word={currentWordIndex === null ? null : filteredWords[currentWordIndex]}
+        onClose={() => setCurrentWordIndex(null)}
+      />
+    </Page>
   );
 }
 
-function WordImageModal({ word, onClose }: { word: Word; onClose: () => void }) {
-  const image = getWordImage(word);
+function WordImageDialog({ word, onClose }: { word: Word | null; onClose: () => void }) {
+  const image = word && getWordImage(word);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose} aria-label="Close">
-          <Icon name="close" size={20} />
-        </button>
-        <h3>{word.headword} — {word.english}</h3>
-        {image && (
-          <figure className="modal-image">
-            <img src={image.url} alt={word.english} loading="lazy" />
-            <figcaption className="image-credit">
-              <a href={image.page} target="_blank" rel="noopener noreferrer">
-                {image.title}
-              </a>
-              {creditLine(image) && <> · {creditLine(image)}</>}
-            </figcaption>
-          </figure>
+    <Dialog open={word !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-[500px] gap-0 rounded-lg p-6">
+        {word && (
+          <>
+            <DialogHeader className="text-left">
+              <DialogTitle className="text-lg">
+                {word.headword} — {word.english}
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                Picture and full definition for {word.english}
+              </DialogDescription>
+            </DialogHeader>
+            {image && (
+              <figure className="my-4 overflow-hidden rounded-sm">
+                <img
+                  src={image.url}
+                  alt={word.english}
+                  loading="lazy"
+                  className="block h-auto max-h-80 w-full object-contain"
+                />
+                {/* Attribution required by the CC licences the Wikimedia images are published under. */}
+                <figcaption className="px-0.5 pt-1.5 text-center text-[11px] leading-snug wrap-anywhere text-faint [&_a]:underline">
+                  <a href={image.page} target="_blank" rel="noopener noreferrer">
+                    {image.title}
+                  </a>
+                  {creditLine(image) && <> · {creditLine(image)}</>}
+                </figcaption>
+              </figure>
+            )}
+            <p className="mt-3 text-sm text-muted-foreground">{word.definition}</p>
+            {word.englishFull.length > 1 && (
+              <div className="mt-3 text-sm">
+                <strong>All meanings:</strong>
+                <ul className="list-disc pl-5">
+                  {word.englishFull.map((t, i) => (
+                    <li key={i}>{t}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
         )}
-        <p className="modal-definition">{word.definition}</p>
-        {word.englishFull.length > 1 && (
-          <div className="modal-translations">
-            <strong>All meanings:</strong>
-            <ul>
-              {word.englishFull.map((t, i) => (
-                <li key={i}>{t}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

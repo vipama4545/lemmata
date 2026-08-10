@@ -1,11 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import type { ImperativeForms, Screeve, ScreeveKey, KaVerb, KaVerbMorphemes } from '@georgian/shared/types';
 import { PERSONS as persons, SCREEVES as screeves, SERIES as series } from '@georgian/shared/grammar/ka';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { MORPHEME_CLASS } from '@/components/ui/morpheme';
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 import { kaVerbData, lang, morphemeData } from '../content/store';
 import { MORPHEME_PARTS, segmentForm } from '../utils/verbMorphology';
-import Icon from './Icon';
+import { NAV_LINK } from './GrammarTopic';
 
 // The persons, screeves and series are constants rather than anything fetched, so the table
 // they key can be built here at module scope as it always was. The paradigms themselves
@@ -13,6 +20,11 @@ import Icon from './Icon';
 const screeveByKey = Object.fromEntries(
   screeves.map(s => [s.key, s]),
 ) as Record<ScreeveKey, Screeve>;
+
+/** Georgian is set a size larger and heavier than the English beside it — at matching sizes
+    the letterforms read as too light. */
+const KA = 'text-base font-semibold';
+const SECTION_TITLE = 'mb-2.5 text-[15px] font-semibold text-muted-foreground';
 
 /** One row of a conjugation table: a screeve (or the imperative) across the persons. */
 interface ConjugationRow {
@@ -44,12 +56,12 @@ function VerbDetail() {
 
   if (!verb) {
     return (
-      <div className="main-content">
-        <div className="not-found">
-          <h2>Verb not found</h2>
-          <Link to={`/${lang()}/verbs`}>← Back to verbs</Link>
+      <Page>
+        <div className="py-10 text-center">
+          <h2 className="mb-2 text-2xl font-bold">Verb not found</h2>
+          <Link to={`/${lang()}/verbs`} className="text-primary hover:underline">← Back to verbs</Link>
         </div>
-      </div>
+      </Page>
     );
   }
 
@@ -58,40 +70,42 @@ function VerbDetail() {
   const next: KaVerb | undefined = verbs[index + 1];
 
   return (
-    <div className="main-content">
-      <div className="breadcrumb">
-        <Link to={`/${lang()}/categories`}>← Categories</Link>
-        <span className="breadcrumb-sep">/</span>
-        <Link to={`/${lang()}/verbs`}>Verbs</Link>
-        <span className="breadcrumb-sep">/</span>
+    <Page>
+      <Breadcrumb>
+        <BreadcrumbLink to={`/${lang()}/categories`}>← Categories</BreadcrumbLink>
+        <BreadcrumbSeparator />
+        <BreadcrumbLink to={`/${lang()}/verbs`}>Verbs</BreadcrumbLink>
+        <BreadcrumbSeparator />
         <span>{verb.english}</span>
-      </div>
+      </Breadcrumb>
 
-      <div className="verb-detail-header">
+      <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="verb-detail-noun">{verb.verbalNoun || verb.english}</h1>
-          <p className="verb-detail-english">
+          <h1 className="text-[34px] leading-tight font-bold max-md:text-[28px]">
+            {verb.verbalNoun || verb.english}
+          </h1>
+          <p className="mt-1 text-[17px] text-muted-foreground">
             {verb.english}
-            {verb.transitivity && <em className="verb-transitivity"> {verb.transitivity}</em>}
+            {verb.transitivity && <em className="text-[13px] text-faint"> {verb.transitivity}</em>}
           </p>
           {verb.senses.length > 0 && (
-            <ul className="verb-senses">
+            <ul className="mt-2 ml-[18px] list-disc text-sm text-muted-foreground">
               {verb.senses.map((sense, i) => <li key={i}>{sense}</li>)}
             </ul>
           )}
         </div>
-        <div className="verb-detail-meta">
-          {verb.group && <span className="group-tag group-tag-lg">{verb.group}</span>}
-          {group && <span className="verb-detail-group-name">{group.name}</span>}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {verb.group && <Badge variant="tagOutline" className="px-3 py-1 text-[13px]">{verb.group}</Badge>}
+          {group && <span className="text-sm text-muted-foreground">{group.name}</span>}
         </div>
       </div>
 
       {lex && <MorphemeKey lex={lex} highlight={highlight} onToggle={() => setHighlight(h => !h)} />}
 
       {group && group.notes.length > 0 && (
-        <details className="verb-group-notes">
-          <summary>About {group.label} {group.name}</summary>
-          <ul>
+        <details className="mb-6 rounded-sm border border-border bg-card px-4 py-3">
+          <summary className="cursor-pointer text-sm font-semibold">About {group.label} {group.name}</summary>
+          <ul className="mt-3 ml-5 flex list-disc flex-col gap-2 text-sm whitespace-pre-line text-muted-foreground">
             {group.notes.map((note, i) => <li key={i}>{note}</li>)}
           </ul>
         </details>
@@ -105,16 +119,16 @@ function VerbDetail() {
         });
         if (rows.length === 0) return null;
         return (
-          <section key={block.id} className="verb-series">
-            <h2 className="verb-series-title">{block.label}</h2>
+          <section key={block.id} className="mb-7">
+            <h2 className={SECTION_TITLE}>{block.label}</h2>
             <ConjugationTable rows={rows} lex={highlight ? lex : null} />
           </section>
         );
       })}
 
       {(verb.imperative || verb.prohibitive) && (
-        <section className="verb-series">
-          <h2 className="verb-series-title">Imperative</h2>
+        <section className="mb-7">
+          <h2 className={SECTION_TITLE}>Imperative</h2>
           <ConjugationTable
             rows={[
               verb.imperative && { key: 'imperative', label: 'Affirmative', forms: verb.imperative },
@@ -126,45 +140,52 @@ function VerbDetail() {
       )}
 
       {(verb.synonymsEnglish.length > 0 || verb.synonymsGeorgian.length > 0) && (
-        <section className="verb-synonyms">
-          <h2 className="verb-series-title">Synonyms</h2>
+        <section className="mb-7">
+          <h2 className={SECTION_TITLE}>Synonyms</h2>
           {verb.synonymsGeorgian.length > 0 && (
-            <p className="verb-synonym-row">
-              <span className="verb-synonym-label">Georgian</span>
-              <span className="verb-georgian">{verb.synonymsGeorgian.join(' · ')}</span>
+            <p className="flex items-baseline gap-3 py-1.5">
+              <span className={SYNONYM_LABEL}>Georgian</span>
+              <span className={KA}>{verb.synonymsGeorgian.join(' · ')}</span>
             </p>
           )}
           {verb.synonymsEnglish.length > 0 && (
-            <p className="verb-synonym-row">
-              <span className="verb-synonym-label">English</span>
+            <p className="flex items-baseline gap-3 py-1.5">
+              <span className={SYNONYM_LABEL}>English</span>
               <span>{verb.synonymsEnglish.join(' · ')}</span>
             </p>
           )}
         </section>
       )}
 
-      <div className="verb-detail-footer">
-        <div className="verb-nav">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4">
+        <div className="flex flex-wrap gap-4">
           {previous && (
-            <Link to={`/${lang()}/verbs/${previous.id}`} className="verb-nav-link">
-              <Icon name="arrow-left" /> {previous.english}
+            <Link to={`/${lang()}/verbs/${previous.id}`} className={NAV_LINK}>
+              <ArrowLeft className="size-[18px]" aria-hidden="true" /> {previous.english}
             </Link>
           )}
           {next && (
-            <Link to={`/${lang()}/verbs/${next.id}`} className="verb-nav-link verb-nav-next">
-              {next.english} <Icon name="arrow-right" />
+            <Link to={`/${lang()}/verbs/${next.id}`} className={NAV_LINK}>
+              {next.english} <ArrowRight className="size-[18px]" aria-hidden="true" />
             </Link>
           )}
         </div>
         {verb.url && (
-          <a className="verb-source-link" href={verb.url} target="_blank" rel="noopener noreferrer">
+          <a
+            className="text-sm text-primary underline underline-offset-2"
+            href={verb.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             View on lingua.ge
           </a>
         )}
       </div>
-    </div>
+    </Page>
   );
 }
+
+const SYNONYM_LABEL = 'min-w-20 text-xs tracking-[0.04em] text-faint uppercase';
 
 // The verb's own morphemes, plus the colour key for the tables below. The parts are only
 // listed here if this verb actually has them — plenty of verbs take no preverb and plenty
@@ -186,40 +207,58 @@ function MorphemeKey({
   ].filter(item => item.value);
 
   return (
-    <section className="morph-key">
-      <div className="morph-key-row">
-        <div className="morph-anatomy">
+    <section className="mb-6 rounded-sm border border-border bg-card px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-2">
           {anatomy.map(item => (
-            <span key={item.part} className={`morph-chip mo-${item.part}`}>
-              <span className="morph-chip-label">{item.label}</span>
-              <span className="morph-chip-value verb-georgian">{item.value}</span>
+            <span
+              key={item.part}
+              // The chip is tinted from its own text colour, so one class sets both.
+              className={cn(
+                'inline-flex items-baseline gap-1.5 rounded-full bg-[color-mix(in_srgb,currentColor_12%,transparent)] px-2.5 py-1',
+                MORPHEME_CLASS[item.part as keyof typeof MORPHEME_CLASS],
+              )}
+            >
+              <span className="text-[11px] font-bold tracking-[0.04em] uppercase">{item.label}</span>
+              <span className="text-base font-semibold text-foreground">{item.value}</span>
             </span>
           ))}
         </div>
-        <button
+        <Button
           type="button"
-          className={`toggle-btn morph-toggle${highlight ? ' is-on' : ''}`}
+          variant={highlight ? 'controlOn' : 'control'}
+          size="auto-sm"
           onClick={onToggle}
           aria-pressed={highlight}
         >
-          <Icon name={highlight ? 'eye' : 'eye-off'} />
+          {highlight ? <Eye /> : <EyeOff />}
           Colour the parts
-        </button>
+        </Button>
       </div>
 
+      {/* Each slot gets its name in its own colour and a plain-language gloss beside it —
+          the labels are jargon ("PFSF", "screeve") and the colour alone does not teach them. */}
       {highlight && (
-        <ul className="morph-legend">
+        <ul className="mt-3 grid list-none grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-x-6 gap-y-2 border-t border-border pt-3 text-xs">
           {MORPHEME_PARTS.map(part => (
-            <li key={part.key} className="morph-legend-item">
-              <span className={`morph-legend-name mo-${part.key}`}>{part.label}</span>
-              <span className="morph-legend-hint">{part.hint}</span>
+            <li key={part.key}>
+              <span
+                className={cn(
+                  'font-bold',
+                  "before:mr-1.5 before:inline-block before:size-2 before:rounded-full before:bg-current before:align-middle before:content-['']",
+                  MORPHEME_CLASS[part.key as keyof typeof MORPHEME_CLASS],
+                )}
+              >
+                {part.label}
+              </span>
+              <span className="text-muted-foreground before:content-['_—_']">{part.hint}</span>
             </li>
           ))}
         </ul>
       )}
 
       {highlight && lex.check && (
-        <p className="morph-warning">
+        <p className="mt-2.5 text-xs text-muted-foreground">
           This verb's stem is irregular, so the split below is a best guess — read it with
           an eye open.
         </p>
@@ -242,7 +281,7 @@ function VerbForm({
   if (!lex) return form;
   const { segments } = segmentForm(form, lex, screeve);
   return segments.map((segment, i) => (
-    <span key={i} className={`mo mo-${segment.part}`}>
+    <span key={i} className={MORPHEME_CLASS[segment.part]}>
       {segment.text}
     </span>
   ));
@@ -250,6 +289,9 @@ function VerbForm({
 
 // Screeves down the side, persons across the top. A cell the spreadsheet leaves blank
 // shows a dash rather than collapsing, so the shape of a defective paradigm stays visible.
+//
+// Seven columns do not fit a phone, so the table scrolls inside its own box rather than
+// pushing the page sideways.
 function ConjugationTable({
   rows,
   lex,
@@ -258,37 +300,40 @@ function ConjugationTable({
   lex: KaVerbMorphemes | null | undefined;
 }) {
   return (
-    <div className="conj-table-wrap">
-      <table className="conj-table">
-        <thead>
-          <tr>
-            <th scope="col" className="conj-corner"></th>
-            {persons.map(person => (
-              <th key={person.key} scope="col">
-                <span className="conj-person">{person.label}</span>
-                <span className="conj-pronoun">{person.pronoun}</span>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(row => (
-            <tr key={row.key}>
-              <th scope="row" className="conj-screeve">{row.label}</th>
-              {persons.map(person => {
-                const form = row.forms[person.key];
-                return (
-                  <td key={person.key} className={form ? 'verb-georgian' : 'conj-empty'}>
-                    {form ? <VerbForm form={form} lex={lex} screeve={row.key} /> : '—'}
-                  </td>
-                );
-              })}
-            </tr>
+    <Table containerClassName="rounded-sm border border-border bg-card" className="min-w-[720px]">
+      <TableHeader>
+        <TableRow className="hover:bg-transparent">
+          <TableHead scope="col" className={CONJ_HEAD} />
+          {persons.map(person => (
+            <TableHead key={person.key} scope="col" className={CONJ_HEAD}>
+              <span className="block font-bold">{person.label}</span>
+              <span className="block text-xs tracking-normal normal-case text-faint">{person.pronoun}</span>
+            </TableHead>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rows.map(row => (
+          <TableRow key={row.key} className="hover:bg-transparent">
+            <TableHead scope="row" className="h-auto bg-muted px-3.5 py-2.5 text-[13px] font-semibold text-muted-foreground">
+              {row.label}
+            </TableHead>
+            {persons.map(person => {
+              const form = row.forms[person.key];
+              return (
+                <TableCell key={person.key} className={cn('px-3.5 py-2.5 text-base', !form && 'text-faint')}>
+                  {form ? <VerbForm form={form} lex={lex} screeve={row.key} /> : '—'}
+                </TableCell>
+              );
+            })}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
+
+const CONJ_HEAD =
+  'h-auto bg-muted px-3.5 py-2.5 text-[11px] tracking-[0.04em] text-faint uppercase align-top';
 
 export default VerbDetail;

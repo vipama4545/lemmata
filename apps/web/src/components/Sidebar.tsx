@@ -1,7 +1,24 @@
 import { useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import Icon from './Icon';
-import type { IconName } from './Icon';
+import {
+  BookOpen,
+  Calendar,
+  Download,
+  LayoutGrid,
+  List,
+  MessageCircle,
+  Search,
+  SlidersHorizontal,
+  Table,
+  Type,
+  Users,
+  WalletCards,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { groupedGrammarTopics } from '../data/grammar';
 import { dueCount, useProgress } from '../study/store';
 import { useIsAdmin } from '../admin/useAdmin';
@@ -11,6 +28,20 @@ interface SidebarProps {
   open: boolean;
   onClose: () => void;
 }
+
+/**
+ * A band of rows under a heading. Every band after the first is ruled off from the one above.
+ *
+ * The rule is a prop rather than `first:`, because the drawer header above these is in the DOM
+ * at every width — it is only `display:none` on a wide screen — and `:first-child` counts it.
+ * Keyed off `first:` the top band would carry a stray rule and a gap on the desktop layout,
+ * where there is no drawer header visible for it to be separated from.
+ */
+function SidebarSection({ first = false, children }: { first?: boolean; children: ReactNode }) {
+  return <div className={first ? undefined : 'mt-6 border-t border-border pt-5'}>{children}</div>;
+}
+
+const HEADING = 'mb-2 px-2.5 text-[11px] font-bold tracking-[0.08em] text-faint uppercase';
 
 // The primary navigation. On a wide screen it is a column pinned beside the content; below
 // 1024px it slides in over the page as a drawer, which is why it needs to know when the
@@ -40,37 +71,49 @@ function Sidebar({ open, onClose }: SidebarProps) {
 
   return (
     <>
-      {open && <div className="sidebar-backdrop" onClick={onClose} aria-hidden="true" />}
+      {open && <div className="fixed inset-0 z-150 bg-overlay lg:hidden" onClick={onClose} aria-hidden="true" />}
 
+      {/* One element at both widths rather than a column and a Sheet. Below `lg` it leaves the
+          flow and slides in from the left; above it, it is a sticky column that starts under
+          the header and scrolls on its own. Two components would mean two trees, and the
+          drawer would lose its scroll position every time the window crossed the breakpoint. */}
       <nav
-        className={`sidebar ${open ? 'open' : ''}`}
+        className={cn(
+          'w-sidebar shrink-0 overflow-y-auto border-r border-border bg-card px-3 pt-5 pb-10',
+          'sticky top-header h-[calc(100vh-var(--spacing-header))]',
+          'max-lg:fixed max-lg:top-0 max-lg:left-0 max-lg:z-200 max-lg:h-screen max-lg:pt-4 max-lg:shadow-pop',
+          'max-lg:-translate-x-full max-lg:transition-transform max-lg:duration-250 motion-reduce:transition-none',
+          'max-md:w-[min(86vw,var(--spacing-sidebar))]',
+          open && 'max-lg:translate-x-0',
+        )}
         aria-label="Main navigation"
         id="sidebar"
       >
-        <div className="sidebar-drawer-head">
-          <span className="sidebar-drawer-title">Menu</span>
-          <button className="sidebar-close" onClick={onClose} aria-label="Close menu">
-            <Icon name="close" />
-          </button>
+        {/* The drawer chrome only exists at the widths where this is a drawer. */}
+        <div className="mb-2.5 hidden items-center justify-between border-b border-border pt-0 pr-1.5 pb-3.5 pl-2.5 max-lg:flex">
+          <span className="text-[13px] font-bold tracking-[0.06em] text-faint uppercase">Menu</span>
+          <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Close menu">
+            <X />
+          </Button>
         </div>
 
-        <div className="sidebar-section">
-          <p className="sidebar-heading">Dictionary</p>
-          <SidebarLink to="/" icon="calendar" label="Word of the day" end />
-          <SidebarLink to="/categories" icon="grid" label="Categories" />
-          <SidebarLink to="/verbs" icon="list" label="Verbs" />
-          <SidebarLink to="/search" icon="search" label="Word search" />
-          <SidebarLink to="/stories" icon="message" label="Stories" />
-          <SidebarLink to="/flashcards" icon="cards" label="Flashcards" badge={due} />
-          <SidebarLink to="/export" icon="download" label="Export to Anki" />
-        </div>
+        <SidebarSection first>
+          <p className={HEADING}>Dictionary</p>
+          <SidebarLink to="/" icon={Calendar} label="Word of the day" end />
+          <SidebarLink to="/categories" icon={LayoutGrid} label="Categories" />
+          <SidebarLink to="/verbs" icon={List} label="Verbs" />
+          <SidebarLink to="/search" icon={Search} label="Word search" />
+          <SidebarLink to="/stories" icon={MessageCircle} label="Stories" />
+          <SidebarLink to="/flashcards" icon={WalletCards} label="Flashcards" badge={due} />
+          <SidebarLink to="/export" icon={Download} label="Export to Anki" />
+        </SidebarSection>
 
-        <div className="sidebar-section">
-          <p className="sidebar-heading">Grammar</p>
-          <SidebarLink to="/grammar" icon="book" label="Overview" end />
+        <SidebarSection>
+          <p className={HEADING}>Grammar</p>
+          <SidebarLink to="/grammar" icon={BookOpen} label="Overview" end />
           {grammarGroups.map(group => (
-            <div key={group.id} className="sidebar-subsection">
-              <p className="sidebar-subheading">{group.label}</p>
+            <div key={group.id} className="mt-3">
+              <p className="mb-1 px-2.5 text-[11px] font-semibold text-faint">{group.label}</p>
               {group.topics.map(topic => (
                 <SidebarLink
                   key={topic.id}
@@ -82,19 +125,19 @@ function Sidebar({ open, onClose }: SidebarProps) {
               ))}
             </div>
           ))}
-        </div>
+        </SidebarSection>
 
         {/* Last, and only for an admin. Editing is a different job from learning, and putting
             it above the grammar topics would make it look like part of the app everyone uses. */}
         {isAdmin && (
-          <div className="sidebar-section">
-            <p className="sidebar-heading">Admin</p>
-            <SidebarLink to="/admin" icon="sliders" label="Overview" end />
-            <SidebarLink to="/admin/words" icon="type" label="Words" />
-            <SidebarLink to="/admin/verbs" icon="table" label="Verbs" />
-            <SidebarLink to="/admin/stories" icon="message" label="Stories" />
-            <SidebarLink to="/admin/users" icon="users" label="Admins" />
-          </div>
+          <SidebarSection>
+            <p className={HEADING}>Admin</p>
+            <SidebarLink to="/admin" icon={SlidersHorizontal} label="Overview" end />
+            <SidebarLink to="/admin/words" icon={Type} label="Words" />
+            <SidebarLink to="/admin/verbs" icon={Table} label="Verbs" />
+            <SidebarLink to="/admin/stories" icon={MessageCircle} label="Stories" />
+            <SidebarLink to="/admin/users" icon={Users} label="Admins" />
+          </SidebarSection>
         )}
 
       </nav>
@@ -104,7 +147,7 @@ function Sidebar({ open, onClose }: SidebarProps) {
 
 interface SidebarLinkProps {
   to: string;
-  icon: IconName;
+  icon: LucideIcon;
   label: string;
   end?: boolean;
   sub?: boolean;
@@ -126,18 +169,30 @@ interface SidebarLinkProps {
  * And `NavLink` compares `to` against the real URL, so an unprefixed link never marks itself
  * active however well the navigation lands.
  */
-function SidebarLink({ to, icon, label, end = false, sub = false, badge = 0 }: SidebarLinkProps) {
+function SidebarLink({ to, icon: Icon, label, end = false, sub = false, badge = 0 }: SidebarLinkProps) {
   return (
     <NavLink
       to={`/${lang()}${to === '/' ? '' : to}`}
       end={end}
       className={({ isActive }) =>
-        `sidebar-link ${sub ? 'sidebar-link-sub' : ''} ${isActive ? 'active' : ''}`
+        cn(
+          'flex items-center gap-2.5 rounded-sm px-2.5 py-2 text-[14.5px] font-medium transition-colors',
+          'text-muted-foreground hover:bg-muted hover:text-foreground',
+          sub && 'pl-3.5 text-[13.5px]',
+          isActive && 'bg-primary-light font-semibold text-primary hover:bg-primary-light hover:text-primary',
+        )
       }
     >
-      <Icon name={icon} size={sub ? 16 : 18} />
+      <Icon className={cn('shrink-0', sub ? 'size-4' : 'size-[18px]')} aria-hidden="true" />
       <span>{label}</span>
-      {badge > 0 && <span className="sidebar-badge" title={`${badge} cards due`}>{badge}</span>}
+      {badge > 0 && (
+        <span
+          className="ml-auto min-w-[22px] rounded-full bg-primary px-1.5 py-px text-center text-[11px] font-bold tabular-nums text-primary-foreground"
+          title={`${badge} cards due`}
+        >
+          {badge}
+        </span>
+      )}
     </NavLink>
   );
 }

@@ -6,6 +6,14 @@
     "moduleResolution": "bundler",
     "moduleDetection": "force",
     "jsx": "react-jsx",
+
+    // Mirrors the `resolve.alias` entry in vite.config.ts. shadcn's components are published
+    // importing themselves through it, so the alias has to exist for them to compile.
+    // No `baseUrl`: TypeScript 7 removed it, and paths now resolve against this file.
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
     "useDefineForClassFields": true,
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,

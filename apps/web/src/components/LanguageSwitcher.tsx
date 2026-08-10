@@ -11,15 +11,17 @@
 // rebuilding mid-render against data whose ids do not resolve. A reload takes the app back
 // through Boot, which is the one place designed to wait for a dictionary to arrive.
 //
-// A native <select> rather than a custom menu: it is one element, it is keyboard-navigable and
-// screen-reader-labelled without any work, and on a phone it opens the platform picker instead
-// of a div pretending to be one. The arrow and the framing are ours; the behaviour is the
-// browser's.
+// A native <select> rather than a custom menu — including rather than the shadcn Select the
+// rest of this app uses. It is one element, it is keyboard-navigable and screen-reader-labelled
+// without any work, and on a phone it opens the platform picker instead of a div pretending to
+// be one. The arrow and the framing are ours; the behaviour is the browser's. Everywhere the
+// options are ours to draw, Select is the better control; this is the one place they are not.
 
-import { isAdminOnlyLang, type Lang } from '@georgian/shared/grammar';
-import { lang as currentLang, languages } from '../content/store';
-import { swapLang } from '../content/lang';
-import { useIsAdmin } from '../admin/useAdmin';
+import { ChevronDown } from "lucide-react";
+import { isAdminOnlyLang, type Lang } from "@georgian/shared/grammar";
+import { lang as currentLang, languages } from "../content/store";
+import { swapLang } from "../content/lang";
+import { useIsAdmin } from "../admin/useAdmin";
 
 /**
  * Purely decorative, and deliberately not in the `languages` table.
@@ -31,8 +33,8 @@ import { useIsAdmin } from '../admin/useAdmin';
  * option on its own: Windows has no flag glyphs and shows the two letters instead.
  */
 const FLAG: Record<Lang, string> = {
-  ka: '🇬🇪',
-  ru: '🇷🇺',
+  ka: "🇬🇪",
+  ru: "🇷🇺",
 };
 
 export default function LanguageSwitcher() {
@@ -50,7 +52,7 @@ export default function LanguageSwitcher() {
   // says yet — a select whose value names no option renders blank, and only an admin can be
   // reading an unreleased one in the first place.
   const available = languages().filter(
-    entry => entry.enabled && (isAdmin || !isAdminOnlyLang(entry.id) || entry.id === here),
+    (entry) => entry.enabled && (isAdmin || !isAdminOnlyLang(entry.id) || entry.id === here),
   );
 
   // Nothing to switch between. The control disappears rather than sitting there disabled: a
@@ -64,25 +66,30 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div className="lang-switcher">
-      <span className="lang-flag" aria-hidden="true">
+    <div className="relative inline-flex h-8.5 items-center gap-1.5 rounded-sm border border-border bg-card pr-6.5 pl-2.5 text-foreground hover:border-border-strong">
+      {/* Windows has no flag glyphs and falls back to two letters. Fixing the width stops the
+          control jumping between platforms, and between languages on the same one. */}
+      <span className="min-w-[1.3em] text-center text-[1.05rem] leading-none" aria-hidden="true">
         {FLAG[here]}
       </span>
+      {/* Laid over the whole control so the entire thing is the hit target, and transparent so
+          what shows through is the flag and caret above. `appearance-none` is what removes the
+          platform chrome without removing the platform behaviour. The open menu is drawn by the
+          OS, which does not inherit the page's colours — so the options are given them
+          explicitly or a dark theme shows black text on black. */}
       <select
-        className="lang-select"
+        className="absolute inset-0 w-full cursor-pointer appearance-none rounded-sm border-0 bg-transparent pr-6.5 pl-8.5 font-[inherit] text-[0.85rem] text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current [&>option]:bg-popover [&>option]:text-popover-foreground"
         value={here}
-        onChange={event => go(event.target.value as Lang)}
+        onChange={(event) => go(event.target.value as Lang)}
         aria-label="Dictionary language"
       >
-        {available.map(entry => (
+        {available.map((entry) => (
           <option key={entry.id} value={entry.id}>
             {FLAG[entry.id]} {entry.nativeName}
           </option>
         ))}
       </select>
-      <svg className="lang-caret" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
-        <path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <ChevronDown className="pointer-events-none absolute right-2 size-3 text-faint" aria-hidden="true" />
     </div>
   );
 }

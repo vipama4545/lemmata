@@ -8,13 +8,30 @@
 //
 // Signed in it collapses to the username, with everything else behind it.
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Check, ChevronDown, RotateCcw, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { flushNow, setSyncUser } from '../study/sync';
 import { DELETED_FLAG, signOut, useSession } from '../api/client';
 import DeleteAccountDialog from './DeleteAccountDialog';
 import SignInDialog from './SignInDialog';
 import type { SignInMode } from './SignInDialog';
-import Icon from './Icon';
+import { KNOW_BUTTON } from './StoryReader';
 
 /**
  * What went wrong with a link that was followed but not accepted.
@@ -34,17 +51,21 @@ function describeLinkError(code: string): string {
   }
 }
 
+/* Everything in this first group sits on the header's dark gradient rather than on a
+   surface, so the colours are white at low alpha rather than the theme's own. The slot
+   holds its height while the session resolves, so the header does not jump when two
+   buttons turn into a username. */
+const SLOT = 'relative flex min-h-9 items-center gap-2 max-md:min-h-0';
+
 export default function Account() {
   const { data: session, isPending } = useSession();
   const user = session?.user ?? null;
 
   const [dialog, setDialog] = useState<SignInMode | null>(null);
   const [linkError, setLinkError] = useState<string | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleted, setDeleted] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   // The only caller of setSyncUser. Everything about syncing hangs off this one line: it
   // starts on sign-in, reconciles the two stores, and stops on sign-out.
@@ -90,23 +111,6 @@ export default function Account() {
     globalThis.history.replaceState(null, '', `${pathname}${query ? `?${query}` : ''}${hash}`);
   }, []);
 
-  // Click anywhere else, or press Escape, and the signed-in menu closes.
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onDown = (event: MouseEvent) => {
-      if (!menuRef.current?.contains(event.target as Node)) setMenuOpen(false);
-    };
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false);
-    };
-    document.addEventListener('mousedown', onDown);
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onDown);
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [menuOpen]);
-
   const close = () => {
     setDialog(null);
     setLinkError(null);
@@ -114,96 +118,105 @@ export default function Account() {
 
   // Nothing at all until the session resolves. A pair of sign-in buttons that appear for a
   // moment and then turn into a username is worse than a beat of empty space.
-  if (isPending) return <div className="account-slot" />;
+  if (isPending) return <div className={SLOT} />;
 
   if (!user) {
     return (
-      <div className="account-slot">
-        <button className="account-btn account-btn-ghost" onClick={() => setDialog('signin')}>
+      <div className={SLOT}>
+        {/* Sign in is the quieter of the two: it is for people who already know they have an
+            account, and they are not the ones who need to be able to find it. */}
+        <Button variant="header" className={ACCOUNT_BUTTON} onClick={() => setDialog('signin')}>
           Sign in
-        </button>
-        <button className="account-btn account-btn-solid" onClick={() => setDialog('signup')}>
+        </Button>
+        <Button
+          className={`${ACCOUNT_BUTTON} border-2 border-white bg-white text-[#0f172a] hover:border-[#dbeafe] hover:bg-[#dbeafe]`}
+          onClick={() => setDialog('signup')}
+        >
           Sign up
-        </button>
-        {dialog ? <SignInDialog mode={dialog} initialError={linkError} onClose={close} /> : null}
+        </Button>
+        <SignInDialog
+          open={dialog !== null}
+          mode={dialog ?? 'signin'}
+          initialError={linkError}
+          onClose={close}
+        />
         {/* Shown signed out, which is the only state it can be shown in — the account it is
             reporting on no longer exists. */}
-        {deleted ? <DeletedNotice onClose={() => setDeleted(false)} /> : null}
+        <DeletedNotice open={deleted} onClose={() => setDeleted(false)} />
       </div>
     );
   }
 
   return (
-    <div className="account-slot" ref={menuRef}>
-      <button
-        className="account-chip"
-        onClick={() => setMenuOpen(open => !open)}
-        aria-haspopup="menu"
-        aria-expanded={menuOpen}
-      >
-        {user.image ? (
-          <img className="account-avatar" src={user.image} alt="" width={26} height={26} />
-        ) : (
-          <span className="account-avatar account-avatar-blank">
-            <Icon name="users" size={14} />
-          </span>
-        )}
-        {/* The username as the provider gave it, or the one taken off the front of the
-            address for an account that came in by mail. There is no other name here. */}
-        <span className="account-chip-name">{user.name}</span>
-        <Icon name="chevron" size={14} />
-      </button>
+    <div className={SLOT}>
+      {/* A DropdownMenu rather than a div and a mousedown listener: dismissal, Escape, focus
+          return and the menu roles are the parts that were hand-written here before. */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="flex max-w-50 cursor-pointer items-center gap-2 rounded-full border-2 border-white/20 bg-white/5 py-[5px] pr-2.5 pl-1.5 text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/15">
+            {user.image ? (
+              <img
+                className="size-6.5 shrink-0 rounded-full object-cover"
+                src={user.image}
+                alt=""
+                width={26}
+                height={26}
+              />
+            ) : (
+              <span className="grid size-6.5 shrink-0 place-items-center rounded-full bg-white/12 text-white/70">
+                <Users className="size-3.5" aria-hidden="true" />
+              </span>
+            )}
+            {/* The username as the provider gave it, or the one taken off the front of the
+                address for an account that came in by mail. There is no other name here. */}
+            <span className="truncate">{user.name}</span>
+            <ChevronDown className="size-3.5 shrink-0" aria-hidden="true" />
+          </button>
+        </DropdownMenuTrigger>
 
-      {menuOpen ? (
-        <div className="account-menu" role="menu">
-          <p className="account-menu-who">
-            <span className="account-menu-name">{user.name}</span>
+        {/* The menu leaves the header's dark band, so from here down it is theme colours. */}
+        <DropdownMenuContent align="end" className="min-w-55 rounded-sm shadow-pop">
+          <div className="flex flex-col gap-0.5 px-2.5 pt-2 pb-1.5">
+            <span className="truncate text-[13px] font-semibold text-foreground">{user.name}</span>
             {/* Your own, in full. Saying which account you are signed in as is the whole job
                 of this line. Other people's addresses are masked wherever they appear, which
                 is the admin user list and nowhere else. */}
-            <span className="account-menu-email">{user.email}</span>
-          </p>
-          <p className="account-menu-status">
-            <Icon name="refresh" size={13} />
+            <span className="text-[11px] wrap-anywhere text-faint">{user.email}</span>
+          </div>
+          <div className="flex items-center gap-1.5 px-2.5 pb-2 text-[11px] text-faint">
+            <RotateCcw className="size-3" aria-hidden="true" />
             <span>Progress is syncing</span>
-          </p>
-          <button
-            className="account-menu-item"
-            role="menuitem"
+          </div>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
             disabled={busy}
-            onClick={() => {
+            onSelect={event => {
+              event.preventDefault();
               setBusy(true);
               // Whatever has not reached the server yet goes now — signing out is exactly
               // when an unflushed answer would be lost for good.
               flushNow();
-              void signOut().finally(() => {
-                setBusy(false);
-                setMenuOpen(false);
-              });
+              void signOut().finally(() => setBusy(false));
             }}
           >
             {busy ? 'Signing out…' : 'Sign out'}
-          </button>
+          </DropdownMenuItem>
 
           {/* Last, under a rule, and the only red thing in here. It is the one irreversible
               action in the app and should not sit a pixel from Sign out. */}
-          <button
-            className="account-menu-item is-danger"
-            role="menuitem"
-            onClick={() => {
-              setMenuOpen(false);
-              setDeleting(true);
-            }}
-          >
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onSelect={() => setDeleting(true)}>
             Delete account
-          </button>
-        </div>
-      ) : null}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {deleting ? <DeleteAccountDialog email={user.email} onClose={() => setDeleting(false)} /> : null}
     </div>
   );
 }
+
+const ACCOUNT_BUTTON = 'h-auto rounded-sm px-3.5 py-[7px] text-[13px] font-semibold whitespace-nowrap';
 
 /**
  * What you come back to after following the confirmation link.
@@ -212,45 +225,29 @@ export default function Account() {
  * showing Sign in / Sign up again — indistinguishable from having been signed out, which is
  * a poor way to learn that something irreversible worked.
  */
-function DeletedNotice({ onClose }: { onClose: () => void }) {
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
+function DeletedNotice({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="modal-content danger-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Account deleted"
-        onClick={event => event.stopPropagation()}
-      >
-        <button className="modal-close" onClick={onClose} aria-label="Close">
-          <Icon name="close" />
-        </button>
-
-        <h2>Your account has been deleted</h2>
-        <p className="danger-lead">
-          The account and every review record on it are gone, and so is the address we had.
-          Nothing is left to sign back in to.
-        </p>
-        <p className="danger-note">
+    <Dialog open={open} onOpenChange={next => { if (!next) onClose(); }}>
+      <DialogContent className="max-w-130 rounded-lg p-6 text-left">
+        <DialogHeader className="text-left">
+          <DialogTitle className="text-xl">Your account has been deleted</DialogTitle>
+          <DialogDescription className="text-[14.5px] leading-relaxed text-foreground">
+            The account and every review record on it are gone, and so is the address we had.
+            Nothing is left to sign back in to.
+          </DialogDescription>
+        </DialogHeader>
+        <p className="text-[13px] leading-relaxed text-muted-foreground">
           Unless you asked for it to be erased too, what this browser knows is still here — so
           the dictionary works exactly as it did, and your progress with it. Signing up again
           later would upload this browser’s copy to the new account.
         </p>
 
-        <div className="danger-actions">
-          <button type="button" className="control-btn know" onClick={onClose}>
-            <Icon name="check" /> Carry on
-          </button>
-        </div>
-      </div>
-    </div>
+        <DialogFooter>
+          <Button variant="control" size="auto" className={KNOW_BUTTON} onClick={onClose}>
+            <Check /> Carry on
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

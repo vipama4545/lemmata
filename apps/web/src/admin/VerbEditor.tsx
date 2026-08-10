@@ -11,13 +11,43 @@
 // clearing a cell and deleting a screeve are two different actions here as well.
 
 import { useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { KaVerbInput } from '@georgian/shared/contract';
 import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar/ka';
 import type { PersonKey, ScreeveKey, KaVerb } from '@georgian/shared/types';
+import { Check } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
+import { KNOW_BUTTON } from '../components/StoryReader';
 import { api } from '../api/client';
-import Icon from '../components/Icon';
 import { kaVerbData } from '../content/store';
+import {
+  ADMIN_INPUT_GEO,
+  AdminActions,
+  AdminError,
+  AdminField,
+  AdminGrid,
+  AdminHead,
+  AdminHint,
+  AdminInput,
+  AdminLabel,
+  AdminNote,
+  AdminPage,
+  AdminSection,
+  AdminSectionTitle,
+  AdminSub,
+  AdminTextarea,
+  AdminTitle,
+} from './ui';
 import { useEdit } from './useAdmin';
 
 type Cells = Record<string, Record<string, string>>;
@@ -100,12 +130,12 @@ function VerbEditor() {
 
   if (verbId && !existing) {
     return (
-      <div className="main-content">
-        <div className="breadcrumb">
-          <Link to="/admin/verbs">← Verbs</Link>
-        </div>
-        <p className="empty-note">There is no paradigm with the id “{verbId}”.</p>
-      </div>
+      <Page>
+        <Breadcrumb>
+          <BreadcrumbLink to="/admin/verbs">← Verbs</BreadcrumbLink>
+        </Breadcrumb>
+        <p className="py-6 text-center text-muted-foreground">There is no paradigm with the id “{verbId}”.</p>
+      </Page>
     );
   }
 
@@ -160,63 +190,63 @@ function VerbEditor() {
   );
 
   return (
-    <div className="main-content admin-page">
-      <div className="breadcrumb">
-        <Link to="/admin/verbs">← Verbs</Link>
-        <span className="breadcrumb-sep">/</span>
+    <AdminPage>
+      <Breadcrumb>
+        <BreadcrumbLink to="/admin/verbs">← Verbs</BreadcrumbLink>
+        <BreadcrumbSeparator />
         <span>{existing ? existing.english : 'New paradigm'}</span>
-      </div>
+      </Breadcrumb>
 
-      <header className="admin-head">
-        <h1 className="admin-title">{existing ? existing.english : 'New paradigm'}</h1>
+      <AdminHead>
+        <AdminTitle>{existing ? existing.english : 'New paradigm'}</AdminTitle>
         {existing && (
-          <p className="admin-sub">
+          <AdminSub>
             <code>{existing.id}</code> · {filled} form(s) filled in
-          </p>
+          </AdminSub>
         )}
-      </header>
+      </AdminHead>
 
-      {error && <p className="admin-error">{error}</p>}
+      {error && <AdminError>{error}</AdminError>}
 
-      <section className="admin-section">
-        <h2 className="admin-section-title">The verb</h2>
+      <AdminSection>
+        <AdminSectionTitle>The verb</AdminSectionTitle>
 
-        <div className="admin-grid">
-          <label className="admin-field">
-            <span className="admin-label">English</span>
-            <input
-              className="admin-input"
+        <AdminGrid>
+          <AdminField>
+            <AdminLabel>English</AdminLabel>
+            <AdminInput
               value={draft.english}
               onChange={event => set('english', event.target.value)}
               placeholder="builds"
             />
-            <span className="admin-hint">A new paradigm’s id is slugged from this and never changes after.</span>
-          </label>
+            <AdminHint>A new paradigm’s id is slugged from this and never changes after.</AdminHint>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Present 3sg</span>
-            <input
-              className="admin-input admin-input-geo"
+          <AdminField>
+            <AdminLabel>Present 3sg</AdminLabel>
+            <AdminInput
+              className={ADMIN_INPUT_GEO}
               value={draft.present3sg}
               onChange={event => set('present3sg', event.target.value)}
               placeholder="აშენებს"
             />
-          </label>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Verbal noun</span>
-            <input
-              className="admin-input admin-input-geo"
+          <AdminField>
+            <AdminLabel>Verbal noun</AdminLabel>
+            <AdminInput
+              className={ADMIN_INPUT_GEO}
               value={draft.verbalNoun}
               onChange={event => set('verbalNoun', event.target.value)}
               placeholder="შენება"
             />
-          </label>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Transitivity</span>
-            <input
-              className="admin-input"
+          <AdminField>
+            <AdminLabel>Transitivity</AdminLabel>
+            {/* A datalist rather than a Select: these three are the usual answers, not the
+                only legal ones. */}
+            <AdminInput
               list="admin-transitivity"
               value={draft.transitivity}
               onChange={event => set('transitivity', event.target.value)}
@@ -227,85 +257,96 @@ function VerbEditor() {
               <option value="v.i." />
               <option value="v.t.i." />
             </datalist>
-          </label>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Conjugation group</span>
-            <select className="admin-input" value={draft.groupId} onChange={event => set('groupId', event.target.value)}>
-              <option value="">None</option>
-              {groups.map(group => (
-                <option key={group.id} value={group.id}>
-                  {group.label} {group.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <AdminField>
+            <AdminLabel>Conjugation group</AdminLabel>
+            {/* An empty string is not a legal Radix Select value, so "no group" travels as a
+                sentinel and is mapped back at both edges. */}
+            <Select
+              value={draft.groupId || NO_GROUP}
+              onValueChange={value => set('groupId', value === NO_GROUP ? '' : value)}
+            >
+              <SelectTrigger className={SELECT}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NO_GROUP}>None</SelectItem>
+                {groups.map(group => (
+                  <SelectItem key={group.id} value={group.id}>
+                    {group.label} {group.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Source URL</span>
-            <input className="admin-input" value={draft.url} onChange={event => set('url', event.target.value)} />
-          </label>
-        </div>
+          <AdminField>
+            <AdminLabel>Source URL</AdminLabel>
+            <AdminInput value={draft.url} onChange={event => set('url', event.target.value)} />
+          </AdminField>
+        </AdminGrid>
 
-        <div className="admin-grid">
-          <label className="admin-field">
-            <span className="admin-label">Other senses</span>
-            <textarea
-              className="admin-input admin-textarea"
+        <AdminGrid className="mb-0 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
+          <AdminField>
+            <AdminLabel>Other senses</AdminLabel>
+            <AdminTextarea
               rows={3}
               value={draft.senses}
               onChange={event => set('senses', event.target.value)}
               placeholder={'One per line.\nEach carries its own preverb where they differ.'}
             />
-          </label>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">English synonyms</span>
-            <textarea
-              className="admin-input admin-textarea"
+          <AdminField>
+            <AdminLabel>English synonyms</AdminLabel>
+            <AdminTextarea
               rows={3}
               value={draft.synonymsEnglish}
               onChange={event => set('synonymsEnglish', event.target.value)}
               placeholder="One per line."
             />
-          </label>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Georgian synonyms</span>
-            <textarea
-              className="admin-input admin-textarea admin-input-geo"
+          <AdminField>
+            <AdminLabel>Georgian synonyms</AdminLabel>
+            <AdminTextarea
+              className={ADMIN_INPUT_GEO}
               rows={3}
               value={draft.synonymsGeorgian}
               onChange={event => set('synonymsGeorgian', event.target.value)}
               placeholder="One per line."
             />
-          </label>
-        </div>
-      </section>
+          </AdminField>
+        </AdminGrid>
+      </AdminSection>
 
-      <section className="admin-section">
-        <h2 className="admin-section-title">The paradigm</h2>
-        <p className="admin-note">
+      <AdminSection>
+        <AdminSectionTitle>The paradigm</AdminSectionTitle>
+        <AdminNote>
           A screeve that is switched off does not inflect at all; a screeve that is on with empty cells is one
           the source has a gap in. Those are different things and the reader shows them differently, so
           clearing a cell is not the same as switching a screeve off.
-        </p>
+        </AdminNote>
 
         {SERIES.map(series => (
-          <div key={series.id} className="admin-series">
-            <h3 className="admin-series-title">
-              Series {series.id} <span className="admin-series-label">{series.label}</span>
+          <div key={series.id} className="mb-6">
+            <h3 className={SERIES_TITLE}>
+              Series {series.id} <span className={SERIES_LABEL}>{series.label}</span>
             </h3>
 
-            <div className="admin-table-scroll">
-              <table className="admin-paradigm">
+            {/* Seven columns do not fit a phone, so the table scrolls inside its own box
+                rather than pushing the page sideways — the same treatment the verb pages
+                give a paradigm. */}
+            <div className={TABLE_SCROLL}>
+              <table className={PARADIGM}>
                 <thead>
                   <tr>
-                    <th className="admin-paradigm-screeve">Screeve</th>
+                    <th className={SCREEVE_CELL}>Screeve</th>
                     {PERSONS.map(person => (
-                      <th key={person.key}>
-                        <span className="admin-person">{person.label}</span>
-                        <span className="admin-person-pronoun">{person.pronoun}</span>
+                      <th key={person.key} className={PERSON_HEAD}>
+                        <span className="block">{person.label}</span>
+                        <span className="block text-xs font-normal text-faint">{person.pronoun}</span>
                       </th>
                     ))}
                   </tr>
@@ -314,20 +355,24 @@ function VerbEditor() {
                   {SCREEVES.filter(screeve => series.screeves.includes(screeve.key)).map(screeve => {
                     const cells = draft.forms[screeve.key];
                     return (
-                      <tr key={screeve.key} className={cells ? '' : 'is-off'}>
-                        <th className="admin-paradigm-screeve">
-                          <label className="check admin-screeve-toggle">
-                            <input type="checkbox" checked={Boolean(cells)} onChange={() => toggleScreeve(screeve.key)} />
+                      <tr key={screeve.key}>
+                        <th className={cn(SCREEVE_CELL, !cells && 'font-normal text-faint')}>
+                          <label className="flex cursor-pointer items-start gap-2 text-[13px]">
+                            <Checkbox
+                              className="mt-0.5"
+                              checked={Boolean(cells)}
+                              onCheckedChange={() => toggleScreeve(screeve.key)}
+                            />
                             <span>
                               {screeve.label}
-                              <span className="admin-screeve-gloss">{screeve.gloss}</span>
+                              <span className="block text-[11.5px] font-normal text-faint">{screeve.gloss}</span>
                             </span>
                           </label>
                         </th>
                         {PERSONS.map(person => (
-                          <td key={person.key}>
+                          <td key={person.key} className={CELL_WRAP}>
                             <input
-                              className="admin-cell admin-input-geo"
+                              className={CELL}
                               value={cells?.[person.key] ?? ''}
                               disabled={!cells}
                               onChange={event => setCell(screeve.key, person.key, event.target.value)}
@@ -344,20 +389,20 @@ function VerbEditor() {
           </div>
         ))}
 
-        <div className="admin-series">
-          <h3 className="admin-series-title">
-            Commands <span className="admin-series-label">not screeves, and with no first person singular</span>
+        <div className="mb-6">
+          <h3 className={SERIES_TITLE}>
+            Commands <span className={SERIES_LABEL}>not screeves, and with no first person singular</span>
           </h3>
 
-          <div className="admin-table-scroll">
-            <table className="admin-paradigm">
+          <div className={TABLE_SCROLL}>
+            <table className={PARADIGM}>
               <thead>
                 <tr>
-                  <th className="admin-paradigm-screeve">Form</th>
+                  <th className={SCREEVE_CELL}>Form</th>
                   {COMMAND_PERSONS.map(person => (
-                    <th key={person.key}>
-                      <span className="admin-person">{person.label}</span>
-                      <span className="admin-person-pronoun">{person.pronoun}</span>
+                    <th key={person.key} className={PERSON_HEAD}>
+                      <span className="block">{person.label}</span>
+                      <span className="block text-xs font-normal text-faint">{person.pronoun}</span>
                     </th>
                   ))}
                 </tr>
@@ -365,14 +410,16 @@ function VerbEditor() {
               <tbody>
                 {(['imperative', 'prohibitive'] as const).map(kind => (
                   <tr key={kind}>
-                    <th className="admin-paradigm-screeve">
+                    <th className={SCREEVE_CELL}>
                       {kind === 'imperative' ? 'Imperative' : 'Prohibitive'}
-                      <span className="admin-screeve-gloss">{kind === 'imperative' ? 'do it' : 'do not do it'}</span>
+                      <span className="block text-[11.5px] font-normal text-faint">
+                        {kind === 'imperative' ? 'do it' : 'do not do it'}
+                      </span>
                     </th>
                     {COMMAND_PERSONS.map(person => (
-                      <td key={person.key}>
+                      <td key={person.key} className={CELL_WRAP}>
                         <input
-                          className="admin-cell admin-input-geo"
+                          className={CELL}
                           value={draft[kind][person.key] ?? ''}
                           onChange={event => set(kind, { ...draft[kind], [person.key]: event.target.value })}
                           aria-label={`${kind} ${person.label}`}
@@ -385,33 +432,56 @@ function VerbEditor() {
             </table>
           </div>
         </div>
-      </section>
+      </AdminSection>
 
-      <div className="admin-actions">
-        <button type="button" className="control-btn know" disabled={!draft.english.trim() || busy} onClick={save}>
-          <Icon name="check" /> {busy ? 'Saving…' : existing ? 'Save changes' : 'Create paradigm'}
-        </button>
+      <AdminActions>
+        <Button
+          variant="control"
+          size="auto"
+          className={KNOW_BUTTON}
+          disabled={!draft.english.trim() || busy}
+          onClick={save}
+        >
+          <Check /> {busy ? 'Saving…' : existing ? 'Save changes' : 'Create paradigm'}
+        </Button>
 
         {existing && !confirmDelete && (
-          <button type="button" className="admin-danger-btn" disabled={busy} onClick={() => setConfirmDelete(true)}>
+          <Button variant="dangerOutline" size="auto" disabled={busy} onClick={() => setConfirmDelete(true)}>
             Delete
-          </button>
+          </Button>
         )}
         {existing && confirmDelete && (
-          <span className="admin-confirm">
+          <span className="flex flex-wrap items-center gap-2.5 text-sm">
             Delete this paradigm?
-            <button type="button" className="admin-danger-btn" disabled={busy} onClick={remove}>
+            <Button variant="dangerOutline" size="auto" disabled={busy} onClick={remove}>
               Yes, delete
-            </button>
-            <button type="button" className="control-btn" onClick={() => setConfirmDelete(false)}>
+            </Button>
+            <Button variant="control" size="auto" onClick={() => setConfirmDelete(false)}>
               Cancel
-            </button>
+            </Button>
           </span>
         )}
-      </div>
-    </div>
+      </AdminActions>
+    </AdminPage>
   );
 }
+
+const NO_GROUP = '__none__';
+const SELECT =
+  'h-auto w-full rounded-sm border border-border-strong bg-background py-2.5 text-sm shadow-none data-[size=default]:h-auto';
+const SERIES_TITLE = 'mb-2 text-sm font-bold';
+const SERIES_LABEL = 'ml-1.5 text-[12.5px] font-normal text-faint';
+const TABLE_SCROLL = 'overflow-x-auto rounded-sm border border-border';
+const PARADIGM = 'w-full min-w-[720px] border-collapse';
+const PERSON_HEAD = 'border-b border-border bg-muted px-2 py-1.5 text-left text-[11.5px] font-semibold';
+const SCREEVE_CELL = 'min-w-[170px] border-b border-border px-2 py-1.5 text-left text-[13px] font-semibold';
+const CELL_WRAP = 'border-b border-border px-2 py-1.5';
+/* Borderless until focused: a grid of 66 outlined boxes reads as a wall, and the row and
+   column rules already say where each cell is. */
+const CELL =
+  'w-full min-w-[92px] rounded-[6px] border border-transparent bg-background px-2 py-1.5 font-[inherit] text-[15px] ' +
+  'focus:border-primary focus:shadow-[0_0_0_2px_var(--primary-glow)] focus:outline-none ' +
+  'disabled:cursor-not-allowed disabled:bg-transparent';
 
 export type { PersonKey, ScreeveKey };
 export default VerbEditor;

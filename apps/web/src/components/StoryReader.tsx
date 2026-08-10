@@ -1,7 +1,23 @@
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
+import { ArrowRight, Check, Eye, EyeOff, Flag, Layers, Link2, SlidersHorizontal } from "lucide-react";
 import type { Story, StoryToken } from "@georgian/shared/types";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { MORPHEME_CLASS } from "@/components/ui/morpheme";
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from "@/components/ui/page";
+import { Dot, LEGEND_ASIDE, StudyLegend, StudyMeter } from "@/components/ui/study-meter";
+import { LevelBadge, PosTag } from "@/components/ui/word-card";
+import { cn } from "@/lib/utils";
 import { useIsAdmin } from "../admin/useAdmin";
 import { replaceStory, useStory } from "../data/stories";
 import { at, headword, isLinked, meaning, pieces, reading } from "../utils/story";
@@ -13,7 +29,6 @@ import { KNOWN, masteryAttr } from "../study/mastery";
 import { forgetItem, markUnseenKnown, readingMastery, setItemMastery, useProgress } from "../study/store";
 import type { Progress } from "../study/store";
 import { MasteryPicker } from "./Mastery";
-import Icon from "./Icon";
 import { lang } from '../content/store';
 
 // Only ever rendered for an admin who has turned editing on, so it rides in the admin chunk
@@ -30,6 +45,9 @@ const OPEN_DELAY = 140;
 // Covers the gap between leaving the word and reaching the card below it.
 const CLOSE_DELAY = 180;
 
+/** The panel under the controls: the progress bar, or the legend that replaces it. */
+const PANEL = "mt-4 flex flex-col gap-2 rounded-sm border border-border bg-card px-3.5 py-3";
+
 /** Which occurrence is open, and the rectangle it was measured at. */
 interface Selection {
   token: StoryToken;
@@ -43,6 +61,75 @@ interface Editing {
   token: StoryToken;
   paragraph: number;
   position: number;
+}
+
+/**
+ * The classes on a word in reading mode.
+ *
+ * Words stay plain spans so a paragraph selects and copies like ordinary text. Only the
+ * underline and the pointer are added when lookup is on; nothing about the element itself
+ * changes, which is what keeps selection working in both modes.
+ *
+ * The tint for a level is a background rather than an outline, so a paragraph still reads as
+ * a paragraph: the colour is behind the word and the text keeps its own weight and hue. A
+ * word marked Known loses its tint entirely — the reward for learning the page is that the
+ * page quiets down, and by the end of a story it should be mostly plain prose again.
+ */
+function wordClasses({
+  live,
+  name,
+  graded,
+  open,
+}: {
+  live: boolean;
+  name: boolean;
+  graded: boolean;
+  open: boolean;
+}) {
+  return cn(
+    live && "cursor-help border-b border-dotted border-border-strong transition-colors duration-100",
+    live && "hover:border-primary hover:bg-primary-glow",
+    live && "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+    // Proper names are looked up like any other word, but they are story furniture rather
+    // than vocabulary — nothing to learn and no entry to open. A solid, fainter rule says as
+    // much without breaking the run of dotted underlines the eye reads past.
+    live && name && "border-solid border-border",
+    graded && [
+      "-mx-px rounded-[3px] px-0.5 py-px",
+      "bg-[color-mix(in_srgb,var(--m)_15%,transparent)]",
+      "shadow-[inset_0_-2px_0_color-mix(in_srgb,var(--m)_45%,transparent)]",
+      "data-[mastery=6]:bg-transparent data-[mastery=6]:shadow-none",
+    ],
+    graded && live && "hover:bg-[color-mix(in_srgb,var(--m)_38%,transparent)]",
+    open && "border-primary bg-primary-light",
+  );
+}
+
+/**
+ * The classes on a word while an admin is editing links.
+ *
+ * Four states, and they are four different jobs. Nothing matched is a missing lemma or a
+ * proper noun; a guess wants a read-through; a name and a pin are already decided and are
+ * marked so they can be told from the resolver's own work at a glance.
+ *
+ * They are listed in order of who wins rather than as exclusive branches, because they are
+ * not exclusive: a name can be marked as a guess, and a pinned link usually is not but may
+ * be. Pinned beats plain — a word somebody has already settled drops its underline, so what
+ * is left underlined is exactly what still wants a decision. A doubt then beats being
+ * pinned: a link flagged "come back to this" is the one case where a decided word should
+ * still catch the eye, which is the whole point of the flag.
+ */
+function editableClasses(token: StoryToken, open: boolean) {
+  return cn(
+    "cursor-pointer rounded-[3px] border-0 border-b-2 border-border-strong bg-transparent px-px font-[inherit] text-inherit",
+    "hover:border-b-primary hover:bg-primary-glow",
+    "focus-visible:border-b-primary focus-visible:bg-primary-glow focus-visible:outline-none",
+    token.name && "border-b-m-unseen bg-[color-mix(in_srgb,var(--m-unseen)_12%,transparent)]",
+    !token.name && !token.word && "border-b-m-1 bg-[color-mix(in_srgb,var(--m-1)_12%,transparent)]",
+    (token.via === "name" || token.via.startsWith("override")) && "border-b-transparent",
+    token.check && "border-b-m-3 border-dashed bg-[color-mix(in_srgb,var(--m-3)_14%,transparent)]",
+    open && "border-b-primary bg-primary-light",
+  );
 }
 
 // A story with its words linked to the dictionary, and coloured by how well you know them.
@@ -150,18 +237,18 @@ function StoryReader() {
 
   if (loading || error || !story) {
     return (
-      <div className="main-content">
-        <div className="breadcrumb">
-          <Link to={`/${lang()}/stories`}>← Stories</Link>
-        </div>
-        <p className="empty-note">
+      <Page>
+        <Breadcrumb>
+          <BreadcrumbLink to={`/${lang()}/stories`}>← Stories</BreadcrumbLink>
+        </Breadcrumb>
+        <p className="py-6 text-center text-muted-foreground">
           {loading
             ? 'Loading the story…'
             : error
               ? 'That story could not be loaded. Check your connection and try again.'
               : 'That story does not exist.'}
         </p>
-      </div>
+      </Page>
     );
   }
 
@@ -192,16 +279,6 @@ function StoryReader() {
       // a proper noun, and both are answered here. Reading mode keeps the old rule: only a
       // word with something to say is interactive.
       if (editing && token) {
-        // The classes are additive rather than a chain of else-ifs, because the states are
-        // not exclusive: a name can be marked as a guess, and a pinned link usually is not
-        // but may be. The stylesheet resolves what wins — see the note there.
-        const classes = ["story-word", "is-editable"];
-        if (token.name) classes.push("is-name");
-        else if (!token.word) classes.push("is-unresolved");
-        if (token.check) classes.push("is-guess");
-        if (token.via === "name" || token.via.startsWith("override")) classes.push("is-pinned");
-        if (selected?.at === key) classes.push("is-open");
-
         // Hovering still opens the real card. Deciding what a word should link to means
         // reading what it links to now — the sense that applies, the other senses, the
         // paradigm behind it — and none of that fits in a title attribute. So editing adds
@@ -211,7 +288,7 @@ function StoryReader() {
           <button
             key={i}
             type="button"
-            className={classes.join(" ")}
+            className={editableClasses(token, selected?.at === key)}
             onClick={() => {
               close();
               setEditingToken({ token, paragraph: p, position: piece.index });
@@ -234,10 +311,12 @@ function StoryReader() {
       return (
         <span
           key={i}
-          className={
-            `story-word${token.name ? " is-name" : ""}${lookup ? " is-live" : ""}` +
-            `${highlight && item ? " is-graded" : ""}${selected?.at === key ? " is-open" : ""}`
-          }
+          className={wordClasses({
+            live: lookup,
+            name: Boolean(token.name),
+            graded: Boolean(highlight && item),
+            open: selected?.at === key,
+          })}
           data-mastery={highlight && item ? masteryAttr(readingMastery(progress, item)) : undefined}
           // Focusable only in lookup mode: 976 stops in the tab order would otherwise sit
           // between the reader and the rest of the page for no gain.
@@ -253,102 +332,104 @@ function StoryReader() {
     });
 
   return (
-    <div className="main-content">
-      <div className="breadcrumb">
-        <Link to={`/${lang()}/stories`}>← Stories</Link>
-        <span className="breadcrumb-sep">/</span>
+    <Page>
+      <Breadcrumb>
+        <BreadcrumbLink to={`/${lang()}/stories`}>← Stories</BreadcrumbLink>
+        <BreadcrumbSeparator />
         <span>{story.titleEnglish || story.title}</span>
-      </div>
+      </Breadcrumb>
 
-      <header className="story-head">
-        <h1 className="story-title">{story.title}</h1>
-        {story.titleEnglish && <p className="story-title-en">{story.titleEnglish}</p>}
-        <div className="story-meta">
-          {story.level && <span className={`level-badge ${story.level.toLowerCase()}`}>{story.level}</span>}
-          <span className="story-stat">{story.stats.tokens} words</span>
-          <span className="story-stat">{story.stats.coverage}% linked</span>
+      <header className="mb-7">
+        <h1 className="text-3xl font-bold max-md:text-2xl">{story.title}</h1>
+        {story.titleEnglish && <p className="mt-1 text-muted-foreground">{story.titleEnglish}</p>}
+        <div className="mt-3 flex flex-wrap items-center gap-2.5">
+          {story.level && <LevelBadge level={story.level} />}
+          <span className="text-xs text-faint">{story.stats.tokens} words</span>
+          <span className="text-xs text-faint">{story.stats.coverage}% linked</span>
         </div>
 
-        <div className="story-controls">
-          <button
-            type="button"
-            className={`toggle-btn${lookup ? " is-on" : ""}`}
-            onClick={() => setLookup((on) => !on)}
-            aria-pressed={lookup}
-          >
-            <Icon name={lookup ? "eye" : "eye-off"} size={16} />
+        <div className="mt-4 flex flex-wrap items-center gap-2.5">
+          <ReaderToggle on={lookup} onClick={() => setLookup((v) => !v)}>
+            {lookup ? <Eye /> : <EyeOff />}
             Word lookup
-          </button>
-          <button
-            type="button"
-            className={`toggle-btn${showSplit ? " is-on" : ""}`}
-            onClick={() => setSplit((on) => !on)}
+          </ReaderToggle>
+          <ReaderToggle
+            on={showSplit}
+            onClick={() => setSplit((v) => !v)}
             disabled={!hasTranslation}
-            aria-pressed={showSplit}
             title={hasTranslation ? undefined : "This story has no translation yet"}
           >
-            <Icon name="layers" size={16} />
+            <Layers />
             Side by side
-          </button>
-          <button
-            type="button"
-            className={`toggle-btn${highlight ? " is-on" : ""}`}
-            onClick={() => setHighlight((on) => !on)}
-            aria-pressed={highlight}
+          </ReaderToggle>
+          <ReaderToggle
+            on={highlight}
+            onClick={() => setHighlight((v) => !v)}
             title="Colour every word by how well you know it"
           >
-            <Icon name="sliders" size={16} />
+            <SlidersHorizontal />
             Highlight
-          </button>
-          <button type="button" className="toggle-btn is-finish" onClick={() => setFinishing(true)}>
-            <Icon name="flag" size={16} />
+          </ReaderToggle>
+          <Button variant="controlOn" size="auto-sm" className="ml-auto" onClick={() => setFinishing(true)}>
+            <Flag />
             Finish
-          </button>
+          </Button>
 
           {isAdmin && (
-            <button
-              type="button"
-              className={`toggle-btn is-admin${editing ? " is-on" : ""}`}
+            // Editing wears the "never seen" indigo rather than the accent blue, so the mode
+            // that rewrites the page is not the same colour as the modes that only read it.
+            <ReaderToggle
+              on={editing}
               onClick={() => {
-                setEditing((on) => !on);
+                setEditing((v) => !v);
                 close();
               }}
-              aria-pressed={editing}
               title="Correct what each word links to"
+              className={editing ? "border-m-unseen text-m-unseen" : undefined}
             >
-              <Icon name="link" size={16} />
+              <Link2 />
               Edit links
-            </button>
+            </ReaderToggle>
           )}
         </div>
 
         {editing ? <EditLegend story={story} /> : <StoryProgress counts={counts} shown={highlight} />}
       </header>
 
-      {showSplit ? (
-        <article className="story-prose story-split">
-          {story.paragraphs.map((paragraph, p) => (
-            <div className="story-row" key={p}>
-              <p className="story-para">{renderParagraph(paragraph, p)}</p>
-              <p className="story-para story-para-en">{story.translation[p]}</p>
-            </div>
-          ))}
-        </article>
-      ) : (
-        <article className="story-prose">
-          {story.paragraphs.map((paragraph, p) => (
-            <p className="story-para" key={p}>
-              {renderParagraph(paragraph, p)}
-            </p>
-          ))}
-        </article>
-      )}
+      {/* A grid rather than two columns of running text: pairing by row is what guarantees a
+          paragraph stays level with its translation however differently the two languages
+          wrap. Two columns stop being readable well before the sidebar drops away, so below
+          900px the pairs stack — Georgian, then its translation directly under it. */}
+      <article
+        className={cn(
+          "rounded-lg border border-border bg-card p-8 shadow-card max-md:p-5",
+          showSplit ? "max-w-none" : "max-w-[68ch]",
+        )}
+      >
+        {showSplit
+          ? story.paragraphs.map((paragraph, p) => (
+              <div
+                className="mb-[18px] grid grid-cols-2 gap-8 border-b border-border pb-[18px] last:mb-0 last:border-b-0 last:pb-0 max-[900px]:grid-cols-1 max-[900px]:gap-2"
+                key={p}
+              >
+                <p className={cn(STORY_PARA, "mb-0")}>{renderParagraph(paragraph, p)}</p>
+                <p className="text-base leading-loose text-muted-foreground max-[900px]:border-l-2 max-[900px]:border-border max-[900px]:pl-3">
+                  {story.translation[p]}
+                </p>
+              </div>
+            ))
+          : story.paragraphs.map((paragraph, p) => (
+              <p className={STORY_PARA} key={p}>
+                {renderParagraph(paragraph, p)}
+              </p>
+            ))}
+      </article>
 
-      <div className="story-end">
-        <p className="story-end-note">Reached the end?</p>
-        <button type="button" className="control-btn know" onClick={() => setFinishing(true)}>
-          <Icon name="flag" /> Finish reading
-        </button>
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-3.5 rounded-lg border border-dashed border-border-strong p-5">
+        <p className="text-muted-foreground">Reached the end?</p>
+        <Button variant="control" size="auto" className={KNOW_BUTTON} onClick={() => setFinishing(true)}>
+          <Flag /> Finish reading
+        </Button>
       </div>
 
       {selected && (
@@ -361,7 +442,12 @@ function StoryReader() {
         />
       )}
 
-      {finishing && <FinishDialog unseen={counts.unseen} vocabulary={vocabulary} onClose={() => setFinishing(false)} />}
+      <FinishDialog
+        open={finishing}
+        unseen={counts.unseen}
+        vocabulary={vocabulary}
+        onClose={() => setFinishing(false)}
+      />
 
       {editingToken && (
         <Suspense fallback={null}>
@@ -382,7 +468,32 @@ function StoryReader() {
           />
         </Suspense>
       )}
-    </div>
+    </Page>
+  );
+}
+
+/** Prose is set large and loose: it is being read a word at a time, not skimmed. */
+const STORY_PARA = "mb-[18px] text-[19px] leading-[2] last:mb-0 max-md:text-[17px] max-md:leading-[1.9]";
+
+/** The affirmative action in this app: green rather than the accent blue. */
+export const KNOW_BUTTON =
+  "border-[#22c55e] bg-level-a1 text-level-a1-foreground hover:border-[#22c55e] hover:bg-level-a1 hover:brightness-97";
+
+/** One of the reader's mode switches. Pressed state is the border and the label going accent. */
+function ReaderToggle({
+  on,
+  className,
+  ...props
+}: React.ComponentProps<typeof Button> & { on: boolean }) {
+  return (
+    <Button
+      type="button"
+      variant={on ? "controlOn" : "control"}
+      size="auto-sm"
+      aria-pressed={on}
+      className={cn("disabled:opacity-50", className)}
+      {...props}
+    />
   );
 }
 
@@ -404,18 +515,18 @@ function EditLegend({ story }: { story: Story }) {
   }
 
   return (
-    <div className="story-progress story-edit-legend">
-      <p className="admin-note">
+    <div className={PANEL}>
+      <p className="max-w-[78ch] text-[13.5px] leading-relaxed text-muted-foreground">
         Every word is a button. Click one to link it to a dictionary entry, name it as a proper noun for this
         story only, or mark it as deliberately not a word.
       </p>
-      <div className="study-legend">
-        <span><i className="dot is-unresolved-word" />{tally.unresolved} nothing matched</span>
-        <span><i className="dot is-guess" />{tally.guessed} reached by a guess</span>
-        <span><i className="dot is-name" />{tally.named} named</span>
-        <span><i className="dot is-pinned" />{tally.pinned} set by hand</span>
-        <span className="study-legend-session">{tally.total} words</span>
-      </div>
+      <StudyLegend>
+        <span><Dot className="bg-m-1" />{tally.unresolved} nothing matched</span>
+        <span><Dot className="bg-m-3" />{tally.guessed} reached by a guess</span>
+        <span><Dot className="bg-m-unseen" />{tally.named} named</span>
+        <span><Dot className="bg-faint" />{tally.pinned} set by hand</span>
+        <span className={LEGEND_ASIDE}>{tally.total} words</span>
+      </StudyLegend>
     </div>
   );
 }
@@ -434,24 +545,19 @@ interface Counts {
 // right in the same order the colours run through the text, so the two are one legend.
 function StoryProgress({ counts, shown }: { counts: Counts; shown: boolean }) {
   if (counts.total === 0) return null;
-  const width = (value: number) => `${(value / counts.total) * 100}%`;
 
   return (
-    <div className="story-progress">
-      <div className="study-meter" aria-hidden="true">
-        <span className="study-meter-seg is-known" style={{ width: width(counts.known) }} />
-        <span className="study-meter-seg is-solid" style={{ width: width(counts.solid) }} />
-        <span className="study-meter-seg is-weak" style={{ width: width(counts.learning) }} />
-      </div>
-      <div className="study-legend">
-        <span><i className="dot is-known" />{counts.known} known</span>
-        <span><i className="dot is-solid" />{counts.solid} solid</span>
-        <span><i className="dot is-weak" />{counts.learning} learning</span>
-        <span><i className="dot is-unseen" />{counts.unseen} never seen</span>
-        <span className="study-legend-session">
+    <div className={PANEL}>
+      <StudyMeter known={counts.known} solid={counts.solid} learning={counts.learning} total={counts.total} />
+      <StudyLegend>
+        <span><Dot className="bg-m-6" />{counts.known} known</span>
+        <span><Dot className="bg-m-5" />{counts.solid} solid</span>
+        <span><Dot className="bg-m-3" />{counts.learning} learning</span>
+        <span><Dot className="bg-m-unseen" />{counts.unseen} never seen</span>
+        <span className={LEGEND_ASIDE}>
           {counts.total} distinct words{shown ? "" : " · highlighting off"}
         </span>
-      </div>
+      </StudyLegend>
     </div>
   );
 }
@@ -469,10 +575,12 @@ function StoryProgress({ counts, shown }: { counts: Counts; shown: boolean }) {
 // the checkbox above the button already said what would happen, and being finished with a
 // story means being somewhere else.
 function FinishDialog({
+  open,
   unseen,
   vocabulary,
   onClose,
 }: {
+  open: boolean;
   unseen: number;
   vocabulary: string[];
   onClose: () => void;
@@ -480,63 +588,51 @@ function FinishDialog({
   const navigate = useNavigate();
   const [markKnown, setMarkKnown] = useState(true);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
   const finish = () => {
     if (markKnown) markUnseenKnown(vocabulary);
     navigate(-1);
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="modal-content story-finish"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Finish reading"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button className="modal-close" onClick={onClose} aria-label="Close">
-          <Icon name="close" />
-        </button>
+    <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
+      <DialogContent className="max-w-[500px] rounded-lg p-6">
+        <DialogHeader className="text-left">
+          <DialogTitle className="text-xl">Finished reading?</DialogTitle>
+          <DialogDescription>
+            {unseen > 0
+              ? `${unseen} of this story's words have never been studied.`
+              : "You have an opinion about every word in this story."}
+          </DialogDescription>
+        </DialogHeader>
 
-        <h2>Finished reading?</h2>
-        <p className="story-finish-lead">
-          {unseen > 0
-            ? `${unseen} of this story's words have never been studied.`
-            : "You have an opinion about every word in this story."}
-        </p>
-
-        <label className={`check story-finish-check${unseen === 0 ? " is-disabled" : ""}`}>
-          <input
-            type="checkbox"
+        <label
+          className={cn(
+            "flex cursor-pointer items-center gap-2 text-[15px] font-medium",
+            unseen === 0 && "cursor-not-allowed opacity-50",
+          )}
+        >
+          <Checkbox
             checked={markKnown && unseen > 0}
             disabled={unseen === 0}
-            onChange={(e) => setMarkKnown(e.target.checked)}
+            onCheckedChange={(value) => setMarkKnown(value === true)}
           />
           Mark those {unseen} words as known
         </label>
-        <p className="story-finish-note">
+        <p className="text-[13px] leading-relaxed text-faint">
           They go to level 6 and never come up in flashcards again. Words you rated while reading are left as
           you rated them.
         </p>
 
-        <div className="story-finish-actions">
-          <button type="button" className="control-btn" onClick={onClose}>
+        <DialogFooter>
+          <Button variant="control" size="auto" onClick={onClose}>
             Cancel
-          </button>
-          <button type="button" className="control-btn know" onClick={finish}>
-            <Icon name="check" /> Finish
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+          <Button variant="control" size="auto" className={KNOW_BUTTON} onClick={finish}>
+            <Check /> Finish
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -545,6 +641,11 @@ function FinishDialog({
 // The definition card. Anchored under the word it belongs to, flipped above when there is
 // no room below, and clamped so it never hangs off either edge. Hovering it holds it open,
 // so the level buttons and the link at the bottom can actually be reached.
+//
+// Positioned by hand rather than by a Popover: it is opened and closed on a hover timer
+// shared with the word under it, and it is anchored to a rectangle measured at open time
+// rather than to a live element, which is what lets the same card serve 976 spans without
+// any of them being a trigger.
 //
 // It leads with the one meaning that applies here rather than the entry's first, which is
 // the whole point of the story recording occurrences separately: აბა is "let's" where the
@@ -580,7 +681,7 @@ function GlossCard({
 
   return (
     <div
-      className="gloss-card"
+      className="fixed z-60 w-80 max-w-[calc(100vw-24px)] rounded-lg border border-border-strong bg-popover px-4.5 py-4 text-popover-foreground shadow-pop"
       style={style}
       ref={ref}
       role="dialog"
@@ -588,64 +689,87 @@ function GlossCard({
       onMouseEnter={onHold}
       onMouseLeave={onRelease}
     >
-      <p className="gloss-form">
+      <p className="text-[22px] leading-tight font-semibold">
         {item.verb && item.lex ? <VerbSegments form={token.form} item={item} /> : token.form}
       </p>
 
-      <div className="gloss-tags">
-        {token.gram && <span className="gloss-gram">{token.gram}</span>}
-        {token.name && <span className="pos-tag">Name</span>}
-        {item.pos && <span className="pos-tag">{item.pos}</span>}
-        {item.word?.level && <span className={`level-badge ${item.word.level.toLowerCase()}`}>{item.word.level}</span>}
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {token.gram && (
+          <span className="rounded-full bg-primary-light px-2 py-0.5 text-[11px] font-semibold text-primary-dark">
+            {token.gram}
+          </span>
+        )}
+        {token.name && <PosTag>Name</PosTag>}
+        {item.pos && <PosTag>{item.pos}</PosTag>}
+        {item.word?.level && <LevelBadge level={item.word.level} />}
       </div>
 
       {/* What the word says here, before what the dictionary calls it. იყო reads as "was";
           filing it under არის "is" is right, and is also not what the sentence said. */}
-      {item.formMeaning && <p className="gloss-form-meaning">{item.formMeaning}</p>}
+      {item.formMeaning && <p className="mt-2.5 text-base font-semibold">{item.formMeaning}</p>}
 
       {lemma && lemma !== token.form && (
-        <p className="gloss-lemma">
-          <Icon name="arrow-right" size={14} />
-          <span className="gloss-lemma-word">{lemma}</span>
+        <p className="mt-2.5 flex items-center gap-1.5 text-[13px] text-muted-foreground">
+          <ArrowRight className="size-3.5" aria-hidden="true" />
+          <span className="text-[17px] text-foreground">{lemma}</span>
         </p>
       )}
 
-      <p className={`gloss-meaning${item.formMeaning ? " is-lemma-meaning" : ""}`}>{meaning(item)}</p>
+      {/* Demoted to a caption under the headword once the form has said its own meaning
+          above, so the card has one thing to read first rather than two of the same size. */}
+      <p className={item.formMeaning ? "mt-0.5 text-sm text-muted-foreground" : "mt-2 text-base"}>
+        {meaning(item)}
+      </p>
 
       {item.otherSenses.length > 0 && (
-        <p className="gloss-senses">
-          <span>Elsewhere</span> {item.otherSenses.slice(0, 3).join(" · ")}
+        <p className={GLOSS_ASIDE}>
+          <span className={GLOSS_ASIDE_LABEL}>Elsewhere</span> {item.otherSenses.slice(0, 3).join(" · ")}
         </p>
       )}
 
-      {item.word?.definition && <p className="gloss-definition">{item.word.definition}</p>}
+      {item.word?.definition && (
+        <p className="mt-2 border-t border-border pt-2 text-[13px] text-muted-foreground">
+          {item.word.definition}
+        </p>
+      )}
 
       {token.alts && token.alts.length > 0 && (
-        <p className="gloss-alts">
-          <span>Could also be</span> {token.alts.map((alt) => alt.english).join(" · ")}
+        <p className={GLOSS_ASIDE}>
+          <span className={GLOSS_ASIDE_LABEL}>Could also be</span>{" "}
+          {token.alts.map((alt) => alt.english).join(" · ")}
         </p>
       )}
 
       {/* Rating a word where you met it is the cheapest moment there is to rate it: the
-          sentence is still on screen and you have just decided whether you understood it. */}
+          sentence is still on screen and you have just decided whether you understood it.
+          The picker states the level once, here, where it is also changed — the word itself
+          is already tinted its own colour in the text behind the card. */}
       {key && (
         <MasteryPicker
           level={level}
           onPick={(next: Mastery) => setItemMastery(key, next)}
           onForget={() => forgetItem(key)}
           label="How well do you know it?"
+          tight
         />
       )}
 
       {item.href && (
-        <Link className="gloss-link" to={item.href} onClick={onClose}>
+        <Link
+          className="mt-3 inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:underline"
+          to={item.href}
+          onClick={onClose}
+        >
           Full entry
-          <Icon name="arrow-right" size={14} />
+          <ArrowRight className="size-3.5" aria-hidden="true" />
         </Link>
       )}
     </div>
   );
 }
+
+const GLOSS_ASIDE = "mt-1.5 text-[13px] text-muted-foreground";
+const GLOSS_ASIDE_LABEL = "mr-1 text-[11px] tracking-[0.04em] text-faint uppercase";
 
 // The form cut into its morphemes, coloured the way the verb pages colour a paradigm. The
 // screeve is left out on purpose: the token records it as a label ("Aorist 3sg") rather
@@ -653,7 +777,7 @@ function GlossCard({
 function VerbSegments({ form, item }: { form: string; item: Reading }): ReactNode {
   const { segments } = segmentForm(form, item.lex);
   return segments.map((segment, i) => (
-    <span key={i} className={`mo mo-${segment.part}`}>
+    <span key={i} className={MORPHEME_CLASS[segment.part]}>
       {segment.text}
     </span>
   ));

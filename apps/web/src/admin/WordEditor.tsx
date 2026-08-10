@@ -11,12 +11,50 @@
 // rather than on a page of its own.
 
 import { useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { WordInput } from '@georgian/shared/contract';
 import type { Word } from '@georgian/shared/types';
+import { Check, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import { SearchField } from '@/components/ui/search-field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { KNOW_BUTTON } from '../components/StoryReader';
 import { api } from '../api/client';
-import Icon from '../components/Icon';
 import { kaVerbData, lang, wordData } from '../content/store';
+import {
+  ADMIN_INPUT_GEO,
+  ADMIN_INPUT_NARROW,
+  AdminActions,
+  AdminCheck,
+  AdminError,
+  AdminField,
+  AdminGrid,
+  AdminHead,
+  AdminHint,
+  AdminIconButton,
+  AdminInput,
+  AdminLabel,
+  AdminLinkButton,
+  AdminList,
+  AdminNote,
+  AdminPage,
+  AdminRow,
+  AdminRowNumber,
+  AdminRowWrap,
+  AdminSection,
+  AdminSectionTitle,
+  AdminSub,
+  AdminTextarea,
+  AdminTitle,
+} from './ui';
 import { useEdit } from './useAdmin';
 
 /** The part-of-speech tags already in use, so the field offers them rather than free text. */
@@ -99,12 +137,12 @@ function WordEditor() {
 
   if (wordId && !existing) {
     return (
-      <div className="main-content">
-        <div className="breadcrumb">
-          <Link to="/admin/words">← Words</Link>
-        </div>
-        <p className="empty-note">There is no word with the id “{wordId}”.</p>
-      </div>
+      <Page>
+        <Breadcrumb>
+          <BreadcrumbLink to="/admin/words">← Words</BreadcrumbLink>
+        </Breadcrumb>
+        <p className="py-6 text-center text-muted-foreground">There is no word with the id “{wordId}”.</p>
+      </Page>
     );
   }
 
@@ -149,77 +187,78 @@ function WordEditor() {
   };
 
   return (
-    <div className="main-content admin-page">
-      <div className="breadcrumb">
-        <Link to="/admin/words">← Words</Link>
-        <span className="breadcrumb-sep">/</span>
+    <AdminPage>
+      <Breadcrumb>
+        <BreadcrumbLink to="/admin/words">← Words</BreadcrumbLink>
+        <BreadcrumbSeparator />
         <span>{existing ? existing.headword : 'New word'}</span>
-      </div>
+      </Breadcrumb>
 
-      <header className="admin-head">
-        <h1 className="admin-title">{existing ? existing.headword : 'New word'}</h1>
+      <AdminHead>
+        <AdminTitle>{existing ? existing.headword : 'New word'}</AdminTitle>
         {existing && (
-          <p className="admin-sub">
+          <AdminSub>
             <code>{existing.id}</code> ·{' '}
             {existing.origin === 'core'
               ? 'from the scrape'
               : existing.origin === 'wiktionary'
                 ? 'imported from Wiktionary'
                 : 'written by hand'}
-          </p>
+          </AdminSub>
         )}
-      </header>
+      </AdminHead>
 
-      {error && <p className="admin-error">{error}</p>}
+      {error && <AdminError>{error}</AdminError>}
 
-      <section className="admin-section">
-        <h2 className="admin-section-title">The headword</h2>
+      <AdminSection>
+        <AdminSectionTitle>The headword</AdminSectionTitle>
 
-        <div className="admin-grid">
-          <label className="admin-field">
-            <span className="admin-label">Georgian</span>
-            <input
-              className="admin-input admin-input-geo"
+        <AdminGrid>
+          <AdminField>
+            <AdminLabel>Georgian</AdminLabel>
+            <AdminInput
+              className={ADMIN_INPUT_GEO}
               value={draft.headword}
               onChange={event => set('headword', event.target.value)}
               placeholder="მგელი"
             />
-            <span className="admin-hint">
+            <AdminHint>
               The headword as it is written. A trailing <code>*</code> or digit marks a homograph and is
               stripped everywhere it is shown.
-            </span>
-          </label>
+            </AdminHint>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Headline gloss</span>
-            <input
-              className="admin-input"
+          <AdminField>
+            <AdminLabel>Headline gloss</AdminLabel>
+            <AdminInput
               value={draft.english}
               onChange={event => set('english', event.target.value)}
               placeholder={senses[0] ?? 'wolf'}
             />
-            <span className="admin-hint">Left blank, this becomes the first sense below.</span>
-          </label>
+            <AdminHint>Left blank, this becomes the first sense below.</AdminHint>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Category</span>
-            <select
-              className="admin-input"
-              value={draft.categoryId}
-              onChange={event => set('categoryId', event.target.value)}
-            >
-              {categories.map(category => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <AdminField>
+            <AdminLabel>Category</AdminLabel>
+            <Select value={draft.categoryId} onValueChange={value => set('categoryId', value)}>
+              <SelectTrigger className={SELECT}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map(category => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Part of speech</span>
-            <input
-              className="admin-input"
+          <AdminField>
+            <AdminLabel>Part of speech</AdminLabel>
+            {/* A datalist rather than a Select: the tags in use are suggestions, and a new
+                entry must be able to introduce one this dictionary has not seen. */}
+            <AdminInput
               list="admin-pos-list"
               value={draft.partOfSpeech}
               onChange={event => set('partOfSpeech', event.target.value)}
@@ -230,74 +269,79 @@ function WordEditor() {
                 <option key={pos} value={pos} />
               ))}
             </datalist>
-            <span className="admin-hint">
+            <AdminHint>
               “Verb” keeps this entry out of the story linker’s nominal peeler, which is what stops a case
               ending being taken off a verb.
-            </span>
-          </label>
+            </AdminHint>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">CEFR level</span>
-            <select
-              className="admin-input"
-              value={draft.level}
-              onChange={event => set('level', event.target.value as Draft['level'])}
+          <AdminField>
+            <AdminLabel>CEFR level</AdminLabel>
+            {/* An empty string is not a legal Radix Select value, so "no level" travels as a
+                sentinel and is mapped back at both edges. */}
+            <Select
+              value={draft.level || NO_LEVEL}
+              onValueChange={value => set('level', (value === NO_LEVEL ? '' : value) as Draft['level'])}
             >
-              <option value="">None — added by hand</option>
-              <option value="A1">A1</option>
-              <option value="A2">A2</option>
-            </select>
-          </label>
+              <SelectTrigger className={SELECT}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NO_LEVEL}>None — added by hand</SelectItem>
+                <SelectItem value="A1">A1</SelectItem>
+                <SelectItem value="A2">A2</SelectItem>
+              </SelectContent>
+            </Select>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Georgian definition</span>
-            <input
-              className="admin-input admin-input-geo"
+          <AdminField>
+            <AdminLabel>Georgian definition</AdminLabel>
+            <AdminInput
+              className={ADMIN_INPUT_GEO}
               value={draft.definition}
               onChange={event => set('definition', event.target.value)}
             />
-          </label>
-        </div>
+          </AdminField>
+        </AdminGrid>
 
-        <label className="check admin-check">
-          <input type="checkbox" checked={draft.check} onChange={event => set('check', event.target.checked)} />
+        <AdminCheck>
+          <Checkbox checked={draft.check} onCheckedChange={value => set('check', value === true)} />
           The meaning is a guess and wants verifying
-        </label>
+        </AdminCheck>
 
-        <label className="admin-field">
-          <span className="admin-label">Note</span>
-          <textarea
-            className="admin-input admin-textarea"
+        <AdminField>
+          <AdminLabel>Note</AdminLabel>
+          <AdminTextarea
             rows={2}
             value={draft.note}
             onChange={event => set('note', event.target.value)}
             placeholder="Anything a reader of this entry needs told."
           />
-        </label>
-      </section>
+        </AdminField>
+      </AdminSection>
 
-      <section className="admin-section">
-        <h2 className="admin-section-title">Meanings</h2>
-        <p className="admin-note">
+      <AdminSection>
+        <AdminSectionTitle>Meanings</AdminSectionTitle>
+        <AdminNote>
           In order. A story token cites a sense by <em>position</em>, so appending is safe and reordering
           changes what every story that cites this word says. The radio picks the one to lead with where a
           story does not pin one.
-        </p>
+        </AdminNote>
 
-        <ul className="admin-list">
+        <AdminList>
           {draft.senses.map((sense, index) => (
-            <li key={index} className="admin-row">
-              <label className="admin-row-lead" title={`Lead with sense ${index + 1}`}>
+            <AdminRow key={index}>
+              <label className="flex shrink-0 cursor-pointer items-center gap-1.5" title={`Lead with sense ${index + 1}`}>
                 <input
                   type="radio"
                   name="default-sense"
+                  className="accent-primary"
                   checked={(draft.defaultSense ?? 1) === index + 1}
                   onChange={() => set('defaultSense', index + 1 === 1 ? null : index + 1)}
                 />
-                <span className="admin-row-number">{index + 1}</span>
+                <AdminRowNumber>{index + 1}</AdminRowNumber>
               </label>
-              <input
-                className="admin-input"
+              <AdminInput
                 value={sense}
                 onChange={event => {
                   const next = [...draft.senses];
@@ -306,9 +350,7 @@ function WordEditor() {
                 }}
                 placeholder="wolf"
               />
-              <button
-                type="button"
-                className="admin-icon-btn"
+              <AdminIconButton
                 aria-label={`Remove sense ${index + 1}`}
                 disabled={draft.senses.length === 1}
                 onClick={() => {
@@ -319,31 +361,31 @@ function WordEditor() {
                   if (draft.defaultSense && draft.defaultSense > index) set('defaultSense', null);
                 }}
               >
-                <Icon name="close" size={15} />
-              </button>
-            </li>
+                <X className="size-[15px]" aria-hidden="true" />
+              </AdminIconButton>
+            </AdminRow>
           ))}
-        </ul>
+        </AdminList>
 
-        <button type="button" className="control-btn" onClick={() => set('senses', [...draft.senses, ''])}>
+        <Button variant="control" size="auto" onClick={() => set('senses', [...draft.senses, ''])}>
           Add a meaning
-        </button>
-      </section>
+        </Button>
+      </AdminSection>
 
-      <section className="admin-section">
-        <h2 className="admin-section-title">Inflected forms</h2>
-        <p className="admin-note">
+      <AdminSection>
+        <AdminSectionTitle>Inflected forms</AdminSectionTitle>
+        <AdminNote>
           Spellings confirmed to belong here. This is the story linker’s first index and the only one it
           never guesses from — a form listed here <em>is</em> this lemma. The English column is for a form
           that means something the headword does not say: იყო reads as “was”, under a headword meaning “is”.
           Case forms of a noun need none.
-        </p>
+        </AdminNote>
 
-        <ul className="admin-list">
+        <AdminList>
           {draft.forms.map((form, index) => (
-            <li key={index} className="admin-row admin-row-form">
-              <input
-                className="admin-input admin-input-geo"
+            <AdminRowWrap key={index}>
+              <AdminInput
+                className={ADMIN_INPUT_GEO}
                 value={form.form}
                 onChange={event => {
                   const next = [...draft.forms];
@@ -352,8 +394,8 @@ function WordEditor() {
                 }}
                 placeholder="მგელმა"
               />
-              <input
-                className="admin-input admin-input-narrow"
+              <AdminInput
+                className={ADMIN_INPUT_NARROW}
                 value={form.gram}
                 onChange={event => {
                   const next = [...draft.forms];
@@ -363,8 +405,7 @@ function WordEditor() {
                 placeholder="erg"
                 aria-label="Grammatical label"
               />
-              <input
-                className="admin-input"
+              <AdminInput
                 value={form.english}
                 onChange={event => {
                   const next = [...draft.forms];
@@ -374,9 +415,7 @@ function WordEditor() {
                 placeholder="English, only if it differs"
                 aria-label="What this form means"
               />
-              <button
-                type="button"
-                className="admin-icon-btn"
+              <AdminIconButton
                 aria-label={`Remove form ${form.form || index + 1}`}
                 onClick={() =>
                   set(
@@ -385,68 +424,80 @@ function WordEditor() {
                   )
                 }
               >
-                <Icon name="close" size={15} />
-              </button>
-            </li>
+                <X className="size-[15px]" aria-hidden="true" />
+              </AdminIconButton>
+            </AdminRowWrap>
           ))}
-        </ul>
+        </AdminList>
 
-        <button
-          type="button"
-          className="control-btn"
+        <Button
+          variant="control"
+          size="auto"
           onClick={() => set('forms', [...draft.forms, { form: '', gram: '', english: '' }])}
         >
           Add a form
-        </button>
-      </section>
+        </Button>
+      </AdminSection>
 
-      <section className="admin-section">
-        <h2 className="admin-section-title">Paradigm</h2>
-        <p className="admin-note">
+      <AdminSection>
+        <AdminSectionTitle>Paradigm</AdminSectionTitle>
+        <AdminNote>
           The conjugation table this headword claims, for the entries that have one. Claiming a paradigm is
           what lets the story linker resolve all 66 of its conjugated forms to this word.
-        </p>
+        </AdminNote>
 
         {paradigm ? (
-          <p className="admin-picker-current">
-            <span className="admin-picker-geo">{paradigm.present3sg || paradigm.verbalNoun}</span>
-            <span className="admin-picker-en">{paradigm.english}</span>
-            <button type="button" className="admin-link-btn" onClick={() => set('verbId', null)}>
-              Clear
-            </button>
+          <p className={PICKED}>
+            <span className="text-base font-semibold">{paradigm.present3sg || paradigm.verbalNoun}</span>
+            <span className="flex-1 text-[13.5px] text-muted-foreground">{paradigm.english}</span>
+            <AdminLinkButton onClick={() => set('verbId', null)}>Clear</AdminLinkButton>
           </p>
         ) : (
-          <p className="admin-hint">No paradigm claimed.</p>
+          <AdminHint>No paradigm claimed.</AdminHint>
         )}
 
         <ParadigmPicker onPick={id => set('verbId', id)} />
-      </section>
+      </AdminSection>
 
-      <div className="admin-actions">
-        <button type="button" className="control-btn know" disabled={!canSave || busy} onClick={save}>
-          <Icon name="check" /> {busy ? 'Saving…' : existing ? 'Save changes' : 'Create word'}
-        </button>
+      <AdminActions>
+        <Button
+          variant="control"
+          size="auto"
+          className={KNOW_BUTTON}
+          disabled={!canSave || busy}
+          onClick={save}
+        >
+          <Check /> {busy ? 'Saving…' : existing ? 'Save changes' : 'Create word'}
+        </Button>
 
         {existing && !confirmDelete && (
-          <button type="button" className="admin-danger-btn" disabled={busy} onClick={() => setConfirmDelete(true)}>
+          <Button variant="dangerOutline" size="auto" disabled={busy} onClick={() => setConfirmDelete(true)}>
             Delete
-          </button>
+          </Button>
         )}
         {existing && confirmDelete && (
-          <span className="admin-confirm">
+          <span className="flex flex-wrap items-center gap-2.5 text-sm">
             Delete “{existing.headword}”?
-            <button type="button" className="admin-danger-btn" disabled={busy} onClick={remove}>
+            <Button variant="dangerOutline" size="auto" disabled={busy} onClick={remove}>
               Yes, delete
-            </button>
-            <button type="button" className="control-btn" onClick={() => setConfirmDelete(false)}>
+            </Button>
+            <Button variant="control" size="auto" onClick={() => setConfirmDelete(false)}>
               Cancel
-            </button>
+            </Button>
           </span>
         )}
-      </div>
-    </div>
+      </AdminActions>
+    </AdminPage>
   );
 }
+
+const NO_LEVEL = '__none__';
+const SELECT =
+  'h-auto w-full rounded-sm border border-border-strong bg-background py-2.5 text-sm shadow-none data-[size=default]:h-auto';
+/* The paradigm currently claimed, outlined in the accent colour: it is a decision that has
+   been made, not a field waiting to be filled. */
+const PICKED =
+  'flex flex-wrap items-baseline gap-2.5 rounded-sm border border-primary bg-[color-mix(in_srgb,var(--primary)_6%,var(--card))] px-3 py-2';
 
 /** A search over the paradigms, by their English or their 3sg. */
 function ParadigmPicker({ onPick }: { onPick: (id: string) => void }) {
@@ -467,34 +518,32 @@ function ParadigmPicker({ onPick }: { onPick: (id: string) => void }) {
   }, [verbs, term]);
 
   return (
-    <div className="admin-picker">
-      <div className="search-field admin-picker-field">
-        <Icon name="search" size={16} />
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search paradigms…"
-          value={term}
-          onChange={event => setTerm(event.target.value)}
-        />
-      </div>
+    <div className="mb-2">
+      <SearchField
+        wrapperClassName="mt-2"
+        placeholder="Search paradigms…"
+        value={term}
+        onChange={event => setTerm(event.target.value)}
+      />
 
       {term.trim() !== '' && (
-        <ul className="admin-picker-results">
-          {results.length === 0 && <li className="admin-picker-empty">Nothing matches “{term}”.</li>}
+        <ul className="mt-2 max-h-65 list-none overflow-y-auto rounded-sm border border-border">
+          {results.length === 0 && (
+            <li className="px-3 py-2.5 text-[13px] text-faint">Nothing matches “{term}”.</li>
+          )}
           {results.map(verb => (
             <li key={verb.id}>
               <button
                 type="button"
-                className="admin-picker-result"
+                className={PICKER_RESULT}
                 onClick={() => {
                   onPick(verb.id);
                   setTerm('');
                 }}
               >
-                <span className="admin-picker-geo">{verb.present3sg || verb.verbalNoun}</span>
-                <span className="admin-picker-en">{verb.english}</span>
-                <span className="admin-picker-pos">{verb.transitivity}</span>
+                <span className="text-base font-semibold">{verb.present3sg || verb.verbalNoun}</span>
+                <span className="flex-1 text-[13.5px] text-muted-foreground">{verb.english}</span>
+                <span className="text-[11.5px] text-faint">{verb.transitivity}</span>
               </button>
             </li>
           ))}
@@ -503,5 +552,9 @@ function ParadigmPicker({ onPick }: { onPick: (id: string) => void }) {
     </div>
   );
 }
+
+const PICKER_RESULT =
+  'flex w-full cursor-pointer flex-wrap items-baseline gap-2.5 border-0 bg-transparent px-3 py-2 text-left ' +
+  'font-[inherit] text-foreground hover:bg-muted';
 
 export default WordEditor;

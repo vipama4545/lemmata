@@ -1,6 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { ArrowRight, BookOpen, Check, Clock, RotateCcw, Shuffle, SlidersHorizontal } from 'lucide-react';
 import type { LevelFilter } from '@georgian/shared/types';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Dot, LEGEND_ASIDE, StudyLegend, StudyMeter } from '@/components/ui/study-meter';
+import { LevelBadge, PosTag } from '@/components/ui/word-card';
+import { cn } from '@/lib/utils';
 import type { StudyItem } from '../study/items';
 import { studyCategories, studyItem, studyItems } from '../study/items';
 import type { CardRecord, Side } from '../study/store';
@@ -20,7 +34,7 @@ import type { Grade } from '../study/mastery';
 import { GRADES, GRADE_LABEL, KNOWN, formatDue, formatInterval, isDue, nextInterval } from '../study/mastery';
 import { creditLine, getWordImage } from '../utils/images';
 import MasteryBadge from './Mastery';
-import Icon from './Icon';
+import { KNOW_BUTTON } from './StoryReader';
 import { lang } from '../content/store';
 
 // The review session.
@@ -338,128 +352,140 @@ function FlashcardMode() {
   const newToday = useMemo(() => newTodayCount(progress, Date.now()), [progress]);
   const sessionTotal = done + queue.length;
   const sessionPct = sessionTotal > 0 ? Math.round((done / sessionTotal) * 100) : 0;
-  const pct = (value: number) => (summary.total > 0 ? (value / summary.total) * 100 : 0);
 
   return (
-    <div className="main-content flashcard-page">
-      <div className="breadcrumb">
-        <Link to={`/${lang()}`}>← Home</Link>
-        <span className="breadcrumb-sep">/</span>
+    <Page className="max-w-[960px]">
+      <Breadcrumb>
+        <BreadcrumbLink to={`/${lang()}`}>← Home</BreadcrumbLink>
+        <BreadcrumbSeparator />
         <span>Flashcards</span>
-      </div>
+      </Breadcrumb>
 
-      <div className="flashcard-container">
-        <div className="flashcard-header">
+      <div className="flex flex-col gap-5">
+        <div className="flex items-center justify-between">
           <div>
-            <h2>Flashcards</h2>
-            <p className="study-subtitle">
+            <h2 className="text-2xl font-bold">Flashcards</h2>
+            <p className="mt-0.5 text-[13px] text-muted-foreground">
               {summary.due > 0 ? `${summary.due} due now` : 'Nothing overdue'} ·{' '}
               {settings.newLimit > 0 ? `${newToday}/${settings.newLimit} new today` : `${newToday} new today`} ·{' '}
               {summary.unseen} never seen · {summary.known} known
             </p>
           </div>
-          <button className="settings-toggle" onClick={() => setShowSettings(!showSettings)} aria-expanded={showSettings}>
-            <Icon name="sliders" /> Settings
-          </button>
+          <Button
+            variant="control"
+            size="auto"
+            onClick={() => setShowSettings(!showSettings)}
+            aria-expanded={showSettings}
+          >
+            <SlidersHorizontal /> Settings
+          </Button>
         </div>
 
         {showSettings && (
-          <div className="flashcard-settings">
-            <div className="settings-group">
-              <label id="mode-label">Direction:</label>
-              <div className="level-filter" role="group" aria-labelledby="mode-label">
+          <div className="flex flex-col gap-3 rounded-lg border-2 border-border bg-card p-4">
+            <SettingRow label="Direction:" id="mode-label">
+              <Segmented aria-labelledby="mode-label">
                 {MODES.map(mode => (
-                  <button
+                  <SegmentedButton
                     key={mode.id}
-                    className={`level-btn ${settings.mode === mode.id ? 'active' : ''}`}
+                    on={settings.mode === mode.id}
                     onClick={() => update('mode', mode.id)}
                     title={mode.hint}
                   >
                     {mode.label}
-                  </button>
+                  </SegmentedButton>
                 ))}
-              </div>
-            </div>
+              </Segmented>
+            </SettingRow>
 
-            <div className="settings-group">
-              <label id="deck-label">Deck:</label>
-              <div className="level-filter" role="group" aria-labelledby="deck-label">
-                <button className={`level-btn ${settings.deck === 'all' ? 'active' : ''}`} onClick={() => update('deck', 'all')}>
+            <SettingRow label="Deck:" id="deck-label">
+              <Segmented aria-labelledby="deck-label">
+                <SegmentedButton on={settings.deck === 'all'} onClick={() => update('deck', 'all')}>
                   Everything
-                </button>
-                <button className={`level-btn ${settings.deck === 'words' ? 'active' : ''}`} onClick={() => update('deck', 'words')}>
+                </SegmentedButton>
+                <SegmentedButton on={settings.deck === 'words'} onClick={() => update('deck', 'words')}>
                   Words only
-                </button>
-                <button className={`level-btn ${settings.deck === 'verbs' ? 'active' : ''}`} onClick={() => update('deck', 'verbs')}>
+                </SegmentedButton>
+                <SegmentedButton on={settings.deck === 'verbs'} onClick={() => update('deck', 'verbs')}>
                   Verbs only
-                </button>
-              </div>
-            </div>
+                </SegmentedButton>
+              </Segmented>
+            </SettingRow>
 
-            <div className="settings-group">
-              <label id="cefr-label">CEFR level:</label>
-              <div className="level-filter" role="group" aria-labelledby="cefr-label">
-                <button className={`level-btn ${settings.cefr === 'all' ? 'active' : ''}`} onClick={() => update('cefr', 'all')}>
+            <SettingRow label="CEFR level:" id="cefr-label">
+              <Segmented aria-labelledby="cefr-label">
+                <SegmentedButton on={settings.cefr === 'all'} onClick={() => update('cefr', 'all')}>
                   All
-                </button>
-                <button className={`level-btn ${settings.cefr === 'A1' ? 'active a1' : ''}`} onClick={() => update('cefr', 'A1')}>
+                </SegmentedButton>
+                <SegmentedButton
+                  on={settings.cefr === 'A1'}
+                  onClick={() => update('cefr', 'A1')}
+                  onClass="bg-[#22c55e] text-white"
+                >
                   A1
-                </button>
-                <button className={`level-btn ${settings.cefr === 'A2' ? 'active a2' : ''}`} onClick={() => update('cefr', 'A2')}>
+                </SegmentedButton>
+                <SegmentedButton
+                  on={settings.cefr === 'A2'}
+                  onClick={() => update('cefr', 'A2')}
+                  onClass="bg-[#f59e0b] text-white"
+                >
                   A2
-                </button>
-              </div>
-            </div>
+                </SegmentedButton>
+              </Segmented>
+            </SettingRow>
 
-            <div className="settings-group">
-              <label htmlFor="category-select">Category:</label>
-              <select
-                id="category-select"
-                value={settings.categoryId}
-                onChange={event => update('categoryId', event.target.value)}
-                className="category-select"
+            <SettingRow label="Category:">
+              <Select value={settings.categoryId} onValueChange={value => update('categoryId', value)}>
+                <SelectTrigger className={SETTING_SELECT}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All categories</SelectItem>
+                  {studyCategories().map(category => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </SettingRow>
+
+            <SettingRow label="New cards per day:">
+              <Select
+                value={String(settings.newLimit)}
+                onValueChange={value => update('newLimit', Number(value))}
               >
-                <option value="all">All categories</option>
-                {studyCategories().map(category => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+                <SelectTrigger className={SETTING_SELECT}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {NEW_LIMITS.map(limit => (
+                    <SelectItem key={limit} value={String(limit)}>
+                      {limit === 0 ? 'No limit' : limit}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </SettingRow>
 
-            <div className="settings-group">
-              <label htmlFor="new-limit">New cards per day:</label>
-              <select
-                id="new-limit"
-                value={settings.newLimit}
-                onChange={event => update('newLimit', Number(event.target.value))}
-                className="category-select"
-              >
-                {NEW_LIMITS.map(limit => (
-                  <option key={limit} value={limit}>
-                    {limit === 0 ? 'No limit' : limit}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="settings-group settings-checks">
-              <label className="check">
-                <input type="checkbox" checked={settings.ahead} onChange={event => update('ahead', event.target.checked)} />
+            <div className="flex flex-col items-start gap-2">
+              <label className={CHECK}>
+                <Checkbox
+                  checked={settings.ahead}
+                  onCheckedChange={value => update('ahead', value === true)}
+                />
                 Study ahead — deal cards that are not due yet
               </label>
-              <label className="check">
-                <input
-                  type="checkbox"
+              <label className={CHECK}>
+                <Checkbox
                   checked={settings.includeKnown}
-                  onChange={event => update('includeKnown', event.target.checked)}
+                  onCheckedChange={value => update('includeKnown', value === true)}
                 />
                 Include words marked Known
               </label>
             </div>
 
-            <p className="settings-shortcuts">
+            <p className="text-xs leading-[1.7] text-faint [&_strong]:font-semibold [&_strong]:text-muted-foreground">
               <strong>Space</strong> reveal, then Good · <strong>1–4</strong> grade · <strong>K</strong> known ·{' '}
               <strong>S</strong> skip · <strong>U</strong> undo
             </p>
@@ -467,23 +493,25 @@ function FlashcardMode() {
         )}
 
         {/* What the deck looks like overall, and how far through the sitting you are. */}
-        <div className="study-status">
+        <div className="flex flex-col gap-2">
           <div
-            className="study-meter"
             role="img"
             aria-label={`${summary.known} known, ${summary.solid} solid, ${summary.weak} being learned, ${summary.unseen} never seen`}
           >
-            <span className="study-meter-seg is-known" style={{ width: `${pct(summary.known)}%` }} />
-            <span className="study-meter-seg is-solid" style={{ width: `${pct(summary.solid)}%` }} />
-            <span className="study-meter-seg is-weak" style={{ width: `${pct(summary.weak)}%` }} />
+            <StudyMeter
+              known={summary.known}
+              solid={summary.solid}
+              learning={summary.weak}
+              total={summary.total || 1}
+            />
           </div>
-          <div className="study-legend">
-            <span><i className="dot is-known" />{summary.known} known</span>
-            <span><i className="dot is-solid" />{summary.solid} solid</span>
-            <span><i className="dot is-weak" />{summary.weak} learning</span>
-            <span><i className="dot is-unseen" />{summary.unseen} new</span>
-            <span className="study-legend-session">{done}/{sessionTotal} this session ({sessionPct}%)</span>
-          </div>
+          <StudyLegend>
+            <span><Dot className="bg-m-6" />{summary.known} known</span>
+            <span><Dot className="bg-m-5" />{summary.solid} solid</span>
+            <span><Dot className="bg-m-3" />{summary.weak} learning</span>
+            <span><Dot className="bg-m-unseen" />{summary.unseen} new</span>
+            <span className={LEGEND_ASIDE}>{done}/{sessionTotal} this session ({sessionPct}%)</span>
+          </StudyLegend>
         </div>
 
         {current ? (
@@ -498,12 +526,14 @@ function FlashcardMode() {
             onKnown={markKnown}
           />
         ) : !progress.ready ? (
-          <div className="no-words">
-            <h3>Loading your progress…</h3>
+          <div className={EMPTY}>
+            <h3 className="mb-1.5 font-semibold text-foreground">Loading your progress…</h3>
           </div>
         ) : (
-          <div className="no-words">
-            <h3>{summary.total === 0 ? 'Nothing in this deck' : 'All caught up'}</h3>
+          <div className={EMPTY}>
+            <h3 className="mb-1.5 font-semibold text-foreground">
+              {summary.total === 0 ? 'Nothing in this deck' : 'All caught up'}
+            </h3>
             <p>
               {summary.total === 0
                 ? 'Try widening the filters in Settings.'
@@ -511,37 +541,98 @@ function FlashcardMode() {
                   ? `Today's ${settings.newLimit} new cards are done, and nothing else is due. Raise the daily limit in Settings, or come back tomorrow.`
                   : 'Everything due today is done. Come back tomorrow, or study ahead.'}
             </p>
-            <div className="flashcard-controls">
+            <div className={cn(CONTROLS, 'mt-5')}>
               {!settings.ahead && summary.total > 0 && (
-                <button className="control-btn" onClick={() => update('ahead', true)}>
-                  <Icon name="clock" /> Study ahead
-                </button>
+                <Button variant="control" size="auto" onClick={() => update('ahead', true)}>
+                  <Clock /> Study ahead
+                </Button>
               )}
-              <button className="control-btn" onClick={() => rebuild()}>
-                <Icon name="refresh" /> Rebuild queue
-              </button>
+              <Button variant="control" size="auto" onClick={() => rebuild()}>
+                <RotateCcw /> Rebuild queue
+              </Button>
             </div>
           </div>
         )}
 
         {current && (
-          <div className="flashcard-controls">
-            <button className="control-btn" onClick={skip} title="Put this card at the back of the queue">
-              <Icon name="arrow-right" /> Skip
-            </button>
-            <button className="control-btn" onClick={() => rebuild(true)} title="Rebuild the queue in a random order">
-              <Icon name="shuffle" /> Shuffle
-            </button>
-            <button className="control-btn" onClick={undo} disabled={!undoStep} title="Take back the last answer">
-              <Icon name="refresh" /> Undo
-            </button>
-            <Link className="control-btn" to={current.href}>
-              <Icon name="book" /> Full entry
-            </Link>
+          <div className={CONTROLS}>
+            <Button variant="control" size="auto" onClick={skip} title="Put this card at the back of the queue">
+              <ArrowRight /> Skip
+            </Button>
+            <Button
+              variant="control"
+              size="auto"
+              onClick={() => rebuild(true)}
+              title="Rebuild the queue in a random order"
+            >
+              <Shuffle /> Shuffle
+            </Button>
+            <Button
+              variant="control"
+              size="auto"
+              onClick={undo}
+              disabled={!undoStep}
+              title="Take back the last answer"
+            >
+              <RotateCcw /> Undo
+            </Button>
+            <Button variant="control" size="auto" asChild>
+              <Link to={current.href}>
+                <BookOpen /> Full entry
+              </Link>
+            </Button>
           </div>
         )}
       </div>
+    </Page>
+  );
+}
+
+const CONTROLS = 'flex flex-wrap justify-center gap-2 max-md:gap-1.5';
+const EMPTY = 'p-10 text-center text-muted-foreground';
+const CHECK = 'inline-flex cursor-pointer items-center gap-2 text-sm';
+const SETTING_SELECT =
+  'h-auto flex-1 rounded-sm border-2 border-border bg-card py-2 text-sm shadow-none data-[size=default]:h-auto';
+
+/** A labelled row of the settings panel. The label drops above the control on a phone. */
+function SettingRow({ label, id, children }: { label: string; id?: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 max-md:flex-col max-md:items-start max-md:*:w-full">
+      <label id={id} className="text-sm font-medium whitespace-nowrap">
+        {label}
+      </label>
+      {children}
     </div>
+  );
+}
+
+function Segmented({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      role="group"
+      className={cn('flex gap-1 rounded-sm border-2 border-border bg-card p-1', className)}
+      {...props}
+    />
+  );
+}
+
+function SegmentedButton({
+  on,
+  onClass = 'bg-primary text-white',
+  className,
+  ...props
+}: React.ComponentProps<'button'> & { on: boolean; onClass?: string }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      className={cn(
+        'cursor-pointer rounded-[6px] px-4 py-1.5 text-sm font-medium transition-all',
+        on ? onClass : 'text-muted-foreground hover:bg-muted',
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
@@ -566,16 +657,26 @@ function StudyCard({ item, side, record, revealed, image, onReveal, onAnswer, on
   const face = (face: Side) => {
     if (face !== side && !revealed) return null;
     return (
-      <div key={face} className={`study-face${face === side ? '' : ' is-second'}`}>
+      <div
+        key={face}
+        className={cn(
+          'flex w-full flex-col items-center gap-1',
+          face !== side && 'border-t border-border pt-3.5',
+        )}
+      >
         {face === 'target' ? (
           <>
-            <p className="study-georgian">{item.headword}</p>
-            {item.sub && <p className="study-georgian-sub">{item.sub}</p>}
+            <p className="text-[40px] leading-tight font-bold wrap-anywhere max-md:text-[32px]">{item.headword}</p>
+            {item.sub && <p className="text-xl text-muted-foreground">{item.sub}</p>}
           </>
         ) : (
           <>
-            <p className="study-english">{item.english}</p>
-            {item.senses.length > 1 && <p className="study-senses">{item.senses.slice(1, 4).join(' · ')}</p>}
+            <p className="text-[26px] leading-snug font-semibold text-primary-dark max-md:text-[22px]">
+              {item.english}
+            </p>
+            {item.senses.length > 1 && (
+              <p className="text-sm text-muted-foreground">{item.senses.slice(1, 4).join(' · ')}</p>
+            )}
           </>
         )}
       </div>
@@ -583,73 +684,105 @@ function StudyCard({ item, side, record, revealed, image, onReveal, onAnswer, on
   };
 
   return (
-    <div className="study-shell">
-      <article className="study-card">
-        <header className="study-card-top">
-          <div className="study-tags">
-            {item.cefr && <span className={`level-badge ${item.cefr.toLowerCase()}`}>{item.cefr}</span>}
-            {item.partOfSpeech && <span className="pos-tag">{item.partOfSpeech}</span>}
-            {item.kind === 'verb' && <span className="pos-tag">paradigm</span>}
+    <div className="flex flex-col items-center gap-3.5">
+      <article className="flex min-h-80 w-full max-w-[620px] flex-col rounded-lg border-2 border-border bg-card px-6 pt-5 pb-6 shadow-card max-md:min-h-60 max-md:px-4 max-md:pt-4 max-md:pb-5">
+        <header className="flex min-h-6 items-center justify-between gap-3">
+          <div className="flex flex-wrap gap-1.5">
+            {item.cefr && <LevelBadge level={item.cefr} />}
+            {item.partOfSpeech && <PosTag>{item.partOfSpeech}</PosTag>}
+            {item.kind === 'verb' && <PosTag>paradigm</PosTag>}
           </div>
-          <span className="study-direction">{SIDE_LABEL[side]}</span>
+          <span className="text-[11px] tracking-[0.04em] whitespace-nowrap text-faint uppercase">
+            {SIDE_LABEL[side]}
+          </span>
         </header>
 
-        <div className="study-card-main">
+        {/* The question sits in the middle of the space it has; the answer joins it there
+            rather than pushing it upwards, so the word does not jump when you reveal. */}
+        <div className="flex flex-1 flex-col items-center justify-center gap-3.5 py-5 text-center">
           {order.map(face)}
 
           {!revealed && (
-            <button type="button" className="study-reveal" onClick={onReveal}>
-              Show answer <span className="study-reveal-key">Space</span>
-            </button>
+            <Button size="auto" className="gap-2.5 text-[15px] font-semibold" onClick={onReveal}>
+              Show answer
+              <span className="rounded-[4px] bg-white/25 px-[7px] py-0.5 text-[11px] font-semibold">Space</span>
+            </Button>
           )}
         </div>
 
         {revealed && (
-          <div className="study-card-extra">
-            {item.definition && <p className="study-definition">{item.definition}</p>}
+          <div className="flex flex-col items-center gap-2.5 border-t border-border pt-3.5 text-center">
+            {item.definition && <p className="max-w-[46ch] text-sm text-muted-foreground">{item.definition}</p>}
             {image && (
-              <figure className="study-image">
-                <img src={image.url} alt={item.english} loading="lazy" />
-                {creditLine(image) && <figcaption className="image-credit">{creditLine(image)}</figcaption>}
+              // Bounded on both axes, so neither a tall portrait nor a wide panorama can push
+              // the card out of shape.
+              <figure className="w-full max-w-[340px]">
+                <img
+                  src={image.url}
+                  alt={item.english}
+                  loading="lazy"
+                  className="block h-auto max-h-60 w-full rounded-sm border border-border object-contain"
+                />
+                {creditLine(image) && (
+                  <figcaption className="px-0.5 pt-1.5 text-center text-[11px] leading-snug text-faint">
+                    {creditLine(image)}
+                  </figcaption>
+                )}
               </figure>
             )}
-            <p className="study-category">{item.category}</p>
+            <p className="text-xs text-faint">{item.category}</p>
           </div>
         )}
       </article>
 
       {revealed && (
-        <div className="study-grades">
+        <div className="flex w-full max-w-[620px] flex-col gap-2.5">
           <GradeRow record={record} onGrade={onAnswer} />
-          <button
-            type="button"
-            className="control-btn know study-known"
+          <Button
+            variant="control"
+            size="auto"
+            className={cn(KNOW_BUTTON, 'self-center')}
             onClick={onKnown}
             title="Retires both directions of this word"
           >
-            <Icon name="check" /> Known — never ask again
-          </button>
+            <Check /> Known — never ask again
+          </Button>
         </div>
       )}
     </div>
   );
 }
 
+/** Each grade wears the colour of the level it lands you on. */
+const GRADE_COLOUR: Record<Grade, string> = {
+  again: 'bg-m-1',
+  hard: 'bg-m-2',
+  good: 'bg-m-5',
+  easy: 'bg-primary',
+};
+
 // The four grades, each showing the wait it buys — the number is what makes the choice
 // between Hard and Good a real one rather than a mood.
 function GradeRow({ record, onGrade }: { record: CardRecord | null; onGrade: (grade: Grade) => void }) {
   const now = Date.now();
   return (
-    <div className="grade-row">
-      <div className="grade-row-head">
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center gap-3 text-xs">
         <MasteryBadge level={record?.level ?? null} />
-        {record && <span className="grade-row-due">{formatDue(record.due, now)}</span>}
+        {record && <span className="ml-auto text-faint">{formatDue(record.due, now)}</span>}
       </div>
-      <div className="grade-buttons" role="group" aria-label="Grade this card">
+      {/* Four in a row stop being tappable well before the sidebar drops away. */}
+      <div className="grid grid-cols-4 gap-2 max-md:grid-cols-2" role="group" aria-label="Grade this card">
         {GRADES.map(grade => (
-          <button key={grade} type="button" className={`grade-btn is-${grade}`} onClick={() => onGrade(grade)}>
-            <span className="grade-btn-label">{GRADE_LABEL[grade]}</span>
-            <span className="grade-btn-when">{formatInterval(nextInterval(record, grade))}</span>
+          <button
+            key={grade}
+            type="button"
+            className="group flex cursor-pointer flex-col items-center gap-0.5 rounded-sm border-2 border-border bg-card px-1.5 py-2.5 transition-colors duration-150 hover:bg-muted"
+            onClick={() => onGrade(grade)}
+          >
+            <span className={cn('mb-1 h-[3px] w-6.5 rounded-[2px]', GRADE_COLOUR[grade])} />
+            <span className="text-sm font-semibold">{GRADE_LABEL[grade]}</span>
+            <span className="text-[11px] tabular-nums text-faint">{formatInterval(nextInterval(record, grade))}</span>
           </button>
         ))}
       </div>

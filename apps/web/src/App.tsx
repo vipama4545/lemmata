@@ -17,7 +17,12 @@ import StoryReader from "./components/StoryReader";
 import Sidebar from "./components/Sidebar";
 import ScrollManager from "./components/ScrollManager";
 import Account from "./components/Account";
-import Icon from "./components/Icon";
+import { Menu, Moon, Sun } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from "@/components/ui/page";
+import { LevelTabs } from "@/components/ui/level-tabs";
+import { SearchField } from "@/components/ui/search-field";
 import { AdminGate } from "./admin/AdminHome";
 import { categoryImageCredits } from "./utils/categoryImages";
 import { content, useContent, lang, wordData as allData } from "./content/store";
@@ -25,7 +30,6 @@ import { isLang } from "@georgian/shared/grammar";
 import RuVerbDetail from "./components/RuVerbDetail";
 import RuVerbList from "./components/RuVerbList";
 import LanguageSwitcher from "./components/LanguageSwitcher";
-import "./App.css";
 
 // Verbs come from the conjugation spreadsheet rather than the scraped dictionary, so they
 // are their own category rather than an entry in words.json. It carries no CEFR level,
@@ -193,58 +197,65 @@ function App() {
     return verbs.kind === "ka"
       ? verbs.verbs.filter(
           (v) =>
-            v.english.toLowerCase().includes(needle) ||
-            v.verbalNoun.includes(needle) ||
-            v.present3sg.includes(needle),
+            v.english.toLowerCase().includes(needle) || v.verbalNoun.includes(needle) || v.present3sg.includes(needle),
         ).length
-      : verbs.verbs.filter(
-          (v) => v.english.toLowerCase().includes(needle) || v.infinitive.includes(needle),
-        ).length;
+      : verbs.verbs.filter((v) => v.english.toLowerCase().includes(needle) || v.infinitive.includes(needle)).length;
   }, [searchTerm, selectedLevel]);
 
   return (
     <HashRouter>
       <ScrollManager />
-      <div className="app">
-        <header className="header">
-          <div className="header-content">
-            <button
-              className="nav-toggle"
+      <div className="flex min-h-screen flex-col">
+        {/* The header sticks and the sidebar sticks below it, so the wordmark and the stats
+            stay visible while a long conjugation table scrolls. */}
+        <header className="sticky top-0 z-100 flex min-h-header items-center bg-(image:--header-bg) px-6 py-4 text-white shadow-pop">
+          <div className="flex w-full items-center justify-between gap-4 max-md:flex-wrap max-md:gap-2.5">
+            {/* Opens the sidebar as a drawer, and only exists at the widths where the
+                sidebar has stopped being a column. */}
+            <Button
+              variant="header"
+              size="icon"
+              className="lg:hidden"
               onClick={() => setNavOpen(true)}
               aria-label="Open menu"
               aria-controls="sidebar"
               aria-expanded={navOpen}
             >
-              <Icon name="menu" />
-            </button>
+              <Menu />
+            </Button>
             {/* The product, not the dictionary. Naming the language here made the masthead
                 change out from under you on every switch, and said the same thing the
                 switcher two inches to the right already says. */}
-            <Link to={`/${lang()}`} className="logo">
-              <span className="logo-word">Lemmata</span>
+            <Link to={`/${lang()}`} className="flex items-baseline gap-3 max-md:flex-1">
+              <span className="bg-[linear-gradient(135deg,#38bdf8,#818cf8)] bg-clip-text text-[28px] font-bold tracking-[-0.01em] text-transparent">
+                Lemmata
+              </span>
             </Link>
-            <div className="header-right">
-              <div className="header-stats">
-                <span className="stat">{verbCount()} verbs</span>
+            {/* On a narrow screen this whole group wraps to its own centred row, and the
+                stats go with it: they are ambient, and worth dropping there. */}
+            <div className="flex items-center gap-4 max-md:w-full max-md:flex-wrap max-md:justify-center max-md:gap-2">
+              <div className="flex gap-3 max-md:flex-wrap max-md:justify-center">
+                <Badge variant="onHeader">{verbCount()} verbs</Badge>
               </div>
-              <button
-                className="theme-toggle"
+              <Button
+                variant="header"
+                size="icon"
                 onClick={toggle}
                 title={dark ? "Switch to light mode" : "Switch to dark mode"}
                 aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
               >
-                <Icon name={dark ? "sun" : "moon"} />
-              </button>
+                {dark ? <Sun /> : <Moon />}
+              </Button>
               <LanguageSwitcher />
               <Account />
             </div>
           </div>
         </header>
 
-        <div className="app-body">
+        <div className="flex flex-1 items-start">
           <Sidebar open={navOpen} onClose={closeNav} />
 
-          <main className="app-main">
+          <main className="min-w-0 flex-1">
             <LangGate>
               <Routes>
                 {/* Every page lives under its language. That is what makes a link to a Russian
@@ -293,7 +304,7 @@ function App() {
                   path="/:lang/admin/*"
                   element={
                     <AdminGate>
-                      <Suspense fallback={<div className="main-content" />}>
+                      <Suspense fallback={<Page />}>
                         <AdminRoutes />
                       </Suspense>
                     </AdminGate>
@@ -333,75 +344,65 @@ function CategoryBrowser({
   verbMatches,
 }: CategoryBrowserProps) {
   return (
-    <div className="main-content">
-      <div className="breadcrumb">
-        <Link to="/">← Home</Link>
-        <span className="breadcrumb-sep">/</span>
+    <Page>
+      <Breadcrumb>
+        <BreadcrumbLink to="/">← Home</BreadcrumbLink>
+        <BreadcrumbSeparator />
         <span>Categories</span>
+      </Breadcrumb>
+
+      <div className="mb-6 flex flex-wrap items-center gap-4 max-md:flex-col max-md:*:w-full">
+        <SearchField
+          placeholder="Search words in Georgian or English…"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <LevelTabs value={selectedLevel} onChange={setSelectedLevel} />
       </div>
 
-      <div className="toolbar">
-        <div className="search-field">
-          <Icon name="search" />
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search words in Georgian or English…"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="level-filter">
-          <button
-            className={`level-btn ${selectedLevel === "all" ? "active" : ""}`}
-            onClick={() => setSelectedLevel("all")}
-          >
-            All
-          </button>
-          <button
-            className={`level-btn ${selectedLevel === "A1" ? "active a1" : ""}`}
-            onClick={() => setSelectedLevel("A1")}
-          >
-            A1
-          </button>
-          <button
-            className={`level-btn ${selectedLevel === "A2" ? "active a2" : ""}`}
-            onClick={() => setSelectedLevel("A2")}
-          >
-            A2
-          </button>
-        </div>
-      </div>
-
-      <div className="category-grid">
+      <div className="mb-8 grid grid-cols-[repeat(auto-fill,minmax(215px,1fr))] gap-4.5 max-md:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] max-md:gap-3">
         {verbMatches > 0 && (
-          <Link to="/verbs" className="category-card">
+          <Link to="/verbs" className={CATEGORY_CARD}>
             <CategoryThumb category={VERB_CATEGORY} />
-            <div className="category-card-body">
-              <h3 className="category-name">{VERB_CATEGORY.name}</h3>
-              <p className="category-name-geo">{VERB_CATEGORY.nameNative}</p>
-              <span className="category-count">{verbMatches} verbs</span>
-            </div>
+            <CategoryCardBody
+              name={VERB_CATEGORY.name}
+              native={VERB_CATEGORY.nameNative}
+              count={`${verbMatches} verbs`}
+            />
           </Link>
         )}
         {categories.map((cat) => (
           <Link
             key={cat.id}
             to={`/category/${cat.id}`}
-            className="category-card"
+            className={CATEGORY_CARD}
             state={{ level: selectedLevel, search: searchTerm }}
           >
             <CategoryThumb category={cat} />
-            <div className="category-card-body">
-              <h3 className="category-name">{cat.name}</h3>
-              <p className="category-name-geo">{cat.nameNative}</p>
-              <span className="category-count">{cat.wordCount} words</span>
-            </div>
+            <CategoryCardBody name={cat.name} native={cat.nameNative} count={`${cat.wordCount} words`} />
           </Link>
         ))}
       </div>
 
       <ImageCredits categories={categories} />
+    </Page>
+  );
+}
+
+/* Exported because the category list on a word's own page draws the same tile. The picture
+   fills the top of the card and eases up a little under the cursor, which is the whole of
+   what says the tile is a link — there is no other affordance on it. */
+export const CATEGORY_CARD =
+  "group flex flex-col overflow-hidden rounded-lg border-2 border-border bg-card transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-pop";
+
+function CategoryCardBody({ name, native, count }: { name: string; native: string; count: string }) {
+  return (
+    <div className="flex flex-col items-start gap-1 px-4 pt-3.5 pb-4 max-md:p-3">
+      <h3 className="text-[15px] leading-tight font-semibold">{name}</h3>
+      <p className="text-xs leading-snug text-faint">{native}</p>
+      <span className="mt-1 rounded-full bg-primary-glow px-2.5 py-0.5 text-[13px] font-medium text-primary">
+        {count}
+      </span>
     </div>
   );
 }
@@ -414,12 +415,14 @@ function ImageCredits({ categories }: { categories: Category[] }) {
   if (!credits.length) return null;
 
   return (
-    <details className="credits">
-      <summary>Image credits ({credits.length})</summary>
-      <ul>
+    <details className="mt-9 border-t border-border pt-4 [&_a]:underline [&_a]:underline-offset-2 [&_a]:hover:text-primary">
+      <summary className="cursor-pointer text-[13px] text-muted-foreground hover:text-primary">
+        Image credits ({credits.length})
+      </summary>
+      <ul className="mt-3.5 columns-2 gap-x-9 max-md:columns-1">
         {credits.map(({ category, image }) => (
-          <li key={category.id}>
-            <span className="credit-category">{category.name}</span>
+          <li key={category.id} className="mb-2 break-inside-avoid text-xs leading-normal text-faint">
+            <span className="block font-medium text-muted-foreground">{category.name}</span>
             <a href={image.page} target="_blank" rel="noopener noreferrer">
               {image.title}
             </a>
@@ -439,7 +442,7 @@ function ImageCredits({ categories }: { categories: Category[] }) {
           </li>
         ))}
       </ul>
-      <p className="credits-source">Images from Wikipedia and Wikimedia Commons.</p>
+      <p className="mt-2 text-xs text-faint">Images from Wikipedia and Wikimedia Commons.</p>
     </details>
   );
 }

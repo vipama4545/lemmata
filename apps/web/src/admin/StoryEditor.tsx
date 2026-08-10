@@ -11,9 +11,33 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { StoryLinkResult } from '@georgian/shared/contract';
 import type { Lang } from '@georgian/shared/grammar';
+import { Check, Eye, RotateCcw, Type } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import { cn } from '@/lib/utils';
+import { KNOW_BUTTON } from '../components/StoryReader';
 import { api } from '../api/client';
-import Icon from '../components/Icon';
 import { lang, langName, storySummaries } from '../content/store';
+import {
+  ADMIN_INPUT_GEO,
+  AdminActions,
+  AdminCount,
+  AdminError,
+  AdminField,
+  AdminGrid,
+  AdminHead,
+  AdminHint,
+  AdminInput,
+  AdminLabel,
+  AdminNote,
+  AdminPage,
+  AdminSection,
+  AdminSectionTitle,
+  AdminSub,
+  AdminTextarea,
+  AdminTitle,
+  AdminWarning,
+} from './ui';
 import { useEdit } from './useAdmin';
 
 /**
@@ -78,12 +102,12 @@ function StoryEditor() {
 
   if (storyId && !summary) {
     return (
-      <div className="main-content">
-        <div className="breadcrumb">
-          <Link to="/admin/stories">← Stories</Link>
-        </div>
-        <p className="empty-note">There is no story with the id “{storyId}”.</p>
-      </div>
+      <Page>
+        <Breadcrumb>
+          <BreadcrumbLink to="/admin/stories">← Stories</BreadcrumbLink>
+        </Breadcrumb>
+        <p className="py-6 text-center text-muted-foreground">There is no story with the id “{storyId}”.</p>
+      </Page>
     );
   }
 
@@ -130,174 +154,173 @@ function StoryEditor() {
   const mismatched = translationCount > 0 && translationCount !== paragraphCount;
 
   return (
-    <div className="main-content admin-page">
-      <div className="breadcrumb">
-        <Link to="/admin/stories">← Stories</Link>
-        <span className="breadcrumb-sep">/</span>
+    <AdminPage>
+      <Breadcrumb>
+        <BreadcrumbLink to="/admin/stories">← Stories</BreadcrumbLink>
+        <BreadcrumbSeparator />
         <span>{summary ? summary.titleEnglish || summary.title : 'New story'}</span>
-      </div>
+      </Breadcrumb>
 
-      <header className="admin-head">
-        <h1 className="admin-title">{summary ? summary.title : 'New story'}</h1>
+      <AdminHead>
+        <AdminTitle>{summary ? summary.title : 'New story'}</AdminTitle>
         {summary && (
-          <p className="admin-sub">
+          <AdminSub>
             <code>{summary.id}</code> · {summary.stats.tokens} words · {summary.stats.coverage}% linked ·{' '}
             {summary.stats.names} name(s)
-          </p>
+          </AdminSub>
         )}
-      </header>
+      </AdminHead>
 
-      {error && <p className="admin-error">{error}</p>}
+      {error && <AdminError>{error}</AdminError>}
 
-      <section className="admin-section">
-        <h2 className="admin-section-title">About it</h2>
-        <div className="admin-grid">
-          <label className="admin-field">
-            <span className="admin-label">{langName()} title</span>
-            <input
-              className="admin-input admin-input-geo"
+      <AdminSection>
+        <AdminSectionTitle>About it</AdminSectionTitle>
+        <AdminGrid>
+          <AdminField>
+            <AdminLabel>{langName()} title</AdminLabel>
+            <AdminInput
+              className={ADMIN_INPUT_GEO}
               value={draft.title}
               onChange={event => set('title', event.target.value)}
               placeholder="Taken from the first line of the text"
             />
-          </label>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">English title</span>
-            <input
-              className="admin-input"
+          <AdminField>
+            <AdminLabel>English title</AdminLabel>
+            <AdminInput
               value={draft.titleEnglish}
               onChange={event => set('titleEnglish', event.target.value)}
               placeholder="The Three Little Pigs"
             />
-            <span className="admin-hint">A new story’s id is slugged from this.</span>
-          </label>
+            <AdminHint>A new story’s id is slugged from this.</AdminHint>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Level</span>
-            <input
-              className="admin-input"
+          <AdminField>
+            <AdminLabel>Level</AdminLabel>
+            <AdminInput
               value={draft.level}
               onChange={event => set('level', event.target.value)}
               placeholder="A2"
             />
-            <span className="admin-hint">Free text: a story is not confined to the A1/A2 word list.</span>
-          </label>
+            <AdminHint>Free text: a story is not confined to the A1/A2 word list.</AdminHint>
+          </AdminField>
 
-          <label className="admin-field">
-            <span className="admin-label">Source</span>
-            <input className="admin-input" value={draft.source} onChange={event => set('source', event.target.value)} />
-          </label>
-        </div>
+          <AdminField>
+            <AdminLabel>Source</AdminLabel>
+            <AdminInput value={draft.source} onChange={event => set('source', event.target.value)} />
+          </AdminField>
+        </AdminGrid>
 
-        <label className="admin-field">
-          <span className="admin-label">Note</span>
-          <textarea
-            className="admin-input admin-textarea"
-            rows={2}
-            value={draft.note}
-            onChange={event => set('note', event.target.value)}
-          />
-        </label>
-      </section>
+        <AdminField>
+          <AdminLabel>Note</AdminLabel>
+          <AdminTextarea rows={2} value={draft.note} onChange={event => set('note', event.target.value)} />
+        </AdminField>
+      </AdminSection>
 
-      <section className="admin-section">
-        <h2 className="admin-section-title">The text</h2>
-        <p className="admin-note">
+      <AdminSection>
+        <AdminSectionTitle>The text</AdminSectionTitle>
+        <AdminNote>
           First line is the title, blank lines separate paragraphs, a lone “-” is a rule and is dropped —
           the same reading a <code>.txt</code> under <code>data/{lang()}/stories/</code> has always had. A
           translation must have one paragraph per {langName()} paragraph, because the side-by-side view pairs
           them by position.
-        </p>
+        </AdminNote>
 
         {storyId && !loadedText ? (
-          <button type="button" className="control-btn" onClick={loadText}>
-            <Icon name="type" /> Load the text to edit it
-          </button>
+          <Button variant="control" size="auto" onClick={loadText}>
+            <Type /> Load the text to edit it
+          </Button>
         ) : (
-          <div className="admin-grid admin-grid-prose">
-            <label className="admin-field">
-              <span className="admin-label">
-                {langName()} <span className="admin-count">{Math.max(paragraphCount, 0)} paragraph(s)</span>
-              </span>
-              <textarea
-                className="admin-input admin-textarea admin-textarea-tall admin-input-geo"
+          <AdminGrid className="mb-0 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
+            <AdminField>
+              <AdminLabel>
+                {langName()} <AdminCount>{Math.max(paragraphCount, 0)} paragraph(s)</AdminCount>
+              </AdminLabel>
+              <AdminTextarea
+                className={cn(TALL, ADMIN_INPUT_GEO)}
                 rows={16}
                 value={draft.text}
                 onChange={event => set('text', event.target.value)}
                 placeholder={PLACEHOLDER[lang()].text}
               />
-            </label>
+            </AdminField>
 
-            <label className="admin-field">
-              <span className="admin-label">
+            <AdminField>
+              <AdminLabel>
                 English{' '}
-                <span className={`admin-count${mismatched ? ' is-wrong' : ''}`}>
+                <AdminCount wrong={mismatched}>
                   {translationCount > 0 ? `${translationCount} paragraph(s)` : 'optional'}
-                </span>
-              </span>
-              <textarea
-                className="admin-input admin-textarea admin-textarea-tall"
+                </AdminCount>
+              </AdminLabel>
+              <AdminTextarea
+                className={TALL}
                 rows={16}
                 value={draft.translation}
                 onChange={event => set('translation', event.target.value)}
                 placeholder={PLACEHOLDER[lang()].translation}
               />
-            </label>
-          </div>
+            </AdminField>
+          </AdminGrid>
         )}
 
         {mismatched && (
-          <p className="admin-warning">
+          <AdminWarning>
             The translation has {translationCount} paragraph(s) and the {langName()} has {paragraphCount}. The
             side-by-side view pairs them by position, so they would drift out of step.
-          </p>
+          </AdminWarning>
         )}
-      </section>
+      </AdminSection>
 
-      <div className="admin-actions">
-        <button
-          type="button"
-          className="control-btn know"
+      <AdminActions>
+        <Button
+          variant="control"
+          size="auto"
+          className={KNOW_BUTTON}
           disabled={busy || draft.text.trim() === '' || (Boolean(storyId) && !loadedText)}
           onClick={save}
         >
-          <Icon name="check" /> {busy ? 'Linking…' : storyId ? 'Save and relink' : 'Create and link'}
-        </button>
+          <Check /> {busy ? 'Linking…' : storyId ? 'Save and relink' : 'Create and link'}
+        </Button>
 
         {storyId && (
           <>
-            <button type="button" className="control-btn" disabled={busy} onClick={relink}>
-              <Icon name="refresh" /> Relink from the lexicon
-            </button>
-            <Link className="control-btn" to={`/stories/${encodeURIComponent(storyId)}`}>
-              <Icon name="eye" /> Open the reader
-            </Link>
+            <Button variant="control" size="auto" disabled={busy} onClick={relink}>
+              <RotateCcw /> Relink from the lexicon
+            </Button>
+            <Button variant="control" size="auto" asChild>
+              <Link to={`/stories/${encodeURIComponent(storyId)}`}>
+                <Eye /> Open the reader
+              </Link>
+            </Button>
           </>
         )}
 
         {storyId && !confirmDelete && (
-          <button type="button" className="admin-danger-btn" disabled={busy} onClick={() => setConfirmDelete(true)}>
+          <Button variant="dangerOutline" size="auto" disabled={busy} onClick={() => setConfirmDelete(true)}>
             Delete
-          </button>
+          </Button>
         )}
         {storyId && confirmDelete && (
-          <span className="admin-confirm">
+          <span className="flex flex-wrap items-center gap-2.5 text-sm">
             Delete this story and every link in it?
-            <button type="button" className="admin-danger-btn" disabled={busy} onClick={remove}>
+            <Button variant="dangerOutline" size="auto" disabled={busy} onClick={remove}>
               Yes, delete
-            </button>
-            <button type="button" className="control-btn" onClick={() => setConfirmDelete(false)}>
+            </Button>
+            <Button variant="control" size="auto" onClick={() => setConfirmDelete(false)}>
               Cancel
-            </button>
+            </Button>
           </span>
         )}
-      </div>
+      </AdminActions>
 
       {report && <LinkReport result={report} />}
-    </div>
+    </AdminPage>
   );
 }
+
+/** Room for a whole story without the textarea having to be dragged open first. */
+const TALL = 'min-h-80 text-[15px] md:text-[15px]';
 
 /**
  * What linking managed, and what it did not.
@@ -311,72 +334,78 @@ function LinkReport({ result }: { result: StoryLinkResult }) {
   const { story, unresolved, flagged } = result;
 
   return (
-    <section className="admin-section admin-report">
-      <h2 className="admin-section-title">How it linked</h2>
+    <AdminSection>
+      <AdminSectionTitle>How it linked</AdminSectionTitle>
 
-      <div className="admin-report-stats">
-        <span className="admin-stat">
-          <strong>{story.stats.coverage}%</strong> linked
-        </span>
-        <span className="admin-stat">
-          <strong>{story.stats.tokens}</strong> words
-        </span>
-        <span className="admin-stat">
-          <strong>{story.stats.distinctForms}</strong> spellings
-        </span>
-        <span className="admin-stat">
-          <strong>{story.stats.names}</strong> names
-        </span>
-        <span className="admin-stat">
-          <strong>{story.stats.unresolved}</strong> unresolved
-        </span>
-        <span className="admin-stat">
-          <strong>{story.stats.flagged}</strong> guessed
-        </span>
+      <div className="mb-4 flex flex-wrap gap-[18px]">
+        <Stat value={`${story.stats.coverage}%`}>linked</Stat>
+        <Stat value={story.stats.tokens}>words</Stat>
+        <Stat value={story.stats.distinctForms}>spellings</Stat>
+        <Stat value={story.stats.names}>names</Stat>
+        <Stat value={story.stats.unresolved}>unresolved</Stat>
+        <Stat value={story.stats.flagged}>guessed</Stat>
       </div>
 
-      <p className="admin-note">
+      <AdminNote>
         Fix these in the reader, on the word itself — <Link to={`/stories/${encodeURIComponent(story.id)}`}>open it</Link>{' '}
         and turn on Edit links. A proper noun is named there and stays out of the dictionary; a missing word
         is added to the lexicon and every story that uses it picks it up on the next relink.
-      </p>
+      </AdminNote>
 
-      <div className="admin-report-lists">
-        <div>
-          <h3 className="admin-report-title">Nothing matched ({unresolved.length})</h3>
-          {unresolved.length === 0 ? (
-            <p className="admin-hint">Every word resolved.</p>
-          ) : (
-            <ul className="admin-tag-list">
-              {unresolved.slice(0, 60).map(item => (
-                <li key={item.form} className="admin-tag">
-                  <span className="admin-input-geo">{item.form}</span>
-                  {item.count > 1 && <span className="admin-tag-count">{item.count}</span>}
-                </li>
-              ))}
-              {unresolved.length > 60 && <li className="admin-hint">…and {unresolved.length - 60} more</li>}
-            </ul>
-          )}
-        </div>
-
-        <div>
-          <h3 className="admin-report-title">Reached by a guess ({flagged.length})</h3>
-          {flagged.length === 0 ? (
-            <p className="admin-hint">Nothing was guessed.</p>
-          ) : (
-            <ul className="admin-tag-list">
-              {flagged.slice(0, 60).map(item => (
-                <li key={item.form} className="admin-tag is-flagged">
-                  <span className="admin-input-geo">{item.form}</span>
-                  {item.count > 1 && <span className="admin-tag-count">{item.count}</span>}
-                </li>
-              ))}
-              {flagged.length > 60 && <li className="admin-hint">…and {flagged.length - 60} more</li>}
-            </ul>
-          )}
-        </div>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5">
+        <TagList title="Nothing matched" items={unresolved} empty="Every word resolved." />
+        <TagList title="Reached by a guess" items={flagged} empty="Nothing was guessed." flagged />
       </div>
-    </section>
+    </AdminSection>
+  );
+}
+
+function Stat({ value, children }: { value: number | string; children: React.ReactNode }) {
+  return (
+    <span className="text-[13px] text-muted-foreground">
+      <strong className="block text-xl text-foreground">{value}</strong>
+      {children}
+    </span>
+  );
+}
+
+/** One of the two lists of spellings, capped so a badly linked story does not fill the page. */
+function TagList({
+  title,
+  items,
+  empty,
+  flagged = false,
+}: {
+  title: string;
+  items: { form: string; count: number }[];
+  empty: string;
+  flagged?: boolean;
+}) {
+  return (
+    <div>
+      <h3 className="mb-2 text-[13px] font-bold">
+        {title} ({items.length})
+      </h3>
+      {items.length === 0 ? (
+        <AdminHint>{empty}</AdminHint>
+      ) : (
+        <ul className="flex list-none flex-wrap gap-1.5">
+          {items.slice(0, 60).map(item => (
+            <li
+              key={item.form}
+              className={cn(
+                'flex items-baseline gap-[5px] rounded-full px-[9px] py-[3px] text-sm',
+                flagged ? 'bg-[color-mix(in_srgb,var(--m-3)_20%,transparent)]' : 'bg-muted',
+              )}
+            >
+              <span className="text-base">{item.form}</span>
+              {item.count > 1 && <span className="text-[11px] text-faint">{item.count}</span>}
+            </li>
+          ))}
+          {items.length > 60 && <AdminHint>…and {items.length - 60} more</AdminHint>}
+        </ul>
+      )}
+    </div>
   );
 }
 

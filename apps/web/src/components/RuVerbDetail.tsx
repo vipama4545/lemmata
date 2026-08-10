@@ -25,7 +25,9 @@ import {
   presentLabel,
 } from '@georgian/shared/grammar/ru';
 import type { RuForm, RuSlot, RuVerb } from '@georgian/shared/types';
+import { Page } from '@/components/ui/page';
 import { derived, lang, ruVerbData } from '../content/store';
+import { AspectTag } from './RuVerbList';
 
 const verbsById = derived(from =>
   from.verbs.kind === 'ru' ? new Map(from.verbs.verbs.map(verb => [verb.id, verb])) : new Map<string, RuVerb>(),
@@ -57,12 +59,12 @@ export default function RuVerbDetail() {
 
   if (!verb || !paradigm) {
     return (
-      <div className="main-content verb-detail">
-        <p className="verb-missing">There is no verb with that id.</p>
-        <Link className="verb-back" to={`/${lang()}/verbs`}>
+      <Page>
+        <p className="text-muted-foreground">There is no verb with that id.</p>
+        <Link className={BACK} to={`/${lang()}/verbs`}>
           Back to the verb list
         </Link>
-      </div>
+      </Page>
     );
   }
 
@@ -72,43 +74,43 @@ export default function RuVerbDetail() {
   const total = ruVerbData().verbs.length;
 
   return (
-    <div className="main-content verb-detail">
-      <Link className="verb-back" to={`/${lang()}/verbs`}>
+    <Page>
+      <Link className={BACK} to={`/${lang()}/verbs`}>
         ← All {total} verbs
       </Link>
 
-      <header className="verb-head">
-        <h1 className="verb-title" lang="ru">
+      <header className="mb-7">
+        <h1 className="mb-1 text-[2rem] font-[650]" lang="ru">
           {verb.accented || verb.infinitive}
         </h1>
-        <p className="verb-english">{verb.english}</p>
+        <p className="mb-3 text-[1.05rem] text-muted-foreground">{verb.english}</p>
 
-        <ul className="verb-tags">
+        <ul className="mb-2.5 flex list-none flex-wrap gap-1.5 p-0">
           {/* Aspect first, and on its own line, because it is the fact that decides what every
               row below means. A perfective's "present" is a future. */}
-          <li className={`verb-tag verb-aspect-${verb.aspect}`}>
-            {verb.aspect === 'pf' ? 'Perfective' : 'Imperfective'}
+          <li>
+            <AspectTag aspect={verb.aspect} label={verb.aspect === 'pf' ? 'Perfective' : 'Imperfective'} />
           </li>
           {verb.transitivity && (
-            <li className="verb-tag">{verb.transitivity === 'tr' ? 'Transitive' : 'Intransitive'}</li>
+            <li className={TAG}>{verb.transitivity === 'tr' ? 'Transitive' : 'Intransitive'}</li>
           )}
-          {verb.reflexive && <li className="verb-tag">Reflexive</li>}
+          {verb.reflexive && <li className={TAG}>Reflexive</li>}
           {verb.motion && (
-            <li className="verb-tag">
+            <li className={TAG}>
               {verb.motion === 'uni' ? 'Unidirectional' : 'Multidirectional'} motion
             </li>
           )}
           {verb.government.map(one => (
-            <li key={one} className="verb-tag">
+            <li key={one} className={TAG}>
               takes the {CASE_NAMES[one] ?? one}
             </li>
           ))}
         </ul>
 
         {pair && (
-          <p className="verb-pair">
+          <p className="text-[0.9rem] text-muted-foreground">
             {verb.aspect === 'impf' ? 'Perfective' : 'Imperfective'} partner:{' '}
-            <Link to={`/${lang()}/verbs/${pair.id}`} lang="ru">
+            <Link className="text-primary hover:underline" to={`/${lang()}/verbs/${pair.id}`} lang="ru">
               {pair.accented || pair.infinitive}
             </Link>
           </p>
@@ -117,12 +119,12 @@ export default function RuVerbDetail() {
 
       {/* -------------------------------------------------- which group it is */}
 
-      <section className="verb-group">
-        <div className="verb-group-head">
-          <h2 className="verb-section-title">Conjugation</h2>
+      <section className="mb-7 rounded-[10px] border border-border p-4">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className={SECTION_TITLE}>Conjugation</h2>
           <button
             type="button"
-            className="verb-group-toggle"
+            className="cursor-pointer rounded-[6px] border border-border px-2.5 py-1 font-[inherit] text-[0.8rem] text-muted-foreground hover:text-foreground"
             onClick={() => setAdvanced(on => !on)}
             aria-pressed={advanced}
           >
@@ -131,22 +133,22 @@ export default function RuVerbDetail() {
         </div>
 
         {!advanced && conjugation && (
-          <div className="verb-group-simple">
-            <p className="verb-group-name">{conjugation.label}</p>
-            <p className="verb-group-endings" lang="ru">
+          <div>
+            <p className={GROUP_NAME}>{conjugation.label}</p>
+            <p className="mb-1.5 font-mono text-muted-foreground" lang="ru">
               {conjugation.endings}
             </p>
-            <p className="verb-group-hint">{conjugation.hint}</p>
+            <p className={HINT}>{conjugation.hint}</p>
           </div>
         )}
 
         {advanced && cls && (
-          <div className="verb-group-advanced">
-            <p className="verb-group-name">
+          <div>
+            <p className={GROUP_NAME}>
               Class {cls.id} — <span lang="ru">{cls.label}</span>
             </p>
-            <p className="verb-group-hint">{cls.description}</p>
-            <dl className="verb-group-facts">
+            <p className={HINT}>{cls.description}</p>
+            <dl className="mt-3.5 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-x-6 gap-y-2.5 [&_dd]:mt-0.5 [&_dt]:text-[0.75rem] [&_dt]:tracking-[0.04em] [&_dt]:text-faint [&_dt]:uppercase">
               <div>
                 <dt>Conjugation</dt>
                 <dd>{conjugation?.label ?? '—'}</dd>
@@ -154,7 +156,7 @@ export default function RuVerbDetail() {
               <div>
                 <dt>Model verb</dt>
                 <dd lang="ru">
-                  {cls.example} <span className="verb-group-gloss">{cls.exampleEnglish}</span>
+                  {cls.example} <span className="text-[0.85rem] text-faint">{cls.exampleEnglish}</span>
                 </dd>
               </div>
               <div>
@@ -183,7 +185,7 @@ export default function RuVerbDetail() {
       </section>
 
       {verb.check && (
-        <p className="verb-check">
+        <p className={ASIDE}>
           This verb’s rule has not been checked against a reference. The forms below are what the
           class predicts.
         </p>
@@ -192,29 +194,35 @@ export default function RuVerbDetail() {
       {/* ------------------------------------------------------- the paradigm */}
 
       {byGroup.map(([group, forms]) => (
-        <section key={group} className="verb-screeve">
-          <h2 className="verb-section-title">
+        <section key={group} className="mb-6">
+          <h2 className={SECTION_TITLE}>
             {group === 'present' ? presentLabel(verb.aspect) : RU_GROUP_LABELS[group]}
           </h2>
 
           {group === 'present' && verb.aspect === 'pf' && (
-            <p className="verb-section-note">
+            <p className="mb-2.5 text-[0.85rem] text-muted-foreground">
               A perfective verb has no present tense. These forms — which look like a present —
               are its future.
             </p>
           )}
 
-          <div className={group === 'past' ? 'verb-grid verb-grid-past' : 'verb-grid'}>
+          <div className="mt-2.5 grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-2">
             {forms.map(form => (
-              <div key={form.slot} className="verb-cell">
-                <span className="verb-person">{labelFor(form.slot)}</span>
-                <span className="verb-form" lang="ru">
+              <div
+                key={form.slot}
+                className="flex items-baseline gap-2 rounded-lg border border-border px-2.5 py-[7px]"
+              >
+                <span className="min-w-[66px] text-[0.8rem] text-faint">{labelFor(form.slot)}</span>
+                <span className="text-[1.05rem]" lang="ru">
                   {accented(form.form, form.stress)}
                   {/* A cell the rule could not reach. Shown rather than hidden: it is a
                       standing note that this verb is irregular here, which is exactly what a
                       learner wants flagged. */}
                   {form.source === 'stored' && (
-                    <abbr className="verb-irregular" title="Irregular — stored rather than derived">
+                    <abbr
+                      className="ml-[5px] cursor-help text-[#f59e0b] no-underline"
+                      title="Irregular — stored rather than derived"
+                    >
                       ×
                     </abbr>
                   )}
@@ -225,10 +233,19 @@ export default function RuVerbDetail() {
         </section>
       ))}
 
-      {verb.note && <p className="verb-note">{verb.note}</p>}
-    </div>
+      {verb.note && <p className={ASIDE}>{verb.note}</p>}
+    </Page>
   );
 }
+
+const BACK = 'mb-4 inline-block text-[0.88rem] text-muted-foreground hover:text-primary';
+const SECTION_TITLE = 'mb-1 text-base font-semibold';
+const GROUP_NAME = 'mt-2.5 mb-1 font-semibold';
+const HINT = 'text-[0.9rem] leading-normal text-muted-foreground';
+const TAG = 'rounded-full border border-border px-2.5 py-[3px] text-[0.78rem] text-muted-foreground';
+/* A standing caveat about the page, set off by a rule rather than a box: it qualifies what
+   is below without competing with it. */
+const ASIDE = 'mb-5 border-l-[3px] border-border px-3 py-2.5 text-[0.88rem] text-muted-foreground';
 
 const STRESS_NAMES: Record<string, string> = {
   stem: 'fixed on the stem',

@@ -10,11 +10,18 @@
 // this component ever mounted.
 
 import { useEffect, useState, lazy, Suspense } from 'react';
+import { Button } from '@/components/ui/button';
 import { loadContent } from './store';
 
 const App = lazy(() => import('../App'));
 
 type State = { status: 'loading' } | { status: 'ready' } | { status: 'failed'; error: Error };
+
+/* What is on screen between the page loading and the dictionary arriving. After the first
+   visit that is one round trip, so this is deliberately plain: a spinner that appears and
+   vanishes inside 100ms reads as a flicker, not as progress. */
+const SCREEN =
+  'flex min-h-screen flex-col items-center justify-center gap-3 bg-background p-8 text-center text-muted-foreground';
 
 export default function Boot() {
   const [state, setState] = useState<State>({ status: 'loading' });
@@ -39,23 +46,23 @@ export default function Boot() {
 
   if (state.status === 'failed') {
     return (
-      <div className="boot boot-failed">
-        <h1 className="boot-title">The dictionary could not be loaded</h1>
-        <p className="boot-note">
+      <div className={SCREEN}>
+        <h1 className="text-base font-semibold text-foreground">The dictionary could not be loaded</h1>
+        <p className="max-w-[40ch] text-sm leading-normal">
           The server did not answer, and there is no copy saved in this browser yet.
         </p>
-        <p className="boot-detail">{state.error.message}</p>
-        <button className="boot-retry" onClick={() => setAttempt(n => n + 1)}>
+        <p className="max-w-[60ch] font-mono text-xs break-words text-faint">{state.error.message}</p>
+        <Button size="auto" className="mt-2 font-semibold" onClick={() => setAttempt(n => n + 1)}>
           Try again
-        </button>
+        </Button>
       </div>
     );
   }
 
   if (state.status === 'loading') {
     return (
-      <div className="boot">
-        <p className="boot-title">Loading the dictionary…</p>
+      <div className={SCREEN}>
+        <p className="text-base font-semibold text-foreground">Loading the dictionary…</p>
       </div>
     );
   }

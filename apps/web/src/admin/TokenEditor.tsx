@@ -18,12 +18,28 @@
 // file, and the distinction is real — და is the conjunction all the way through, but აბა is
 // two different words in two different lines.
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { StoryLinkResult } from '@georgian/shared/contract';
 import type { Story, StoryToken, Word } from '@georgian/shared/types';
+import { Check, RotateCcw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
+import { KNOW_BUTTON } from '../components/StoryReader';
 import { api } from '../api/client';
-import Icon from '../components/Icon';
 import { wordData } from '../content/store';
+import {
+  AdminActions,
+  AdminBadge,
+  AdminCheck,
+  AdminError,
+  AdminField,
+  AdminHint,
+  AdminInput,
+  AdminLabel,
+  AdminNote,
+} from './ui';
 import { useEdit } from './useAdmin';
 import WordPicker from './WordPicker';
 
@@ -69,14 +85,6 @@ function TokenEditor({ story, paragraph, position, token, onClose, onSaved }: To
     [story, token.form],
   );
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
   const handMade = token.via === 'name' || token.via.startsWith('override');
 
   const save = async () => {
@@ -115,39 +123,29 @@ function TokenEditor({ story, paragraph, position, token, onClose, onSaved }: To
     (choice === 'word' && picked !== null) || (choice === 'name' && name.trim() !== '') || choice === 'plain';
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="modal-content admin-token"
-        role="dialog"
-        aria-modal="true"
-        aria-label={`Edit the link on ${token.form}`}
-        onClick={event => event.stopPropagation()}
-      >
-        <button className="modal-close" onClick={onClose} aria-label="Close">
-          <Icon name="close" />
-        </button>
-
-        <header className="admin-token-head">
-          <p className="admin-token-form">{token.form}</p>
-          <p className="admin-token-where">
+    <Dialog open onOpenChange={next => { if (!next) onClose(); }}>
+      <DialogContent className="max-w-140 gap-0 rounded-lg p-6 text-left">
+        <DialogHeader className="mb-4.5 text-left">
+          <DialogTitle className="text-[26px] font-bold">{token.form}</DialogTitle>
+          <DialogDescription className="text-[12.5px] text-faint">
             paragraph {paragraph + 1}, word {position + 1}
             {occurrences > 1 && ` · ${occurrences} occurrences of this spelling`}
-          </p>
-          <p className="admin-token-via">
+          </DialogDescription>
+          <p className="mt-2 flex flex-wrap gap-1.5">
             {handMade ? (
-              <span className="admin-badge is-admin">set by hand · {token.via}</span>
+              <AdminBadge admin>set by hand · {token.via}</AdminBadge>
             ) : (
-              <span className="admin-badge">
+              <AdminBadge>
                 {token.via === 'unresolved' ? 'nothing matched' : `matched by ${token.via}`}
-              </span>
+              </AdminBadge>
             )}
-            {token.check && <span className="admin-badge is-flagged">a guess</span>}
+            {token.check && <AdminBadge flagged>a guess</AdminBadge>}
           </p>
-        </header>
+        </DialogHeader>
 
-        {error && <p className="admin-error">{error}</p>}
+        {error && <AdminError>{error}</AdminError>}
 
-        <div className="admin-token-choices" role="radiogroup" aria-label="What this word is">
+        <div className="mb-4.5 grid gap-2" role="radiogroup" aria-label="What this word is">
           {(
             [
               ['word', 'A dictionary word', 'Links to a lexicon entry and one of its meanings.'],
@@ -155,38 +153,55 @@ function TokenEditor({ story, paragraph, position, token, onClose, onSaved }: To
               ['plain', 'Not a word', 'Left as plain text on purpose, rather than by failure.'],
             ] as [Choice, string, string][]
           ).map(([value, label, hint]) => (
-            <label key={value} className={`admin-token-choice${choice === value ? ' is-on' : ''}`}>
+            <label
+              key={value}
+              className={cn(
+                'grid cursor-pointer grid-cols-[auto_1fr] gap-x-2.5 gap-y-0.5 rounded-sm border px-3 py-2.5',
+                choice === value
+                  ? 'border-primary bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]'
+                  : 'border-border',
+              )}
+            >
               <input
                 type="radio"
                 name="token-choice"
+                className="row-span-2 self-center accent-primary"
                 checked={choice === value}
                 onChange={() => setChoice(value)}
               />
-              <span className="admin-token-choice-label">{label}</span>
-              <span className="admin-token-choice-hint">{hint}</span>
+              <span className="text-sm font-semibold">{label}</span>
+              <span className="col-start-2 text-[12.5px] text-muted-foreground">{hint}</span>
             </label>
           ))}
         </div>
 
         {choice === 'word' && (
-          <div className="admin-token-body">
+          <div className="mb-4">
             <WordPicker value={picked} suggestions={suggestions} onPick={setPicked} clearable={false} autoFocus />
 
             {picked && (
               <>
-                <div className="admin-field">
-                  <span className="admin-label">Which meaning</span>
-                  <ul className="admin-sense-list">
+                <div className="block">
+                  <AdminLabel>Which meaning</AdminLabel>
+                  <ul className="grid list-none gap-1">
                     {picked.senses.map((item, index) => (
                       <li key={item.id}>
-                        <label className={`admin-sense${sense === index + 1 ? ' is-on' : ''}`}>
+                        <label
+                          className={cn(
+                            'flex cursor-pointer items-baseline gap-2 rounded-sm border px-2.5 py-1.5 text-[13.5px]',
+                            sense === index + 1
+                              ? 'border-primary bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]'
+                              : 'border-transparent hover:bg-muted',
+                          )}
+                        >
                           <input
                             type="radio"
                             name="token-sense"
+                            className="accent-primary"
                             checked={sense === index + 1}
                             onChange={() => setSense(index + 1)}
                           />
-                          <span className="admin-sense-number">{index + 1}</span>
+                          <span className="text-xs tabular-nums text-faint">{index + 1}</span>
                           <span>{item.english}</span>
                         </label>
                       </li>
@@ -194,93 +209,97 @@ function TokenEditor({ story, paragraph, position, token, onClose, onSaved }: To
                   </ul>
                 </div>
 
-                <label className="admin-field">
-                  <span className="admin-label">Grammatical label</span>
-                  <input
-                    className="admin-input"
+                <AdminField className="mt-3">
+                  <AdminLabel>Grammatical label</AdminLabel>
+                  <AdminInput
                     value={gram}
                     onChange={event => setGram(event.target.value)}
                     placeholder="erg, dat.pl, Aorist 3sg"
                   />
-                  <span className="admin-hint">How this form differs from the headword. Shown on the card.</span>
-                </label>
+                  <AdminHint>How this form differs from the headword. Shown on the card.</AdminHint>
+                </AdminField>
               </>
             )}
           </div>
         )}
 
         {choice === 'name' && (
-          <div className="admin-token-body">
-            <label className="admin-field">
-              <span className="admin-label">Who or what this is</span>
-              <input
-                className="admin-input"
+          <div className="mb-4">
+            <AdminField>
+              <AdminLabel>Who or what this is</AdminLabel>
+              <AdminInput
                 value={name}
                 onChange={event => setName(event.target.value)}
                 placeholder="Nif-Nif, one of the three pigs"
                 autoFocus
               />
-              <span className="admin-hint">
+              <AdminHint>
                 Shown on the card in place of a definition. Case forms are named separately — ნიფ-ნიფმა can
                 read “Nif-Nif (ergative)” — because nothing derives that from the nominative.
-              </span>
-            </label>
+              </AdminHint>
+            </AdminField>
           </div>
         )}
 
         {choice === 'plain' && (
-          <p className="admin-note admin-token-body">
+          <AdminNote>
             This occurrence will be left as ordinary text, and marked as a decision rather than a failure —
             so it stops showing up in the unresolved list and survives every relink.
-          </p>
+          </AdminNote>
         )}
 
-        <label className="admin-field">
-          <span className="admin-label">Note</span>
-          <input
-            className="admin-input"
+        <AdminField>
+          <AdminLabel>Note</AdminLabel>
+          <AdminInput
             value={comment}
             onChange={event => setComment(event.target.value)}
             placeholder="Why, for whoever reads this in a year."
           />
-        </label>
+        </AdminField>
 
-        <label className="check admin-check admin-token-flag">
-          <input type="checkbox" checked={check} onChange={event => setCheck(event.target.checked)} />
+        <AdminCheck className={BOXED}>
+          <Checkbox className="mt-0.5" checked={check} onCheckedChange={value => setCheck(value === true)} />
           <span>
             Still a guess — come back to this
-            <span className="admin-hint">
+            <AdminHint>
               The same flag the linker sets on its own uncertain matches, so a doubt you have
               lands in the same list rather than needing the wrong link left in place to record it.
-            </span>
+            </AdminHint>
           </span>
-        </label>
+        </AdminCheck>
 
         {occurrences > 1 && (
-          <label className="check admin-check admin-token-everywhere">
-            <input type="checkbox" checked={everywhere} onChange={event => setEverywhere(event.target.checked)} />
+          <AdminCheck className={BOXED}>
+            <Checkbox
+              className="mt-0.5"
+              checked={everywhere}
+              onCheckedChange={value => setEverywhere(value === true)}
+            />
             Apply to all {occurrences} occurrences of “{token.form}” in this story
-          </label>
+          </AdminCheck>
         )}
 
-        <div className="admin-actions">
-          <button type="button" className="control-btn know" disabled={!canSave || busy} onClick={save}>
-            <Icon name="check" /> {busy ? 'Saving…' : 'Save'}
-          </button>
+        <AdminActions>
+          <Button variant="control" size="auto" className={KNOW_BUTTON} disabled={!canSave || busy} onClick={save}>
+            <Check /> {busy ? 'Saving…' : 'Save'}
+          </Button>
 
           {handMade && (
-            <button type="button" className="control-btn" disabled={busy} onClick={reset}>
-              <Icon name="refresh" /> Undo, and let the resolver decide
-            </button>
+            <Button variant="control" size="auto" disabled={busy} onClick={reset}>
+              <RotateCcw /> Undo, and let the resolver decide
+            </Button>
           )}
 
-          <button type="button" className="control-btn" onClick={onClose}>
+          <Button variant="control" size="auto" onClick={onClose}>
             Cancel
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </AdminActions>
+      </DialogContent>
+    </Dialog>
   );
 }
+
+/** The two flags at the foot get a box each: they modify the save rather than describe it. */
+const BOXED = 'mb-2.5 items-start rounded-sm border border-border-strong px-3 py-2.5';
 
 export default TokenEditor;

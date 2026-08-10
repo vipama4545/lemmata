@@ -1,0 +1,8 @@
+{
+  // Tailwind's language server suggests rewriting every arbitrary value that happens to land
+  // on a scale step — `max-w-[960px]` → `max-w-240`, `size-[22px]` → `size-5.5`. This codebase
+  // uses the bracket form on purpose where the number came from the design rather than from
+  // the spacing scale: `max-w-[960px]` says "the flashcard column is 960px wide", `max-w-240`
+  // says nothing. The suggestions are noise here, so the rule is off.
+  "tailwindCSS.lint.suggestCanonicalClasses": "ignore"
+}

@@ -1,10 +1,20 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { LevelFilter } from '@georgian/shared/types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import { SearchField } from '@/components/ui/search-field';
+import { LevelBadge, PosTag, WordCard, WordCardBody, WordCardTags } from '@/components/ui/word-card';
+import { LevelTabs } from "@/components/ui/level-tabs";
 import { lang, wordData as allData } from '../content/store';
 import { focusHref } from '../utils/scroll';
 import { useEntryState } from '../utils/entryState';
-import Icon from './Icon';
 
 function WordSearch() {
   // The whole page is the search: leaving it and coming back to an empty box would throw
@@ -29,89 +39,77 @@ function WordSearch() {
   }, [searchTerm, selectedLevel, selectedCategory]);
 
   return (
-    <div className="main-content">
-      <div className="breadcrumb">
-        <Link to={`/${lang()}`}>← Home</Link>
-        <span className="breadcrumb-sep">/</span>
+    <Page>
+      <Breadcrumb>
+        <BreadcrumbLink to={`/${lang()}`}>← Home</BreadcrumbLink>
+        <BreadcrumbSeparator />
         <span>Word Search</span>
-      </div>
+      </Breadcrumb>
 
-      <h2>Word Search</h2>
+      <h2 className="mb-4 text-2xl font-bold">Word Search</h2>
 
-      <div className="search-page-toolbar">
-        <div className="search-field">
-          <Icon name="search" size={20} />
-          <input
-            type="text"
-            className="search-input large"
-            placeholder="Type in Georgian or English…"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            autoFocus
-          />
-        </div>
-        <div className="search-filters">
-          <div className="level-filter">
-            <button className={`level-btn ${selectedLevel === 'all' ? 'active' : ''}`}
-              onClick={() => setSelectedLevel('all')}>All</button>
-            <button className={`level-btn ${selectedLevel === 'A1' ? 'active a1' : ''}`}
-              onClick={() => setSelectedLevel('A1')}>A1</button>
-            <button className={`level-btn ${selectedLevel === 'A2' ? 'active a2' : ''}`}
-              onClick={() => setSelectedLevel('A2')}>A2</button>
-          </div>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="category-select"
-          >
-            <option value="all">All Categories</option>
-            {allData().categories.map(cat => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+      <div className="mb-5">
+        <SearchField
+          large
+          placeholder="Type in Georgian or English…"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          autoFocus
+        />
+        <div className="mt-3 flex flex-wrap gap-4">
+          <LevelTabs value={selectedLevel} onChange={setSelectedLevel} />
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="h-auto flex-1 rounded-sm border-2 border-border bg-card py-2 text-sm shadow-none data-[size=default]:h-auto">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {allData().categories.map(cat => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       {searchTerm && (
-        <p className="search-results-count">
+        <p className="mb-3 text-sm text-muted-foreground">
           {results.length} result{results.length !== 1 ? 's' : ''} found
         </p>
       )}
 
-      <div className="word-list">
+      <div className="flex flex-col gap-2">
         {results.map((word) => (
-          <Link
-            key={word.id}
-            to={focusHref(`/category/${word.categoryId}`, word.id)}
-            className="word-card search-result"
-          >
-            <div className="word-card-left">
-              <span className={`level-badge ${word.level.toLowerCase()}`}>{word.level}</span>
-              <span className="pos-tag">{word.partOfSpeech}</span>
-            </div>
-            <div className="word-card-center">
-              <span className="word-georgian">{word.headword}</span>
-              <span className="word-english">{word.english}</span>
-              {word.definition && (
-                <span className="word-definition">{word.definition}</span>
-              )}
-            </div>
-            <div className="word-card-right">
-              <span className="word-category-small">{word.category}</span>
-            </div>
+          <Link key={word.id} to={focusHref(`/category/${word.categoryId}`, word.id)}>
+            <WordCard className="cursor-pointer">
+              <WordCardTags>
+                <LevelBadge level={word.level} />
+                <PosTag>{word.partOfSpeech}</PosTag>
+              </WordCardTags>
+              <WordCardBody>
+                <span className="text-xl font-semibold">{word.headword}</span>
+                <span className="text-[15px] text-muted-foreground">{word.english}</span>
+                {word.definition && (
+                  <span className="text-[13px] text-faint">{word.definition}</span>
+                )}
+              </WordCardBody>
+              <div className="flex shrink-0 items-center">
+                <span className="text-xs text-faint">{word.category}</span>
+              </div>
+            </WordCard>
           </Link>
         ))}
       </div>
 
       {!searchTerm && (
-        <div className="search-placeholder">
+        <div className="px-5 py-15 text-center text-faint">
           <p>Start typing to search across all {allData().words.length} Georgian words...</p>
-          <p className="search-hint">You can search in Georgian (₾) or English alphabets</p>
+          <p className="mt-2 text-[13px]">You can search in Georgian (₾) or English alphabets</p>
         </div>
       )}
-    </div>
+    </Page>
   );
 }
 

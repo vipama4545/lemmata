@@ -13,11 +13,24 @@
 // The second is that nothing here deletes anything. It sends a link, the same as signing in
 // does. This is the only irreversible action in the app, and a mistyped click or somebody
 // else at an unlocked laptop should not be enough on its own.
+//
+// Red is used nowhere else in this app — the mastery ramp's --m-1 is the closest thing, and
+// it means "you keep forgetting this word", not danger — so it is unambiguous here.
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { WalletCards } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { requestAccountDeletion } from '../api/client';
 import { resetProgress } from '../study/store';
-import Icon from './Icon';
 
 interface DeleteAccountDialogProps {
   /** The signed-in user's own address, in full — it is where the confirmation is going. */
@@ -25,21 +38,13 @@ interface DeleteAccountDialogProps {
   onClose: () => void;
 }
 
+const NOTE = 'text-[13px] leading-relaxed text-muted-foreground';
+
 export default function DeleteAccountDialog({ email, onClose }: DeleteAccountDialogProps) {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [alsoLocal, setAlsoLocal] = useState(false);
-
-  // Escape closes it, as everywhere else here, and for the same reason: a keyboard user
-  // cannot click the backdrop.
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
 
   const submit = () => {
     if (sending) return;
@@ -61,68 +66,63 @@ export default function DeleteAccountDialog({ email, onClose }: DeleteAccountDia
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="modal-content danger-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Delete your account"
-        onClick={event => event.stopPropagation()}
-      >
-        <button className="modal-close" onClick={onClose} aria-label="Close">
-          <Icon name="close" />
-        </button>
-
+    <Dialog open onOpenChange={next => { if (!next) onClose(); }}>
+      <DialogContent className="max-w-130 rounded-lg p-6 text-left">
         {sent ? (
           <>
-            <h2>Check your inbox</h2>
-            <p className="danger-lead">
-              A confirmation has gone to <strong>{email}</strong>. Your account is deleted when
-              you follow the link in it, and not before — until then nothing has changed.
-            </p>
-            <p className="danger-note">
+            <DialogHeader className="text-left">
+              <DialogTitle className="text-xl">Check your inbox</DialogTitle>
+              <DialogDescription className="text-[14.5px] leading-relaxed text-foreground">
+                A confirmation has gone to <strong>{email}</strong>. Your account is deleted when
+                you follow the link in it, and not before — until then nothing has changed.
+              </DialogDescription>
+            </DialogHeader>
+            <p className={NOTE}>
               Open it <strong>in this browser</strong>, while still signed in. The link proves which
               account to delete by the session it is opened with, so following it somewhere you are
               signed out will not work.
             </p>
             {alsoLocal && (
-              <p className="danger-note">
-                What this browser knew has already been erased, as you asked.
-              </p>
+              <p className={NOTE}>What this browser knew has already been erased, as you asked.</p>
             )}
-            <div className="danger-actions">
-              <button type="button" className="control-btn" onClick={onClose}>
+            <DialogFooter>
+              <Button variant="control" size="auto" onClick={onClose}>
                 Close
-              </button>
-            </div>
+              </Button>
+            </DialogFooter>
           </>
         ) : (
           <>
-            <h2>Delete your account</h2>
-            <p className="danger-lead">
-              This removes the account behind <strong>{email}</strong> and every review record
-              stored on it — what you know, and when each word is next due. It cannot be undone.
-            </p>
+            <DialogHeader className="text-left">
+              <DialogTitle className="text-xl">Delete your account</DialogTitle>
+              <DialogDescription className="text-[14.5px] leading-relaxed text-foreground">
+                This removes the account behind <strong>{email}</strong> and every review record
+                stored on it — what you know, and when each word is next due. It cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
 
-            <div className="danger-panel">
-              <p className="danger-panel-title">
-                <Icon name="cards" size={15} />
+            {/* What is *kept* — deliberately a panel rather than another paragraph. It is the
+                one thing in the dialog somebody is likely to have got wrong in their head, so
+                it has to survive being skim-read. */}
+            <div className="rounded-sm border border-border bg-muted p-3.5">
+              <p className="mb-2 flex items-center gap-[7px] text-[13.5px] font-semibold">
+                <WalletCards className="size-[15px]" aria-hidden="true" />
                 What this browser knows is kept
               </p>
-              <p className="danger-note">
+              <p className={`${NOTE} mb-2.5`}>
                 Your progress lives here first and was here before you signed up. Deleting the
                 account removes the copy that outlives this laptop; the copy on it stays, and you
                 can carry on studying signed out exactly as you are now.
               </p>
-              <label className="check danger-check">
-                <input
-                  type="checkbox"
+              <label className="flex cursor-pointer items-start gap-2 text-[13.5px]">
+                <Checkbox
+                  className="mt-0.5"
                   checked={alsoLocal}
-                  onChange={event => setAlsoLocal(event.target.checked)}
+                  onCheckedChange={value => setAlsoLocal(value === true)}
                 />
                 <span>
                   Erase this browser’s copy too
-                  <span className="danger-hint">
+                  <span className="mt-[3px] block text-[12.5px] leading-normal text-faint">
                     Every level, interval and due date on this device, gone as well. Other devices
                     you have used keep theirs.
                   </span>
@@ -130,23 +130,27 @@ export default function DeleteAccountDialog({ email, onClose }: DeleteAccountDia
               </label>
             </div>
 
-            {error && <p className="danger-error">{error}</p>}
+            {error && (
+              <p className="rounded-sm border border-l-[3px] border-destructive bg-[color-mix(in_srgb,var(--m-1)_8%,var(--card))] px-3 py-2.5 text-[13.5px]">
+                {error}
+              </p>
+            )}
 
-            <p className="danger-note">
+            <p className={NOTE}>
               Nothing happens yet. We send a link to confirm it is you, the same as signing in.
             </p>
 
-            <div className="danger-actions">
-              <button type="button" className="control-btn" onClick={onClose}>
+            <DialogFooter>
+              <Button variant="control" size="auto" onClick={onClose}>
                 Cancel
-              </button>
-              <button type="button" className="danger-btn" disabled={sending} onClick={submit}>
+              </Button>
+              <Button variant="danger" size="auto" disabled={sending} onClick={submit}>
                 {sending ? 'Sending…' : 'Email me the confirmation'}
-              </button>
-            </div>
+              </Button>
+            </DialogFooter>
           </>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
