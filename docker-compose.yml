@@ -57,5 +57,38 @@ services:
       # Reading ~400 MB of models off disk, once, on a cold container.
       start_period: 120s
 
+  # The voice the story reader plays. Optional in exactly the way the analyser is: with
+  # TTS_URL unset the server never calls it and no audio is offered anywhere.
+  #
+  #   npm run tts:up
+  #
+  # then put TTS_URL=http://127.0.0.1:8001 in .env.
+  tts:
+    build:
+      context: .
+      dockerfile: apps/tts/Dockerfile
+    container_name: georgian-dict-tts
+    restart: unless-stopped
+    ports:
+      # Published for the same reason the analyser's is: in development the server runs on
+      # the host and cannot reach a compose network by service name.
+      - '8001:8001'
+    healthcheck:
+      # /health loads every voice, so passing it means the first sentence a reader asks for
+      # does not wait on 126 MB coming off disk. /voices answers which languages there are
+      # without touching a model, and is what the server asks before it offers audio at all.
+      test:
+        [
+          'CMD',
+          'python',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=10)",
+        ]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      # Two 63 MB voices, once, on a cold container — far quicker than the analyser's models.
+      start_period: 30s
+
 volumes:
   db-data:

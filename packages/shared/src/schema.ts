@@ -1,6 +1,6 @@
 // The database, in Drizzle.
 //
-// Four things live here and they are worth telling apart, because they have different
+// Five things live here and they are worth telling apart, because they have different
 // owners and completely different write patterns:
 //
 //   content — the lexicon, the paradigms, the stories. Seeded from data/<lang>/*.json and,
@@ -17,6 +17,10 @@
 //
 //   study — one row per side of one item per user. This is the only table that holds
 //     something a user would miss.
+//
+//   speech — an index over the synthesised audio cached on disk. The only group here that is
+//     wholly disposable: every row can be deleted at any moment and is simply made again the
+//     next time someone presses play. See `ttsCache`.
 //
 // The content tables are normalised where the shape is a real relation (a word's senses, a
 // verb's 66 forms) and left as jsonb where it is a closed record the app only ever reads
@@ -892,6 +896,64 @@ export const studyCards = pgTable(
     index('study_cards_user_lang_due_idx').on(table.userId, table.lang, table.due),
     uniqueIndex('study_cards_user_item_side_idx').on(table.userId, table.item, table.side),
   ],
+);
+
+/* ===================================================================== speech */
+
+/**
+ * What has been synthesised, and where it is on disk.
+ *
+ * An index, not a store: the audio itself is a file under TTS_CACHE_DIR, because a browser
+ * fetches these and Postgres is the wrong thing to stream bytes out of or to grow a backup
+ * by two gigabytes. This table is what makes the directory answerable — how big it is, what
+ * can be dropped first, and what the word timings for a file are without decoding it.
+ *
+ * Every row is disposable and that is the point. `key` is a hash of the exact text that was
+ * spoken, so a row and its file can be deleted at any moment and the next request for that
+ * text simply makes it again, identically. Nothing here is content and nothing here is worth
+ * backing up; `npm run db:export` does not write it out and the seed does not fill it.
+ */
+export const ttsCache = pgTable(
+  'tts_cache',
+  {
+    /**
+     * sha256 of the language, the voice and the text, hex, truncated to 32 characters.
+     *
+     * The voice is in there because changing which voice a language uses has to invalidate
+     * everything said in it — otherwise a story reads in two voices, the old sentences and
+     * the re-synthesised ones, which is the one bug this cache could plausibly cause.
+     */
+    key: text('key').primaryKey(),
+    lang: text('lang').notNull().$type<Lang>().default('ka'),
+    /** Size of the file on disk. Summed to decide whether anything needs evicting. */
+    bytes: integer('bytes').notNull(),
+    /** Seconds. What the player builds its timeline from, without loading the audio. */
+    duration: real('duration').notNull(),
+    /**
+     * When each word of the line is said, in seconds from the start of the audio. One entry
+     * per word, in reading order, so an entry's position in the array is the word's position
+     * in the *sentence*.
+     *
+     * Sentence-relative and not paragraph-relative, deliberately. Where a line sits in a
+     * paragraph is a fact about that paragraph, not about the sound, and the key here is a
+     * hash of the text alone — so the same sentence occurring in two places is one row and
+     * one file, and it is the caller that adds the offset to get the word index the reader
+     * keys on. Storing the absolute index would make the audio and its position share a
+     * cache entry, and the second occurrence would light up the wrong words.
+     *
+     * Empty where the speech service could not group its phonemes into the same number of
+     * words our tokeniser found. The audio is still good; the reader falls back to
+     * highlighting the whole sentence. See apps/tts/main.py.
+     */
+    words: jsonb('words').$type<{ start: number; end: number }[]>().notNull().default([]),
+    /**
+     * When it was last played, not when it was made. This is the whole eviction policy: the
+     * least recently *wanted* files go first, so a story someone is working through stays
+     * warm and a word looked up once in March does not.
+     */
+    usedAt: timestamp('used_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  table => [index('tts_cache_used_idx').on(table.usedAt)],
 );
 
 /* =================================================================== relations */

@@ -47,3 +47,7 @@ scripts
 backups/
 *.dump
 *.sql.gz
+
+# Synthesised speech. A cache: every file in it is remade on demand from the text it
+# was hashed from, so it is never worth committing or backing up.
+.tts-cache/

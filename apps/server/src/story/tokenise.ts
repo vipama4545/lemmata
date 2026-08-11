@@ -6,19 +6,21 @@
 // about where a word starts, every meaning after the disagreement would be shifted along by
 // one, silently, with nothing to show anything was wrong.
 //
-// The four are:
+// The five are:
 //
 //   this file                      — the server, resolving and storing tokens
 //   apps/web/src/utils/story.ts    — the browser, painting them back over the prose
 //   apps/analyser/main.py          — the tagger, aligning its own tokenisation onto ours
+//   apps/tts/main.py               — the voice, grouping its phonemes into words to time them
 //   scripts/buildStoryData.cjs     — the offline Georgian build, still there for the batch route
 //
 // The web app repeats the pattern rather than importing it, because it splits with a
-// capturing group to keep the punctuation and this one only scans; the tagger repeats it
-// because it is Python; the script repeats it because it is CommonJS and Georgian-only.
-// Change one and the others have to follow. `at()` on the web side checks the recorded
-// spelling against the text before believing a position, which is what turns a drift from
-// silent corruption into a word that simply does not light up.
+// capturing group to keep the punctuation and this one only scans; the two Python services
+// repeat it because they are Python; the script repeats it because it is CommonJS and
+// Georgian-only. Change one and the others have to follow. `at()` on the web side checks the
+// recorded spelling against the text before believing a position, and the voice returns no
+// timings at all rather than wrong ones when its count disagrees with this one — which is
+// what turns a drift from silent corruption into a word that simply does not light up.
 
 import type { Lang } from '@georgian/shared/grammar';
 

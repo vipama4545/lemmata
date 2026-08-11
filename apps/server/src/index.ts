@@ -16,6 +16,7 @@ import { auth } from './auth.ts';
 import { env, isProduction } from './env.ts';
 import { assertMailConfigured, mailEnabled } from './mail/mailgun.ts';
 import { router } from './router/index.ts';
+import { registerTtsRoutes } from './tts/routes.ts';
 import { sql } from './db/index.ts';
 
 assertMailConfigured();
@@ -101,6 +102,12 @@ await app.register(async instance => {
     if (!matched) reply.status(404).send({ error: 'No such procedure' });
   });
 });
+
+/* ------------------------------------------------------------------ audio */
+
+// Outside the oRPC plugin, so these keep the ordinary body parser and stay plain URLs a
+// browser can hand to an <audio> element. See tts/routes.ts.
+registerTtsRoutes(app);
 
 /* ----------------------------------------------------------------- health */
 

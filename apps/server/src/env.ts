@@ -41,6 +41,42 @@ const schema = z.object({
    */
   ANALYSER_URL: z.url().optional(),
 
+  /**
+   * The speech service, if one is running — `http://tts:8001` under compose.
+   *
+   * Optional in exactly the way ANALYSER_URL is. Unset, the story reader is told there is no
+   * audio and never shows the player at all; nothing else changes and nothing fails. See
+   * tts/client.ts, and apps/tts/ for the service.
+   */
+  TTS_URL: z.url().optional(),
+
+  /**
+   * Where synthesised audio is kept. A directory rather than a table: these are files a
+   * browser fetches, and Postgres is the wrong place to stream bytes from and the wrong
+   * thing to grow a backup by two gigabytes. The index that says what is in here — sizes,
+   * word timings, when each was last played — is in `tts_cache`.
+   *
+   * The default is absolute and anchored to the repo, not relative to the working directory.
+   * `npm run dev:server` runs in apps/server and the container runs in /app, so a relative
+   * default would put the cache somewhere different in each and quietly start again from
+   * empty when it moved. Production sets this to a volume; see docker-compose.prod.yml.
+   */
+  TTS_CACHE_DIR: z.string().default(new URL('../../../.tts-cache', import.meta.url).pathname),
+
+  /**
+   * How large that directory may get before the least recently played files are dropped.
+   *
+   * Two gigabytes is about 167 hours of speech at the 24 kbps the service encodes at, which
+   * is far more than every story will ever amount to — all four Georgian ones come to about
+   * 2.5 MB. What it actually bounds is how much of the 33,762-word dictionary stays warm,
+   * which is the part with no natural end to it.
+   *
+   * Eviction is safe at any size because a key is a hash of the text it was made from: a
+   * dropped file is re-synthesised the next time it is asked for, and nothing is lost but
+   * the second it takes to make it again.
+   */
+  TTS_CACHE_MAX_BYTES: z.coerce.number().int().positive().default(2_000_000_000),
+
   // Optional as a pair: both or neither. See mail/mailgun.ts.
   MAILGUN_API_KEY: z.string().min(1).optional(),
   /** The sending domain as Mailgun knows it — `mg.example.com`, not a URL. */

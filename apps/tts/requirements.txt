@@ -1,0 +1,7 @@
+# The [alignment] extra is not optional here, despite the name. It pulls `onnx` alongside
+# `onnxruntime` — ~50 MB more image — and without it PiperVoice.load(include_alignments=True)
+# refuses at load time and every reply comes back with no word timings at all. Word timings
+# are the reason the reader can highlight what is being read, so the extra is the point.
+piper-tts[alignment]==1.6.0
+fastapi==0.141.1
+uvicorn[standard]==0.52.1

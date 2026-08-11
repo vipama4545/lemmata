@@ -62,6 +62,17 @@ x-server: &server
     # it out to turn the tagger off without redeploying anything else.
     ANALYSER_URL: ${ANALYSER_URL:-http://analyser:8000}
 
+    # The voice, on the same terms as the tagger above: comment it out to turn audio off
+    # without redeploying anything else, and the reader simply stops offering a player.
+    TTS_URL: ${TTS_URL:-http://tts:8001}
+    # On the volume, not in the container's writable layer — a cache that is thrown away on
+    # every deploy is a cache that is always cold, and this one is allowed to reach 2 GB.
+    TTS_CACHE_DIR: /cache/tts
+    # Roughly 167 hours of speech at the 24 kbps the service encodes at. Every file in it is
+    # remade on demand from the text it was hashed from, so this is a disk budget and not a
+    # data-loss decision — lower it freely if the box is tight.
+    TTS_CACHE_MAX_BYTES: ${TTS_CACHE_MAX_BYTES:-2000000000}
+
     # Only the server enforces these — assertMailConfigured runs in index.ts, not in migrate
     # or seed — but the stack is not deployable without them, so they fail here too.
     MAILGUN_API_KEY: ${MAILGUN_API_KEY:?set MAILGUN_API_KEY}
@@ -70,6 +81,11 @@ x-server: &server
     MAILGUN_API_BASE: ${MAILGUN_API_BASE:-https://api.mailgun.net}
     MAIL_FROM_EMAIL: ${MAIL_FROM_EMAIL:-no-reply@lemmata.fyi}
     MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Lemmata}
+  # Shared by migrate and seed as well as the server itself, which costs nothing: the two
+  # one-shot jobs never write a byte of audio, and a mount they ignore is cheaper than a
+  # second copy of this whole block to leave it out of.
+  volumes:
+    - tts-cache:/cache/tts
   depends_on:
     db:
       condition: service_healthy
@@ -196,6 +212,43 @@ services:
           # depends on cannot take Postgres down with it.
           memory: 3G
 
+  # The voice. Asked for one sentence at a time, the first time anybody plays it, and never
+  # again for that sentence — what it produces is cached by the server, so a story that has
+  # been read once costs this container nothing on every later reading.
+  #
+  # Optional in exactly the way the analyser is, and `server` has no depends_on for it for
+  # exactly the same reason. Down or never deployed, the reader is told there is no audio and
+  # draws no player; nothing else changes.
+  tts:
+    build:
+      context: .
+      dockerfile: apps/tts/Dockerfile
+    image: ${REGISTRY:?set REGISTRY, e.g. youruser/yourrepo}:tts-${TAG:-20260805}
+    restart: unless-stopped
+    logging: *logging
+    # No published port. Only `server` talks to it, over the compose network, by name.
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=10)",
+        ]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      # Two 63 MB voices off disk. Nothing like the analyser's wait.
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          # Two voices at 63 MB of weights each, two uvicorn workers with a private copy
+          # apiece, and onnxruntime's arenas on top. Measured well under half of this; the
+          # ceiling is here so a leak in a service nothing depends on cannot take Postgres
+          # down with it.
+          memory: 1G
+
   web:
     build:
       context: .
@@ -225,3 +278,7 @@ services:
 
 volumes:
   db-data:
+  # Synthesised speech. Not backed up and not worth backing up: every file in it is a hash of
+  # the text it was made from, so an empty volume costs one re-synthesis per line and nothing
+  # else. It is a volume rather than a bind mount so that `down` leaves it alone.
+  tts-cache:

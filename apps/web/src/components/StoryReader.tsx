@@ -1,7 +1,19 @@
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
-import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, Flag, Layers, Link2, SlidersHorizontal } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Eye,
+  EyeOff,
+  Flag,
+  Headphones,
+  Layers,
+  Link2,
+  Play,
+  SlidersHorizontal,
+} from "lucide-react";
 import type { Story, StoryToken } from "@georgian/shared/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -36,6 +48,7 @@ import { KNOWN, masteryAttr } from "../study/mastery";
 import { forgetItem, markUnseenKnown, readingMastery, setItemMastery, useProgress } from "../study/store";
 import type { Progress } from "../study/store";
 import { MasteryPicker } from "./Mastery";
+import { StoryAudioBar, useStoryAudio } from "./StoryAudio";
 import { lang } from '../content/store';
 
 // Only ever rendered for an admin who has turned editing on, so it rides in the admin chunk
@@ -87,11 +100,13 @@ function wordClasses({
   name,
   graded,
   open,
+  spoken,
 }: {
   live: boolean;
   name: boolean;
   graded: boolean;
   open: boolean;
+  spoken: boolean;
 }) {
   return cn(
     live && "cursor-help border-b border-dotted border-border-strong transition-colors duration-100",
@@ -101,14 +116,26 @@ function wordClasses({
     // than vocabulary — nothing to learn and no entry to open. A solid, fainter rule says as
     // much without breaking the run of dotted underlines the eye reads past.
     live && name && "border-solid border-border",
-    graded && [
+    // Dropped entirely while a word is being spoken, rather than overridden by the rule
+    // below it. `cn` merges conflicting utilities by letting the last one win, but that only
+    // settles ties between selectors of equal weight — and `data-[mastery=6]:bg-transparent`
+    // is a class *and* an attribute, so it outranks a plain `bg-primary` however late that
+    // comes. Leaving both on meant a Known word, whose whole reward is that it stops being
+    // tinted, also refused to light up when it was read. The spoken style below restates the
+    // geometry these lines set, so nothing shifts when they go.
+    graded && !spoken && [
       "-mx-px rounded-[3px] px-0.5 py-px",
       "bg-[color-mix(in_srgb,var(--m)_15%,transparent)]",
       "shadow-[inset_0_-2px_0_color-mix(in_srgb,var(--m)_45%,transparent)]",
       "data-[mastery=6]:bg-transparent data-[mastery=6]:shadow-none",
     ],
-    graded && live && "hover:bg-[color-mix(in_srgb,var(--m)_38%,transparent)]",
-    open && "border-primary bg-primary-light",
+    // Same reasoning: a hover rule is a class plus a pseudo-class, so it would repaint the
+    // word the reader is listening to the moment the pointer crossed it.
+    graded && live && !spoken && "hover:bg-[color-mix(in_srgb,var(--m)_38%,transparent)]",
+    open && !spoken && "border-primary bg-primary-light",
+    // The word being read. A filled block rather than an underline because it has to be
+    // findable from across the paragraph, at a glance, while it is moving.
+    spoken && "-mx-px rounded-[3px] bg-primary px-0.5 py-px text-primary-foreground shadow-none",
   );
 }
 
@@ -211,6 +238,39 @@ function StoryReader() {
       navigate(chapterHref(storyId, landed), { replace: true });
     }
   }, [storyId, landed, asked, navigate]);
+  // Keyed on the chapter that is actually on screen rather than the one in the URL, so the
+  // queue is never built against a page that has already been turned. `storyId` is empty for
+  // one render before the route resolves, which the hook reads as "no chapter" and skips.
+  const audio = useStoryAudio(storyId ?? '', story?.chapter ?? 0);
+
+  // Whether the player is on screen. Off by default: reading is what this page is for, and
+  // a bar fixed over the foot of every story would be a permanent tax on the ordinary case
+  // to serve the occasional one. The manifest is still fetched either way — it is a database
+  // read with no synthesis behind it, and its answer is what decides whether the button that
+  // opens this is worth showing at all.
+  const [listening, setListening] = useState(false);
+
+  // Closing has to stop the audio, not merely hide the controls: a bar put away mid-sentence
+  // would otherwise keep talking with nothing left on screen to stop it.
+  const stopListening = useCallback(() => {
+    setListening(false);
+    audio.stop();
+  }, [audio]);
+
+  // Turning the page must do the same, for the same reason.
+  useEffect(() => {
+    setListening(false);
+  }, [storyId, asked]);
+
+  // The words of a line the voice could not be aligned to, which are marked together rather
+  // than one at a time. Parsed once per change instead of per word: this is compared against
+  // every span in the story on every render that moves the highlight.
+  const lineSpan = useMemo(() => {
+    if (!audio.lineKey) return null;
+    const [paragraph, from, to] = audio.lineKey.split(":").map(Number);
+    return { paragraph, from, to };
+  }, [audio.lineKey]);
+
   // One shared timer: a pending open and a pending close can never both be wanted.
   const timer = useRef<number | undefined>(undefined);
 
@@ -312,6 +372,13 @@ function StoryReader() {
     pieces(paragraph).map((piece, i) => {
       const token = piece.word ? at(story, p, piece.index, piece.text) : null;
       const key = `${p}:${piece.index}`;
+      // Either the one word being said, or every word of a line that could not be timed.
+      const spoken =
+        audio.at === key ||
+        (lineSpan !== null &&
+          lineSpan.paragraph === p &&
+          piece.index >= lineSpan.from &&
+          piece.index <= lineSpan.to);
 
       // In edit mode every word is a control, including the ones nothing matched — those are
       // the whole point, because an unresolved spelling is usually either a missing lemma or
@@ -342,8 +409,22 @@ function StoryReader() {
         );
       }
 
+      // A word with nothing to say is still a word that gets read aloud, so the spoken
+      // highlight goes on every *word* of the paragraph — not only the ones the lexicon
+      // matched. An unlinked word is skipped by the card, never by the voice.
+      //
+      // Only where `piece.word`, though: the gaps between words are pieces too and carry
+      // index -1, which is not a position the voice or the highlight could mean.
       if (!isLinked(token)) {
-        return <span key={i}>{piece.text}</span>;
+        if (!piece.word) return <span key={i}>{piece.text}</span>;
+        return (
+          <span
+            key={i}
+            className={wordClasses({ live: false, name: false, graded: false, open: false, spoken })}
+          >
+            {piece.text}
+          </span>
+        );
       }
       // Proper names are story furniture rather than vocabulary, so they carry no level.
       const item = token.word ? wordKey(token.word) : "";
@@ -355,6 +436,7 @@ function StoryReader() {
             name: Boolean(token.name),
             graded: Boolean(highlight && item),
             open: selected?.at === key,
+            spoken,
           })}
           data-mastery={highlight && item ? masteryAttr(readingMastery(progress, item)) : undefined}
           // Focusable only in lookup mode: 976 stops in the tab order would otherwise sit
@@ -413,6 +495,18 @@ function StoryReader() {
             <SlidersHorizontal />
             Highlight
           </ReaderToggle>
+          {/* Absent, rather than disabled, where the server has no voice: a control that
+              cannot ever do anything on this deployment is not a control worth explaining. */}
+          {audio.available && (
+            <ReaderToggle
+              on={listening}
+              onClick={() => (listening ? stopListening() : setListening(true))}
+              title="Read the story aloud and follow along"
+            >
+              <Headphones />
+              Read aloud
+            </ReaderToggle>
+          )}
           <Button variant="controlOn" size="auto-sm" className="ml-auto" onClick={() => setFinishing(true)}>
             <Flag />
             Finish
@@ -509,6 +603,22 @@ function StoryReader() {
           onClose={close}
           onHold={cancel}
           onRelease={closeLater}
+          // Reading from here is an action you ask for on the card, not something a click
+          // anywhere in the prose does. The text is for reading and selecting; taking its
+          // click for playback would mean no word could be highlighted with the mouse.
+          //
+          // `at` is the "paragraph:word" key the span was built with, which is the pair the
+          // player needs, so it is read back rather than threaded through the selection.
+          onPlay={
+            audio.available
+              ? () => {
+                  const [paragraph, word] = selected.at.split(":").map(Number);
+                  setListening(true);
+                  audio.playFrom(paragraph, word);
+                  close();
+                }
+              : undefined
+          }
         />
       )}
 
@@ -538,6 +648,17 @@ function StoryReader() {
             }}
           />
         </Suspense>
+      )}
+
+      {/* Fixed to the viewport, so it stays put while the text scrolls under it — following
+          a recording means scrolling, and controls that scroll away with the paragraph they
+          started on are controls you have to go and find. The spacer is what keeps the last
+          line of the story from sitting underneath it, and goes away with the bar. */}
+      {listening && audio.available && (
+        <>
+          <div aria-hidden className="h-24" />
+          <StoryAudioBar audio={audio} onClose={stopListening} />
+        </>
       )}
     </Page>
   );
@@ -796,12 +917,15 @@ function GlossCard({
   onClose,
   onHold,
   onRelease,
+  onPlay,
 }: {
   selection: Selection;
   progress: Progress;
   onClose: () => void;
   onHold: () => void;
   onRelease: () => void;
+  /** Read the story from this word. Absent where the server has no voice. */
+  onPlay?: () => void;
 }) {
   const { token } = selection;
   const item = reading(token);
@@ -829,9 +953,27 @@ function GlossCard({
       onMouseEnter={onHold}
       onMouseLeave={onRelease}
     >
-      <p className="text-[22px] leading-tight font-semibold">
-        {item.verb && item.lex ? <VerbSegments form={token.form} item={item} /> : token.form}
-      </p>
+      {/* The word, and — where there is a voice — the one control that starts the recording
+          here. Beside the headword rather than down with "Full entry", because it acts on
+          the word this card is about rather than taking you somewhere else. */}
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-[22px] leading-tight font-semibold">
+          {item.verb && item.lex ? <VerbSegments form={token.form} item={item} /> : token.form}
+        </p>
+        {onPlay && (
+          <Button
+            type="button"
+            variant="control"
+            size="icon-sm"
+            className="mt-0.5 shrink-0"
+            onClick={onPlay}
+            aria-label={`Read the story from ${token.form}`}
+            title="Read from here"
+          >
+            <Play />
+          </Button>
+        )}
+      </div>
 
       <div className="mt-2 flex flex-wrap gap-1.5">
         {token.gram && (
