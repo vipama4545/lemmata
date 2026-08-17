@@ -21,7 +21,7 @@ function StoryCategoryView() {
     return (
       <Page>
         <Breadcrumb>
-          <BreadcrumbLink to={`/${lang()}/stories`}>← Stories</BreadcrumbLink>
+          <BreadcrumbLink to={`/${lang()}/stories`}>← Library</BreadcrumbLink>
         </Breadcrumb>
         <p className="py-6 text-center text-muted-foreground">
           There is nothing filed under that category.
@@ -33,7 +33,7 @@ function StoryCategoryView() {
   return (
     <Page>
       <Breadcrumb>
-        <BreadcrumbLink to={`/${lang()}/stories`}>← Stories</BreadcrumbLink>
+        <BreadcrumbLink to={`/${lang()}/stories`}>← Library</BreadcrumbLink>
         <BreadcrumbSeparator />
         <span>{shelf.name}</span>
       </Breadcrumb>

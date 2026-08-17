@@ -9,6 +9,8 @@
     "./grammar": "./src/grammar/index.ts",
     "./grammar/ka": "./src/grammar/ka.ts",
     "./grammar/ru": "./src/grammar/ru.ts",
+    "./lesson": "./src/lesson.ts",
+    "./quiz": "./src/quiz.ts",
     "./schema": "./src/schema.ts"
   },
   "scripts": {

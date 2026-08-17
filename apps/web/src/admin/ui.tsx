@@ -1,9 +1,14 @@
-// The shapes the editing screens need and the reader does not: dense forms, ordered lists of
-// small things, and the index rows that lead into them.
+// The shapes an editing screen needs and a reading screen does not: dense forms, ordered lists
+// of small things, and the index rows that lead into them.
 //
 // Everything else these screens use is the app's own — Button, Input, Badge, the Page shell —
 // rather than a second set, so a control here behaves like a control everywhere else. What is
 // below is only what has no counterpart out in the reader.
+//
+// It lives under admin/ because that is where every editing screen was when it was written, and
+// it is no longer only theirs: the reader's own library has forms too, and library/ui.tsx takes
+// what it needs from here rather than growing a second set that would drift. Nothing in this
+// file knows anything about being an admin. It is furniture, and the name is history.
 
 import type { ComponentProps } from "react";
 

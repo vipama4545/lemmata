@@ -4,6 +4,7 @@ import { ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import { Pagination, usePagination } from '@/components/ui/pagination';
 import { SearchField } from '@/components/ui/search-field';
 import {
   Select,
@@ -30,10 +31,7 @@ const ROW_GRID =
 
 /** Exported for the Russian index, which re-columns the same row. */
 export const VERB_ROW =
-  'rounded-sm border border-border bg-card px-4 py-3 text-inherit transition-all hover:border-primary hover:shadow-card ' +
-  // The index is one unpaginated list of every verb, so rows scrolled out of view skip
-  // layout and paint. The size hint keeps the scrollbar honest.
-  '[content-visibility:auto] [contain-intrinsic-size:auto_49px]';
+  'rounded-sm border border-border bg-card px-4 py-3 text-inherit transition-all hover:border-primary hover:shadow-card';
 
 export const VERB_HEAD =
   'px-4 pb-1 text-[11px] font-semibold tracking-[0.04em] text-faint uppercase max-md:hidden';
@@ -63,6 +61,8 @@ function VerbList() {
       );
     });
   }, [search, groupId]);
+
+  const pager = usePagination(filteredVerbs, `${search}|${groupId}`);
 
   return (
     <Page>
@@ -122,7 +122,7 @@ function VerbList() {
           <span>English</span>
         </div>
 
-        {filteredVerbs.map(verb => (
+        {pager.items.map(verb => (
           <Link key={verb.id} to={`/${lang()}/verbs/${verb.id}`} className={cn(ROW_GRID, VERB_ROW, 'group')}>
             <span className="max-md:col-span-full">
               <Badge variant="tagOutline">{verb.group || '—'}</Badge>
@@ -148,6 +148,8 @@ function VerbList() {
           <p className="py-6 text-center text-muted-foreground">No verbs match that filter.</p>
         )}
       </div>
+
+      <Pagination pager={pager} noun="verbs" />
     </Page>
   );
 }

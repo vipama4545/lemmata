@@ -92,6 +92,21 @@
   --mo-screeve: #a21caf;
   --mo-ending: #475569;
 
+  /* Lesson ink: the colours a lesson's markup may set a word — or a single letter — in.
+     A closed set of names rather than free hex in the prose, because a lesson is read on a
+     white page and on a dark one, and a colour chosen against either is unreadable on the
+     other. Each name resolves here, once per theme, so {red:მ} is legible in both and stays
+     legible when the palette is retuned. See LESSON_COLOURS in shared/lesson.ts. */
+  --ink-red: #dc2626;
+  --ink-orange: #ea580c;
+  --ink-yellow: #a16207;
+  --ink-green: #15803d;
+  --ink-teal: #0f766e;
+  --ink-blue: #2563eb;
+  --ink-purple: #7c3aed;
+  --ink-pink: #be185d;
+  --ink-grey: #64748b;
+
   /* Shape and layout are the same in both themes, so they are only declared here.
      --spacing-header is what the sidebar sticks below; the header is held to it. */
   --radius: 12px;
@@ -163,6 +178,19 @@
   --mo-pfsf: #4ade80;
   --mo-screeve: #e879f9;
   --mo-ending: #94a3b8;
+
+  /* Lighter and less saturated than their light-theme twins: a colour that reads as emphasis
+     on white glares on #0f172a, and a lesson that colours half a paradigm would glare in a
+     dozen places at once. */
+  --ink-red: #f87171;
+  --ink-orange: #fb923c;
+  --ink-yellow: #fbbf24;
+  --ink-green: #4ade80;
+  --ink-teal: #2dd4bf;
+  --ink-blue: #60a5fa;
+  --ink-purple: #a78bfa;
+  --ink-pink: #f472b6;
+  --ink-grey: #94a3b8;
 }
 
 /* Everything above becomes a utility here: `bg-card`, `text-muted-foreground`,
@@ -225,6 +253,16 @@
   --color-mo-pfsf: var(--mo-pfsf);
   --color-mo-screeve: var(--mo-screeve);
   --color-mo-ending: var(--mo-ending);
+
+  --color-ink-red: var(--ink-red);
+  --color-ink-orange: var(--ink-orange);
+  --color-ink-yellow: var(--ink-yellow);
+  --color-ink-green: var(--ink-green);
+  --color-ink-teal: var(--ink-teal);
+  --color-ink-blue: var(--ink-blue);
+  --color-ink-purple: var(--ink-purple);
+  --color-ink-pink: var(--ink-pink);
+  --color-ink-grey: var(--ink-grey);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

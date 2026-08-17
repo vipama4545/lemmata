@@ -65,3 +65,23 @@ export function PosTag({ children, className }: { children: React.ReactNode; cla
     </Badge>
   );
 }
+
+/**
+ * Marks an entry as the reader's own rather than the dictionary's.
+ *
+ * Worth saying on a row that otherwise looks exactly like every other one, because it *is*
+ * exactly like every other one. That is the point of how private vocabulary is stored. The
+ * badge answers "why can I edit this one", and "where did this come from" for somebody who
+ * added it three months ago.
+ */
+export function MineTag({ className }: { className?: string }) {
+  return (
+    <Badge
+      variant="tag"
+      className={cn("rounded-[10px] border-primary px-2 py-0.5 text-primary", className)}
+      title="One of your own words"
+    >
+      yours
+    </Badge>
+  );
+}

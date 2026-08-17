@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
-import { Eye, EyeOff, Image as ImageIcon } from 'lucide-react';
+import { Eye, EyeOff, Image as ImageIcon, Pencil } from 'lucide-react';
 import type { LevelFilter, Word } from '@georgian/shared/types';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,12 +12,15 @@ import {
 } from '@/components/ui/dialog';
 import { LevelTabs } from '@/components/ui/level-tabs';
 import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import { PAGE_SIZE, Pagination, usePagination } from '@/components/ui/pagination';
 import { SearchField } from '@/components/ui/search-field';
-import { LevelBadge, PosTag, WordCard, WordCardBody, WordCardTags } from '@/components/ui/word-card';
+import { LevelBadge, MineTag, PosTag, WordCard, WordCardBody, WordCardTags } from '@/components/ui/word-card';
 import { lang, wordData as allData } from '../content/store';
+import { useSpeaks, wordAudioUrl } from '../data/wordAudio';
 import { getWordImage, creditLine } from '../utils/images';
 import { focusId } from '../utils/scroll';
 import { useEntryState } from '../utils/entryState';
+import { PlayButton, usePlayer } from './AudioButton';
 import CategoryThumb from './CategoryThumb';
 
 /** What the category cards on the browse page hand over in the link's router state. */
@@ -42,7 +45,14 @@ function CategoryView() {
   const [localLevel, setLocalLevel] = useEntryState<LevelFilter>('level', levelFilter);
   const [localSearch, setLocalSearch] = useEntryState('search', searchFilter);
   const [showTranslation, setShowTranslation] = useState(true);
-  const [currentWordIndex, setCurrentWordIndex] = useState<number | null>(null);
+  // One `<audio>` for the page rather than one per row: a category is fifty headwords and they
+  // are by definition heard one at a time. See usePlayer.
+  const { play, playing } = usePlayer();
+  const speaks = useSpeaks();
+  // The word whose picture is open, rather than its position in the list: the list is now one
+  // page of a longer one, and a position in it stops meaning the same word as soon as the
+  // reader turns a page.
+  const [imageWord, setImageWord] = useState<Word | null>(null);
 
   const category = allData().categories.find(c => c.id === categoryId);
   const categoryWords = allData().words.filter(w => w.categoryId === categoryId);
@@ -56,6 +66,17 @@ function CategoryView() {
       return matchesLevel && matchesSearch;
     });
   }, [categoryWords, localLevel, localSearch]);
+
+  // A link that names a word — a search result, a word in a story, the day's word — has to
+  // open on the page that word is on. ScrollManager looks for the row in the DOM, and a row
+  // eight pages down was never rendered for it to find.
+  const focusPage = useMemo(() => {
+    if (!focusedWord) return 1;
+    const at = filteredWords.findIndex(word => word.id === focusedWord);
+    return at < 0 ? 1 : Math.floor(at / PAGE_SIZE) + 1;
+  }, [filteredWords, focusedWord]);
+
+  const pager = usePagination(filteredWords, `${localLevel}|${localSearch}`, { initialPage: focusPage });
 
   if (!category) {
     return (
@@ -101,38 +122,71 @@ function CategoryView() {
       </div>
 
       <div className="flex flex-col gap-2">
-        {filteredWords.map((word, idx) => (
-          <WordCard key={word.id} data-focus={word.id} focused={word.id === focusedWord}>
-            <WordCardTags>
-              <LevelBadge level={word.level} />
-              <PosTag>{word.partOfSpeech}</PosTag>
-            </WordCardTags>
-            <WordCardBody>
-              <span className="text-xl font-semibold">{word.headword}</span>
-              {showTranslation && (
-                <span className="text-[15px] text-muted-foreground">{word.english}</span>
-              )}
-            </WordCardBody>
-            <div className="flex shrink-0 items-center">
-              {getWordImage(word) && (
-                <button
-                  className="inline-flex cursor-pointer p-1 text-muted-foreground opacity-60 transition-opacity hover:opacity-100"
-                  onClick={() => setCurrentWordIndex(idx)}
-                  title="Show image"
-                  aria-label={`Show image for ${word.english}`}
-                >
-                  <ImageIcon className="size-5" aria-hidden="true" />
-                </button>
-              )}
-            </div>
-          </WordCard>
-        ))}
+        {pager.items.map(word => {
+          const audio = wordAudioUrl(word.id);
+          return (
+            <WordCard key={word.id} data-focus={word.id} focused={word.id === focusedWord}>
+              <WordCardTags>
+                <LevelBadge level={word.level} />
+                <PosTag>{word.partOfSpeech}</PosTag>
+                {word.mine && <MineTag />}
+              </WordCardTags>
+              <WordCardBody>
+                <span className="text-xl font-semibold">{word.headword}</span>
+                {showTranslation && (
+                  <span className="text-[15px] text-muted-foreground">{word.english}</span>
+                )}
+              </WordCardBody>
+              {/* The play button comes last because it is the one that is always there: a
+                  picture is the exception, so hanging it off the left of the button keeps the
+                  buttons themselves in a straight column down the page. Ordering them the
+                  other way round would step the play button left on every row that has a
+                  picture, which is most of a category like Food & Drink and none of one like
+                  Qualities. */}
+              <div className="flex shrink-0 items-center gap-1">
+                {/* Only on your own entries, and the only way into the editor from a page of
+                    words, which is where somebody notices a gloss of theirs is wrong. The
+                    dictionary's own rows have no such button for anybody. */}
+                {word.mine && (
+                  <Link
+                    to={`/${lang()}/library/words/${encodeURIComponent(word.id)}`}
+                    className="inline-flex p-1 text-muted-foreground opacity-60 transition-opacity hover:opacity-100"
+                    title="Edit this word of yours"
+                    aria-label={`Edit ${word.headword}`}
+                  >
+                    <Pencil className="size-4" aria-hidden="true" />
+                  </Link>
+                )}
+                {getWordImage(word) && (
+                  <button
+                    className="inline-flex cursor-pointer p-1 text-muted-foreground opacity-60 transition-opacity hover:opacity-100"
+                    onClick={() => setImageWord(word)}
+                    title="Show image"
+                    aria-label={`Show image for ${word.english}`}
+                  >
+                    <ImageIcon className="size-5" aria-hidden="true" />
+                  </button>
+                )}
+                {/* Drawn only where there is a voice for this dictionary — see useSpeaks. The
+                    accented spelling is what Russian is read from, which is a fact about the
+                    row and stays on the server; this end knows only the word's id. */}
+                {speaks && (
+                  <PlayButton
+                    src={audio}
+                    playing={playing === audio}
+                    onPlay={play}
+                    label={`Play ${word.headword}`}
+                  />
+                )}
+              </div>
+            </WordCard>
+          );
+        })}
       </div>
 
-      <WordImageDialog
-        word={currentWordIndex === null ? null : filteredWords[currentWordIndex]}
-        onClose={() => setCurrentWordIndex(null)}
-      />
+      <Pagination pager={pager} noun="words" />
+
+      <WordImageDialog word={imageWord} onClose={() => setImageWord(null)} />
     </Page>
   );
 }

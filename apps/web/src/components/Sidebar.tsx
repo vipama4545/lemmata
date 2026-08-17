@@ -5,10 +5,13 @@ import {
   BookOpen,
   Calendar,
   Download,
+  GraduationCap,
   LayoutGrid,
   Library,
   List,
+  ListChecks,
   MessageCircle,
+  NotebookPen,
   Search,
   SlidersHorizontal,
   Table,
@@ -20,9 +23,9 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { groupedGrammarTopics } from '../data/grammar';
 import { dueCount, useProgress } from '../study/store';
 import { useIsAdmin } from '../admin/useAdmin';
+import { useSignedIn } from '../library/store';
 import { lang } from '../content/store';
 
 interface SidebarProps {
@@ -53,6 +56,7 @@ function Sidebar({ open, onClose }: SidebarProps) {
   // that has to be opened to find out whether it needs opening does not get opened.
   const due = dueCount(useProgress(), Date.now());
   const { isAdmin } = useIsAdmin();
+  const signedIn = useSignedIn();
 
   useEffect(() => {
     onClose();
@@ -67,8 +71,6 @@ function Sidebar({ open, onClose }: SidebarProps) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
-
-  const grammarGroups = groupedGrammarTopics();
 
   return (
     <>
@@ -104,32 +106,42 @@ function Sidebar({ open, onClose }: SidebarProps) {
           <SidebarLink to="/categories" icon={LayoutGrid} label="Categories" />
           <SidebarLink to="/verbs" icon={List} label="Verbs" />
           <SidebarLink to="/search" icon={Search} label="Word search" />
-          <SidebarLink to="/stories" icon={MessageCircle} label="Stories" />
+          {/* "Library" rather than "Stories": what is filed in here is stories, dialogues from
+              the lessons, and whatever else is worth reading, and the lessons now reach into it
+              by name. The address stays /stories — every link ever shared points at it. */}
+          <SidebarLink to="/stories" icon={Library} label="Library" />
+          <SidebarLink to="/quizzes" icon={ListChecks} label="Quizzes" />
           <SidebarLink to="/flashcards" icon={WalletCards} label="Flashcards" badge={due} />
           <SidebarLink to="/export" icon={Download} label="Export to Anki" />
         </SidebarSection>
 
+        {/* Two rows, and no list of topics under them.
+
+            This band used to enumerate every grammar topic, which it could because there were
+            ten of them and they were a constant in the bundle. Both halves of that have gone:
+            they are rows in a table now, there is no ceiling on how many somebody writes, and a
+            sidebar that grew a row per lesson would push the dictionary off the top of the
+            screen by the twentieth. Each of these leads to an index that shelves its own
+            section, which is the same two-level browse the stories and the quizzes use. */}
         <SidebarSection>
-          <p className={HEADING}>Grammar</p>
-          <SidebarLink to="/grammar" icon={BookOpen} label="Overview" end />
-          {grammarGroups.map(group => (
-            <div key={group.id} className="mt-3">
-              <p className="mb-1 px-2.5 text-[11px] font-semibold text-faint">{group.label}</p>
-              {group.topics.map(topic => (
-                <SidebarLink
-                  key={topic.id}
-                  to={`/grammar/${topic.id}`}
-                  icon={topic.icon}
-                  label={topic.title}
-                  sub
-                />
-              ))}
-            </div>
-          ))}
+          <p className={HEADING}>Reading</p>
+          <SidebarLink to="/lessons" icon={GraduationCap} label="Lessons" />
+          <SidebarLink to="/grammar" icon={BookOpen} label="Grammar" />
         </SidebarSection>
 
+        {/* Only once there is an account to keep any of it against. Hidden rather than shown
+            and refused, but not for the reason the admin band below is: that one is hidden
+            because the work is not yours to do, and this one because there is nothing in it yet.
+            Anybody who reaches /library by a link is told what it is and offered a way in. */}
+        {signedIn && (
+          <SidebarSection>
+            <p className={HEADING}>Yours</p>
+            <SidebarLink to="/library" icon={NotebookPen} label="My library" />
+          </SidebarSection>
+        )}
+
         {/* Last, and only for an admin. Editing is a different job from learning, and putting
-            it above the grammar topics would make it look like part of the app everyone uses. */}
+            it above the reading rows would make it look like part of the app everyone uses. */}
         {isAdmin && (
           <SidebarSection>
             <p className={HEADING}>Admin</p>
@@ -138,6 +150,10 @@ function Sidebar({ open, onClose }: SidebarProps) {
             <SidebarLink to="/admin/verbs" icon={Table} label="Verbs" />
             <SidebarLink to="/admin/stories" icon={MessageCircle} label="Stories" />
             <SidebarLink to="/admin/story-categories" icon={Library} label="Story categories" />
+            <SidebarLink to="/admin/quizzes" icon={ListChecks} label="Quizzes" />
+            <SidebarLink to="/admin/quiz-categories" icon={Library} label="Quiz categories" />
+            <SidebarLink to="/admin/lessons" icon={GraduationCap} label="Lessons" />
+            <SidebarLink to="/admin/lesson-categories" icon={Library} label="Lesson categories" />
             <SidebarLink to="/admin/users" icon={Users} label="Admins" />
           </SidebarSection>
         )}

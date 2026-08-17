@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Plus } from "lucide-react";
 import type { StorySummary } from "@georgian/shared/types";
+import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from "@/components/ui/page";
 import { LevelBadge } from "@/components/ui/word-card";
-import { stories } from "../data/stories";
-import { lang, langName, storyCategories } from '../content/store';
+import { lang, langName, myStories, publishedStories, storyCategories } from '../content/store';
+import { useSignedIn } from '../library/store';
 
 /**
  * The id the unfiled stories are gathered under.
@@ -42,7 +43,11 @@ export interface Shelf {
  * out that there is nothing to read.
  */
 export function useShelves(): Shelf[] {
-  const storyList = stories();
+  // The published stories alone. A reader's own are never filed on one of these shelves, since
+  // the shelves belong to the dictionary, and letting them fall into "Everything else" would put
+  // one person's private notebook in the middle of what everybody sees. They have a section of
+  // their own below, and `following()` in the reader still walks these.
+  const storyList = publishedStories();
   const categories = storyCategories();
 
   return useMemo(() => {
@@ -86,25 +91,29 @@ export function useShelves(): Shelf[] {
 // That is not a fallback: a dozen stories on one screen is better than one card that has to
 // be opened to reach them, and it is exactly what this page has always been.
 function StoryIndex() {
-  const storyList = stories();
+  const storyList = publishedStories();
   const shelves = useShelves();
   const filed = shelves.some(shelf => shelf.id !== UNFILED);
+  const mine = myStories();
+  const signedIn = useSignedIn();
 
   return (
     <Page>
       <Breadcrumb>
         <BreadcrumbLink to={`/${lang()}`}>← Home</BreadcrumbLink>
         <BreadcrumbSeparator />
-        <span>Stories</span>
+        <span>Library</span>
       </Breadcrumb>
 
       <header className="mb-6">
         <h1 className="mb-1.5 flex items-center gap-2.5 text-[26px] font-bold">
           <BookOpen className="size-[22px]" aria-hidden="true" />
-          Stories
+          Library
         </h1>
         <p className="max-w-[62ch] text-muted-foreground">
-          {langName()} short stories with every word linked back to the dictionary.
+          {langName()} stories and dialogues, with every word linked back to the dictionary. The
+          lessons read from these shelves too — a dialogue taught in a lesson is the same text you
+          can open here.
         </p>
       </header>
 
@@ -119,7 +128,57 @@ function StoryIndex() {
       ) : (
         <StoryGrid stories={storyList} />
       )}
+
+      <YourStories stories={mine} signedIn={signedIn} />
     </Page>
+  );
+}
+
+/**
+ * Your own texts, under the dictionary's.
+ *
+ * Below rather than beside, and always the same way round. What is here is a shelf nobody else
+ * has, so putting it above the library proper would make the page open on a different thing for
+ * every reader, and for most on an empty box. Underneath, it reads as what it is: the same
+ * library, with your own end of it at the bottom.
+ *
+ * Shown to a signed-out visitor as an offer rather than hidden, because "you can put your own
+ * texts in here" is not discoverable from anywhere else, and this is the page they would be
+ * looking at when the thought occurs.
+ */
+function YourStories({ stories: mine, signedIn }: { stories: StorySummary[]; signedIn: string | null }) {
+  if (!signedIn && mine.length === 0) {
+    return (
+      <section className="mt-10 border-t border-border pt-6">
+        <h2 className="mb-1.5 text-lg font-semibold">Your own texts</h2>
+        <p className="max-w-[62ch] text-sm text-muted-foreground">
+          Sign in to paste in anything you are reading: a news item, a page of a book, a message
+          from a friend. It is linked back to the dictionary word by word, exactly as the stories
+          above are, and only you can see it.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="mt-10 border-t border-border pt-6">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold">Your own texts</h2>
+        <Button variant="control" size="auto" asChild>
+          <Link to={`/${lang()}/library/stories/new`}>
+            <Plus /> New story
+          </Link>
+        </Button>
+      </div>
+
+      {mine.length === 0 ? (
+        <p className="rounded-sm border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+          Nothing of yours yet. Paste something in and every word of it is linked to the dictionary.
+        </p>
+      ) : (
+        <StoryGrid stories={mine} />
+      )}
+    </section>
   );
 }
 

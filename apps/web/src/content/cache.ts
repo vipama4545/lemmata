@@ -37,8 +37,12 @@ const STORE = 'snapshot';
  *   1 — the original snapshot
  *   2 — stories gained `chapters`, `categoryId` and `category`; the snapshot gained
  *       `storyCategories`
+ *   3 — the snapshot gained `quizzes` and `quizCategories`, and then `lessons`,
+ *       `lessonCategories` and `lessonImages`
+ *   4 — a lesson's `quizzes` count became `quizIds`, the list a lesson's progress is
+ *       measured against
  */
-const SHAPE = 2;
+const SHAPE = 4;
 
 /**
  * One entry per language, so that opening the Russian dictionary does not evict the Georgian

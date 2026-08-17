@@ -9,25 +9,47 @@
 // before, and the one rule is that nothing may call these at module scope. `derived()` is
 // what makes that easy to obey: it takes the build of an index and defers it to first use,
 // then holds it until the content itself changes.
+//
+// Since readers gained a library of their own there are two things arriving rather than one,
+// and this file is where they are put together. What the app reads is neither of them on its
+// own: it is `snapshot`, composed from the published dictionary and this reader's private
+// overlay by `compose()` below. Everything downstream (the search index, the deck, the category
+// grid, the export) then works on a word without asking whose it is, which is why private
+// vocabulary needed no changes in any of those places. See the note on `compose`.
 
 import { useSyncExternalStore } from 'react';
-import type { ContentSnapshot, KaVerbContent, RuVerbContent } from '@georgian/shared/contract';
+import type { ContentSnapshot, KaVerbContent, PrivateContent, RuVerbContent } from '@georgian/shared/contract';
 import { DEFAULT_LANG, LANG_LABELS, type Lang } from '@georgian/shared/grammar';
 import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar/ka';
 import type {
+  Category,
   ImageMap,
   KaVerb,
   KaVerbData,
   KaVerbGroup,
   Language,
+  LessonCategory,
+  LessonImageMap,
+  LessonSection,
+  LessonSummary,
+  QuizCategory,
+  QuizSummary,
   StoryCategory,
   StorySummary,
+  Word,
   WordData,
 } from '@georgian/shared/types';
 import { api } from '../api/client';
 import * as cache from './cache';
 import { currentLang, rememberLang, swapLang } from './lang';
 
+/** The published dictionary, exactly as the server sent it. What the cache holds. */
+let base: ContentSnapshot | null = null;
+
+/** This reader's own stories and words, or null when signed out. Never cached. */
+let overlay: PrivateContent | null = null;
+
+/** The two together. What every screen in the app reads. */
 let snapshot: ContentSnapshot | null = null;
 
 /**
@@ -42,6 +64,77 @@ export function content(): ContentSnapshot {
     throw new Error('The dictionary has not loaded yet. Nothing may read it at module scope.');
   }
   return snapshot;
+}
+
+/**
+ * The published dictionary and the reader's own, as one object.
+ *
+ * A composed copy rather than a merge in place, and rather than a second store every consumer
+ * has to remember to consult. Three things fall out of doing it here:
+ *
+ *   Nothing downstream changes. `wordData().words` is every word this reader has, their own
+ *   included, so the search box, the flashcard deck, the Anki export and the category grid
+ *   picked up private vocabulary without a line of code in any of them.
+ *
+ *   Every derived index rebuilds by itself. `derived()` keys on the *identity* of this object,
+ *   so composing a new one is the whole of invalidation. See the note there.
+ *
+ *   The cache stays clean. `cache.write` is only ever given `base`, so a browser that syncs a
+ *   snapshot to IndexedDB is not quietly storing somebody's private notebook in it.
+ *
+ * The counts are recomputed rather than carried over, which is the one piece of real work here.
+ * A published category's stored `word_count` counts published words, deliberately (see
+ * `recountCategories` on the server), so a reader who filed three of their own under "Food &
+ * drink" would see a card claiming 45 words above a list of 48. Recounting from the merged list
+ * is exact, and costs one pass over the words, only when there is an overlay to merge.
+ */
+function compose(): ContentSnapshot | null {
+  if (!base) return null;
+
+  const mine = overlay && overlay.lang === base.lang ? overlay : null;
+  if (!mine || (!mine.words.length && !mine.stories.length && !mine.categories.length)) return base;
+
+  const words = [...base.words.words, ...mine.words];
+
+  const counts = new Map<string, number>();
+  for (const word of words) counts.set(word.categoryId, (counts.get(word.categoryId) ?? 0) + 1);
+
+  const categories = [...base.words.categories, ...mine.categories].map(category => ({
+    ...category,
+    wordCount: counts.get(category.id) ?? 0,
+  }));
+
+  return {
+    ...base,
+    words: { ...base.words, words, categories },
+    // Yours last, so the published library keeps the order it was given. Which are yours is on
+    // the records themselves, in `story.mine`, rather than implied by where they sit here.
+    stories: [...base.stories, ...mine.stories],
+  };
+}
+
+/**
+ * Swaps in this reader's own content and repaints everything that shows any of it.
+ *
+ * Called at boot, whenever the session changes, and by every library mutation. Those answer
+ * with the whole overlay for exactly this reason; see the head of the `library` contract.
+ *
+ * An overlay for another language is kept rather than discarded: switching to Russian and back
+ * should not have to re-fetch what was already in hand. `compose` ignores one that does not
+ * match the loaded dictionary, so a mismatch is inert rather than wrong.
+ */
+export function setPrivateContent(content: PrivateContent | null): void {
+  overlay = content;
+  snapshot = compose();
+  for (const listener of listeners) listener();
+}
+
+/** This reader's own content in the loaded language, or empty when there is none. */
+export function privateContent(): PrivateContent {
+  const here = content();
+  return overlay && overlay.lang === here.lang
+    ? overlay
+    : { lang: here.lang, stories: [], words: [], categories: [] };
 }
 
 /**
@@ -64,13 +157,14 @@ export async function loadContent(lang: Lang = currentLang()): Promise<ContentSn
         // between the read above and now, so ask again without claiming to know anything.
         const full = await api.content.snapshot({ lang });
         if (full.upToDate) throw new Error('The server says the dictionary is unchanged, but none was sent.');
-        snapshot = stripDiscriminant(full);
+        base = stripDiscriminant(full);
       } else {
-        snapshot = cached;
+        base = cached;
       }
     } else {
-      snapshot = stripDiscriminant(response);
-      void cache.write(snapshot);
+      base = stripDiscriminant(response);
+      // The published half alone. See the note on `compose`.
+      void cache.write(base);
     }
   } catch (error) {
     // A dictionary this visitor may not read — Russian, until it is released. Checked before
@@ -90,11 +184,13 @@ export async function loadContent(lang: Lang = currentLang()): Promise<ContentSn
 
     if (!cached) throw error;
     console.warn('Could not reach the server; using the dictionary already in this browser.', error);
-    snapshot = cached;
+    base = cached;
   }
 
   rememberLang(lang);
-  return snapshot;
+  snapshot = compose();
+  // Not null: every path above either assigned `base` or threw.
+  return snapshot as ContentSnapshot;
 }
 
 /**
@@ -144,10 +240,11 @@ export async function refreshContent(lang: Lang = content().lang): Promise<Conte
   const response = await api.content.snapshot({ lang });
   if (response.upToDate) throw new Error('The server said the dictionary was unchanged, but none was sent.');
 
-  snapshot = stripDiscriminant(response);
-  void cache.write(snapshot);
+  base = stripDiscriminant(response);
+  void cache.write(base);
+  snapshot = compose();
   for (const listener of listeners) listener();
-  return snapshot;
+  return snapshot as ContentSnapshot;
 }
 
 /**
@@ -284,10 +381,99 @@ export function categoryImageMap(): ImageMap {
   return content().categoryImages;
 }
 
+/**
+ * Every story this reader can open: the library's own, and theirs.
+ *
+ * One list rather than two, because almost everything that asks wants both. The reader's "what
+ * comes after this one", a lesson looking up a passage by id, the index page. The two screens
+ * where the distinction matters are the shelves and the "Yours" section under them, and both
+ * filter on `story.mine`, which is on the record itself.
+ */
 export function storySummaries(): StorySummary[] {
   return content().stories;
 }
 
+/* ------------------------------------------------- the dictionary, on its own */
+
+/**
+ * The published dictionary with no private content in it at all.
+ *
+ * **Everything under admin/ reads through these two and never through `content()`.** That is a
+ * rule rather than a preference. Those screens edit the dictionary, and the dictionary is what
+ * everybody sees; a private story of the signed-in admin's own turning up in the story list
+ * would be an editing screen offering to publish something that is not theirs to publish, and
+ * a private word in the picker would be one pin away from a published token citing a note only
+ * one person can read.
+ *
+ * Read straight off `base` rather than filtered out of the composed snapshot, so it is exactly
+ * what the server sent and cannot be got wrong by a missing flag.
+ */
+function published(): ContentSnapshot {
+  if (!base) {
+    throw new Error('The dictionary has not loaded yet. Nothing may read it at module scope.');
+  }
+  return base;
+}
+
+/** The dictionary's own stories: what the shelves are built from, and every admin list. */
+export function publishedStories(): StorySummary[] {
+  return published().stories;
+}
+
+/** The dictionary's own words and categories. See `published`. */
+export function publishedWordData(): WordData {
+  return published().words;
+}
+
+/** This reader's own, in the order they were made. */
+export function myStories(): StorySummary[] {
+  return privateContent().stories;
+}
+
+/** This reader's own entries. Already inside `wordData()`; this is for the screens that list them. */
+export function myWords(): Word[] {
+  return privateContent().words;
+}
+
+/** This reader's own shelves. Likewise already inside `wordData().categories`. */
+export function myCategories(): Category[] {
+  return privateContent().categories;
+}
+
 export function storyCategories(): StoryCategory[] {
   return content().storyCategories;
+}
+
+/**
+ * Every quiz, minus its questions. The index is built from these and never fetches to draw
+ * itself; the questions arrive from `quiz.get` when one is opened. See the `Quiz` type.
+ */
+export function quizSummaries(): QuizSummary[] {
+  return content().quizzes;
+}
+
+export function quizCategories(): QuizCategory[] {
+  return content().quizCategories;
+}
+
+/**
+ * Every lesson, minus its markup — both reading sections in one list.
+ *
+ * Filtered by `section` at the two index pages rather than split here, because that is the one
+ * place the difference matters. The body arrives from `content.lesson` when one is opened; see
+ * the `Lesson` type.
+ */
+export function lessonSummaries(section?: LessonSection): LessonSummary[] {
+  const all = content().lessons;
+  return section ? all.filter(lesson => lesson.section === section) : all;
+}
+
+export function lessonCategories(section?: LessonSection): LessonCategory[] {
+  const all = content().lessonCategories;
+  return section ? all.filter(category => category.section === section) : all;
+}
+
+/** The size and alt text of every uploaded picture, for the blocks that draw one. */
+export function lessonImages(): LessonImageMap {
+  return content().lessonImages;
 }

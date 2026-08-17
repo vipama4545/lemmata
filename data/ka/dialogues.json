@@ -1,0 +1,13 @@
+{
+ "note": "The library shelf the lessons read from, and which of the stories under data/ka/stories/ belong on it. A dialogue is built exactly as every other story is — a .txt and its .en.txt through the story builder — so this file says only the one thing a story file cannot: which shelf it is filed on, and what that shelf is called. `npm run db:dialogues` loads it, and leaves alone anything already in the database.",
+ "lang": "ka",
+ "category": {
+  "id": "dialogues",
+  "name": "Dialogues",
+  "nameNative": "დიალოგები",
+  "note": "Short conversations, each one taught by a lesson. Read them here to look a word up, hear a line again, or rate what you know."
+ },
+ "stories": [
+  "first-conversation"
+ ]
+}

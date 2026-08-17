@@ -17,9 +17,16 @@
 // the spelling in this story. Those are the `at` and `forms` blocks of the offline overrides
 // file, and the distinction is real — და is the conjunction all the way through, but აბა is
 // two different words in two different lines.
+//
+// It serves two owners now, and `story.mine` is the whole of the difference. On a published
+// story the write goes through `admin` and re-fetches the shared dictionary afterwards, because
+// what changed is something every visitor sees. On a reader's own it goes through `library` and
+// re-fetches nothing at all: the four megabytes in this browser are still current, and the story
+// itself comes back from the call. Whose story it is decides which procedure is called, and the
+// server re-reads that either way. This panel cannot grant anybody anything.
 
 import { useMemo, useState } from 'react';
-import type { StoryLinkResult } from '@georgian/shared/contract';
+import type { PrivateContent, StoryLinkResult } from '@georgian/shared/contract';
 import type { Story, StoryToken, Word } from '@georgian/shared/types';
 import { Check, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -28,7 +35,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { cn } from '@/lib/utils';
 import { KNOW_BUTTON } from '../components/StoryReader';
 import { api } from '../api/client';
-import { wordData } from '../content/store';
+import { publishedWordData, setPrivateContent, wordData } from '../content/store';
 import {
   AdminActions,
   AdminBadge,
@@ -42,6 +49,18 @@ import {
 } from './ui';
 import { useEdit } from './useAdmin';
 import WordPicker from './WordPicker';
+
+/**
+ * Swaps in the overlay a library write answers with, and hands back the relinked story.
+ *
+ * Pinning a word changes the story's coverage, and that figure is on its card in My library, so
+ * the answer carries the whole overlay as every write in that namespace does. The shared
+ * dictionary is not re-fetched, because nothing in it moved.
+ */
+function takeOverlay({ result, content }: { result: StoryLinkResult; content: PrivateContent }) {
+  setPrivateContent(content);
+  return result;
+}
 
 type Choice = 'word' | 'name' | 'plain';
 
@@ -58,8 +77,16 @@ interface TokenEditorProps {
 }
 
 function TokenEditor({ story, chapter, paragraph, position, token, onClose, onSaved }: TokenEditorProps) {
-  const { words } = wordData();
   const { busy, error, run } = useEdit();
+  // A story of the reader's own: same panel, different endpoint, and no snapshot refresh. See
+  // the note at the head of this file.
+  const mine = story.mine === true;
+
+  // And a different lexicon to pin from, which is the same rule the server's `loadLexicon`
+  // follows. Your own story may cite your own words as well as the dictionary's; a published
+  // one may cite the dictionary's alone, or a published token would be pointing at a note that
+  // only one reader can see and that vanishes the day they delete it.
+  const { words } = mine ? wordData() : publishedWordData();
 
   const byId = useMemo(() => new Map(words.map(word => [word.id, word])), [words]);
   const current = token.word ? byId.get(token.word) ?? null : null;
@@ -92,36 +119,33 @@ function TokenEditor({ story, chapter, paragraph, position, token, onClose, onSa
   const handMade = token.via === 'name' || token.via.startsWith('override');
 
   const save = async () => {
-    const result = await run(() =>
-      api.admin.setStoryToken({
-        storyId: story.id,
-        chapter,
-        paragraph,
-        position,
-        form: token.form,
-        wordId: choice === 'word' ? picked?.id ?? null : null,
-        sense: choice === 'word' ? sense : null,
-        gram: choice === 'word' ? gram.trim() : '',
-        name: choice === 'name' ? name.trim() : null,
-        comment: comment.trim() || null,
-        check,
-        everywhere,
-      }),
-    );
+    const input = {
+      storyId: story.id,
+      chapter,
+      paragraph,
+      position,
+      form: token.form,
+      wordId: choice === 'word' ? picked?.id ?? null : null,
+      sense: choice === 'word' ? sense : null,
+      gram: choice === 'word' ? gram.trim() : '',
+      name: choice === 'name' ? name.trim() : null,
+      comment: comment.trim() || null,
+      check,
+      everywhere,
+    };
+
+    const result = mine
+      ? await run(() => api.library.setStoryToken(input).then(takeOverlay), { refresh: false })
+      : await run(() => api.admin.setStoryToken(input));
     if (result) onSaved(result);
   };
 
   const reset = async () => {
-    const result = await run(() =>
-      api.admin.resetStoryToken({
-        storyId: story.id,
-        chapter,
-        paragraph,
-        position,
-        form: token.form,
-        everywhere,
-      }),
-    );
+    const input = { storyId: story.id, chapter, paragraph, position, form: token.form, everywhere };
+
+    const result = mine
+      ? await run(() => api.library.resetStoryToken(input).then(takeOverlay), { refresh: false })
+      : await run(() => api.admin.resetStoryToken(input));
     if (result) onSaved(result);
   };
 
@@ -183,7 +207,7 @@ function TokenEditor({ story, chapter, paragraph, position, token, onClose, onSa
 
         {choice === 'word' && (
           <div className="mb-4">
-            <WordPicker value={picked} suggestions={suggestions} onPick={setPicked} clearable={false} autoFocus />
+            <WordPicker words={words} value={picked} suggestions={suggestions} onPick={setPicked} clearable={false} autoFocus />
 
             {picked && (
               <>

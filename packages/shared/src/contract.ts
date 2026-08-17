@@ -17,13 +17,24 @@ import type {
   KaVerbGroup,
   Lang,
   Language,
+  Lesson,
+  LessonCategory,
+  LessonImageMap,
+  LessonSummary,
   Mastery,
+  Quiz,
+  QuizAnswer,
+  QuizCategory,
+  QuizResult,
+  QuizSummary,
   RuVerb,
   Side,
   Story,
   StoryCategory,
   StorySummary,
   StudyCardWire,
+  Category,
+  Word,
   WordData,
 } from './types.ts';
 
@@ -94,6 +105,39 @@ export interface ContentSnapshot {
    * able to say "there are none yet" rather than "this story has none".
    */
   storyCategories: StoryCategory[];
+  /**
+   * Every quiz there is, minus its questions — and so minus its answers.
+   *
+   * In the snapshot rather than behind a call of its own, for the reason the story summaries
+   * are: the index has to be drawable, filterable and countable without a round trip, and a
+   * few hundred bytes per quiz is nothing beside the dictionary they arrive with. The
+   * questions are not here and must not be, which is what `quiz.get` is for.
+   */
+  quizzes: QuizSummary[];
+  quizCategories: QuizCategory[];
+  /**
+   * Every lesson there is, minus its markup — both reading sections in one list.
+   *
+   * One field rather than `lessons` and `grammar`, because they are one table and the split is
+   * a column on it: the index pages filter this by `section`, and so does the sidebar. Two
+   * fields would mean every consumer choosing between them and the day somebody adds a third
+   * section being the day a dozen call sites need editing.
+   *
+   * The bodies are not here, for the reason the quizzes' questions are not: a section of forty
+   * lessons would put forty documents in a payload that draws a list of cards. `content.lesson`
+   * is what fetches one.
+   */
+  lessons: LessonSummary[];
+  lessonCategories: LessonCategory[];
+  /**
+   * The size and the alt text of every uploaded picture, keyed by id.
+   *
+   * Every one, not only the ones some lesson currently draws. Working out which are in use
+   * would mean parsing every body twice over to save a few hundred bytes, and a picture pasted
+   * into a lesson a second after this snapshot was built would then have no entry — which is
+   * exactly the case that produces a layout jump nobody can reproduce.
+   */
+  lessonImages: LessonImageMap;
 }
 
 /**
@@ -134,6 +178,16 @@ const contentContract = {
       }),
     )
     .output(type<Story | null>()),
+
+  /**
+   * One lesson, with its markup. Null when there is no such lesson.
+   *
+   * Public, as `quiz.get` is and for the same reason: a lesson is content, and the dictionary
+   * is readable signed out. A lesson with an empty body is returned rather than treated as
+   * missing, so the admin can open the one they are half-way through writing and the page says
+   * "nothing in this one yet" rather than "no such lesson" — an empty room, not a wrong address.
+   */
+  lesson: oc.input(z.object({ id: z.string().min(1).max(128) })).output(type<Lesson | null>()),
 
   /** The switcher's list, for the shell to draw before any dictionary has loaded. */
   languages: oc.output(type<{ languages: Language[] }>()),
@@ -217,6 +271,75 @@ const studyContract = {
 
   /** Forgets everything, on the server. Tombstones rather than deletes, so it syncs down. */
   reset: oc.output(type<{ cleared: number }>()),
+};
+
+/* ------------------------------------------------------------------ quizzes */
+
+// Taking a quiz. Three calls, and the split between them is the answer to one question:
+// **who may do this without an account?**
+//
+//   `get`     — anybody. A quiz is content, and the dictionary is readable signed out; a quiz
+//               that demanded a sign-up before it would show you a question would be a
+//               worse version of the app for the person most likely to be trying it out.
+//               It is also what makes an embedded quiz on somebody else's page work at all,
+//               since a third-party iframe has no cookie to send.
+//   `finish`  — signed in only, and quietly. A signed-out run is marked, scored and explained
+//               on screen exactly as any other; the only thing it does not do is leave a
+//               record, because there is nobody to leave it against.
+//   `results` — signed in only, for the ticks on the index.
+//
+// The answers travel with `get`. See the note on the `Quiz` type for why that is deliberate
+// and what `finish` does about it.
+
+/** One answer, on its way up. The bounds are what stops a run being a way to send us a novel. */
+const quizAnswerInput = z.object({
+  /** Option positions. A question cannot have more options than this many. */
+  picked: z.array(z.number().int().min(0).max(200)).max(200).default([]),
+  text: z.string().max(2000).default(''),
+}) satisfies z.ZodType<QuizAnswer>;
+
+const quizContract = {
+  /**
+   * One quiz, with every question and every answer. Null when there is no such quiz.
+   *
+   * Public, per the note above. A quiz with no questions is still returned rather than
+   * treated as missing: the admin is entitled to open the one they are half-way through
+   * writing, and the runner says "nothing in this one yet" rather than "no such quiz",
+   * which is the difference between an empty room and a wrong address.
+   */
+  get: oc.input(z.object({ id: z.string().min(1).max(128) })).output(type<Quiz | null>()),
+
+  /**
+   * Records how a run went, and hands back what was stored.
+   *
+   * The answers go up, not the score. The server marks them again with the same `mark()` the
+   * browser used — see quiz.ts — so what lands in `quiz_results` is the server's own reading
+   * of what was answered rather than a number it was handed. That is not paranoia about
+   * cheating so much as it is the only way the record can be trusted to mean anything.
+   *
+   * Keyed by question position, for the reason given on `mark()`: a shuffled run has no order
+   * anything outside it knows.
+   */
+  finish: oc
+    .input(
+      z.object({
+        quizId: z.string().min(1).max(128),
+        answers: z.record(z.string().max(4), quizAnswerInput),
+        /**
+         * Which questions this run was dealt, by position. Empty means all of them.
+         *
+         * Only a quiz with an `askCount` deals a subset, and such a run has to say what it got:
+         * the server marks the answers again rather than trusting a score, and marking ten
+         * answers against a thirty-three question quiz would record a fail for a perfect run.
+         * Empty rather than optional so an older client keeps the old meaning exactly.
+         */
+        asked: z.array(z.number().int().min(0).max(1000)).max(200).default([]),
+      }),
+    )
+    .output(type<{ result: QuizResult }>()),
+
+  /** Every quiz this account has taken, in one language. Empty when signed out. */
+  results: oc.input(z.object({ lang: LANG })).output(type<{ results: QuizResult[] }>()),
 };
 
 /* ---------------------------------------------------------------- session */
@@ -539,6 +662,185 @@ export interface StoryLinkResult {
   flagged: { form: string; count: number }[];
 }
 
+/* -- the quizzes -- */
+
+/** A shelf to file quizzes on. The same three fields a story category has. */
+export const quizCategoryInput = z.object({
+  /** Absent to create; slugged from the name. */
+  id: z.string().trim().max(128).optional(),
+  lang: LANG,
+  name: z.string().trim().min(1).max(120),
+  nameNative: z.string().trim().max(120).default(''),
+  note: z.string().trim().max(2000).default(''),
+});
+
+export type QuizCategoryInput = z.infer<typeof quizCategoryInput>;
+
+/** Where one prompt or one option gets its sound. Empty `say` and null `clipId` means silent. */
+const quizAudioInput = z.object({
+  /** What a voice should read out. Synthesised through the same cache the stories use. */
+  say: z.string().trim().max(500).default(''),
+  /** An uploaded clip, which wins over `say`. A `quiz_audio` id, from `admin.uploadQuizAudio`. */
+  clipId: z.string().trim().max(64).nullable().default(null),
+});
+
+const quizChoiceInput = z.object({
+  text: z.string().trim().max(500).default(''),
+  /** For `order`, this also fixes where the word goes: the correct ones are in answer order. */
+  correct: z.boolean().default(false),
+  audio: quizAudioInput.default({ say: '', clipId: null }),
+});
+
+const quizQuestionInput = z.object({
+  /**
+   * Loose here and checked against `QUIZ_KINDS` on the server, for the reason `paradigmInput`
+   * is loose: a Zod union of three literals would be a second copy of a set that already
+   * exists in types.ts, and the two could drift.
+   */
+  kind: z.string().trim().min(1).max(20),
+  prompt: z.string().trim().max(1000).default(''),
+  promptNative: z.string().trim().max(1000).default(''),
+  audio: quizAudioInput.default({ say: '', clipId: null }),
+  multiple: z.boolean().default(false),
+  answers: z.array(z.string().trim().min(1).max(500)).max(50).default([]),
+  hint: z.string().trim().max(1000).default(''),
+  explanation: z.string().trim().max(2000).default(''),
+  /** The options, or the word bank. Position is order: the first entry is option 0. */
+  choices: z.array(quizChoiceInput).max(50).default([]),
+});
+
+/**
+ * A whole quiz, questions and all, in one call.
+ *
+ * Sent whole rather than a question at a time, and this is the one place these screens differ
+ * from the story editor — which saves a chapter at a time because a chapter is a megabyte of
+ * prose that has to be re-tokenised and re-linked against the lexicon. A quiz is a few
+ * kilobytes and nothing downstream is derived from it, so the whole of it fits in one request
+ * and one transaction. What that buys is worth more than the bytes: reordering questions,
+ * deleting one from the middle and editing another are one save rather than three calls that
+ * can half-succeed, and there is no state in which the questions and their options disagree
+ * about how many there are.
+ */
+export const quizInput = z.object({
+  /** Absent to create; slugged from the English title. */
+  id: z.string().trim().max(128).optional(),
+  lang: LANG,
+  title: z.string().trim().min(1).max(300),
+  titleNative: z.string().trim().max(300).default(''),
+  description: z.string().trim().max(2000).default(''),
+  level: z.string().trim().max(20).default(''),
+  /** The shelf to file it on. Null is "not filed", which is a state and not a mistake. */
+  categoryId: z.string().trim().max(128).nullable().default(null),
+  shuffleQuestions: z.boolean().default(true),
+  shuffleOptions: z.boolean().default(true),
+  /** 0 asks every question. Not bounded above by the pool — see `quizzes.ask_count`. */
+  askCount: z.number().int().min(0).max(200).default(0),
+  passMark: z.number().int().min(0).max(100).default(70),
+  note: z.string().trim().max(2000).default(''),
+  /** In order. A quiz may be saved with none, which is how one gets written over two sittings. */
+  questions: z.array(quizQuestionInput).max(200).default([]),
+});
+
+export type QuizInput = z.infer<typeof quizInput>;
+
+/* -- the lessons -- */
+
+/** Which of the two sections a lesson or a shelf belongs to. See `LessonSection`. */
+const SECTION = z.enum(['lessons', 'grammar']);
+
+/**
+ * A whole lesson, body and all, in one call.
+ *
+ * One request rather than a field at a time, and unlike the story editor — which saves a
+ * chapter at a time because a chapter is a megabyte of prose that has to be re-tokenised and
+ * re-linked against the lexicon. A lesson body is markup that nothing downstream is derived
+ * from: it is parsed to draw a page and parsed again to answer "what does block four say", and
+ * both happen on the way out rather than on the way in. So the whole of it fits in one request,
+ * and there is no state in which the title and the body disagree about which lesson they are.
+ *
+ * A megabyte is the cap, as a chapter's is. That is a very long lesson and a very short novel.
+ */
+export const lessonInput = z.object({
+  /** Absent to create; slugged from the English title. */
+  id: z.string().trim().max(128).optional(),
+  lang: LANG,
+  section: SECTION,
+  title: z.string().trim().min(1).max(300),
+  titleNative: z.string().trim().max(300).default(''),
+  /** One line for the card. The opening paragraph stands in when it is empty. */
+  summary: z.string().trim().max(1000).default(''),
+  level: z.string().trim().max(20).default(''),
+  /** The shelf to file it on. Null is "not filed", which is a state and not a mistake. */
+  categoryId: z.string().trim().max(128).nullable().default(null),
+  /**
+   * The markup. Not trimmed and not validated beyond its length: the parser accepts anything
+   * and reports what it could not make sense of, so a body saved half-written is an ordinary
+   * state rather than a rejected save. See `LessonWarning`.
+   */
+  body: z.string().max(1_000_000).default(''),
+  note: z.string().trim().max(2000).default(''),
+});
+
+export type LessonInput = z.infer<typeof lessonInput>;
+
+/** A shelf to file lessons on. A quiz shelf's three fields, and the section it belongs to. */
+export const lessonCategoryInput = z.object({
+  /** Absent to create; slugged from the name. */
+  id: z.string().trim().max(128).optional(),
+  lang: LANG,
+  section: SECTION,
+  name: z.string().trim().min(1).max(120),
+  nameNative: z.string().trim().max(120).default(''),
+  note: z.string().trim().max(2000).default(''),
+});
+
+export type LessonCategoryInput = z.infer<typeof lessonCategoryInput>;
+
+/**
+ * An uploaded picture or recording, as the editor lists it.
+ *
+ * The bytes never cross oRPC: an upload is a plain POST of the file to /api/lesson/media and
+ * drawing one is an ordinary URL, for the same reasons the quiz audio is plain Fastify. This is
+ * the index over them, so the editor can offer something already uploaded rather than uploading
+ * it twice.
+ */
+export interface LessonMediaFile {
+  id: string;
+  lang: Lang;
+  /** 'image' | 'audio'. */
+  kind: string;
+  mime: string;
+  bytes: number;
+  name: string;
+  /** Pixels. Zero for a recording, and for a picture whose header could not be read. */
+  width: number;
+  height: number;
+  alt: string;
+  /** Epoch ms. */
+  createdAt: number;
+  /**
+   * How many lesson bodies mention this id. Zero means nothing would miss it.
+   *
+   * Counted by looking in the *text* of every body rather than by following a foreign key,
+   * because a lesson names what it uses in its markup and there is no key to follow. See the
+   * note on the `lesson_media` table.
+   */
+  uses: number;
+}
+
+/** An uploaded clip, as the editor lists it. The bytes never cross this wire; see `uploadUrl`. */
+export interface QuizAudioClip {
+  id: string;
+  lang: Lang;
+  mime: string;
+  bytes: number;
+  name: string;
+  /** Epoch ms. */
+  createdAt: number;
+  /** How many questions and options play it. Zero means nothing would miss it. */
+  uses: number;
+}
+
 /**
  * One account, for the admin user list — the only place in this app where you see anybody
  * but yourself.
@@ -676,6 +978,125 @@ const adminContract = {
     )
     .output(type<StoryLinkResult>()),
 
+  /* -- the quizzes -- */
+
+  /** Writes a quiz and every question in it, replacing whatever it held before. */
+  saveQuiz: oc.input(quizInput).output(type<{ id: string; version: string }>()),
+  /**
+   * Deletes a quiz, its questions and everybody's record of having taken it.
+   *
+   * The results go because they are about *this* quiz — a pass at a quiz that no longer
+   * exists is not a fact anybody can act on — which is why `quiz_results` cascades from it
+   * rather than being protected the way a story's tokens are. Uploaded clips do not go: they
+   * are content in their own right and may be used by another quiz. See `quizAudio`.
+   */
+  deleteQuiz: oc
+    .input(z.object({ id: z.string().min(1).max(128) }))
+    .output(type<{ version: string }>()),
+
+  saveQuizCategory: oc.input(quizCategoryInput).output(type<{ id: string; version: string }>()),
+  /** Deletes a shelf. The quizzes on it are unfiled, not deleted — as a story shelf's are. */
+  deleteQuizCategory: oc
+    .input(z.object({ id: z.string().min(1).max(128) }))
+    .output(type<{ version: string }>()),
+
+  /**
+   * Every uploaded clip, with a count of what plays it.
+   *
+   * The bytes are not here and never cross oRPC: an upload is a plain POST of the file to
+   * /api/quiz/audio and playback is an ordinary URL, for the same reasons the story audio is
+   * plain Fastify. This is only the index over them, so the editor can offer a clip that has
+   * already been uploaded instead of uploading it twice.
+   */
+  quizAudio: oc.output(type<{ clips: QuizAudioClip[] }>()),
+  /**
+   * Deletes a clip and its file.
+   *
+   * Refused while anything still plays it, with a count — the foreign key is `set null`, so
+   * this would otherwise succeed and quietly leave a listening question with nothing to hear
+   * and no indication that there ever was.
+   */
+  deleteQuizAudio: oc
+    .input(z.object({ id: z.string().min(1).max(64) }))
+    .output(type<{ clips: QuizAudioClip[] }>()),
+
+  /* -- the lessons -- */
+
+  /**
+   * Writes a lesson and its markup, replacing whatever it held before.
+   *
+   * The two lists coming back are what a foreign key would otherwise have said. A body names
+   * the quizzes and the pictures it uses in its text — see the note on the `lessons` table — so
+   * nothing can refuse a save that names one which is not there, and a mistyped id would
+   * otherwise become a hole in the page nobody notices until a reader reports it. The save
+   * still succeeds: writing a lesson around a quiz you have not made yet is an ordinary way to
+   * work, and this is the editor being told, not the server declining.
+   */
+  saveLesson: oc.input(lessonInput).output(
+    type<{
+      id: string;
+      version: string;
+      /** Quiz ids the body embeds that no quiz answers to. */
+      unknownQuizzes: string[];
+      /** Picture and recording ids the body names that no upload answers to. */
+      unknownMedia: string[];
+    }>(),
+  ),
+  /**
+   * Deletes a lesson.
+   *
+   * Nothing is refused, and nothing cascades: a lesson owns no rows. What it *names* — an
+   * embedded quiz, an uploaded picture — belongs to somebody else and stays exactly where it
+   * was, which is why deleting the last lesson that used a picture does not delete the picture.
+   */
+  deleteLesson: oc
+    .input(z.object({ id: z.string().min(1).max(128) }))
+    .output(type<{ version: string }>()),
+  /**
+   * Swaps a lesson with its neighbour on the same shelf.
+   *
+   * Up and down rather than "move to index n", for the reason `moveChapter` is: a course is
+   * reordered a step at a time by somebody looking at the list, and a position taken from a
+   * stale list is a lesson landing somewhere nobody pointed at. Its neighbour is the next
+   * lesson in the same section *and* the same category, because that is the list on screen —
+   * swapping with something on another shelf would move it out of sight.
+   */
+  moveLesson: oc
+    .input(z.object({ id: z.string().min(1).max(128), direction: z.enum(['up', 'down']) }))
+    .output(type<{ version: string }>()),
+
+  saveLessonCategory: oc.input(lessonCategoryInput).output(type<{ id: string; version: string }>()),
+  /** Deletes a shelf. The lessons on it are unfiled, not deleted — as a quiz shelf's are. */
+  deleteLessonCategory: oc
+    .input(z.object({ id: z.string().min(1).max(128) }))
+    .output(type<{ version: string }>()),
+
+  /** Every uploaded picture and recording, with a count of the lessons that name each. */
+  lessonMedia: oc.output(type<{ files: LessonMediaFile[] }>()),
+  /**
+   * Renames a file or gives it alt text. The bytes are untouched and cannot be replaced —
+   * a different picture is a different upload, which is what keeps a URL meaning one thing.
+   */
+  updateLessonMedia: oc
+    .input(
+      z.object({
+        id: z.string().min(1).max(64),
+        name: z.string().trim().max(200),
+        alt: z.string().trim().max(500),
+      }),
+    )
+    .output(type<{ files: LessonMediaFile[] }>()),
+  /**
+   * Deletes a file and its bytes.
+   *
+   * Refused while any lesson body still mentions it, with a count — nothing would stop this
+   * otherwise, because the reference is text rather than a key, and the result would be a
+   * lesson with a broken picture in it and no indication of when that happened.
+   */
+  deleteLessonMedia: oc
+    .input(z.object({ id: z.string().min(1).max(64) }))
+    .output(type<{ files: LessonMediaFile[] }>()),
+
   /* -- who else may do all this -- */
 
   users: oc.output(type<{ users: AdminUser[] }>()),
@@ -690,10 +1111,208 @@ const adminContract = {
     .output(type<{ users: AdminUser[] }>()),
 };
 
+/* ------------------------------------------------------------------ library */
+
+// A reader's own content: stories they pasted in and words they added, private to them.
+//
+// This namespace is `admin` with the authority taken out and the ownership put in. The two
+// look alike because a story has the same shape either way; what differs is who the write is
+// for, and that has to be visible at the call site. `admin.saveStory` publishes. This one does
+// not and cannot be made to: every procedure below is scoped to the caller's own rows by the
+// server, never by anything sent from the browser.
+//
+// Three things follow from "private":
+//
+//   **None of it is in the snapshot.** That object is assembled once per language and shared
+//   by every visitor and every cache. A row that varied per person would make the whole of it
+//   vary per person, and cost every reader the dictionary again on every sign-in. So `mine` is
+//   a second, small payload the browser lays over the first.
+//
+//   **Every mutation answers with the whole overlay**, not with the row that changed. It is a
+//   few kilobytes, the browser's copy cannot drift from the server's, and adding a word
+//   updates the search index, the category card and the deck in one assignment. The snapshot
+//   works the same way; see `refreshContent`.
+//
+//   **Nothing here bumps the content version.** An edit to your own library must not
+//   invalidate the shared snapshot, or one person adding a word would make every other reader
+//   re-download the dictionary.
+
+/**
+ * One person's private content in one language: the whole overlay.
+ *
+ * `words` carries full entries rather than summaries, unlike the stories. A private vocabulary
+ * is tens of entries where the dictionary has tens of thousands, and everything that reads the
+ * lexicon (the search box, the deck, the category grid) wants whole `Word` objects. Splitting
+ * them would buy nothing and leave two ways of holding a word.
+ */
+export interface PrivateContent {
+  lang: Lang;
+  /** Your own stories, in the order they were made. Prose is fetched per chapter as ever. */
+  stories: StorySummary[];
+  words: Word[];
+  /** Shelves of your own. Made on demand, so there are none until you have added a word. */
+  categories: Category[];
+}
+
+/**
+ * A story of your own.
+ *
+ * `storyInput` minus the shelf. The shelves belong to the dictionary, and one person's own
+ * story appearing on "Folk tales" for them alone would make that shelf mean two things to two
+ * people. See the note on `stories.owner_id`.
+ */
+export const myStoryInput = storyInput.omit({ categoryId: true });
+
+export type MyStoryInput = z.infer<typeof myStoryInput>;
+
+/**
+ * A word of your own.
+ *
+ * `wordInput` with the category made optional, which is the only field that changes meaning:
+ * an admin files a word on a shelf that already exists, and a reader adding their first word
+ * has no shelf at all. Empty means "my words", which the server makes on demand.
+ */
+export const myWordInput = wordInput.extend({
+  /** A shelf of your own or one of the dictionary's. Empty for "My words", made on demand. */
+  categoryId: z.string().trim().max(128).default(''),
+});
+
+export type MyWordInput = z.infer<typeof myWordInput>;
+
+const libraryContract = {
+  /**
+   * Everything of yours in one language. Empty for a signed-out visitor rather than a refusal:
+   * the app asks once at boot, before it knows whether anybody is signed in, and "you have no
+   * private content" is the true answer for somebody who has no account.
+   */
+  mine: oc.input(z.object({ lang: LANG })).output(type<PrivateContent>()),
+
+  /**
+   * Writes a story of your own, and its first chapter where prose came with it.
+   *
+   * The same one-shot creation `admin.saveStory` allows, for the same reason: pasting a text in
+   * is the ordinary way one of these begins, and making it two screens would charge every short
+   * story for a feature only a book uses.
+   */
+  saveStory: oc
+    .input(myStoryInput)
+    .output(type<{ id: string; report: StoryLinkResult | null; content: PrivateContent }>()),
+
+  /** Deletes a story of yours, with its chapters and every link in them. */
+  deleteStory: oc
+    .input(z.object({ id: z.string().min(1).max(128) }))
+    .output(type<{ content: PrivateContent }>()),
+
+  /**
+   * Takes a copy of a published story into your own library.
+   *
+   * This is the answer to "why can I not edit this one". The copy carries the prose, the
+   * translation and every link already worked out for it, hand-made ones included, so it opens
+   * as good as the original instead of as an unlinked wall of text. It is a copy rather than a
+   * reference: corrections to the original afterwards do not reach it, which is the point of
+   * having taken one.
+   */
+  copyStory: oc
+    .input(z.object({ id: z.string().min(1).max(128) }))
+    .output(type<{ id: string; content: PrivateContent }>()),
+
+  /**
+   * Runs the resolver over one of your stories again, keeping the decisions you pinned.
+   *
+   * Worth doing after adding words. A word added today is a link the story could not have made
+   * yesterday, and this is what goes back and makes it.
+   */
+  relinkStory: oc
+    .input(z.object({ id: z.string().min(1).max(128) }))
+    .output(type<{ result: StoryLinkResult; content: PrivateContent }>()),
+
+  saveChapter: oc
+    .input(storyChapterInput)
+    .output(type<{ result: StoryLinkResult; content: PrivateContent }>()),
+  deleteChapter: oc
+    .input(z.object({ storyId: z.string().min(1).max(128), position: z.number().int().min(0).max(999) }))
+    .output(type<{ content: PrivateContent }>()),
+  moveChapter: oc
+    .input(
+      z.object({
+        storyId: z.string().min(1).max(128),
+        position: z.number().int().min(0).max(999),
+        direction: z.enum(['up', 'down']),
+      }),
+    )
+    .output(type<{ content: PrivateContent }>()),
+
+  /**
+   * One occurrence in one of your stories, decided by hand.
+   *
+   * The reader's own version of `admin.setStoryToken`, making the same three claims: this is
+   * that entry, this is a name, this is not a dictionary word at all. It is here because the
+   * resolver works against a dictionary that does not have your vocabulary in it yet, so a
+   * private story shows far more guesses than a published one.
+   */
+  setStoryToken: oc
+    .input(storyTokenInput)
+    .output(type<{ result: StoryLinkResult; content: PrivateContent }>()),
+  /** Undoes one, and works the token out again from the lexicon as it now stands. */
+  resetStoryToken: oc
+    .input(
+      z.object({
+        storyId: z.string().min(1).max(128),
+        chapter: z.number().int().min(0).max(999).default(0),
+        paragraph: z.number().int().min(0).max(10_000),
+        position: z.number().int().min(0).max(10_000),
+        form: z.string().trim().min(1).max(200),
+        everywhere: z.boolean().default(false),
+      }),
+    )
+    .output(type<{ result: StoryLinkResult; content: PrivateContent }>()),
+
+  /**
+   * Writes an entry of your own, with its senses and its inflected forms.
+   *
+   * The forms are the half that earns its keep. An entry with `მგელს` listed under it is one
+   * the resolver will find in your own prose, which is the reason for adding it: you met a
+   * word, you wrote it down, and the next text you paste in finds it.
+   */
+  saveWord: oc.input(myWordInput).output(type<{ id: string; content: PrivateContent }>()),
+  /**
+   * Deletes one of your entries.
+   *
+   * Unlike `admin.deleteWord` this is never refused. Your stories' tokens point at it through a
+   * key that clears itself, so those words go back to being plain text, which is where they
+   * came from. Adding the entry again and relinking brings them back.
+   */
+  deleteWord: oc
+    .input(z.object({ id: z.string().min(1).max(128) }))
+    .output(type<{ content: PrivateContent }>()),
+
+  /** Renames a shelf of yours, or makes one. */
+  saveCategory: oc
+    .input(
+      z.object({
+        id: z.string().trim().max(128).optional(),
+        lang: LANG,
+        name: z.string().trim().min(1).max(120),
+        nameNative: z.string().trim().max(120).default(''),
+      }),
+    )
+    .output(type<{ id: string; content: PrivateContent }>()),
+  /**
+   * Deletes a shelf of yours. Refused while it still holds words, which is the opposite of what
+   * deleting a story shelf does. A word must be filed somewhere, so there is nowhere for them
+   * to fall back to. Move them first.
+   */
+  deleteCategory: oc
+    .input(z.object({ id: z.string().min(1).max(128) }))
+    .output(type<{ content: PrivateContent }>()),
+};
+
 export const contract = {
   content: contentContract,
   study: studyContract,
+  quiz: quizContract,
   session: sessionContract,
+  library: libraryContract,
   admin: adminContract,
 };
 

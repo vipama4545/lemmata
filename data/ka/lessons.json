@@ -1,0 +1,1807 @@
+{
+  "note": "The starter course and the reference grammar. The course is written by scripts/starterLessons.ts and the grammar was converted from the old module by scripts/lessonsFromGrammar.ts. Edited in the admin screens from here on; `npm run db:lessons` loads it, and leaves alone anything already in the database.",
+  "lang": "ka",
+  "categories": [
+    {
+      "id": "start-here",
+      "section": "lessons",
+      "name": "Start here",
+      "nameNative": "",
+      "note": "What this is and the order to take it in."
+    },
+    {
+      "id": "the-alphabet",
+      "section": "lessons",
+      "name": "The alphabet",
+      "nameNative": "ანბანი",
+      "note": "All 33 letters, then five at a time."
+    },
+    {
+      "id": "introductions",
+      "section": "lessons",
+      "name": "Introductions",
+      "nameNative": "გაცნობა",
+      "note": "Hello, your name, where you are from."
+    },
+    {
+      "id": "grammar-writing",
+      "section": "grammar",
+      "name": "Writing & sounds",
+      "nameNative": "",
+      "note": ""
+    },
+    {
+      "id": "grammar-nouns",
+      "section": "grammar",
+      "name": "Nouns & phrases",
+      "nameNative": "",
+      "note": ""
+    },
+    {
+      "id": "grammar-verbs",
+      "section": "grammar",
+      "name": "Verbs",
+      "nameNative": "",
+      "note": ""
+    },
+    {
+      "id": "grammar-sentences",
+      "section": "grammar",
+      "name": "Sentences",
+      "nameNative": "",
+      "note": ""
+    }
+  ],
+  "lessons": [
+    {
+      "id": "start-here",
+      "section": "lessons",
+      "title": "Start here",
+      "titleNative": "დაიწყე აქედან",
+      "summary": "What this course is, and the order to take it in.",
+      "level": "A1",
+      "categoryId": "start-here",
+      "body": "Georgian is written in an alphabet that looks like nothing you have seen before, and that is the only genuinely hard part of the first week. Once it is behind you the language stops fighting you at the level of the page: there are no silent letters, no doubled letters and nothing to memorise about spelling. Every letter is one sound. Every sound is one letter. Read what is written and you have said the word.\n\n## How this works\n\n- Every lesson is short — one table, one idea, ten minutes.\n- Most of them end in a few questions you answer here on the page. They are marked as you go, with the reason underneath.\n- Anything with a play button beside it can be heard. Press it as often as you like.\n\n## The order\n\n1. **The alphabet.** All 33 letters once, to see the shape of it, and then five at a time with a quiz on each.\n2. **Introductions.** Hello, your name, where you are from, and a first conversation to put them together.\n\nMore will follow. Grammar arrives a piece at a time, inside the lessons that need it, rather than as a wall to climb first.\n\n> **Grammar** in the sidebar is the reference — the seven cases, the eleven screeves, the conjugation groups. You do not need it yet, and nothing here assumes you have read it. Go there when a lesson makes you curious about why something is the way it is.\n\nStart with the alphabet. Do not try to learn all 33 today.",
+      "note": ""
+    },
+    {
+      "id": "alphabet-all",
+      "section": "lessons",
+      "title": "The whole alphabet",
+      "titleNative": "ანბანი",
+      "summary": "All 33 letters in one table, with a word that uses each. Read it once and move on.",
+      "level": "A1",
+      "categoryId": "the-alphabet",
+      "body": "Here is the whole thing at once. It is not for memorising — it is so that the next seven lessons have somewhere to point back to, and so you can see how small the alphabet actually is.\n\nWatch it read aloud first. Then read down the table and say each example word out loud; the letter being taught is marked in red inside it.\n\n::video https://www.youtube.com/watch?v=mY1C8-uGsU0 The 33 letters, read aloud\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| ა {say:ა} | an | a as in \"father\" | {red:ა}სო — letter {say:ასო} |\n| ბ {say:ბ} | ban | b | {red:ბ}აღი — garden {say:ბაღი} |\n| გ {say:გ} | gan | g, always hard as in \"go\" | {red:გ}ზა — road {say:გზა} |\n| დ {say:დ} | don | d | {red:დ}ღე — day {say:დღე} |\n| ე {say:ე} | en | e as in \"bed\" | {red:ე}ზო — yard {say:ეზო} |\n| ვ {say:ვ} | vin | v | {red:ვ}აშლი — apple {say:ვაშლი} |\n| ზ {say:ზ} | zen | z | {red:ზ}ღვა — sea {say:ზღვა} |\n| თ {say:თ} | tan | aspirated t, as in \"top\" | {red:თ}ვე — month {say:თვე} |\n| ი {say:ი} | in | i as in \"machine\" | {red:ი}ვნისი — June {say:ივნისი} |\n| კ {say:კ} | kʼan | ejective k | {red:კ}ატა — cat {say:კატა} |\n| ლ {say:ლ} | las | l | {red:ლ}არი — lari {say:ლარი} |\n| მ {say:მ} | man | m | {red:მ}ზე — sun {say:მზე} |\n| ნ {say:ნ} | nar | n | {red:ნ}ავი — boat {say:ნავი} |\n| ო {say:ო} | on | o as in \"sort\" | {red:ო}თახი — room {say:ოთახი} |\n| პ {say:პ} | pʼar | ejective p | {red:პ}ური — bread {say:პური} |\n| ჟ {say:ჟ} | zhan | like the s in \"measure\" | {red:ჟ}ოლო — raspberry {say:ჟოლო} |\n| რ {say:რ} | rae | r, tapped or trilled | {red:რ}ძე — milk {say:რძე} |\n| ს {say:ს} | san | s | {red:ს}ახე — face {say:სახე} |\n| ტ {say:ტ} | tʼar | ejective t | {red:ტ}ბა — lake {say:ტბა} |\n| უ {say:უ} | un | u as in \"flute\" | {red:უ}კვე — already {say:უკვე} |\n| ფ {say:ფ} | par | aspirated p, as in \"pot\" | {red:ფ}ერი — colour {say:ფერი} |\n| ქ {say:ქ} | kan | aspirated k, as in \"cat\" | {red:ქ}ალი — woman {say:ქალი} |\n| ღ {say:ღ} | ghan | voiced, like the Parisian French r | {red:ღ}ვინო — wine {say:ღვინო} |\n| ყ {say:ყ} | qʼar | ejective, made far back in the throat | {red:ყ}ავა — coffee {say:ყავა} |\n| შ {say:შ} | shin | sh as in \"shoe\" | {red:შ}ვილი — child {say:შვილი} |\n| ჩ {say:ჩ} | chin | aspirated ch, as in \"chair\" | {red:ჩ}აი — tea {say:ჩაი} |\n| ც {say:ც} | tsan | aspirated ts, as in \"cats\" | {red:ც}ოლი — wife {say:ცოლი} |\n| ძ {say:ძ} | dzil | dz as in \"adze\" | {red:ძ}მა — brother {say:ძმა} |\n| წ {say:წ} | tsʼil | ejective ts | {red:წ}ელი — year {say:წელი} |\n| ჭ {say:ჭ} | chʼar | ejective ch | {red:ჭ}იქა — glass {say:ჭიქა} |\n| ხ {say:ხ} | khan | kh as in Scottish \"loch\" | {red:ხ}ელი — hand {say:ხელი} |\n| ჯ {say:ჯ} | jan | j as in \"jam\" | {red:ჯ}იბე — pocket {say:ჯიბე} |\n| ჰ {say:ჰ} | hae | h | {red:ჰ}ობი — hobby {say:ჰობი} |\n\n> Six of these letters are **ejectives** — კ პ ტ ყ წ ჭ. They are made with the throat closed, so the sound leaves the mouth with a small pop and no breath behind it. Each has an ordinary partner that does have breath behind it, and swapping the two changes the word: კარი is a door, ქარი is wind. Nobody hears the difference on the first day.\n\nNow take them five at a time.",
+      "note": ""
+    },
+    {
+      "id": "letters-1",
+      "section": "lessons",
+      "title": "ა ბ გ დ ე",
+      "titleNative": "",
+      "summary": "The first five, and four of them sound exactly like the English letters they look nothing like.",
+      "level": "A1",
+      "categoryId": "the-alphabet",
+      "body": "The first five, and four of them sound exactly like the English letters they look nothing like. Read each word aloud — every letter is pronounced, so there is nothing to guess at.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| ა {say:ა} | an | a as in \"father\" | {red:ა}სო — letter {say:ასო} |\n| ბ {say:ბ} | ban | b | {red:ბ}აღი — garden {say:ბაღი} |\n| გ {say:გ} | gan | g, always hard as in \"go\" | {red:გ}ზა — road {say:გზა} |\n| დ {say:დ} | don | d | {red:დ}ღე — day {say:დღე} |\n| ე {say:ე} | en | e as in \"bed\" | {red:ე}ზო — yard {say:ეზო} |\n\n> ე is always the short e of \"bed\". It never softens and never goes silent at the end of a word.\n\n::quiz letters-1-quiz",
+      "note": ""
+    },
+    {
+      "id": "letters-2",
+      "section": "lessons",
+      "title": "ვ ზ თ ი კ",
+      "titleNative": "",
+      "summary": "Four familiar sounds and the first ejective.",
+      "level": "A1",
+      "categoryId": "the-alphabet",
+      "body": "Four familiar sounds and the first ejective. თ and კ are worth slowing down for: they are the two halves of a distinction English does not make.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| ვ {say:ვ} | vin | v | {red:ვ}აშლი — apple {say:ვაშლი} |\n| ზ {say:ზ} | zen | z | {red:ზ}ღვა — sea {say:ზღვა} |\n| თ {say:თ} | tan | aspirated t, as in \"top\" | {red:თ}ვე — month {say:თვე} |\n| ი {say:ი} | in | i as in \"machine\" | {red:ი}ვნისი — June {say:ივნისი} |\n| კ {say:კ} | kʼan | ejective k | {red:კ}ატა — cat {say:კატა} |\n\n> კ is made by closing the throat and letting the sound pop out with no breath behind it. Its ordinary partner is ქ, which you meet in the fifth lesson — კარი is a door, ქარი is wind.\n\n::quiz letters-2-quiz",
+      "note": ""
+    },
+    {
+      "id": "letters-3",
+      "section": "lessons",
+      "title": "ლ მ ნ ო პ",
+      "titleNative": "",
+      "summary": "Four more familiar ones, and პ — the ejective partner of the p you already know from English.",
+      "level": "A1",
+      "categoryId": "the-alphabet",
+      "body": "Four more familiar ones, and პ — the ejective partner of the p you already know from English.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| ლ {say:ლ} | las | l | {red:ლ}არი — lari {say:ლარი} |\n| მ {say:მ} | man | m | {red:მ}ზე — sun {say:მზე} |\n| ნ {say:ნ} | nar | n | {red:ნ}ავი — boat {say:ნავი} |\n| ო {say:ო} | on | o as in \"sort\" | {red:ო}თახი — room {say:ოთახი} |\n| პ {say:პ} | pʼar | ejective p | {red:პ}ური — bread {say:პური} |\n\n> Hold a hand in front of your mouth. English \"p\" pushes air onto it; პ should not.\n\n::quiz letters-3-quiz",
+      "note": ""
+    },
+    {
+      "id": "letters-4",
+      "section": "lessons",
+      "title": "ჟ რ ს ტ უ",
+      "titleNative": "",
+      "summary": "One rare letter, two easy ones, another ejective, and a vowel.",
+      "level": "A1",
+      "categoryId": "the-alphabet",
+      "body": "One rare letter, two easy ones, another ejective, and a vowel. ჟ turns up in loanwords more than anywhere else.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| ჟ {say:ჟ} | zhan | like the s in \"measure\" | {red:ჟ}ოლო — raspberry {say:ჟოლო} |\n| რ {say:რ} | rae | r, tapped or trilled | {red:რ}ძე — milk {say:რძე} |\n| ს {say:ს} | san | s | {red:ს}ახე — face {say:სახე} |\n| ტ {say:ტ} | tʼar | ejective t | {red:ტ}ბა — lake {say:ტბა} |\n| უ {say:უ} | un | u as in \"flute\" | {red:უ}კვე — already {say:უკვე} |\n\n> ტ is to თ what პ is to ფ and კ is to ქ: same place in the mouth, no breath behind it.\n\n::quiz letters-4-quiz",
+      "note": ""
+    },
+    {
+      "id": "letters-5",
+      "section": "lessons",
+      "title": "ფ ქ ღ ყ შ",
+      "titleNative": "",
+      "summary": "The hardest five in the alphabet for an English speaker, and worth taking twice.",
+      "level": "A1",
+      "categoryId": "the-alphabet",
+      "body": "The hardest five in the alphabet for an English speaker, and worth taking twice. ღ and ყ are made further back in the throat than any English sound.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| ფ {say:ფ} | par | aspirated p, as in \"pot\" | {red:ფ}ერი — colour {say:ფერი} |\n| ქ {say:ქ} | kan | aspirated k, as in \"cat\" | {red:ქ}ალი — woman {say:ქალი} |\n| ღ {say:ღ} | ghan | voiced, like the Parisian French r | {red:ღ}ვინო — wine {say:ღვინო} |\n| ყ {say:ყ} | qʼar | ejective, made far back in the throat | {red:ყ}ავა — coffee {say:ყავა} |\n| შ {say:შ} | shin | sh as in \"shoe\" | {red:შ}ვილი — child {say:შვილი} |\n\n> ყ is the one that takes practice. It is made where you would swallow, not where you would say \"k\". Nobody gets it on the first day.\n\n::quiz letters-5-quiz",
+      "note": ""
+    },
+    {
+      "id": "letters-6",
+      "section": "lessons",
+      "title": "ჩ ც ძ წ ჭ",
+      "titleNative": "",
+      "summary": "Five affricates — sounds made by stopping the air and then releasing it as a hiss.",
+      "level": "A1",
+      "categoryId": "the-alphabet",
+      "body": "Five affricates — sounds made by stopping the air and then releasing it as a hiss. Three of them come in aspirated and ejective pairs.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| ჩ {say:ჩ} | chin | aspirated ch, as in \"chair\" | {red:ჩ}აი — tea {say:ჩაი} |\n| ც {say:ც} | tsan | aspirated ts, as in \"cats\" | {red:ც}ოლი — wife {say:ცოლი} |\n| ძ {say:ძ} | dzil | dz as in \"adze\" | {red:ძ}მა — brother {say:ძმა} |\n| წ {say:წ} | tsʼil | ejective ts | {red:წ}ელი — year {say:წელი} |\n| ჭ {say:ჭ} | chʼar | ejective ch | {red:ჭ}იქა — glass {say:ჭიქა} |\n\n> ც and წ are the pair, and so are ჩ and ჭ. If you can hear the difference between კარი and ქარი, you already know what you are listening for.\n\n::quiz letters-6-quiz",
+      "note": ""
+    },
+    {
+      "id": "letters-7",
+      "section": "lessons",
+      "title": "ხ ჯ ჰ",
+      "titleNative": "",
+      "summary": "The last three.",
+      "level": "A1",
+      "categoryId": "the-alphabet",
+      "body": "The last three. After this you can read anything written in Georgian, even if you do not know what it means yet.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| ხ {say:ხ} | khan | kh as in Scottish \"loch\" | {red:ხ}ელი — hand {say:ხელი} |\n| ჯ {say:ჯ} | jan | j as in \"jam\" | {red:ჯ}იბე — pocket {say:ჯიბე} |\n| ჰ {say:ჰ} | hae | h | {red:ჰ}ობი — hobby {say:ჰობი} |\n\n> ხ is the ch of Scottish \"loch\" or German \"Bach\" — a scrape, not a k.\n\n::quiz letters-7-quiz",
+      "note": ""
+    },
+    {
+      "id": "greetings",
+      "section": "lessons",
+      "title": "Hello and goodbye",
+      "titleNative": "გამარჯობა",
+      "summary": "Two words that will get you through a door and back out again.",
+      "level": "A1",
+      "categoryId": "introductions",
+      "body": "გამარჯობა is what you say to anybody, at any hour, in any shop. It is not reserved for friends and there is no casual alternative you are supposed to know instead.\n\n| Georgian | English | |\n| --- | --- | --- |\n| გამარჯობა | hello | {say:გამარჯობა} |\n| ნახვამდის | goodbye | {say:ნახვამდის} |\n| დილა მშვიდობისა | good morning | {say:დილა მშვიდობისა} |\n| საღამო მშვიდობისა | good evening | {say:საღამო მშვიდობისა} |\n\nThe morning and evening greetings are the ones you will hear on the radio and from a shopkeeper opening up. მშვიდობისა in both of them is \"of peace\" — literally \"morning of peace\".\n\n> Add **-თ** to the end and a greeting becomes plural, or polite to one person: გამარჯობა to a friend, **გამარჯობათ** to a room or to somebody you have just met. That -თ is going to turn up on almost every verb you learn, doing exactly this job.\n\n::quiz greetings-quiz",
+      "note": ""
+    },
+    {
+      "id": "your-name",
+      "section": "lessons",
+      "title": "Saying your name",
+      "titleNative": "რა გქვია?",
+      "summary": "Two ways to give your name, and how to ask for somebody else’s.",
+      "level": "A1",
+      "categoryId": "introductions",
+      "body": "There are two ways to say who you are, and Georgian uses the second one more than English does.\n\n| Georgian | English | |\n| --- | --- | --- |\n| მე ვარ ... | I am ... | {say:მე ვარ} |\n| მე მქვია ... | my name is ... | {say:მე მქვია} |\n| რა გქვია? | what is your name? | {say:რა გქვია} |\n| ძალიან სასიამოვნოა | very nice to meet you | {say:ძალიან სასიამოვნოა} |\n\n**მე ვარ** is \"I am\" — the same as English, and it works with a name, a job or a nationality.\n\n**მე მქვია** is closer to \"I am called\". It only works with a name, and it is what most people actually say. The question that goes with it is **რა გქვია?** — \"what are you called?\"\n\n> Notice that the two questions are built the same way: მ- at the front means the thing is about me, გ- means it is about you. მქვია, I am called. გქვია, you are called. That prefix system is most of what makes Georgian verbs look frightening, and this is the gentlest possible introduction to it.\n\n::quiz your-name-quiz",
+      "note": ""
+    },
+    {
+      "id": "where-from",
+      "section": "lessons",
+      "title": "Where are you from?",
+      "titleNative": "საიდან ხარ?",
+      "summary": "The second question anybody will ask you, and how to answer it.",
+      "level": "A1",
+      "categoryId": "introductions",
+      "body": "| Georgian | English | |\n| --- | --- | --- |\n| საიდან ხარ? | where are you from? | {say:საიდან ხარ} |\n| მე ვარ ამერიკელი | I am American | {say:მე ვარ ამერიკელი} |\n| შენ ქართველი ხარ? | are you Georgian? | {say:შენ ქართველი ხარ} |\n| დიახ, ქართველი ვარ | yes, I am Georgian | {say:დიახ, ქართველი ვარ} |\n\nA nationality in Georgian is one word, not two: **ქართველი** is \"a Georgian person\", **ამერიკელი** is \"an American\". The **-ელი** on the end is the ending that makes a person out of a place, and you will see it everywhere.\n\nWord order is free, because the endings carry the meaning. All three of these are correct:\n\n| Georgian | |\n| --- | --- |\n| მე ვარ ქართველი | {say:მე ვარ ქართველი} |\n| ქართველი ვარ | {say:ქართველი ვარ} |\n| ქართველი მე ვარ | {say:ქართველი მე ვარ} |\n\nThe middle one is what a Georgian would say. **მე** is only there for emphasis — the verb already says who is speaking, so leaving it in every sentence sounds like you are insisting.\n\n::quiz where-from-quiz",
+      "note": ""
+    },
+    {
+      "id": "polite",
+      "section": "lessons",
+      "title": "Please and thank you",
+      "titleNative": "გმადლობთ",
+      "summary": "Six words that make the difference between a tourist and a guest.",
+      "level": "A1",
+      "categoryId": "introductions",
+      "body": "| Georgian | English | |\n| --- | --- | --- |\n| გმადლობთ | thank you | {say:გმადლობთ} |\n| მადლობა | thanks | {say:მადლობა} |\n| ბოდიში | sorry, excuse me | {say:ბოდიში} |\n| თუ შეიძლება | please | {say:თუ შეიძლება} |\n| დიახ | yes | {say:დიახ} |\n| არა | no | {say:არა} |\n\n**გმადლობთ** and **მადლობა** are both \"thanks\". გმადლობთ is the fuller one and carries that same polite -თ on the end; მადლობა is the noun, \"gratitude\", used on its own the way English uses \"thanks\".\n\n**ბოდიში** does double duty. It is \"sorry\" after you have stepped on a foot, and \"excuse me\" before you ask a stranger something.\n\n> **დიახ** and **კი** both mean yes. დიახ is the formal one — in a shop, to somebody older, on the phone. კი is what you say to a friend. There is no wrong choice here that anybody will mind.\n\n::quiz polite-quiz",
+      "note": ""
+    },
+    {
+      "id": "to-be",
+      "section": "lessons",
+      "title": "am, are, is",
+      "titleNative": "ვარ, ხარ, არის",
+      "summary": "The first verb, and the only one you need for everything so far.",
+      "level": "A1",
+      "categoryId": "introductions",
+      "body": "Every sentence in the last four lessons used one verb. Here it is in full — six forms, and you have already met three of them.\n\n| Georgian | English | |\n| --- | --- | --- |\n| მე ვარ | I am | {say:მე ვარ} |\n| შენ ხარ | you are | {say:შენ ხარ} |\n| ის არის | he / she / it is | {say:ის არის} |\n| ჩვენ ვართ | we are | {say:ჩვენ ვართ} |\n| თქვენ ხართ | you are (plural, polite) | {say:თქვენ ხართ} |\n| ისინი არიან | they are | {say:ისინი არიან} |\n\nRead down the Georgian column and ignore the pronouns for a moment. **ვარ, ხარ, არის, ვართ, ხართ, არიან** — the verb alone says who is doing it. That is why მე and შენ are optional, and why dropping them is the normal way to speak.\n\nTwo patterns are worth noticing now, because they hold for almost every verb in the language:\n\n- **ვ-** at the front means *I*: **ვ**არ, **ვ**ართ.\n- **-თ** at the end means *more than one, or polite*: ვარ**თ**, ხარ**თ**.\n\n> This verb is irregular, which is the usual fate of \"to be\" in any language. Do not try to derive the other verbs from it. It is here because you cannot say anything without it.\n\n::quiz to-be-quiz",
+      "note": ""
+    },
+    {
+      "id": "first-conversation",
+      "section": "lessons",
+      "title": "A first conversation",
+      "titleNative": "პირველი დიალოგი",
+      "summary": "Everything so far, in eight lines. Read it out loud.",
+      "level": "A1",
+      "categoryId": "introductions",
+      "body": "Nothing here is new. Every line is built from the five lessons before it — which is the point, and is roughly how much of a real conversation those five lessons buy you.\n\n::story first-conversation\n\n> **შენ?** on its own is \"and you?\" — the whole question, in one word. Georgian does this a lot: if the context has already supplied the rest of the sentence, it is not said again.\n\nRead it aloud twice, then turn the English off and read it again. Hover any word you are not sure of.\n\n::quiz first-conversation-quiz",
+      "note": ""
+    },
+    {
+      "id": "alphabet",
+      "section": "grammar",
+      "title": "The alphabet",
+      "titleNative": "ანბანი",
+      "summary": "All 33 letters of Mkhedruli, their names, and the sounds they stand for.",
+      "level": "",
+      "categoryId": "grammar-writing",
+      "body": "Georgian is written in Mkhedruli, an alphabet of 33 letters with no capital letters and no silent letters: every letter is one sound and every sound is one letter, so once you know the alphabet you can read any word aloud.\n\nThe one thing English does not prepare you for is the ejectives — consonants made with a closed throat and a small pop of air. Each of them has an ordinary aspirated partner, and swapping the two changes the word: კარი (kʼari) is a door, ქარი (kʰari) is wind.\n\n| Letter | Name | Sound | Notes |\n| --- | --- | --- | --- |\n| ა | an | a | as in \"father\" |\n| ბ | ban | b |  |\n| გ | gan | g | always hard, as in \"go\" |\n| დ | don | d |  |\n| ე | en | e | as in \"bed\" |\n| ვ | vin | v |  |\n| ზ | zen | z |  |\n| თ | tan | tʰ | aspirated t, as in \"top\" |\n| ი | in | i | as in \"machine\" |\n| კ | kʼan | kʼ | ejective k |\n| ლ | las | l |  |\n| მ | man | m |  |\n| ნ | nar | n |  |\n| ო | on | o | as in \"sort\" |\n| პ | pʼar | pʼ | ejective p |\n| ჟ | zhan | ʒ | like the s in \"measure\" |\n| რ | rae | r | tapped or trilled |\n| ს | san | s |  |\n| ტ | tʼar | tʼ | ejective t |\n| უ | un | u | as in \"flute\" |\n| ფ | par | pʰ | aspirated p, as in \"pot\" |\n| ქ | kan | kʰ | aspirated k, as in \"cat\" |\n| ღ | ghan | ɣ | voiced, like the Parisian French r |\n| ყ | qʼar | qʼ | ejective, made far back in the throat |\n| შ | shin | ʃ | as in \"shoe\" |\n| ჩ | chin | tʃʰ | aspirated ch, as in \"chair\" |\n| ც | tsan | tsʰ | aspirated ts, as in \"cats\" |\n| ძ | dzil | dz | as in \"adze\" |\n| წ | tsʼil | tsʼ | ejective ts |\n| ჭ | chʼar | tʃʼ | ejective ch |\n| ხ | khan | x | as in Scottish \"loch\" |\n| ჯ | jan | dʒ | as in \"jam\" |\n| ჰ | hae | h |  |\n\n## Consonant clusters\n\nGeorgian allows runs of consonants that look impossible on the page — გვ-, მკ-, ფრცქვ- — but each letter keeps its own sound and none of them is dropped. Say them slowly and in order rather than looking for a vowel to lean on.\n\n| Georgian | English |\n| --- | --- |\n| გვარი | surname |\n| მთვარე | moon |\n| ბრძანება | order, command |",
+      "note": ""
+    },
+    {
+      "id": "noun-cases",
+      "section": "grammar",
+      "title": "Noun cases",
+      "titleNative": "ბრუნვები",
+      "summary": "The seven cases, their endings, and the case each verb series asks for.",
+      "level": "",
+      "categoryId": "grammar-nouns",
+      "body": "Georgian has seven cases. The ending on a noun tells you what it does in the sentence, which is why word order can move around so freely — the roles travel with the nouns, not with their position.\n\nEndings attach to the stem. Stems ending in a consonant (კაც- \"man\") take the full ending; stems ending in a vowel (დედა \"mother\") often lose that vowel before the ending, or take a shortened form of it.\n\n| Case | Georgian | Ending | კაც- (man) | დედა (mother) |\n| --- | --- | --- | --- | --- |\n| Nominative | სახელობითი | -ი | კაცი | დედა |\n| Ergative | მოთხრობითი | -მა / -მ | კაცმა | დედამ |\n| Dative | მიცემითი | -ს | კაცს | დედას |\n| Genitive | ნათესაობითი | -ის / -ს | კაცის | დედის |\n| Instrumental | მოქმედებითი | -ით / -თ | კაცით | დედით |\n| Adverbial | ვითარებითი | -ად / -დ | კაცად | დედად |\n| Vocative | წოდებითი | -ო / -ვ | კაცო | დედავ |\n\n> დედა loses its final -ა before the genitive, instrumental and adverbial endings. Stems in -ე behave the same way.\n\n## What each case does\n\n- Nominative — the citation form, and the subject of most sentences in the present.\n- Ergative — the subject of a transitive verb in the aorist series. It exists for no other purpose, which makes it the clearest signal that you are in the past.\n- Dative — the indirect object (\"to whom\"), the direct object in the present, and the subject of verbs of feeling and having.\n- Genitive — possession and belonging: კაცის სახლი, \"the man's house\".\n- Instrumental — the means: კალმით ვწერ, \"I write with a pen\".\n- Adverbial — turning into, acting as, or the manner of something: ექიმად მუშაობს, \"he works as a doctor\"; ქართულად, \"in Georgian\".\n- Vocative — calling someone: კაცო! ბიჭებო!\n\n## Case follows the verb series\n\nThis is the part that surprises learners: for a transitive verb, the case of the subject and the object changes depending on which tense series the verb is in. The same three people can wear three different sets of endings.\n\n| Series | Subject | Direct object | Indirect object |\n| --- | --- | --- | --- |\n| I — present, future | Nominative | Dative | Dative |\n| II — aorist | Ergative | Nominative | Dative |\n| III — perfect | Dative | Nominative | genitive + -თვის |\n\n| Georgian | English |  |\n| --- | --- | --- |\n| ბიჭი წერს წერილს | the boy writes a letter | Series I — nominative subject, dative object |\n| ბიჭმა დაწერა წერილი | the boy wrote a letter | Series II — ergative subject, nominative object |\n| ბიჭს დაუწერია წერილი | the boy has written a letter | Series III — dative subject, nominative object |\n\n> Intransitive verbs keep a nominative subject in Series I and II. Verbs of the 4th conjugation — მიყვარს \"I love\", მაქვს \"I have\" — take a dative subject throughout.",
+      "note": ""
+    },
+    {
+      "id": "plurals-and-adjectives",
+      "section": "grammar",
+      "title": "Plurals & adjectives",
+      "titleNative": "მრავლობითი და ზედსართავი",
+      "summary": "Forming the plural, and how an adjective agrees with the noun in front of it.",
+      "level": "",
+      "categoryId": "grammar-nouns",
+      "body": "## Plurals\n\nThe modern plural is -ებ-, inserted between the stem and the case ending. Every case ending then works exactly as it does in the singular.\n\n| Case | Singular | Plural |\n| --- | --- | --- |\n| Nominative | კაცი | კაცები |\n| Ergative | კაცმა | კაცებმა |\n| Dative | კაცს | კაცებს |\n| Genitive | კაცის | კაცების |\n\n- Stems that drop a vowel do so before -ები as well: ქვეყანა → ქვეყნები, \"countries\".\n- After a numeral the noun stays singular: სამი წიგნი, \"three books\".\n- An older plural in -ნი (nominative) and -თა (oblique) survives in literary and set phrases: კაცნი, კაცთა.\n\n## Adjectives\n\nAdjectives come before the noun. Those ending in a consonant take a reduced set of case endings; those ending in a vowel — პატარა \"small\", ლურჯი is consonant-stem but პატარა is not — never change at all.\n\n| Case | დიდი კაცი (big man) | პატარა კაცი (small man) |\n| --- | --- | --- |\n| Nominative | დიდი კაცი | პატარა კაცი |\n| Ergative | დიდმა კაცმა | პატარა კაცმა |\n| Dative | დიდ კაცს | პატარა კაცს |\n| Genitive | დიდი კაცის | პატარა კაცის |\n| Instrumental | დიდი კაცით | პატარა კაცით |\n| Adverbial | დიდ კაცად | პატარა კაცად |\n\n> A consonant-stem adjective takes -მა only in the ergative and bare stem in the dative and adverbial — it never copies the noun's ending outright.\n\n## Comparison\n\nThe comparative wraps the adjective in უ- … -ეს-, and the thing compared against goes in the genitive with -ზე. The superlative adds ყველაზე, \"than everyone\".\n\n| Georgian | English |\n| --- | --- |\n| დიდი | big |\n| უფრო დიდი | bigger |\n| ყველაზე დიდი | biggest |\n| ეს სახლი იმ სახლზე დიდია | this house is bigger than that house |",
+      "note": ""
+    },
+    {
+      "id": "postpositions",
+      "section": "grammar",
+      "title": "Postpositions",
+      "titleNative": "თანდებულები",
+      "summary": "Georgian puts its prepositions after the noun — and each one governs a case.",
+      "level": "",
+      "categoryId": "grammar-nouns",
+      "body": "Where English puts a word in front of the noun, Georgian glues one onto the end of it. Each postposition demands a particular case, so you have to know both halves: the case, then the ending.\n\nWith -ში and -ზე the dative -ს drops out before the postposition: სახლს + ში → სახლში.\n\n| Postposition | Case | Meaning | Example |\n| --- | --- | --- | --- |\n| -ში | dative | in, into | სახლში — in the house |\n| -ზე | dative | on, about | მაგიდაზე — on the table |\n| -თან | dative | at, next to, with (a person) | ექიმთან — at the doctor's |\n| -თვის | genitive | for | შენთვის — for you |\n| -კენ | genitive | towards | ზღვისკენ — towards the sea |\n| -გან | genitive | from, made of | ბავშვისგან — from the child |\n| -დან | instrumental | from (a place or time) | თბილისიდან — from Tbilisi |\n| -მდე | adverbial | up to, until | საღამომდე — until evening |\n\n## In and on\n\nThe split between -ში and -ზე does not line up with English. Open spaces, events and surfaces take -ზე; enclosed spaces take -ში.\n\n| Georgian | English |\n| --- | --- |\n| ოთახში | in the room |\n| ქუჩაზე | on / in the street |\n| წვეულებაზე | at the party |\n| საქართველოში | in Georgia |",
+      "note": ""
+    },
+    {
+      "id": "pronouns",
+      "section": "grammar",
+      "title": "Pronouns",
+      "titleNative": "ნაცვალსახელები",
+      "summary": "Personal, possessive and demonstrative pronouns, plus the question words.",
+      "level": "",
+      "categoryId": "grammar-nouns",
+      "body": "## Personal pronouns\n\nFirst and second person pronouns do not change for case — მე is მე whether it is the subject or the object. Only the third person declines, which is why მან and მას are worth learning as separate words.\n\n|  | Nominative | Ergative | Dative | Possessive |\n| --- | --- | --- | --- | --- |\n| I | მე | მე | მე | ჩემი |\n| you (sg) | შენ | შენ | შენ | შენი |\n| he / she / it | ის, იგი | მან | მას | მისი |\n| we | ჩვენ | ჩვენ | ჩვენ | ჩვენი |\n| you (pl) | თქვენ | თქვენ | თქვენ | თქვენი |\n| they | ისინი | მათ | მათ | მათი |\n\n> თქვენ is also the polite singular \"you\", used with strangers and anyone older than you.\n\n## Demonstratives\n\nGeorgian points in three directions rather than two: near me, near you, and away from us both.\n\n|  | Nominative | Ergative | Dative | Sense |\n| --- | --- | --- | --- | --- |\n| this | ეს | ამან | ამას | near the speaker |\n| that | ეგ | მაგან | მაგას | near the listener |\n| that (yonder) | ის | იმან | იმას | away from both |\n\n> Before a noun the short forms are used: ამ კაცმა, ამ კაცს, იმ სახლში.\n\n## Question words\n\n| Georgian | English |\n| --- | --- |\n| ვინ | who |\n| რა | what |\n| სად | where |\n| საიდან | where from |\n| როდის | when |\n| როგორ | how |\n| რატომ | why |\n| რამდენი | how many, how much |\n| რომელი | which |\n| ვისი | whose |",
+      "note": ""
+    },
+    {
+      "id": "numbers",
+      "section": "grammar",
+      "title": "Numbers",
+      "titleNative": "რიცხვები",
+      "summary": "Counting in twenties: the vigesimal system, ordinals, and counted nouns.",
+      "level": "",
+      "categoryId": "grammar-nouns",
+      "body": "Georgian counts in twenties. Above 20 a number is read as \"so many twenties and a remainder\": 40 is ორმოცი, \"two twenties\", and 57 is ორმოცდაჩვიდმეტი, \"two twenties and seventeen\".\n\n|  | 1–10 |  | 11–20 |\n| --- | --- | --- | --- |\n| 1 | ერთი | 11 | თერთმეტი |\n| 2 | ორი | 12 | თორმეტი |\n| 3 | სამი | 13 | ცამეტი |\n| 4 | ოთხი | 14 | თოთხმეტი |\n| 5 | ხუთი | 15 | თხუთმეტი |\n| 6 | ექვსი | 16 | თექვსმეტი |\n| 7 | შვიდი | 17 | ჩვიდმეტი |\n| 8 | რვა | 18 | თვრამეტი |\n| 9 | ცხრა | 19 | ცხრამეტი |\n| 10 | ათი | 20 | ოცი |\n\n> The teens are built on a frame თ-…-მეტი, \"ten more\" — worth hearing as one shape rather than memorising nine separate words.\n\n## Tens and hundreds\n\n| Number | Georgian | Literally |\n| --- | --- | --- |\n| 20 | ოცი | twenty |\n| 30 | ოცდაათი | twenty and ten |\n| 40 | ორმოცი | two twenties |\n| 50 | ორმოცდაათი | two twenties and ten |\n| 60 | სამოცი | three twenties |\n| 70 | სამოცდაათი | three twenties and ten |\n| 80 | ოთხმოცი | four twenties |\n| 90 | ოთხმოცდაათი | four twenties and ten |\n| 100 | ასი | hundred |\n| 1000 | ათასი | thousand |\n\n| Georgian | English |  |\n| --- | --- | --- |\n| ოცდახუთი | 25 | 20 + 5 |\n| ორმოცდარვა | 48 | 40 + 8 |\n| ოთხმოცდაცხრამეტი | 99 | 80 + 19 |\n| ორასი | 200 |  |\n\n## Ordinals and counted nouns\n\n- Ordinals take the frame მე-…-ე: მეორე \"second\", მესამე \"third\", მეოთხე \"fourth\". \"First\" is irregular: პირველი.\n- A noun after a numeral stays singular: ხუთი წიგნი, \"five books\".\n- Ages and dates use the same numbers: ოცდაათი წლის ვარ, \"I am thirty years old\".",
+      "note": ""
+    },
+    {
+      "id": "verb-basics",
+      "section": "grammar",
+      "title": "How verbs work",
+      "titleNative": "ზმნა",
+      "summary": "Conjugation classes, person markers, preverbs and version vowels.",
+      "level": "",
+      "categoryId": "grammar-verbs",
+      "body": "A Georgian verb is a small sentence in itself. One form can carry the person and number of the subject, the person of the object, tense, mood, direction, and who the action is being done for — მიყვარხარ is a complete sentence meaning \"I love you\".\n\nThat density is why verbs are indexed by their verbal noun rather than an infinitive: there is no infinitive. The dictionary headword სწავლა is \"studying\", and the forms you actually say are built from a stem that changes across the tenses.\n\n## The four conjugations\n\n| Class | Type | Example | Meaning |\n| --- | --- | --- | --- |\n| 1st | Transitive — an agent acting on an object | ვწერ | I write (something) |\n| 2nd | Passive / intransitive — a change of state | იწერება | it is being written |\n| 3rd | Medial — activity with no object | ვმუშაობ | I work |\n| 4th | Indirect — dative subject, states of feeling and having | მიყვარს | I love (him/her) |\n\n> The class decides the case pattern the verb imposes on its nouns — see Noun cases.\n\n## Person markers\n\nSubject and object are marked in different slots: the subject mostly by a prefix plus a suffix, the object by a prefix alone. A verb form can therefore hold both at once.\n\n| Person | Subject marker | Object marker |\n| --- | --- | --- |\n| 1sg | ვ- | მ- |\n| 2sg | — (no prefix) | გ- |\n| 3sg | -ს / -ა / -ო | ჰ- / ს- / — |\n| 1pl | ვ- … -თ | გვ- |\n| 2pl | -თ | გ- … -თ |\n| 3pl | -ენ / -ან / -ნენ | ჰ- / ს- …  |\n\n| Georgian | English |  |\n| --- | --- | --- |\n| ვწერ | I write | ვ- subject prefix |\n| წერ | you write | no prefix at all |\n| წერს | he/she writes | -ს subject suffix |\n| გწერ | I write to you | გ- object prefix pushes out ვ- |\n\n## Preverbs\n\nA preverb is a prefix that adds direction — and, in doing so, turns a present into a future. This is the ordinary way Georgian expresses the future: no separate tense marker, just the preverb.\n\n| Preverb | Direction | Example |\n| --- | --- | --- |\n| და- | general completion | დავწერ — I will write |\n| გა- | out, away | გავა — he will go out |\n| მი- | away from the speaker | მივდივარ — I am going (there) |\n| მო- | towards the speaker | მოდის — he is coming |\n| შე- | in, into | შევა — he will go in |\n| ჩა- | down, in | ჩავა — he will go down |\n| ა- | up | ავა — he will go up |\n| გადა- | across, over | გადავა — he will cross |\n\n## Version vowels\n\nThe vowel between the prefix and the root says who benefits from the action. It is one letter, and it changes the meaning of the sentence.\n\n| Georgian | English |  |\n| --- | --- | --- |\n| ვხატავ | I draw | neutral version |\n| ვიხატავ | I draw for myself | subjective version — ი- |\n| ვუხატავ | I draw for him/her | objective version — უ- |",
+      "note": ""
+    },
+    {
+      "id": "screeves",
+      "section": "grammar",
+      "title": "Tenses & screeves",
+      "titleNative": "მწკრივები",
+      "summary": "The eleven screeves, grouped into the three series every verb is built on.",
+      "level": "",
+      "categoryId": "grammar-verbs",
+      "body": "Georgian does not have tenses in the European sense. It has screeves — a screeve being one complete set of six person forms sharing a tense, aspect and mood. There are eleven of them, in three series, and the series a verb is in also decides the cases of its nouns.\n\n## Series I — present and future\n\n| Screeve | Sense | 1sg of მიტოვება |\n| --- | --- | --- |\n| Present | I abandon | ვტოვებ |\n| Imperfect | I was abandoning | ვტოვებდი |\n| Present subjunctive | (that) I abandon | ვტოვებდე |\n| Future | I will abandon | მივატოვებ |\n| Conditional | I would abandon | მივატოვებდი |\n| Future subjunctive | (that) I will abandon | მივატოვებდე |\n\n## Series II — aorist\n\n| Screeve | Sense | 1sg of მიტოვება |\n| --- | --- | --- |\n| Aorist | I abandoned | მივატოვე |\n| Optative | (that) I abandon | მივატოვო |\n\n## Series III — perfect\n\n| Screeve | Sense | 1sg of მიტოვება |\n| --- | --- | --- |\n| Perfect | I have abandoned | ვტოვებდი |\n| Pluperfect | I had abandoned | მიმეტოვებინა |\n| Perfect subjunctive | (that) I have abandoned | მიმეტოვებინოს |\n\n## Imperative\n\nThe imperative is not a screeve of its own: the affirmative borrows the aorist forms and the prohibitive borrows the present, with ნუ in front. Only five persons exist — you cannot command yourself.\n\n| Georgian | English |\n| --- | --- |\n| დაწერე! | write! |\n| ნუ წერ! | don't write! |",
+      "note": ""
+    },
+    {
+      "id": "verb-groups",
+      "section": "grammar",
+      "title": "Conjugation groups",
+      "titleNative": "ჯგუფები",
+      "summary": "The groups the verb tables are sorted into, and what makes each one different.",
+      "level": "",
+      "categoryId": "grammar-verbs",
+      "body": "Every verb in the tables carries a group tag such as (1, A). The number is the conjugation class; the letter marks a pattern that differs from the main one in a few forms. Verbs inside a group conjugate alike, so learning one pattern gets you the rest.\n\n### (1, A) — 1st Conjugation Group A\n\n222 verbs.\n\n- The majority of 1st Conjugation verbs belong to this group\n\n### (1, B) — 1st Conjugation Group B\n\n24 verbs.\n\n- All of the 1st Conjugation verbs with the present/future stem formant (PFSF) -ი belong to this group. Their conjugation pattern differs from that of Group A only in two forms: third person plural in the present and future tenses. In all other forms they follow the pattern of Group A.\n\n### (1, C) — 1st Conjugation Group C\n\n33 verbs.\n\n- Some verbs with no vowel in their root belong to this group. They differ from the verbs in Group A only in the 3rd-person singular form of the aorist. All other forms follow the pattern of Group A.\n\n### (1, D) — 1st Conjugation Group D\n\n23 verbs.\n\n- A small number of 1st Conjugation verbs produce the vowel -ა- in their root in the aorist and optative tenses in both the singular and plural. In all other ways their conjugation pattern is similar to the verbs in Group A.\n\n### (1, E) — 1st Conjugation Group E\n\n43 verbs.\n\n- Some verbs of the 1st Conjugation are irregular and should be memorized individually. Most of them change their roots in the future tense, which is the base for the formation of the aorist and optative, following the pattern of Group-A.\n- იცი (you) know\nThis is a unique verb in that the subject must be in the ergative case in both the present and the imperfect. For practical purposes, its conjugation should be memorized in these two tenses. ამ კაცმო არ იცის (This man does not know). As you can see \"this man\" is in ergative case.\n- Other examples: სწავლობ, ისწავლი, ისწავლე, ისწავლო\n\n### (1, irr.) — 1st Conjugation Group irr.\n\n26 verbs.\n\n### (2, A) — 2nd Conjugation Group A\n\n38 verbs.\n\n- For practical use, certain verbs are best learned only in their third-person singular form.\n- Doniani verbs\n\n### (2, B) — 2nd Conjugation Group B\n\n42 verbs.\n\n- Iniani verbs\n- Verbs have  the preradical -ი, vowel in all tenses, but follow the pattern in group A. კარგია!!\n- The majority of these verbs are not used when referring ot a person.\n\n### (2, C) — 2nd Conjugation Group C\n\n19 verbs.\n\n- Verbs of motion\n- Preverbs indicate the direction of movement.\n- There are seven basic preverbs, roughly correspoding to the English to, in, up, down, over, ect. One of the most frequently used prefixes is მი- denoting going away. The preverb მო- indicates to come here, and could be combined with each of the preverbs.\n\n### (2, D) — 2nd Conjugation Group D\n\n4 verbs.\n\n- The verb be\n- The verb be is highly irregular with a different root in all tenses.\n\n### (3, A) — 3rd Conjugation Group A\n\n59 verbs.\n\n- The majority of 3rd Conjugation verbs belong to this group. And have a PFSF of ობ\n\n### (3, B) — 3rd Conjugation Group B\n\n8 verbs.\n\n- All verbs ending with -ი have thsi conjugation pattern. The suffix forming the imperfect of these verbs is not -დი but -ოდი. The conjugation patterns in the future, aorist and optative tenses are exactly the same as in group A.\n\n### (4, A) — 4th Conjugation Group A\n\n8 verbs.\n\n- Subjects of these verbs are in the nominative, while direct objects are in the dative. There are about three dozen verbs of this conjugation. The third person markers in parentheses, (ჰ), and (ს), are usually dropped in the spoken forms.\n\n### (4, B) — 4th Conjugation Group B\n\n25 verbs.\n\n### (4, C) — 4th Conjugation Group C\n\n10 verbs.\n\n### Ungrouped — Ungrouped\n\n19 verbs.",
+      "note": ""
+    },
+    {
+      "id": "sentence-basics",
+      "section": "grammar",
+      "title": "Sentence basics",
+      "titleNative": "წინადადება",
+      "summary": "Word order, the verb \"to be\", negation, and asking questions.",
+      "level": "",
+      "categoryId": "grammar-sentences",
+      "body": "## Word order\n\nThe neutral order is subject – object – verb, but because the cases carry the roles, almost any order is grammatical. Moving a word to the front emphasises it, and the slot right before the verb is the one that carries focus.\n\n| Georgian | English |  |\n| --- | --- | --- |\n| ბიჭი წიგნს კითხულობს | the boy is reading a book | neutral order |\n| წიგნს კითხულობს ბიჭი | it's the boy who is reading a book |  |\n\n## To be\n\n| Person | Georgian | English |\n| --- | --- | --- |\n| 1sg | ვარ | I am |\n| 2sg | ხარ | you are |\n| 3sg | არის | he / she / it is |\n| 1pl | ვართ | we are |\n| 2pl | ხართ | you are |\n| 3pl | არიან | they are |\n\n> In the third person არის usually contracts onto the preceding word: ის ექიმია, \"he is a doctor\".\n\n## Negation\n\nGeorgian has three negatives, and choosing between them says something the English \"not\" does not.\n\n| Word | Use | Example |\n| --- | --- | --- |\n| არ | plain negation | არ ვიცი — I don't know |\n| ვერ | inability — cannot, could not manage to | ვერ ვხედავ — I can't see |\n| ნუ | negative command | ნუ ხარ — don't be |\n\n## Questions\n\nYes/no questions need no change in word order and no particle — intonation alone carries them. Question words normally sit immediately before the verb.\n\n| Georgian | English |\n| --- | --- |\n| ქართველი ხარ? | are you Georgian? |\n| სად მიდიხარ? | where are you going? |\n| დიახ / კი / არა | yes (formal) / yes / no |",
+      "note": ""
+    }
+  ],
+  "quizCategories": [
+    {
+      "id": "lesson-quizzes",
+      "name": "From the lessons",
+      "nameNative": "",
+      "note": "The quizzes the lessons embed."
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "letters-1-quiz",
+      "title": "ა ბ გ დ ე",
+      "titleNative": "",
+      "description": "The letters ა ბ გ დ ე, and one word for each.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"a as in \"father\"\"?",
+          "explanation": "ა (an) — as in ასო, \"letter\".",
+          "choices": [
+            {
+              "text": "ა",
+              "correct": true
+            },
+            {
+              "text": "თ"
+            },
+            {
+              "text": "ჟ"
+            },
+            {
+              "text": "ყ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"b\"?",
+          "explanation": "ბ (ban) — as in ბაღი, \"garden\".",
+          "choices": [
+            {
+              "text": "ბ",
+              "correct": true
+            },
+            {
+              "text": "ი"
+            },
+            {
+              "text": "რ"
+            },
+            {
+              "text": "შ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"g, always hard as in \"go\"\"?",
+          "explanation": "გ (gan) — as in გზა, \"road\".",
+          "choices": [
+            {
+              "text": "გ",
+              "correct": true
+            },
+            {
+              "text": "კ"
+            },
+            {
+              "text": "ს"
+            },
+            {
+              "text": "ჩ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "ეზო",
+          "say": "ეზო",
+          "explanation": "ეზო — \"yard\". It starts with ე.",
+          "choices": [
+            {
+              "text": "yard",
+              "correct": true
+            },
+            {
+              "text": "cat"
+            },
+            {
+              "text": "face"
+            },
+            {
+              "text": "tea"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put the letters in order to spell \"letter\".",
+          "explanation": "ასო — \"letter\".",
+          "choices": [
+            {
+              "text": "ა",
+              "correct": true
+            },
+            {
+              "text": "ს",
+              "correct": true
+            },
+            {
+              "text": "ო",
+              "correct": true
+            },
+            {
+              "text": "ბ"
+            },
+            {
+              "text": "ი"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "letters-2-quiz",
+      "title": "ვ ზ თ ი კ",
+      "titleNative": "",
+      "description": "The letters ვ ზ თ ი კ, and one word for each.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"v\"?",
+          "explanation": "ვ (vin) — as in ვაშლი, \"apple\".",
+          "choices": [
+            {
+              "text": "ვ",
+              "correct": true
+            },
+            {
+              "text": "ნ"
+            },
+            {
+              "text": "ფ"
+            },
+            {
+              "text": "წ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"z\"?",
+          "explanation": "ზ (zen) — as in ზღვა, \"sea\".",
+          "choices": [
+            {
+              "text": "ზ",
+              "correct": true
+            },
+            {
+              "text": "ო"
+            },
+            {
+              "text": "ქ"
+            },
+            {
+              "text": "ჭ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"aspirated t, as in \"top\"\"?",
+          "explanation": "თ (tan) — as in თვე, \"month\".",
+          "choices": [
+            {
+              "text": "თ",
+              "correct": true
+            },
+            {
+              "text": "პ"
+            },
+            {
+              "text": "ღ"
+            },
+            {
+              "text": "ხ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "კატა",
+          "say": "კატა",
+          "explanation": "კატა — \"cat\". It starts with კ.",
+          "choices": [
+            {
+              "text": "cat",
+              "correct": true
+            },
+            {
+              "text": "bread"
+            },
+            {
+              "text": "wine"
+            },
+            {
+              "text": "hand"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put the letters in order to spell \"apple\".",
+          "explanation": "ვაშლი — \"apple\".",
+          "choices": [
+            {
+              "text": "ვ",
+              "correct": true
+            },
+            {
+              "text": "ა",
+              "correct": true
+            },
+            {
+              "text": "შ",
+              "correct": true
+            },
+            {
+              "text": "ლ",
+              "correct": true
+            },
+            {
+              "text": "ი",
+              "correct": true
+            },
+            {
+              "text": "თ"
+            },
+            {
+              "text": "რ"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "letters-3-quiz",
+      "title": "ლ მ ნ ო პ",
+      "titleNative": "",
+      "description": "The letters ლ მ ნ ო პ, and one word for each.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"l\"?",
+          "explanation": "ლ (las) — as in ლარი, \"lari\".",
+          "choices": [
+            {
+              "text": "ლ",
+              "correct": true
+            },
+            {
+              "text": "ს"
+            },
+            {
+              "text": "ჩ"
+            },
+            {
+              "text": "ა"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"m\"?",
+          "explanation": "მ (man) — as in მზე, \"sun\".",
+          "choices": [
+            {
+              "text": "მ",
+              "correct": true
+            },
+            {
+              "text": "ტ"
+            },
+            {
+              "text": "ც"
+            },
+            {
+              "text": "ბ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"n\"?",
+          "explanation": "ნ (nar) — as in ნავი, \"boat\".",
+          "choices": [
+            {
+              "text": "ნ",
+              "correct": true
+            },
+            {
+              "text": "უ"
+            },
+            {
+              "text": "ძ"
+            },
+            {
+              "text": "გ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "პური",
+          "say": "პური",
+          "explanation": "პური — \"bread\". It starts with პ.",
+          "choices": [
+            {
+              "text": "bread",
+              "correct": true
+            },
+            {
+              "text": "already"
+            },
+            {
+              "text": "brother"
+            },
+            {
+              "text": "road"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put the letters in order to spell \"lari\".",
+          "explanation": "ლარი — \"lari\".",
+          "choices": [
+            {
+              "text": "ლ",
+              "correct": true
+            },
+            {
+              "text": "ა",
+              "correct": true
+            },
+            {
+              "text": "რ",
+              "correct": true
+            },
+            {
+              "text": "ი",
+              "correct": true
+            },
+            {
+              "text": "ე"
+            },
+            {
+              "text": "ო"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "letters-4-quiz",
+      "title": "ჟ რ ს ტ უ",
+      "titleNative": "",
+      "description": "The letters ჟ რ ს ტ უ, and one word for each.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"like the s in \"measure\"\"?",
+          "explanation": "ჟ (zhan) — as in ჟოლო, \"raspberry\".",
+          "choices": [
+            {
+              "text": "ჟ",
+              "correct": true
+            },
+            {
+              "text": "ღ"
+            },
+            {
+              "text": "ხ"
+            },
+            {
+              "text": "ვ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"r, tapped or trilled\"?",
+          "explanation": "რ (rae) — as in რძე, \"milk\".",
+          "choices": [
+            {
+              "text": "რ",
+              "correct": true
+            },
+            {
+              "text": "ყ"
+            },
+            {
+              "text": "ჯ"
+            },
+            {
+              "text": "ზ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"s\"?",
+          "explanation": "ს (san) — as in სახე, \"face\".",
+          "choices": [
+            {
+              "text": "ს",
+              "correct": true
+            },
+            {
+              "text": "შ"
+            },
+            {
+              "text": "ჰ"
+            },
+            {
+              "text": "თ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "უკვე",
+          "say": "უკვე",
+          "explanation": "უკვე — \"already\". It starts with უ.",
+          "choices": [
+            {
+              "text": "already",
+              "correct": true
+            },
+            {
+              "text": "child"
+            },
+            {
+              "text": "hobby"
+            },
+            {
+              "text": "month"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put the letters in order to spell \"milk\".",
+          "explanation": "რძე — \"milk\".",
+          "choices": [
+            {
+              "text": "რ",
+              "correct": true
+            },
+            {
+              "text": "ძ",
+              "correct": true
+            },
+            {
+              "text": "ე",
+              "correct": true
+            },
+            {
+              "text": "გ"
+            },
+            {
+              "text": "ლ"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "letters-5-quiz",
+      "title": "ფ ქ ღ ყ შ",
+      "titleNative": "",
+      "description": "The letters ფ ქ ღ ყ შ, and one word for each.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"aspirated p, as in \"pot\"\"?",
+          "explanation": "ფ (par) — as in ფერი, \"colour\".",
+          "choices": [
+            {
+              "text": "ფ",
+              "correct": true
+            },
+            {
+              "text": "ძ"
+            },
+            {
+              "text": "გ"
+            },
+            {
+              "text": "ლ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"aspirated k, as in \"cat\"\"?",
+          "explanation": "ქ (kan) — as in ქალი, \"woman\".",
+          "choices": [
+            {
+              "text": "ქ",
+              "correct": true
+            },
+            {
+              "text": "წ"
+            },
+            {
+              "text": "დ"
+            },
+            {
+              "text": "მ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"voiced, like the Parisian French r\"?",
+          "explanation": "ღ (ghan) — as in ღვინო, \"wine\".",
+          "choices": [
+            {
+              "text": "ღ",
+              "correct": true
+            },
+            {
+              "text": "ჭ"
+            },
+            {
+              "text": "ე"
+            },
+            {
+              "text": "ნ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "შვილი",
+          "say": "შვილი",
+          "explanation": "შვილი — \"child\". It starts with შ.",
+          "choices": [
+            {
+              "text": "child",
+              "correct": true
+            },
+            {
+              "text": "glass"
+            },
+            {
+              "text": "yard"
+            },
+            {
+              "text": "boat"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put the letters in order to spell \"colour\".",
+          "explanation": "ფერი — \"colour\".",
+          "choices": [
+            {
+              "text": "ფ",
+              "correct": true
+            },
+            {
+              "text": "ე",
+              "correct": true
+            },
+            {
+              "text": "რ",
+              "correct": true
+            },
+            {
+              "text": "ი",
+              "correct": true
+            },
+            {
+              "text": "თ"
+            },
+            {
+              "text": "ჟ"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "letters-6-quiz",
+      "title": "ჩ ც ძ წ ჭ",
+      "titleNative": "",
+      "description": "The letters ჩ ც ძ წ ჭ, and one word for each.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"aspirated ch, as in \"chair\"\"?",
+          "explanation": "ჩ (chin) — as in ჩაი, \"tea\".",
+          "choices": [
+            {
+              "text": "ჩ",
+              "correct": true
+            },
+            {
+              "text": "ჰ"
+            },
+            {
+              "text": "თ"
+            },
+            {
+              "text": "ჟ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"aspirated ts, as in \"cats\"\"?",
+          "explanation": "ც (tsan) — as in ცოლი, \"wife\".",
+          "choices": [
+            {
+              "text": "ც",
+              "correct": true
+            },
+            {
+              "text": "ა"
+            },
+            {
+              "text": "ი"
+            },
+            {
+              "text": "რ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"dz as in \"adze\"\"?",
+          "explanation": "ძ (dzil) — as in ძმა, \"brother\".",
+          "choices": [
+            {
+              "text": "ძ",
+              "correct": true
+            },
+            {
+              "text": "ბ"
+            },
+            {
+              "text": "კ"
+            },
+            {
+              "text": "ს"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "ჭიქა",
+          "say": "ჭიქა",
+          "explanation": "ჭიქა — \"glass\". It starts with ჭ.",
+          "choices": [
+            {
+              "text": "glass",
+              "correct": true
+            },
+            {
+              "text": "garden"
+            },
+            {
+              "text": "cat"
+            },
+            {
+              "text": "face"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put the letters in order to spell \"tea\".",
+          "explanation": "ჩაი — \"tea\".",
+          "choices": [
+            {
+              "text": "ჩ",
+              "correct": true
+            },
+            {
+              "text": "ა",
+              "correct": true
+            },
+            {
+              "text": "ი",
+              "correct": true
+            },
+            {
+              "text": "ვ"
+            },
+            {
+              "text": "ო"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "letters-7-quiz",
+      "title": "ხ ჯ ჰ",
+      "titleNative": "",
+      "description": "The letters ხ ჯ ჰ, and one word for each.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"kh as in Scottish \"loch\"\"?",
+          "explanation": "ხ (khan) — as in ხელი, \"hand\".",
+          "choices": [
+            {
+              "text": "ხ",
+              "correct": true
+            },
+            {
+              "text": "ე"
+            },
+            {
+              "text": "ნ"
+            },
+            {
+              "text": "ფ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"j as in \"jam\"\"?",
+          "explanation": "ჯ (jan) — as in ჯიბე, \"pocket\".",
+          "choices": [
+            {
+              "text": "ჯ",
+              "correct": true
+            },
+            {
+              "text": "ვ"
+            },
+            {
+              "text": "ო"
+            },
+            {
+              "text": "ქ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes the sound \"h\"?",
+          "explanation": "ჰ (hae) — as in ჰობი, \"hobby\".",
+          "choices": [
+            {
+              "text": "ჰ",
+              "correct": true
+            },
+            {
+              "text": "ზ"
+            },
+            {
+              "text": "პ"
+            },
+            {
+              "text": "ღ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "ჰობი",
+          "say": "ჰობი",
+          "explanation": "ჰობი — \"hobby\". It starts with ჰ.",
+          "choices": [
+            {
+              "text": "hobby",
+              "correct": true
+            },
+            {
+              "text": "yard"
+            },
+            {
+              "text": "boat"
+            },
+            {
+              "text": "colour"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put the letters in order to spell \"hand\".",
+          "explanation": "ხელი — \"hand\".",
+          "choices": [
+            {
+              "text": "ხ",
+              "correct": true
+            },
+            {
+              "text": "ე",
+              "correct": true
+            },
+            {
+              "text": "ლ",
+              "correct": true
+            },
+            {
+              "text": "ი",
+              "correct": true
+            },
+            {
+              "text": "გ"
+            },
+            {
+              "text": "ნ"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "greetings-quiz",
+      "title": "Hello and goodbye",
+      "titleNative": "",
+      "description": "The four greetings.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "გამარჯობა",
+          "say": "გამარჯობა",
+          "explanation": "გამარჯობა — \"hello\".",
+          "choices": [
+            {
+              "text": "hello",
+              "correct": true
+            },
+            {
+              "text": "goodbye"
+            },
+            {
+              "text": "good morning"
+            },
+            {
+              "text": "good evening"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "ნახვამდის",
+          "say": "ნახვამდის",
+          "explanation": "ნახვამდის — \"goodbye\".",
+          "choices": [
+            {
+              "text": "goodbye",
+              "correct": true
+            },
+            {
+              "text": "hello"
+            },
+            {
+              "text": "good morning"
+            },
+            {
+              "text": "good evening"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "დილა მშვიდობისა",
+          "say": "დილა მშვიდობისა",
+          "explanation": "დილა მშვიდობისა — \"good morning\".",
+          "choices": [
+            {
+              "text": "good morning",
+              "correct": true
+            },
+            {
+              "text": "hello"
+            },
+            {
+              "text": "goodbye"
+            },
+            {
+              "text": "good evening"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "საღამო მშვიდობისა",
+          "say": "საღამო მშვიდობისა",
+          "explanation": "საღამო მშვიდობისა — \"good evening\".",
+          "choices": [
+            {
+              "text": "good evening",
+              "correct": true
+            },
+            {
+              "text": "hello"
+            },
+            {
+              "text": "goodbye"
+            },
+            {
+              "text": "good morning"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "your-name-quiz",
+      "title": "Saying your name",
+      "titleNative": "",
+      "description": "Giving your name and asking for one.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "მე ვარ ...",
+          "say": "მე ვარ",
+          "explanation": "მე ვარ ... — \"I am ...\".",
+          "choices": [
+            {
+              "text": "I am ...",
+              "correct": true
+            },
+            {
+              "text": "my name is ..."
+            },
+            {
+              "text": "what is your name?"
+            },
+            {
+              "text": "very nice to meet you"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "მე მქვია ...",
+          "say": "მე მქვია",
+          "explanation": "მე მქვია ... — \"my name is ...\".",
+          "choices": [
+            {
+              "text": "my name is ...",
+              "correct": true
+            },
+            {
+              "text": "I am ..."
+            },
+            {
+              "text": "what is your name?"
+            },
+            {
+              "text": "very nice to meet you"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "რა გქვია?",
+          "say": "რა გქვია",
+          "explanation": "რა გქვია? — \"what is your name?\".",
+          "choices": [
+            {
+              "text": "what is your name?",
+              "correct": true
+            },
+            {
+              "text": "I am ..."
+            },
+            {
+              "text": "my name is ..."
+            },
+            {
+              "text": "very nice to meet you"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "ძალიან სასიამოვნოა",
+          "say": "ძალიან სასიამოვნოა",
+          "explanation": "ძალიან სასიამოვნოა — \"very nice to meet you\".",
+          "choices": [
+            {
+              "text": "very nice to meet you",
+              "correct": true
+            },
+            {
+              "text": "I am ..."
+            },
+            {
+              "text": "my name is ..."
+            },
+            {
+              "text": "what is your name?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "where-from-quiz",
+      "title": "Where are you from?",
+      "titleNative": "",
+      "description": "Asking and answering where somebody is from.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "საიდან ხარ?",
+          "say": "საიდან ხარ",
+          "explanation": "საიდან ხარ? — \"where are you from?\".",
+          "choices": [
+            {
+              "text": "where are you from?",
+              "correct": true
+            },
+            {
+              "text": "I am American"
+            },
+            {
+              "text": "are you Georgian?"
+            },
+            {
+              "text": "yes, I am Georgian"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "მე ვარ ამერიკელი",
+          "say": "მე ვარ ამერიკელი",
+          "explanation": "მე ვარ ამერიკელი — \"I am American\".",
+          "choices": [
+            {
+              "text": "I am American",
+              "correct": true
+            },
+            {
+              "text": "where are you from?"
+            },
+            {
+              "text": "are you Georgian?"
+            },
+            {
+              "text": "yes, I am Georgian"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "შენ ქართველი ხარ?",
+          "say": "შენ ქართველი ხარ",
+          "explanation": "შენ ქართველი ხარ? — \"are you Georgian?\".",
+          "choices": [
+            {
+              "text": "are you Georgian?",
+              "correct": true
+            },
+            {
+              "text": "where are you from?"
+            },
+            {
+              "text": "I am American"
+            },
+            {
+              "text": "yes, I am Georgian"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "დიახ, ქართველი ვარ",
+          "say": "დიახ, ქართველი ვარ",
+          "explanation": "დიახ, ქართველი ვარ — \"yes, I am Georgian\".",
+          "choices": [
+            {
+              "text": "yes, I am Georgian",
+              "correct": true
+            },
+            {
+              "text": "where are you from?"
+            },
+            {
+              "text": "I am American"
+            },
+            {
+              "text": "are you Georgian?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "polite-quiz",
+      "title": "Please and thank you",
+      "titleNative": "",
+      "description": "The polite words.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "გმადლობთ",
+          "say": "გმადლობთ",
+          "explanation": "გმადლობთ — \"thank you\".",
+          "choices": [
+            {
+              "text": "thank you",
+              "correct": true
+            },
+            {
+              "text": "thanks"
+            },
+            {
+              "text": "sorry, excuse me"
+            },
+            {
+              "text": "please"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "მადლობა",
+          "say": "მადლობა",
+          "explanation": "მადლობა — \"thanks\".",
+          "choices": [
+            {
+              "text": "thanks",
+              "correct": true
+            },
+            {
+              "text": "thank you"
+            },
+            {
+              "text": "sorry, excuse me"
+            },
+            {
+              "text": "please"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "ბოდიში",
+          "say": "ბოდიში",
+          "explanation": "ბოდიში — \"sorry, excuse me\".",
+          "choices": [
+            {
+              "text": "sorry, excuse me",
+              "correct": true
+            },
+            {
+              "text": "thank you"
+            },
+            {
+              "text": "thanks"
+            },
+            {
+              "text": "please"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "თუ შეიძლება",
+          "say": "თუ შეიძლება",
+          "explanation": "თუ შეიძლება — \"please\".",
+          "choices": [
+            {
+              "text": "please",
+              "correct": true
+            },
+            {
+              "text": "thank you"
+            },
+            {
+              "text": "thanks"
+            },
+            {
+              "text": "sorry, excuse me"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "to-be-quiz",
+      "title": "am, are, is",
+      "titleNative": "",
+      "description": "The six forms of the first verb.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "მე ვარ",
+          "say": "მე ვარ",
+          "explanation": "მე ვარ — \"I am\".",
+          "choices": [
+            {
+              "text": "I am",
+              "correct": true
+            },
+            {
+              "text": "you are"
+            },
+            {
+              "text": "he / she / it is"
+            },
+            {
+              "text": "we are"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "შენ ხარ",
+          "say": "შენ ხარ",
+          "explanation": "შენ ხარ — \"you are\".",
+          "choices": [
+            {
+              "text": "you are",
+              "correct": true
+            },
+            {
+              "text": "I am"
+            },
+            {
+              "text": "he / she / it is"
+            },
+            {
+              "text": "we are"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "ის არის",
+          "say": "ის არის",
+          "explanation": "ის არის — \"he / she / it is\".",
+          "choices": [
+            {
+              "text": "he / she / it is",
+              "correct": true
+            },
+            {
+              "text": "I am"
+            },
+            {
+              "text": "you are"
+            },
+            {
+              "text": "we are"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "ჩვენ ვართ",
+          "say": "ჩვენ ვართ",
+          "explanation": "ჩვენ ვართ — \"we are\".",
+          "choices": [
+            {
+              "text": "we are",
+              "correct": true
+            },
+            {
+              "text": "I am"
+            },
+            {
+              "text": "you are"
+            },
+            {
+              "text": "he / she / it is"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "first-conversation-quiz",
+      "title": "A first conversation",
+      "titleNative": "",
+      "description": "Putting the introductions together.",
+      "level": "A1",
+      "categoryId": "lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Somebody says this to you. What are they asking?",
+          "promptNative": "რა გქვია?",
+          "say": "რა გქვია",
+          "explanation": "რა გქვია? — \"what are you called?\", which is how a name is asked for.",
+          "choices": [
+            {
+              "text": "What is your name?",
+              "correct": true
+            },
+            {
+              "text": "Where are you from?"
+            },
+            {
+              "text": "How are you?"
+            },
+            {
+              "text": "What is that?"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "How do you answer “საიდან ხარ?”",
+          "explanation": "საიდან ხარ? asks where you are from, so the answer is a nationality.",
+          "choices": [
+            {
+              "text": "ამერიკელი ვარ",
+              "correct": true
+            },
+            {
+              "text": "მე მქვია ჯონი"
+            },
+            {
+              "text": "გმადლობთ"
+            },
+            {
+              "text": "ნახვამდის"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put these in order to say “my name is Nino”.",
+          "explanation": "მე მქვია ნინო — literally \"I am called Nino\".",
+          "choices": [
+            {
+              "text": "მე",
+              "correct": true
+            },
+            {
+              "text": "მქვია",
+              "correct": true
+            },
+            {
+              "text": "ნინო",
+              "correct": true
+            },
+            {
+              "text": "ხარ"
+            },
+            {
+              "text": "დიახ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which of these is the polite “yes”?",
+          "explanation": "დიახ is the formal yes; კი is what you say to a friend.",
+          "choices": [
+            {
+              "text": "დიახ",
+              "correct": true
+            },
+            {
+              "text": "კი"
+            },
+            {
+              "text": "არა"
+            },
+            {
+              "text": "ბოდიში"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

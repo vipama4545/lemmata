@@ -1,11 +1,17 @@
 import { adminRouter } from './admin.ts';
 import { contentRouter } from './content.ts';
+import { libraryRouter } from './library.ts';
+import { quizRouter } from './quiz.ts';
 import { studyRouter } from './study.ts';
 import { os } from './base.ts';
 
 export const router = os.router({
   content: contentRouter,
   study: studyRouter,
+  quiz: quizRouter,
+  // A reader's own stories and words. Beside `admin` rather than under `content`, because what
+  // it writes is content and what decides whether it may is *ownership* — see library.ts.
+  library: libraryRouter,
   admin: adminRouter,
   session: os.session.router({
     /**

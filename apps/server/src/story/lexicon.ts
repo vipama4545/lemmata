@@ -12,7 +12,7 @@
 // see the note above `foldRu`. Passing it in rather than branching keeps the Georgian path
 // byte-for-byte what it was before there were two.
 
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq, isNull, or } from 'drizzle-orm';
 import type { Lang } from '@georgian/shared/grammar';
 import { db, schema } from '../db/index.ts';
 import { posAgrees, type Tag } from './analyser.ts';
@@ -100,10 +100,28 @@ export function headwordKeys(headword: string): string[] {
  * ids: neither carries a `lang` of its own — getting one would mean a column that could
  * disagree with the word it hangs off — and an `IN` list of 30,000 ids is not a saving. The
  * rows of the other language fall out on the `byId` lookup below.
+ *
+ * `owner` is whose private vocabulary to include beside the published one, and this is the
+ * only query here that reads both sides of `words.owner_id` at once. Null means the dictionary
+ * alone, which covers every published story and every relink an admin runs. A user id means the
+ * dictionary plus that person's own entries, which is what finds a word somebody added in the
+ * text they added it for.
+ *
+ * Deliberately not "every private entry there is". Somebody else's gloss turning up in your
+ * story would be a stranger's notebook leaking into your reading, and on a published story it
+ * would be that leak to everyone at once.
  */
-export async function loadLexicon(lang: Lang, key: (spelling: string) => string): Promise<Lexicon> {
+export async function loadLexicon(
+  lang: Lang,
+  key: (spelling: string) => string,
+  owner: string | null = null,
+): Promise<Lexicon> {
+  const visible = owner
+    ? and(eq(schema.words.lang, lang), or(isNull(schema.words.ownerId), eq(schema.words.ownerId, owner)))
+    : and(eq(schema.words.lang, lang), isNull(schema.words.ownerId));
+
   const [wordRows, senseRows, formRows] = await Promise.all([
-    db.select().from(schema.words).where(eq(schema.words.lang, lang)).orderBy(asc(schema.words.position)),
+    db.select().from(schema.words).where(visible).orderBy(asc(schema.words.position)),
     db.select({ wordId: schema.wordSenses.wordId }).from(schema.wordSenses),
     db.select().from(schema.wordForms).orderBy(asc(schema.wordForms.position)),
   ]);

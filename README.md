@@ -76,6 +76,16 @@ Georgian paragraph) in `data/stories/`, then `build:data` and `db:seed`. Nothing
 needs editing any more — no module declaration, no list of stories. Or paste it into
 **Admin → Stories → New story**, which does the same work against the live database.
 
+The reader calls all of this the **Library**. A lesson can read from it: `::story <id>` puts a
+passage where it stands — the library's own reading surface, so the words are hoverable, the
+voice reads the whole passage through and the highlight follows it — with a door to the full
+reader. The lesson decides whether the English starts showing (`::story <id> no-english`,
+and a chapter number where the passage is one chapter of something longer); the reader can
+turn it over either way. The dialogues the lessons teach are ordinary stories built the ordinary way —
+`data/<lang>/dialogues.json` says only which shelf they belong on, because a story file has
+never carried one, and `npm run db:dialogues` files them there. It leaves alone anything
+already in the database, so it is safe to re-run.
+
 ### Stories have chapters
 
 A story is a container: a title, a level, a category, and one or more **chapters** that hold
@@ -300,6 +310,53 @@ the matcher already handles by flagging a key two entries claim rather than gues
 
 On _Колобок_, 177 tokens: **85.3%** linked with no tagger, **94.4%** with one.
 
+## Your own library
+
+Everything above is the dictionary's, and an admin writes it. A signed-in **reader** writes a
+library of their own: texts they paste in, and words they add. It is at **My library** in the
+sidebar, and under the shelves on the library index.
+
+It is not a second app bolted on. A private story is a row in `stories` with `owner_id` set, so
+it is cut into tokens by the same tokeniser, linked by the same resolver, coloured by the same
+study records, read by the same reader and spoken by the same voice as anything the dictionary
+publishes. It is the same kind of thing, with a name on it. Same for a word: a `words` row with
+an owner, senses and inflected forms and all, so it is searched, studied and exported like any
+other. Two tables' worth of parallel `user_*` schema was the alternative, and it would have
+drifted from this one the first time either was fixed.
+
+**Nobody else ever sees any of it.** Three rules hold that up, and each is one line in the
+place it belongs:
+
+- The shared snapshot asks for `owner_id is null`, always. That object is built once per
+  language and cached in every browser; anything that varied per person would make the whole
+  four megabytes vary per person.
+- Every read of one story by id, whether the reader or the three audio URLs behind the player,
+  answers as if it did not exist for anybody but its owner. Not a refusal, which would confirm
+  that something is filed there.
+- Every write is scoped by the session's own user id rather than by anything sent from the
+  browser, so an id typed into a URL reaches nothing.
+
+The reward for adding a word is the loop the section is arranged around. Linking one of your own
+stories draws on the published lexicon **and** your own entries. That is `loadLexicon`'s `owner`
+argument, the only query in the codebase that reads both sides of the line, and it means a word
+you wrote down after meeting it once turns up in the next thing you paste in. List its inflected
+forms and it is found under its endings too. **Link it again** on the story is what goes back and
+does that, and the unresolved list under a pasted chapter is the reading list for what to add
+next.
+
+Readers cannot edit or add to the dictionary's own stories. The answer to wanting to is **Copy
+to my library** on any published story. The copy carries the prose, the translation and every
+link already worked out for it, hand-made ones included, which no amount of re-resolving could
+reproduce. It is a copy rather than a reference: corrections to the original afterwards do not
+reach it, which is the point of having taken one.
+
+Nothing here bumps `content_version`; one person adding a word must not make every other reader
+re-download the dictionary. Instead each mutation answers with that person's whole overlay, which
+the browser lays over the snapshot in `compose()`. One object comes out the other side, so the
+search box, the deck, the category grid and the export needed no changes to show private
+vocabulary. `npm run db:export` writes out published content only, so a private notebook cannot
+end up in `data/` on the next `git add`. Closing an account takes the whole library with it.
+
 ## The snapshot
 
 The whole dictionary goes to the browser in one response, and everything reads it
@@ -511,6 +568,8 @@ story in under half a second.
 | `npm run db:migrate`                 | apply pending migrations                                                     |
 | `npm run db:seed`                    | load `data/` into Postgres; refuses to clobber admin edits without `--force` |
 | `npm run db:export`                  | write Postgres back out to `data/`                                           |
+| `npm run db:lessons`                 | load `data/<lang>/lessons.json`; `--force --lesson <id>` reloads just one    |
+| `npm run db:dialogues`               | file the lessons' dialogues on their library shelf                           |
 | `npm run admin -- grant <email>`     | make somebody an admin (also `revoke`, `list`)                               |
 | `npm run db:verify`                  | prove the database still matches `data/`                                     |
 | `npm run db:verify-sync`             | prove the study merge rule holds                                             |

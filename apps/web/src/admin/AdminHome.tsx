@@ -4,28 +4,34 @@
 // already in this browser — that is the point of the snapshot — so filtering 2,096 words as
 // you type costs nothing and works with the network down. Only the writes go over the wire.
 
-import { useEffect, useMemo, useState } from 'react';
-import type { ReactNode } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { Library, MessageCircle, Table, Type, Users } from 'lucide-react';
-import type { AdminUser } from '@georgian/shared/contract';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
-import { SearchField } from '@/components/ui/search-field';
+import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { GraduationCap, Library, ListChecks, MessageCircle, Table, Type, Users } from "lucide-react";
+import type { AdminUser } from "@georgian/shared/contract";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from "@/components/ui/page";
+import { Pagination, usePagination } from "@/components/ui/pagination";
+import { SearchField } from "@/components/ui/search-field";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LevelBadge } from "@/components/ui/word-card";
+import { cn } from "@/lib/utils";
+import { KNOW_BUTTON } from "../components/StoryReader";
+import { api, useSession } from "../api/client";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { LevelBadge } from '@/components/ui/word-card';
-import { cn } from '@/lib/utils';
-import { KNOW_BUTTON } from '../components/StoryReader';
-import { api, useSession } from '../api/client';
-import { storyCategories, storySummaries, kaVerbData, wordData } from '../content/store';
-import { searchWords } from './search';
+  kaVerbData,
+  lessonCategories,
+  lessonSummaries,
+  quizCategories,
+  publishedStories,
+  publishedWordData,
+  quizSummaries,
+  ruVerbData,
+  storyCategories,
+  verbKind,
+} from "../content/store";
+import { searchWords } from "./search";
 import {
   ADMIN_ROW_LINK,
   ADMIN_ROW_LINK_HOVER,
@@ -46,8 +52,8 @@ import {
   AdminSectionTitle,
   AdminSub,
   AdminTitle,
-} from './ui';
-import { useEdit, useIsAdmin } from './useAdmin';
+} from "./ui";
+import { useEdit, useIsAdmin } from "./useAdmin";
 
 /**
  * Everything under /admin sits behind this.
@@ -79,14 +85,28 @@ function AdminCrumb({ children }: { children: ReactNode }) {
 }
 
 export function AdminHome() {
-  const { words, categories } = wordData();
-  const verbs = kaVerbData().verbs;
-  const stories = storySummaries();
+  const { words, categories } = publishedWordData();
+  // Whichever dictionary is loaded owns the verb section — the two are different tables
+  // behind one route. See `VerbList` below.
+  const russian = verbKind() === "ru";
+  const verbs = russian ? ruVerbData().verbs : kaVerbData().verbs;
+  const unpaired = russian ? ruVerbData().verbs.filter((verb) => !verb.pairId).length : 0;
+  const stories = publishedStories();
   const shelves = storyCategories();
   const chapters = stories.reduce((total, story) => total + story.chapters.length, 0);
 
-  const needsCheck = words.filter(word => word.check).length;
-  const withForms = words.filter(word => word.forms?.length).length;
+  const quizzes = quizSummaries();
+  const quizShelves = quizCategories();
+  const questions = quizzes.reduce((total, quiz) => total + quiz.questionCount, 0);
+  const emptyQuizzes = quizzes.filter((quiz) => quiz.questionCount === 0).length;
+
+  const lessons = lessonSummaries();
+  const lessonShelves = lessonCategories();
+  const grammarTopics = lessons.filter((lesson) => lesson.section === "grammar").length;
+  const emptyLessons = lessons.filter((lesson) => lesson.blocks === 0).length;
+
+  const needsCheck = words.filter((word) => word.check).length;
+  const withForms = words.filter((word) => word.forms?.length).length;
 
   return (
     <AdminPage>
@@ -99,8 +119,8 @@ export function AdminHome() {
       <AdminHead>
         <AdminTitle>Editing the dictionary</AdminTitle>
         <AdminSub>
-          Every change here is live the moment it saves: the content version moves, this browser re-fetches,
-          and every other one does on its next visit.
+          Every change here is live the moment it saves: the content version moves, this browser re-fetches, and every
+          other one does on its next visit.
         </AdminSub>
       </AdminHead>
 
@@ -109,13 +129,28 @@ export function AdminHome() {
           {categories.length} categories · {withForms} with inflected forms · {needsCheck} flagged for checking
         </HubCard>
         <HubCard to="/admin/verbs" icon={Table} title="Verbs" count={verbs.length}>
-          Paradigms and all 66 cells of each
+          {russian
+            ? `A class, a few stems and a stress pattern — the forms follow · ${unpaired} without an aspect pair`
+            : "Paradigms and all 66 cells of each"}
         </HubCard>
         <HubCard to="/admin/stories" icon={MessageCircle} title="Stories" count={stories.length}>
           {chapters} chapters · paste prose in and it links itself against the lexicon
         </HubCard>
         <HubCard to="/admin/story-categories" icon={Library} title="Story categories" count={shelves.length}>
           The headings the story index groups by
+        </HubCard>
+        <HubCard to="/admin/quizzes" icon={ListChecks} title="Quizzes" count={quizzes.length}>
+          {questions} questions · {emptyQuizzes > 0 ? `${emptyQuizzes} with none yet · ` : ""}embeddable
+        </HubCard>
+        <HubCard to="/admin/quiz-categories" icon={Library} title="Quiz categories" count={quizShelves.length}>
+          The headings the quiz index groups by
+        </HubCard>
+        <HubCard to="/admin/lessons" icon={GraduationCap} title="Lessons" count={lessons.length}>
+          {grammarTopics} under grammar · {emptyLessons > 0 ? `${emptyLessons} empty · ` : ""}markup, pictures and
+          embedded quizzes
+        </HubCard>
+        <HubCard to="/admin/lesson-categories" icon={Library} title="Lesson categories" count={lessonShelves.length}>
+          The headings the lessons and grammar indexes group by
         </HubCard>
         <HubCard to="/admin/users" icon={Users} title="Admins" count="—">
           Who else may edit all of this
@@ -126,9 +161,9 @@ export function AdminHome() {
         <AdminSectionTitle>Where the data lives now</AdminSectionTitle>
         <AdminNote className="mb-0">
           The database is the source of truth for content, not <code>data/*.json</code>. After editing here,
-          <code> npm run db:export</code> writes it back out to those files so the authoring scripts have
-          something current to work from, and <code>npm run db:seed</code> will refuse to overwrite these
-          edits with the older files unless it is given <code>--force</code>.
+          <code> npm run db:export</code> writes it back out to those files so the authoring scripts have something
+          current to work from, and <code>npm run db:seed</code> will refuse to overwrite these edits with the older
+          files unless it is given <code>--force</code>.
         </AdminNote>
       </AdminSection>
     </AdminPage>
@@ -143,7 +178,7 @@ function HubCard({
   children,
 }: {
   to: string;
-  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean }>;
+  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
   title: string;
   count: number | string;
   children: ReactNode;
@@ -164,15 +199,15 @@ function HubCard({
 /* -------------------------------------------------------------------- words */
 
 export function WordList() {
-  const { words, categories } = wordData();
-  const [term, setTerm] = useState('');
-  const [category, setCategory] = useState('');
+  const { words, categories } = publishedWordData();
+  const [term, setTerm] = useState("");
+  const [category, setCategory] = useState("");
   const [flaggedOnly, setFlaggedOnly] = useState(false);
 
   const shown = useMemo(() => {
     let list = term.trim() ? searchWords(words, term, 400) : words;
-    if (category) list = list.filter(word => word.categoryId === category);
-    if (flaggedOnly) list = list.filter(word => word.check);
+    if (category) list = list.filter((word) => word.categoryId === category);
+    if (flaggedOnly) list = list.filter((word) => word.check);
     return list.slice(0, 400);
   }, [words, term, category, flaggedOnly]);
 
@@ -193,17 +228,17 @@ export function WordList() {
         <SearchField
           placeholder="Search Georgian or English…"
           value={term}
-          onChange={event => setTerm(event.target.value)}
+          onChange={(event) => setTerm(event.target.value)}
         />
         {/* An empty string is not a legal Radix Select value — it is how it says "nothing is
             chosen" — so "every category" travels as a sentinel and is mapped at the edges. */}
-        <Select value={category || ALL} onValueChange={value => setCategory(value === ALL ? '' : value)}>
+        <Select value={category || ALL} onValueChange={(value) => setCategory(value === ALL ? "" : value)}>
           <SelectTrigger className="h-auto w-auto min-w-40 rounded-sm border border-border-strong bg-background py-2.5 text-sm shadow-none data-[size=default]:h-auto">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={ALL}>Every category</SelectItem>
-            {categories.map(item => (
+            {categories.map((item) => (
               <SelectItem key={item.id} value={item.id}>
                 {item.name}
               </SelectItem>
@@ -211,7 +246,7 @@ export function WordList() {
           </SelectContent>
         </Select>
         <AdminCheck className="my-0 mb-0">
-          <Checkbox checked={flaggedOnly} onCheckedChange={value => setFlaggedOnly(value === true)} />
+          <Checkbox checked={flaggedOnly} onCheckedChange={(value) => setFlaggedOnly(value === true)} />
           Only ones flagged for checking
         </AdminCheck>
       </div>
@@ -221,7 +256,7 @@ export function WordList() {
       </AdminCountLine>
 
       <AdminRows>
-        {shown.map(word => (
+        {shown.map((word) => (
           <li key={word.id}>
             <Link
               to={`/admin/words/${encodeURIComponent(word.id)}`}
@@ -244,26 +279,38 @@ export function WordList() {
   );
 }
 
-const ALL = '__all__';
+const ALL = "__all__";
 
 /* -------------------------------------------------------------------- verbs */
 
+/**
+ * Whichever verb index the loaded dictionary calls for.
+ *
+ * The same fork the reader makes at `VerbsPage` in App.tsx, and for the same reason: a
+ * Georgian row carries a verbal noun and a screeve count, a Russian one an aspect and a
+ * class, and there is nothing worth sharing between two lists that agree on none of their
+ * columns. The route is one route; only the screen behind it differs.
+ */
 export function VerbList() {
+  return verbKind() === "ru" ? <RuVerbList /> : <KaVerbList />;
+}
+
+function KaVerbList() {
   const verbs = kaVerbData().verbs;
-  const [term, setTerm] = useState('');
+  const [term, setTerm] = useState("");
 
   const shown = useMemo(() => {
     const needle = term.trim().toLowerCase();
-    if (!needle) return verbs.slice(0, 400);
-    return verbs
-      .filter(
-        verb =>
-          verb.english.toLowerCase().includes(needle) ||
-          verb.present3sg.includes(needle) ||
-          verb.verbalNoun.includes(needle),
-      )
-      .slice(0, 400);
+    if (!needle) return verbs;
+    return verbs.filter(
+      (verb) =>
+        verb.english.toLowerCase().includes(needle) ||
+        verb.present3sg.includes(needle) ||
+        verb.verbalNoun.includes(needle),
+    );
   }, [verbs, term]);
+
+  const pager = usePagination(shown, term);
 
   return (
     <AdminPage>
@@ -279,11 +326,7 @@ export function VerbList() {
       </AdminHeadRow>
 
       <div className="mb-6 flex flex-wrap items-center gap-4">
-        <SearchField
-          placeholder="Search English or Georgian…"
-          value={term}
-          onChange={event => setTerm(event.target.value)}
-        />
+        <SearchField placeholder="Type to search…" value={term} onChange={(event) => setTerm(event.target.value)} />
       </div>
 
       <AdminCountLine>
@@ -291,7 +334,7 @@ export function VerbList() {
       </AdminCountLine>
 
       <AdminRows>
-        {shown.map(verb => (
+        {pager.items.map((verb) => (
           <li key={verb.id}>
             <Link
               to={`/admin/verbs/${encodeURIComponent(verb.id)}`}
@@ -308,14 +351,126 @@ export function VerbList() {
           </li>
         ))}
       </AdminRows>
+
+      <Pagination pager={pager} noun="paradigms" />
     </AdminPage>
   );
 }
 
+/** What a Russian verb can be short of, and which are worth finding by it. */
+const RU_GAPS = [
+  { id: "", label: "Everything" },
+  { id: "pair", label: "No aspect pair" },
+  { id: "check", label: "Unchecked" },
+  { id: "stem", label: "No present stem" },
+];
+
+/**
+ * The Russian verbs, filtered by the things an editor is looking for.
+ *
+ * There are 8,500 of them and they came in from a script rather than from anybody's hands,
+ * so "show me the ones that are missing something" is the question this list exists to
+ * answer — a search box alone would only find the verb you already knew about.
+ */
+function RuVerbList() {
+  const verbs = ruVerbData().verbs;
+  const [term, setTerm] = useState("");
+  const [aspect, setAspect] = useState("");
+  const [gap, setGap] = useState("");
+
+  const shown = useMemo(() => {
+    const needle = term.trim().toLowerCase();
+    return verbs.filter((verb) => {
+      if (aspect && verb.aspect !== aspect) return false;
+      if (gap === "pair" && verb.pairId) return false;
+      if (gap === "check" && !verb.check) return false;
+      if (gap === "stem" && verb.stemPresent) return false;
+      if (!needle) return true;
+      return verb.infinitive.includes(needle) || verb.english.toLowerCase().includes(needle);
+    });
+  }, [verbs, term, aspect, gap]);
+
+  const pager = usePagination(shown, `${term}|${aspect}|${gap}`);
+
+  return (
+    <AdminPage>
+      <AdminCrumb>Verbs</AdminCrumb>
+
+      <AdminHeadRow>
+        <AdminTitle>Verbs</AdminTitle>
+        <Button variant="control" size="auto" className={KNOW_BUTTON} asChild>
+          <Link to="/admin/verbs/new">
+            <Table /> New verb
+          </Link>
+        </Button>
+      </AdminHeadRow>
+
+      <div className="mb-6 flex flex-wrap items-center gap-4 max-md:flex-col max-md:*:w-full">
+        <SearchField
+          placeholder="Search Russian or English…"
+          value={term}
+          onChange={(event) => setTerm(event.target.value)}
+        />
+        <Select value={aspect || ALL} onValueChange={(value) => setAspect(value === ALL ? "" : value)}>
+          <SelectTrigger className={ADMIN_SELECT}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL}>Both aspects</SelectItem>
+            <SelectItem value="impf">Imperfective</SelectItem>
+            <SelectItem value="pf">Perfective</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={gap || ALL} onValueChange={(value) => setGap(value === ALL ? "" : value)}>
+          <SelectTrigger className={ADMIN_SELECT}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {RU_GAPS.map((option) => (
+              <SelectItem key={option.id || ALL} value={option.id || ALL}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <AdminCountLine>
+        {shown.length === verbs.length ? `${verbs.length} verbs` : `${shown.length} shown of ${verbs.length}`}
+      </AdminCountLine>
+
+      <AdminRows>
+        {pager.items.map((verb) => (
+          <li key={verb.id}>
+            <Link
+              to={`/admin/verbs/${encodeURIComponent(verb.id)}`}
+              className={cn(ADMIN_ROW_LINK, ADMIN_ROW_LINK_HOVER)}
+            >
+              <AdminRowGeo lang="ru">{verb.accented || verb.infinitive}</AdminRowGeo>
+              <AdminRowEn>{verb.english}</AdminRowEn>
+              <AdminRowMeta>
+                <AdminBadge>{verb.aspect === "pf" ? "pf" : "impf"}</AdminBadge>
+                <AdminBadge>class {verb.classId}</AdminBadge>
+                {!verb.pairId && <AdminBadge>no pair</AdminBadge>}
+                {verb.check && <AdminBadge flagged>check</AdminBadge>}
+              </AdminRowMeta>
+            </Link>
+          </li>
+        ))}
+      </AdminRows>
+
+      <Pagination pager={pager} noun="verbs" />
+    </AdminPage>
+  );
+}
+
+const ADMIN_SELECT =
+  "h-auto w-auto min-w-40 rounded-sm border border-border-strong bg-background py-2.5 text-sm shadow-none data-[size=default]:h-auto";
+
 /* ------------------------------------------------------------------ stories */
 
 export function StoryList() {
-  const stories = storySummaries();
+  const stories = publishedStories();
 
   return (
     <AdminPage>
@@ -331,13 +486,11 @@ export function StoryList() {
       </AdminHeadRow>
 
       {stories.length === 0 && (
-        <p className="py-6 text-center text-muted-foreground">
-          No stories yet. Paste one in and it will link itself.
-        </p>
+        <p className="py-6 text-center text-muted-foreground">No stories yet. Paste one in and it will link itself.</p>
       )}
 
       <AdminRows>
-        {stories.map(story => (
+        {stories.map((story) => (
           <li key={story.id}>
             <Link
               to={`/admin/stories/${encodeURIComponent(story.id)}`}
@@ -350,14 +503,10 @@ export function StoryList() {
                 {story.category && <AdminBadge>{story.category}</AdminBadge>}
                 {/* Flagged when there are none, because a story with no chapters has nothing
                     to read and is the one state this list should make obvious. */}
-                <AdminBadge flagged={story.chapters.length === 0}>
-                  {story.chapters.length} chapter(s)
-                </AdminBadge>
+                <AdminBadge flagged={story.chapters.length === 0}>{story.chapters.length} chapter(s)</AdminBadge>
                 <AdminBadge>{story.stats.tokens} words</AdminBadge>
                 <AdminBadge flagged={story.stats.coverage < 90}>{story.stats.coverage}% linked</AdminBadge>
-                {story.stats.unresolved > 0 && (
-                  <AdminBadge flagged>{story.stats.unresolved} unresolved</AdminBadge>
-                )}
+                {story.stats.unresolved > 0 && <AdminBadge flagged>{story.stats.unresolved} unresolved</AdminBadge>}
                 {story.translated && <AdminBadge>translated</AdminBadge>}
               </AdminRowMeta>
             </Link>
@@ -372,7 +521,7 @@ export function StoryList() {
 
 /** A join date, which is all that separates two accounts with the same username. */
 function joined(at: number): string {
-  return new Date(at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  return new Date(at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
 
 export function UserList() {
@@ -388,7 +537,7 @@ export function UserList() {
   // one that has to be fetched. `refresh: false` on both calls here: neither touches content,
   // and re-downloading the dictionary to find out who is an admin would be absurd.
   useEffect(() => {
-    void run(() => api.admin.users(), { refresh: false }).then(result => {
+    void run(() => api.admin.users(), { refresh: false }).then((result) => {
       if (result) setUsers(result.users);
     });
   }, [run]);
@@ -407,12 +556,12 @@ export function UserList() {
       <AdminHead>
         <AdminTitle>Who may edit</AdminTitle>
         <AdminSub>
-          An admin may add, change and delete every word, paradigm and story. There is no way back into an
-          installation with no admins except a shell on the host, so the last one cannot be removed here.
+          An admin may add, change and delete every word, paradigm and story. There is no way back into an installation
+          with no admins except a shell on the host, so the last one cannot be removed here.
         </AdminSub>
         <AdminSub>
-          Accounts are listed by username. Email addresses are not shown — not partially, not to admins —
-          and the server does not send them, so there is nothing here to reveal.
+          Accounts are listed by username. Email addresses are not shown — not partially, not to admins — and the server
+          does not send them, so there is nothing here to reveal.
         </AdminSub>
       </AdminHead>
 
@@ -421,7 +570,7 @@ export function UserList() {
 
       {users !== null && (
         <AdminRows>
-          {users.map(user => (
+          {users.map((user) => (
             <li key={user.id}>
               <div className={ADMIN_ROW_LINK}>
                 <AdminRowGeo className="text-[14.5px] font-normal">{user.name}</AdminRowGeo>
@@ -434,13 +583,13 @@ export function UserList() {
                   {user.isAdmin && <AdminBadge admin>admin</AdminBadge>}
                   <Button
                     type="button"
-                    variant={user.isAdmin ? 'dangerOutline' : 'control'}
+                    variant={user.isAdmin ? "dangerOutline" : "control"}
                     size="auto"
                     disabled={busy || user.id === me}
-                    title={user.id === me ? 'You cannot change your own access.' : undefined}
+                    title={user.id === me ? "You cannot change your own access." : undefined}
                     onClick={() => toggle(user)}
                   >
-                    {user.isAdmin ? 'Remove admin' : 'Make admin'}
+                    {user.isAdmin ? "Remove admin" : "Make admin"}
                   </Button>
                 </AdminRowMeta>
               </div>

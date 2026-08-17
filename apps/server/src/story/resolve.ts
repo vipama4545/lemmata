@@ -39,9 +39,15 @@ export type Indexes = KaIndexes | RuIndexes;
  * Not cached: a relink happens when somebody presses a button and takes a second either way,
  * while a cache would have to be invalidated by every word edit — and a stale form index is
  * exactly the failure that would be hardest to see.
+ *
+ * `owner` decides whose vocabulary is in it. Null builds the published dictionary, which every
+ * published story is linked against. A user id adds that person's own entries, which is what a
+ * story in their own library is linked against. Getting it wrong is not a subtle bug: it is
+ * either a private gloss on a public page, or a reader's own word failing to turn up in the
+ * text they added it for. So every call site states it rather than inheriting a default.
  */
-export async function buildIndexes(lang: Lang): Promise<Indexes> {
-  return lang === 'ru' ? buildRuIndexes() : buildKaIndexes();
+export async function buildIndexes(lang: Lang, owner: string | null = null): Promise<Indexes> {
+  return lang === 'ru' ? buildRuIndexes(owner) : buildKaIndexes(owner);
 }
 
 /** Spellings two lemmas both claim, for whoever wants to know. See `loadLexicon`. */

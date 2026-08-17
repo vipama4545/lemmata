@@ -1,29 +1,23 @@
-import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import type { ReactNode } from "react";
 import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Copy,
   Eye,
   EyeOff,
   Flag,
   Headphones,
   Layers,
   Link2,
-  Play,
+  Pencil,
   SlidersHorizontal,
 } from "lucide-react";
-import type { Story, StoryToken } from "@georgian/shared/types";
+import type { Story, StorySummary, StoryToken } from "@georgian/shared/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -32,138 +26,63 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { MORPHEME_CLASS } from "@/components/ui/morpheme";
 import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from "@/components/ui/page";
 import { Dot, LEGEND_ASIDE, StudyLegend, StudyMeter } from "@/components/ui/study-meter";
-import { LevelBadge, PosTag } from "@/components/ui/word-card";
+import { LevelBadge } from "@/components/ui/word-card";
 import { cn } from "@/lib/utils";
 import { useIsAdmin } from "../admin/useAdmin";
+import { useLibraryEdit, useSignedIn } from "../library/store";
+import { api } from "../api/client";
 import { replaceStory, useStory } from "../data/stories";
-import { at, chapterHref, headword, isLinked, meaning, pieces, reading } from "../utils/story";
-import type { Reading } from "../utils/story";
-import { segmentForm } from "../utils/verbMorphology";
-import { wordKey } from "../study/items";
-import type { Mastery, MasteryValue } from "../study/mastery";
-import { KNOWN, masteryAttr } from "../study/mastery";
-import { forgetItem, markUnseenKnown, readingMastery, setItemMastery, useProgress } from "../study/store";
-import type { Progress } from "../study/store";
-import { MasteryPicker } from "./Mastery";
+import { chapterHref } from "../utils/story";
+import { markUnseenKnown, useProgress } from "../study/store";
 import { StoryAudioBar, useStoryAudio } from "./StoryAudio";
-import { lang } from '../content/store';
+import { useShelves, type Shelf } from "./StoryIndex";
+import StoryProse, { masteryCounts, storyVocabulary } from "./StoryProse";
+import { lang } from "../content/store";
 
-// Only ever rendered for an admin who has turned editing on, so it rides in the admin chunk
-// rather than in the one every reader downloads.
+// Only rendered for somebody who has turned editing on: an admin on a published story, or a
+// reader on one of their own. So it rides in a chunk of its own rather than in the one every
+// reader downloads. It still lives under admin/ because that is where it was written and it
+// does the same job for both; see the note at the head of it.
 const TokenEditor = lazy(() => import("../admin/TokenEditor"));
-
-const CARD_W = 320;
-// Only the estimate the card is first placed with, before its real height is measurable.
-const CARD_H = 300;
-const MARGIN = 12;
-// Long enough that sweeping the pointer across a line does not flash a card per word,
-// short enough that stopping on a word feels like it answered immediately.
-const OPEN_DELAY = 140;
-// Covers the gap between leaving the word and reaching the card below it.
-const CLOSE_DELAY = 180;
 
 /** The panel under the controls: the progress bar, or the legend that replaces it. */
 const PANEL = "mt-4 flex flex-col gap-2 rounded-sm border border-border bg-card px-3.5 py-3";
 
-/** Which occurrence is open, and the rectangle it was measured at. */
-interface Selection {
-  token: StoryToken;
-  /** "paragraph:word" — identifies the exact occurrence, so only that one looks active. */
-  at: string;
-  rect: DOMRect;
-}
-
-/** Which occurrence an admin is editing the link on, and where in the text it is. */
+/** Which occurrence is being edited, and where in the text it is. */
 interface Editing {
   token: StoryToken;
   paragraph: number;
   position: number;
 }
 
-/**
- * The classes on a word in reading mode.
- *
- * Words stay plain spans so a paragraph selects and copies like ordinary text. Only the
- * underline and the pointer are added when lookup is on; nothing about the element itself
- * changes, which is what keeps selection working in both modes.
- *
- * The tint for a level is a background rather than an outline, so a paragraph still reads as
- * a paragraph: the colour is behind the word and the text keeps its own weight and hue. A
- * word marked Known loses its tint entirely — the reward for learning the page is that the
- * page quiets down, and by the end of a story it should be mostly plain prose again.
- */
-function wordClasses({
-  live,
-  name,
-  graded,
-  open,
-  spoken,
-}: {
-  live: boolean;
-  name: boolean;
-  graded: boolean;
-  open: boolean;
-  spoken: boolean;
-}) {
-  return cn(
-    live && "cursor-help border-b border-dotted border-border-strong transition-colors duration-100",
-    live && "hover:border-primary hover:bg-primary-glow",
-    live && "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-    // Proper names are looked up like any other word, but they are story furniture rather
-    // than vocabulary — nothing to learn and no entry to open. A solid, fainter rule says as
-    // much without breaking the run of dotted underlines the eye reads past.
-    live && name && "border-solid border-border",
-    // Dropped entirely while a word is being spoken, rather than overridden by the rule
-    // below it. `cn` merges conflicting utilities by letting the last one win, but that only
-    // settles ties between selectors of equal weight — and `data-[mastery=6]:bg-transparent`
-    // is a class *and* an attribute, so it outranks a plain `bg-primary` however late that
-    // comes. Leaving both on meant a Known word, whose whole reward is that it stops being
-    // tinted, also refused to light up when it was read. The spoken style below restates the
-    // geometry these lines set, so nothing shifts when they go.
-    graded && !spoken && [
-      "-mx-px rounded-[3px] px-0.5 py-px",
-      "bg-[color-mix(in_srgb,var(--m)_15%,transparent)]",
-      "shadow-[inset_0_-2px_0_color-mix(in_srgb,var(--m)_45%,transparent)]",
-      "data-[mastery=6]:bg-transparent data-[mastery=6]:shadow-none",
-    ],
-    // Same reasoning: a hover rule is a class plus a pseudo-class, so it would repaint the
-    // word the reader is listening to the moment the pointer crossed it.
-    graded && live && !spoken && "hover:bg-[color-mix(in_srgb,var(--m)_38%,transparent)]",
-    open && !spoken && "border-primary bg-primary-light",
-    // The word being read. A filled block rather than an underline because it has to be
-    // findable from across the paragraph, at a glance, while it is moving.
-    spoken && "-mx-px rounded-[3px] bg-primary px-0.5 py-px text-primary-foreground shadow-none",
-  );
+/** The story to read after this one, and the shelf it is on when that is not this one's. */
+interface Onward {
+  story: StorySummary;
+  /** Set only when the next story is filed under another category. */
+  shelf?: Shelf;
 }
 
 /**
- * The classes on a word while an admin is editing links.
+ * What there is to read after the last chapter of this story.
  *
- * Four states, and they are four different jobs. Nothing matched is a missing lemma or a
- * proper noun; a guess wants a read-through; a name and a pin are already decided and are
- * marked so they can be told from the resolver's own work at a glance.
- *
- * They are listed in order of who wins rather than as exclusive branches, because they are
- * not exclusive: a name can be marked as a guess, and a pinned link usually is not but may
- * be. Pinned beats plain — a word somebody has already settled drops its underline, so what
- * is left underlined is exactly what still wants a decision. A doubt then beats being
- * pinned: a link flagged "come back to this" is the one case where a decided word should
- * still catch the eye, which is the whole point of the flag.
+ * The next story on the same shelf, or — at the end of a shelf — the first story on the next one,
+ * in the order the library lays them out. The end of a chapter has always offered the chapter
+ * after it; this is that same offer at the two boundaries above it, so that finishing a book
+ * leads somewhere rather than stopping dead and sending the reader back to the index to work out
+ * where they had got to.
  */
-function editableClasses(token: StoryToken, open: boolean) {
-  return cn(
-    "cursor-pointer rounded-[3px] border-0 border-b-2 border-border-strong bg-transparent px-px font-[inherit] text-inherit",
-    "hover:border-b-primary hover:bg-primary-glow",
-    "focus-visible:border-b-primary focus-visible:bg-primary-glow focus-visible:outline-none",
-    token.name && "border-b-m-unseen bg-[color-mix(in_srgb,var(--m-unseen)_12%,transparent)]",
-    !token.name && !token.word && "border-b-m-1 bg-[color-mix(in_srgb,var(--m-1)_12%,transparent)]",
-    (token.via === "name" || token.via.startsWith("override")) && "border-b-transparent",
-    token.check && "border-b-m-3 border-dashed bg-[color-mix(in_srgb,var(--m-3)_14%,transparent)]",
-    open && "border-b-primary bg-primary-light",
-  );
+function following(shelves: Shelf[], storyId: string): Onward | undefined {
+  const at = shelves.findIndex((shelf) => shelf.stories.some((entry) => entry.id === storyId));
+  if (at < 0) return undefined;
+
+  const here = shelves[at].stories;
+  const along = here[here.findIndex((entry) => entry.id === storyId) + 1];
+  if (along) return { story: along };
+
+  const over = shelves[at + 1];
+  return over?.stories[0] ? { story: over.stories[0], shelf: over } : undefined;
 }
 
 // A story with its words linked to the dictionary, and coloured by how well you know them.
@@ -189,16 +108,18 @@ function StoryReader() {
   const { story: fetched, loading, error } = useStory(storyId, asked);
   const progress = useProgress();
   const { isAdmin } = useIsAdmin();
+  // The library's shelves, for the one question this page asks of them: what comes after this
+  // book. Out of the snapshot that is already here, so it costs a `useMemo` rather than a fetch.
+  const shelves = useShelves();
 
   const [lookup, setLookup] = useState(true);
   const [split, setSplit] = useState(false);
   const [highlight, setHighlight] = useState(true);
-  const [selected, setSelected] = useState<Selection | null>(null);
   const [finishing, setFinishing] = useState(false);
 
-  // Editing links is a mode of its own rather than something an admin always has on, for the
-  // same reason lookup is: it turns every word into a control, and most visits to a story are
-  // to read it. Off by default even for an admin.
+  // Editing links is a mode of its own rather than something always on for whoever may do it,
+  // for the same reason lookup is: it turns every word into a control, and most visits to a
+  // story are to read it. Off by default for an admin and for the owner alike.
   const [editing, setEditing] = useState(false);
   const [editingToken, setEditingToken] = useState<Editing | null>(null);
   // An edit comes back from the server as the whole relinked story, and that is what the page
@@ -241,7 +162,7 @@ function StoryReader() {
   // Keyed on the chapter that is actually on screen rather than the one in the URL, so the
   // queue is never built against a page that has already been turned. `storyId` is empty for
   // one render before the route resolves, which the hook reads as "no chapter" and skips.
-  const audio = useStoryAudio(storyId ?? '', story?.chapter ?? 0);
+  const audio = useStoryAudio(storyId ?? "", story?.chapter ?? 0);
 
   // Whether the player is on screen. Off by default: reading is what this page is for, and
   // a bar fixed over the foot of every story would be a permanent tax on the ordinary case
@@ -262,83 +183,23 @@ function StoryReader() {
     setListening(false);
   }, [storyId, asked]);
 
-  // The words of a line the voice could not be aligned to, which are marked together rather
-  // than one at a time. Parsed once per change instead of per word: this is compared against
-  // every span in the story on every render that moves the highlight.
-  const lineSpan = useMemo(() => {
-    if (!audio.lineKey) return null;
-    const [paragraph, from, to] = audio.lineKey.split(":").map(Number);
-    return { paragraph, from, to };
-  }, [audio.lineKey]);
-
-  // One shared timer: a pending open and a pending close can never both be wanted.
-  const timer = useRef<number | undefined>(undefined);
-
-  const cancel = useCallback(() => window.clearTimeout(timer.current), []);
-  const close = useCallback(() => {
-    cancel();
-    setSelected(null);
-  }, [cancel]);
-
-  useEffect(() => cancel, [cancel]);
-
-  // Turning lookup off must also take any open card with it — unless editing is on, where
-  // the card is the reference you are editing against rather than a reading aid.
-  useEffect(() => {
-    if (!lookup && !editing) close();
-  }, [lookup, editing, close]);
-
-  // The card is anchored to a rectangle measured when it opened, which stops being where
-  // the word is as soon as the page moves.
-  useEffect(() => {
-    if (!selected) return undefined;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("scroll", close, true);
-    window.addEventListener("resize", close);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("scroll", close, true);
-      window.removeEventListener("resize", close);
-    };
-  }, [selected, close]);
-
   // Every dictionary entry the story cites, once. This is the story's vocabulary — what the
   // counts below are out of, and what Finish acts on.
-  const vocabulary = useMemo(() => {
-    const keys = new Set<string>();
-    for (const paragraph of story?.tokens ?? []) {
-      for (const token of paragraph) if (token.word) keys.add(wordKey(token.word));
-    }
-    return [...keys];
-  }, [story]);
-
-  const counts = useMemo(() => {
-    const tally = { unseen: 0, learning: 0, solid: 0, known: 0, total: vocabulary.length };
-    for (const key of vocabulary) {
-      const level = readingMastery(progress, key);
-      if (level === null) tally.unseen += 1;
-      else if (level >= KNOWN) tally.known += 1;
-      else if (level >= 4) tally.solid += 1;
-      else tally.learning += 1;
-    }
-    return tally;
-  }, [vocabulary, progress]);
+  const vocabulary = useMemo(() => storyVocabulary(story), [story]);
+  const counts = useMemo(() => masteryCounts(vocabulary, progress), [vocabulary, progress]);
 
   if (loading || error || !story) {
     return (
       <Page>
         <Breadcrumb>
-          <BreadcrumbLink to={`/${lang()}/stories`}>← Stories</BreadcrumbLink>
+          <BreadcrumbLink to={`/${lang()}/stories`}>← Library</BreadcrumbLink>
         </Breadcrumb>
         <p className="py-6 text-center text-muted-foreground">
           {loading
-            ? 'Loading the story…'
+            ? "Loading the story…"
             : error
-              ? 'That story could not be loaded. Check your connection and try again.'
-              : 'That story does not exist.'}
+              ? "That story could not be loaded. Check your connection and try again."
+              : "That story does not exist."}
         </p>
       </Page>
     );
@@ -347,115 +208,28 @@ function StoryReader() {
   const hasTranslation = story.translation.length > 0;
   const showSplit = split && hasTranslation;
 
+  // Whose story this is, and what that licenses on screen. An admin may correct the links in
+  // anything the dictionary publishes; a reader may correct them in their own text and nowhere
+  // else. Both decide only whether the *button* is drawn; every write re-reads the owner on
+  // the server.
+  const mine = story.mine === true;
+  const mayEditLinks = mine || (isAdmin && !story.mine);
+
   const multiChapter = story.chapters.length > 1;
-  const here = story.chapters.find(entry => entry.position === story.chapter);
+  const here = story.chapters.find((entry) => entry.position === story.chapter);
   // A story of one chapter has the same counts either way, and one with none at all — which
   // only an admin mid-upload ever sees — has the story's, which are zeroes.
   const stats = here?.stats ?? story.stats;
-  const next = story.chapters.find(entry => entry.position === story.chapter + 1);
-
-  const openLater = (token: StoryToken, key: string, target: HTMLElement) => {
-    // Editing counts as a reason to open the card even with lookup switched off: choosing
-    // what a word should mean is exactly when you need to see what it means now.
-    if (!lookup && !editing) return;
-    cancel();
-    const rect = target.getBoundingClientRect();
-    timer.current = window.setTimeout(() => setSelected({ token, at: key, rect }), OPEN_DELAY);
-  };
-
-  const closeLater = () => {
-    cancel();
-    timer.current = window.setTimeout(() => setSelected(null), CLOSE_DELAY);
-  };
-
-  const renderParagraph = (paragraph: string, p: number) =>
-    pieces(paragraph).map((piece, i) => {
-      const token = piece.word ? at(story, p, piece.index, piece.text) : null;
-      const key = `${p}:${piece.index}`;
-      // Either the one word being said, or every word of a line that could not be timed.
-      const spoken =
-        audio.at === key ||
-        (lineSpan !== null &&
-          lineSpan.paragraph === p &&
-          piece.index >= lineSpan.from &&
-          piece.index <= lineSpan.to);
-
-      // In edit mode every word is a control, including the ones nothing matched — those are
-      // the whole point, because an unresolved spelling is usually either a missing lemma or
-      // a proper noun, and both are answered here. Reading mode keeps the old rule: only a
-      // word with something to say is interactive.
-      if (editing && token) {
-        // Hovering still opens the real card. Deciding what a word should link to means
-        // reading what it links to now — the sense that applies, the other senses, the
-        // paradigm behind it — and none of that fits in a title attribute. So editing adds
-        // the click without taking the card away: hover to see, click to change.
-        const hoverable = isLinked(token);
-        return (
-          <button
-            key={i}
-            type="button"
-            className={editableClasses(token, selected?.at === key)}
-            onClick={() => {
-              close();
-              setEditingToken({ token, paragraph: p, position: piece.index });
-            }}
-            onMouseEnter={hoverable ? (e) => openLater(token, key, e.currentTarget) : undefined}
-            onMouseLeave={hoverable ? closeLater : undefined}
-            onFocus={hoverable ? (e) => openLater(token, key, e.currentTarget) : undefined}
-            onBlur={hoverable ? closeLater : undefined}
-          >
-            {piece.text}
-          </button>
-        );
-      }
-
-      // A word with nothing to say is still a word that gets read aloud, so the spoken
-      // highlight goes on every *word* of the paragraph — not only the ones the lexicon
-      // matched. An unlinked word is skipped by the card, never by the voice.
-      //
-      // Only where `piece.word`, though: the gaps between words are pieces too and carry
-      // index -1, which is not a position the voice or the highlight could mean.
-      if (!isLinked(token)) {
-        if (!piece.word) return <span key={i}>{piece.text}</span>;
-        return (
-          <span
-            key={i}
-            className={wordClasses({ live: false, name: false, graded: false, open: false, spoken })}
-          >
-            {piece.text}
-          </span>
-        );
-      }
-      // Proper names are story furniture rather than vocabulary, so they carry no level.
-      const item = token.word ? wordKey(token.word) : "";
-      return (
-        <span
-          key={i}
-          className={wordClasses({
-            live: lookup,
-            name: Boolean(token.name),
-            graded: Boolean(highlight && item),
-            open: selected?.at === key,
-            spoken,
-          })}
-          data-mastery={highlight && item ? masteryAttr(readingMastery(progress, item)) : undefined}
-          // Focusable only in lookup mode: 976 stops in the tab order would otherwise sit
-          // between the reader and the rest of the page for no gain.
-          tabIndex={lookup ? 0 : undefined}
-          onMouseEnter={(e) => openLater(token, key, e.currentTarget)}
-          onMouseLeave={closeLater}
-          onFocus={(e) => openLater(token, key, e.currentTarget)}
-          onBlur={closeLater}
-        >
-          {piece.text}
-        </span>
-      );
-    });
+  const next = story.chapters.find((entry) => entry.position === story.chapter + 1);
+  // Only at the end of the book: while there is another chapter, the next chapter is the only
+  // thing worth offering, and a second forward button beside it would be a choice where there is
+  // no decision to make.
+  const onward = next ? undefined : following(shelves, story.id);
 
   return (
     <Page>
       <Breadcrumb>
-        <BreadcrumbLink to={`/${lang()}/stories`}>← Stories</BreadcrumbLink>
+        <BreadcrumbLink to={`/${lang()}/stories`}>← Library</BreadcrumbLink>
         <BreadcrumbSeparator />
         <span>{story.titleEnglish || story.title}</span>
       </Breadcrumb>
@@ -512,16 +286,13 @@ function StoryReader() {
             Finish
           </Button>
 
-          {isAdmin && (
+          {mayEditLinks && (
             // Editing wears the "never seen" indigo rather than the accent blue, so the mode
             // that rewrites the page is not the same colour as the modes that only read it.
             <ReaderToggle
               on={editing}
-              onClick={() => {
-                setEditing((v) => !v);
-                close();
-              }}
-              title="Correct what each word links to"
+              onClick={() => setEditing((v) => !v)}
+              title={mine ? "Correct what each word in your own text links to" : "Correct what each word links to"}
               className={editing ? "border-m-unseen text-m-unseen" : undefined}
             >
               <Link2 />
@@ -529,6 +300,8 @@ function StoryReader() {
             </ReaderToggle>
           )}
         </div>
+
+        <OwnStoryActions story={story} />
 
         {editing ? <EditLegend story={story} /> : <StoryProgress counts={counts} shown={highlight} />}
       </header>
@@ -555,30 +328,37 @@ function StoryReader() {
           </header>
         )}
 
-        {showSplit
-          ? story.paragraphs.map((paragraph, p) => (
-              <div
-                className="mb-[18px] grid grid-cols-2 gap-8 border-b border-border pb-[18px] last:mb-0 last:border-b-0 last:pb-0 max-[900px]:grid-cols-1 max-[900px]:gap-2"
-                key={p}
-              >
-                <p className={cn(STORY_PARA, "mb-0")}>{renderParagraph(paragraph, p)}</p>
-                <p className="text-base leading-loose text-muted-foreground max-[900px]:border-l-2 max-[900px]:border-border max-[900px]:pl-3">
-                  {story.translation[p]}
-                </p>
-              </div>
-            ))
-          : story.paragraphs.map((paragraph, p) => (
-              <p className={STORY_PARA} key={p}>
-                {renderParagraph(paragraph, p)}
-              </p>
-            ))}
+        <StoryProse
+          story={story}
+          lookup={lookup}
+          highlight={highlight}
+          translation={showSplit}
+          spokenAt={audio.at}
+          spokenLine={audio.lineKey}
+          onPlayFrom={
+            audio.available
+              ? (paragraph, word) => {
+                  setListening(true);
+                  audio.playFrom(paragraph, word);
+                }
+              : undefined
+          }
+          editing={editing}
+          onEditWord={(token, paragraph, position) => setEditingToken({ token, paragraph, position })}
+        />
       </article>
 
       {/* Reaching the end of a chapter that has another after it is not reaching the end of
           the story, so the green button says so: carrying on is the expected thing and gets
-          the affirmative colour, and finishing early is still offered beside it. */}
+          the affirmative colour, and finishing early is still offered beside it.
+
+          At the end of the last chapter the same holds one level up — there is another story on
+          the shelf, or another shelf — so the offer is the next book instead, in the same
+          colour. Finish keeps the affirmative only when there is genuinely nothing after this. */}
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3.5 rounded-lg border border-dashed border-border-strong p-5">
-        <p className="text-muted-foreground">{next ? 'End of this chapter.' : 'Reached the end?'}</p>
+        <p className="text-muted-foreground">
+          {next ? "End of this chapter." : onward ? "End of this story." : "Reached the end?"}
+        </p>
         {next && (
           <Button variant="control" size="auto" className={KNOW_BUTTON} asChild>
             <Link to={chapterHref(story.id, next.position)}>
@@ -586,41 +366,29 @@ function StoryReader() {
             </Link>
           </Button>
         )}
+        {onward && (
+          <Button variant="control" size="auto" className={KNOW_BUTTON} asChild>
+            <Link
+              to={chapterHref(onward.story.id, 0)}
+              // The shelf it is on, where that has changed. Not in the label — a button whose
+              // text is two names is a button nobody reads to the end of — but the reader is
+              // being moved to another part of the library and something should say so.
+              title={onward.shelf ? `Next on ${onward.shelf.name}` : undefined}
+            >
+              <span className="max-w-[34ch] truncate">Next: {onward.story.titleEnglish || onward.story.title}</span>
+              <ArrowRight />
+            </Link>
+          </Button>
+        )}
         <Button
           variant="control"
           size="auto"
-          className={next ? undefined : KNOW_BUTTON}
+          className={next || onward ? undefined : KNOW_BUTTON}
           onClick={() => setFinishing(true)}
         >
           <Flag /> Finish reading
         </Button>
       </div>
-
-      {selected && (
-        <GlossCard
-          selection={selected}
-          progress={progress}
-          onClose={close}
-          onHold={cancel}
-          onRelease={closeLater}
-          // Reading from here is an action you ask for on the card, not something a click
-          // anywhere in the prose does. The text is for reading and selecting; taking its
-          // click for playback would mean no word could be highlighted with the mouse.
-          //
-          // `at` is the "paragraph:word" key the span was built with, which is the pair the
-          // player needs, so it is read back rather than threaded through the selection.
-          onPlay={
-            audio.available
-              ? () => {
-                  const [paragraph, word] = selected.at.split(":").map(Number);
-                  setListening(true);
-                  audio.playFrom(paragraph, word);
-                  close();
-                }
-              : undefined
-          }
-        />
-      )}
 
       <FinishDialog
         open={finishing}
@@ -664,8 +432,52 @@ function StoryReader() {
   );
 }
 
-/** Prose is set large and loose: it is being read a word at a time, not skimmed. */
-const STORY_PARA = "mb-[18px] text-[19px] leading-[2] last:mb-0 max-md:text-[17px] max-md:leading-[1.9]";
+/**
+ * The row that says whose story this is and what can be done about it.
+ *
+ * Two buttons, and never both. On your own text it opens the editor. On one the dictionary
+ * publishes it offers a copy, which is the honest answer to what a reader will try first: they
+ * cannot edit this story, but they can have one just like it that they can edit.
+ *
+ * Nothing at all for a signed-out visitor, who has nowhere to copy anything to. The invitation
+ * lives on the library index, where it can be explained in a sentence rather than in a button.
+ */
+function OwnStoryActions({ story }: { story: Story }) {
+  const navigate = useNavigate();
+  const signedIn = useSignedIn();
+  const { busy, error, run } = useLibraryEdit();
+
+  if (!signedIn) return null;
+
+  if (story.mine) {
+    return (
+      <div className="mt-3 flex flex-wrap items-center gap-2.5">
+        <Button variant="control" size="auto-sm" asChild>
+          <Link to={`/${lang()}/library/stories/${encodeURIComponent(story.id)}`}>
+            <Pencil /> Edit this text
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  const copy = async () => {
+    const result = await run(() => api.library.copyStory({ id: story.id }));
+    // Straight into the copy, because that is the thing they now want to be looking at: the
+    // same page, with the buttons that were missing a moment ago.
+    if (result) navigate(chapterHref(result.id, 0));
+  };
+
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-2.5">
+      <Button variant="control" size="auto-sm" disabled={busy} onClick={copy}>
+        <Copy /> {busy ? "Copying…" : "Copy to my library"}
+      </Button>
+      <span className="text-xs text-faint">Takes a copy you can edit, with its links already worked out.</span>
+      {error && <span className="text-xs text-danger">{error}</span>}
+    </div>
+  );
+}
 
 /**
  * Moving between chapters: a step either way, and a menu for the rest.
@@ -676,8 +488,8 @@ const STORY_PARA = "mb-[18px] text-[19px] leading-[2] last:mb-0 max-md:text-[17p
  */
 function ChapterNav({ story }: { story: Story }) {
   const navigate = useNavigate();
-  const previous = story.chapters.find(entry => entry.position === story.chapter - 1);
-  const next = story.chapters.find(entry => entry.position === story.chapter + 1);
+  const previous = story.chapters.find((entry) => entry.position === story.chapter - 1);
+  const next = story.chapters.find((entry) => entry.position === story.chapter + 1);
 
   return (
     <nav className="mt-4 flex flex-wrap items-center gap-2.5" aria-label="Chapters">
@@ -699,15 +511,12 @@ function ChapterNav({ story }: { story: Story }) {
       {/* A select rather than a list of links: forty chapters is a plausible book and forty
           buttons is not a navigation bar. It carries the titles, which is what makes it
           worth opening — the numbers are already on the two buttons either side. */}
-      <Select
-        value={String(story.chapter)}
-        onValueChange={value => navigate(chapterHref(story.id, Number(value)))}
-      >
+      <Select value={String(story.chapter)} onValueChange={(value) => navigate(chapterHref(story.id, Number(value)))}>
         <SelectTrigger className="h-8 w-auto min-w-52 text-sm" aria-label="Go to a chapter">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {story.chapters.map(entry => (
+          {story.chapters.map((entry) => (
             <SelectItem key={entry.position} value={String(entry.position)}>
               {entry.title || entry.titleEnglish
                 ? `${entry.position + 1}. ${entry.title || entry.titleEnglish}`
@@ -741,11 +550,7 @@ export const KNOW_BUTTON =
   "border-[#22c55e] bg-level-a1 text-level-a1-foreground hover:border-[#22c55e] hover:bg-level-a1 hover:brightness-97";
 
 /** One of the reader's mode switches. Pressed state is the border and the label going accent. */
-function ReaderToggle({
-  on,
-  className,
-  ...props
-}: React.ComponentProps<typeof Button> & { on: boolean }) {
+function ReaderToggle({ on, className, ...props }: React.ComponentProps<typeof Button> & { on: boolean }) {
   return (
     <Button
       type="button"
@@ -778,14 +583,26 @@ function EditLegend({ story }: { story: Story }) {
   return (
     <div className={PANEL}>
       <p className="max-w-[78ch] text-[13.5px] leading-relaxed text-muted-foreground">
-        Every word is a button. Click one to link it to a dictionary entry, name it as a proper noun for this
-        story only, or mark it as deliberately not a word.
+        Every word is a button. Click one to link it to a dictionary entry, name it as a proper noun for this story
+        only, or mark it as deliberately not a word.
       </p>
       <StudyLegend>
-        <span><Dot className="bg-m-1" />{tally.unresolved} nothing matched</span>
-        <span><Dot className="bg-m-3" />{tally.guessed} reached by a guess</span>
-        <span><Dot className="bg-m-unseen" />{tally.named} named</span>
-        <span><Dot className="bg-faint" />{tally.pinned} set by hand</span>
+        <span>
+          <Dot className="bg-m-1" />
+          {tally.unresolved} nothing matched
+        </span>
+        <span>
+          <Dot className="bg-m-3" />
+          {tally.guessed} reached by a guess
+        </span>
+        <span>
+          <Dot className="bg-m-unseen" />
+          {tally.named} named
+        </span>
+        <span>
+          <Dot className="bg-faint" />
+          {tally.pinned} set by hand
+        </span>
         <span className={LEGEND_ASIDE}>{tally.total} words</span>
       </StudyLegend>
     </div>
@@ -811,10 +628,22 @@ function StoryProgress({ counts, shown }: { counts: Counts; shown: boolean }) {
     <div className={PANEL}>
       <StudyMeter known={counts.known} solid={counts.solid} learning={counts.learning} total={counts.total} />
       <StudyLegend>
-        <span><Dot className="bg-m-6" />{counts.known} known</span>
-        <span><Dot className="bg-m-5" />{counts.solid} solid</span>
-        <span><Dot className="bg-m-3" />{counts.learning} learning</span>
-        <span><Dot className="bg-m-unseen" />{counts.unseen} never seen</span>
+        <span>
+          <Dot className="bg-m-6" />
+          {counts.known} known
+        </span>
+        <span>
+          <Dot className="bg-m-5" />
+          {counts.solid} solid
+        </span>
+        <span>
+          <Dot className="bg-m-3" />
+          {counts.learning} learning
+        </span>
+        <span>
+          <Dot className="bg-m-unseen" />
+          {counts.unseen} never seen
+        </span>
         <span className={LEGEND_ASIDE}>
           {counts.total} distinct words{shown ? "" : " · highlighting off"}
         </span>
@@ -855,7 +684,12 @@ function FinishDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) onClose();
+      }}
+    >
       <DialogContent className="max-w-[500px] rounded-lg p-6">
         <DialogHeader className="text-left">
           <DialogTitle className="text-xl">Finished reading?</DialogTitle>
@@ -880,8 +714,8 @@ function FinishDialog({
           Mark those {unseen} words as known
         </label>
         <p className="text-[13px] leading-relaxed text-faint">
-          They go to level 6 and never come up in flashcards again. Words you rated while reading are left as
-          you rated them.
+          They go to level 6 and never come up in flashcards again. Words you rated while reading are left as you rated
+          them.
         </p>
 
         <DialogFooter>
@@ -895,184 +729,6 @@ function FinishDialog({
       </DialogContent>
     </Dialog>
   );
-}
-
-/* ----------------------------------------------------------------- the card */
-
-// The definition card. Anchored under the word it belongs to, flipped above when there is
-// no room below, and clamped so it never hangs off either edge. Hovering it holds it open,
-// so the level buttons and the link at the bottom can actually be reached.
-//
-// Positioned by hand rather than by a Popover: it is opened and closed on a hover timer
-// shared with the word under it, and it is anchored to a rectangle measured at open time
-// rather than to a live element, which is what lets the same card serve 976 spans without
-// any of them being a trigger.
-//
-// It leads with the one meaning that applies here rather than the entry's first, which is
-// the whole point of the story recording occurrences separately: აბა is "let's" where the
-// pigs egg each other on and "just try" where the wolf threatens them.
-function GlossCard({
-  selection,
-  progress,
-  onClose,
-  onHold,
-  onRelease,
-  onPlay,
-}: {
-  selection: Selection;
-  progress: Progress;
-  onClose: () => void;
-  onHold: () => void;
-  onRelease: () => void;
-  /** Read the story from this word. Absent where the server has no voice. */
-  onPlay?: () => void;
-}) {
-  const { token } = selection;
-  const item = reading(token);
-  const ref = useRef<HTMLDivElement>(null);
-  const [style, setStyle] = useState(() => place(selection.rect, CARD_H));
-
-  // Re-place once the real height is known, so a card shorter than the estimate does not
-  // sit with a gap under the word it belongs to.
-  useLayoutEffect(() => {
-    const height = ref.current?.offsetHeight;
-    if (height) setStyle(place(selection.rect, height));
-  }, [selection]);
-
-  const lemma = headword(item);
-  const key = token.word ? wordKey(token.word) : "";
-  const level: MasteryValue = key ? readingMastery(progress, key) : null;
-
-  return (
-    <div
-      className="fixed z-60 w-80 max-w-[calc(100vw-24px)] rounded-lg border border-border-strong bg-popover px-4.5 py-4 text-popover-foreground shadow-pop"
-      style={style}
-      ref={ref}
-      role="dialog"
-      aria-label={`Meaning of ${token.form}`}
-      onMouseEnter={onHold}
-      onMouseLeave={onRelease}
-    >
-      {/* The word, and — where there is a voice — the one control that starts the recording
-          here. Beside the headword rather than down with "Full entry", because it acts on
-          the word this card is about rather than taking you somewhere else. */}
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-[22px] leading-tight font-semibold">
-          {item.verb && item.lex ? <VerbSegments form={token.form} item={item} /> : token.form}
-        </p>
-        {onPlay && (
-          <Button
-            type="button"
-            variant="control"
-            size="icon-sm"
-            className="mt-0.5 shrink-0"
-            onClick={onPlay}
-            aria-label={`Read the story from ${token.form}`}
-            title="Read from here"
-          >
-            <Play />
-          </Button>
-        )}
-      </div>
-
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        {token.gram && (
-          <span className="rounded-full bg-primary-light px-2 py-0.5 text-[11px] font-semibold text-primary-dark">
-            {token.gram}
-          </span>
-        )}
-        {token.name && <PosTag>Name</PosTag>}
-        {item.pos && <PosTag>{item.pos}</PosTag>}
-        {item.word?.level && <LevelBadge level={item.word.level} />}
-      </div>
-
-      {/* What the word says here, before what the dictionary calls it. იყო reads as "was";
-          filing it under არის "is" is right, and is also not what the sentence said. */}
-      {item.formMeaning && <p className="mt-2.5 text-base font-semibold">{item.formMeaning}</p>}
-
-      {lemma && lemma !== token.form && (
-        <p className="mt-2.5 flex items-center gap-1.5 text-[13px] text-muted-foreground">
-          <ArrowRight className="size-3.5" aria-hidden="true" />
-          <span className="text-[17px] text-foreground">{lemma}</span>
-        </p>
-      )}
-
-      {/* Demoted to a caption under the headword once the form has said its own meaning
-          above, so the card has one thing to read first rather than two of the same size. */}
-      <p className={item.formMeaning ? "mt-0.5 text-sm text-muted-foreground" : "mt-2 text-base"}>
-        {meaning(item)}
-      </p>
-
-      {item.otherSenses.length > 0 && (
-        <p className={GLOSS_ASIDE}>
-          <span className={GLOSS_ASIDE_LABEL}>Elsewhere</span> {item.otherSenses.slice(0, 3).join(" · ")}
-        </p>
-      )}
-
-      {item.word?.definition && (
-        <p className="mt-2 border-t border-border pt-2 text-[13px] text-muted-foreground">
-          {item.word.definition}
-        </p>
-      )}
-
-      {token.alts && token.alts.length > 0 && (
-        <p className={GLOSS_ASIDE}>
-          <span className={GLOSS_ASIDE_LABEL}>Could also be</span>{" "}
-          {token.alts.map((alt) => alt.english).join(" · ")}
-        </p>
-      )}
-
-      {/* Rating a word where you met it is the cheapest moment there is to rate it: the
-          sentence is still on screen and you have just decided whether you understood it.
-          The picker states the level once, here, where it is also changed — the word itself
-          is already tinted its own colour in the text behind the card. */}
-      {key && (
-        <MasteryPicker
-          level={level}
-          onPick={(next: Mastery) => setItemMastery(key, next)}
-          onForget={() => forgetItem(key)}
-          label="How well do you know it?"
-          tight
-        />
-      )}
-
-      {item.href && (
-        <Link
-          className="mt-3 inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:underline"
-          to={item.href}
-          onClick={onClose}
-        >
-          Full entry
-          <ArrowRight className="size-3.5" aria-hidden="true" />
-        </Link>
-      )}
-    </div>
-  );
-}
-
-const GLOSS_ASIDE = "mt-1.5 text-[13px] text-muted-foreground";
-const GLOSS_ASIDE_LABEL = "mr-1 text-[11px] tracking-[0.04em] text-faint uppercase";
-
-// The form cut into its morphemes, coloured the way the verb pages colour a paradigm. The
-// screeve is left out on purpose: the token records it as a label ("Aorist 3sg") rather
-// than as the key segmentForm expects, and the wrong key strips preverbs the form has.
-function VerbSegments({ form, item }: { form: string; item: Reading }): ReactNode {
-  const { segments } = segmentForm(form, item.lex);
-  return segments.map((segment, i) => (
-    <span key={i} className={MORPHEME_CLASS[segment.part]}>
-      {segment.text}
-    </span>
-  ));
-}
-
-/** Puts the card below the word, or above it when it would not fit, clamped to the viewport. */
-function place(rect: DOMRect, height: number): { top: number; left: number } {
-  const below = rect.bottom + MARGIN;
-  const fitsBelow = below + height <= window.innerHeight - MARGIN;
-  return {
-    top: fitsBelow ? below : Math.max(MARGIN, rect.top - MARGIN - height),
-    left: Math.min(Math.max(MARGIN, rect.left + rect.width / 2 - CARD_W / 2), window.innerWidth - CARD_W - MARGIN),
-  };
 }
 
 export default StoryReader;

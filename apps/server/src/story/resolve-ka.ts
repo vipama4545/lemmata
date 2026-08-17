@@ -115,10 +115,15 @@ function cellForms(cell: string): string[] {
   return forms;
 }
 
-/** Every index the Georgian matcher needs. Mkhedruli is unicase, so a key is a spelling. */
-export async function buildKaIndexes(): Promise<KaIndexes> {
+/**
+ * Every index the Georgian matcher needs. Mkhedruli is unicase, so a key is a spelling.
+ *
+ * `owner` is passed straight through to the lexicon: whose private entries to see beside the
+ * published ones, and null for the published dictionary alone. See `loadLexicon`.
+ */
+export async function buildKaIndexes(owner: string | null = null): Promise<KaIndexes> {
   const [lexicon, verbFormRows] = await Promise.all([
-    loadLexicon('ka', spelling => spelling),
+    loadLexicon('ka', spelling => spelling, owner),
     db.select().from(schema.kaVerbForms),
   ]);
 

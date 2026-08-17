@@ -25,9 +25,10 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { KNOW_BUTTON } from '../components/StoryReader';
+import { forgetStory, replaceStory } from '../data/stories';
 import { chapterHref } from '../utils/story';
 import { api } from '../api/client';
-import { lang, langName, storyCategories, storySummaries } from '../content/store';
+import { lang, langName, publishedStories, storyCategories } from '../content/store';
 import {
   ADMIN_INPUT_GEO,
   AdminActions,
@@ -93,7 +94,7 @@ function StoryEditor() {
   // bumps the content version, which `useEdit` re-fetches and `App`'s `useContent` repaints
   // from. A memo keyed on the id alone would survive all of that and keep showing the
   // chapter order from before the click.
-  const summary = storySummaries().find(story => story.id === storyId) ?? null;
+  const summary = publishedStories().find(story => story.id === storyId) ?? null;
   const categories = storyCategories();
 
   const [draft, setDraft] = useState<Draft>({
@@ -142,6 +143,9 @@ function StoryEditor() {
 
     if (result) {
       setReport(result.report);
+      // The title and the level are on the story the reader fetched, not only on its summary in
+      // the snapshot, so its cached copy has to go for a rename to show up there.
+      if (storyId) forgetStory(storyId);
       if (!storyId) navigate(`/admin/stories/${encodeURIComponent(result.id)}`, { replace: true });
     }
   };
@@ -149,23 +153,32 @@ function StoryEditor() {
   const relink = async () => {
     if (!storyId) return;
     const result = await run(() => api.admin.relinkStory({ id: storyId }));
-    if (result) setReport(result);
+    if (result) {
+      setReport(result);
+      // Every chapter was re-resolved, so every one the reader has cached is stale.
+      replaceStory(result.story);
+    }
   };
 
   const remove = async () => {
     if (!storyId) return;
     const result = await run(() => api.admin.deleteStory({ id: storyId }));
-    if (result) navigate('/admin/stories', { replace: true });
+    if (result) {
+      forgetStory(storyId);
+      navigate('/admin/stories', { replace: true });
+    }
   };
 
+  // Both renumber what the reader has cached under this story, so the cache is dropped after
+  // either of them.
   const moveChapter = (position: number, direction: 'up' | 'down') => {
     if (!storyId) return;
-    void run(() => api.admin.moveChapter({ storyId, position, direction }));
+    void run(() => api.admin.moveChapter({ storyId, position, direction })).then(() => forgetStory(storyId));
   };
 
   const removeChapter = (position: number) => {
     if (!storyId) return;
-    void run(() => api.admin.deleteChapter({ storyId, position }));
+    void run(() => api.admin.deleteChapter({ storyId, position })).then(() => forgetStory(storyId));
   };
 
   const paragraphCount = draft.text.split('\n').map(line => line.trim()).filter(line => line && line !== '-').length - 1;

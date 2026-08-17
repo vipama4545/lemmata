@@ -7,12 +7,11 @@ import { PERSONS as persons, SCREEVES as screeves, SERIES as series } from '@geo
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MORPHEME_CLASS } from '@/components/ui/morpheme';
-import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, NAV_LINK, Page } from '@/components/ui/page';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import { kaVerbData, lang, morphemeData } from '../content/store';
 import { MORPHEME_PARTS, segmentForm } from '../utils/verbMorphology';
-import { NAV_LINK } from './GrammarTopic';
 
 // The persons, screeves and series are constants rather than anything fetched, so the table
 // they key can be built here at module scope as it always was. The paradigms themselves

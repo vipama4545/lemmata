@@ -15,6 +15,8 @@ import { fromNodeHeaders } from 'better-auth/node';
 import { auth } from './auth.ts';
 import { env, isProduction } from './env.ts';
 import { assertMailConfigured, mailEnabled } from './mail/mailgun.ts';
+import { registerLessonRoutes } from './lesson/routes.ts';
+import { registerQuizRoutes } from './quiz/routes.ts';
 import { router } from './router/index.ts';
 import { registerTtsRoutes } from './tts/routes.ts';
 import { sql } from './db/index.ts';
@@ -108,6 +110,15 @@ await app.register(async instance => {
 // Outside the oRPC plugin, so these keep the ordinary body parser and stay plain URLs a
 // browser can hand to an <audio> element. See tts/routes.ts.
 registerTtsRoutes(app);
+
+// The same, for quizzes — and one route that is not a read: uploading a clip, which registers
+// a parser for `audio/*` inside a scope of its own. See quiz/routes.ts.
+registerQuizRoutes(app);
+
+// And for lessons: the pictures and recordings they carry, and a block of one read aloud. Its
+// upload route registers parsers for `image/*` and `audio/*` in a scope of its own, which is
+// why registering it beside the quiz one does not give either of them the other's.
+registerLessonRoutes(app);
 
 /* ----------------------------------------------------------------- health */
 

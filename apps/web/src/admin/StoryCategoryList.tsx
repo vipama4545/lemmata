@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator } from '@/components/ui/page';
 import { KNOW_BUTTON } from '../components/StoryReader';
 import { api } from '../api/client';
-import { lang, langName, storyCategories, storySummaries } from '../content/store';
+import { lang, langName, publishedStories, storyCategories } from '../content/store';
 import {
   ADMIN_INPUT_GEO,
   AdminActions,
@@ -55,7 +55,7 @@ function stories(count: number): string {
 
 export default function StoryCategoryList() {
   const categories = storyCategories();
-  const storyList = storySummaries();
+  const storyList = publishedStories();
   const { busy, error, run } = useEdit();
 
   /** Which row is open: a category id, 'new' for the blank one, or null for none. */

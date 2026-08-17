@@ -15,123 +15,53 @@
 //   The foreign keys would cascade — dropping a word would silently take its story links with
 //   it — and a story quietly losing a word months later is not a trade worth making for the
 //   convenience of not reading the error.
+//
+// Everything about *writing a story* that is not about being an admin lives in storyWrite.ts,
+// and the small id and recount helpers in shared.ts. Both were carved out of this file when
+// readers gained a library of their own: those routines are the same whoever is calling, and
+// the alternative was a second copy in library.ts that would have drifted from this one the
+// first time either was corrected. What stayed here is what only an admin does.
 
-import { randomUUID } from 'node:crypto';
-import { ORPCError } from '@orpc/server';
 import { and, asc, count, eq, inArray, ne, sql as raw } from 'drizzle-orm';
-import type { RuVerbInput, StoryLinkResult, KaVerbInput, WordInput } from '@georgian/shared/contract';
-import type { Lang } from '@georgian/shared/grammar';
+import type { RuVerbInput, KaVerbInput, WordInput } from '@georgian/shared/contract';
 import { PERSONS, SCREEVES } from '@georgian/shared/grammar/ka';
 import { RU_CLASS_BY_ID, RU_SLOT_KEYS } from '@georgian/shared/grammar/ru';
-import type { RuClassId, RuSlotKey, Story, StoryToken } from '@georgian/shared/types';
+import type { RuClassId, RuSlotKey } from '@georgian/shared/types';
 import { db, schema } from '../db/index.ts';
 import type { Tx } from '../db/index.ts';
-import { analyse, type Tags } from '../story/analyser.ts';
-import { buildIndexes, isHandMade, linkStory, pinKey } from '../story/resolve.ts';
-import type { Pinned } from '../story/resolve.ts';
-import { readLines } from '../story/tokenise.ts';
+import { pinKey } from '../story/resolve.ts';
+import { lessonAdminRoutes } from './adminLesson.ts';
+import { quizAdminRoutes } from './adminQuiz.ts';
 import { adminOnly, os } from './base.ts';
-import { bumpContentVersion, loadStory } from './content.ts';
+import { bumpContentVersion } from './content.ts';
+import {
+  fail,
+  freeId,
+  nextPosition,
+  recountCategories,
+  recountStoryCategories,
+  slug,
+  slugCyrillic,
+} from './shared.ts';
+import {
+  NO_STATS,
+  linkResult,
+  mergeLists,
+  readChapter,
+  readPinned,
+  recountStory,
+  relink,
+  shiftChapter,
+  storyProse,
+  tagsFor,
+  type LinkLists,
+} from './storyWrite.ts';
 
 /* ------------------------------------------------------------------- helpers */
 
 /** The keys grammar.ts pins as real. Anything else in a submitted paradigm is dropped. */
 const SCREEVE_KEYS = new Set<string>(SCREEVES.map(screeve => screeve.key));
 const PERSON_KEYS = new Set<string>(PERSONS.map(person => person.key));
-
-function fail(message: string): never {
-  throw new ORPCError('BAD_REQUEST', { message });
-}
-
-/**
- * A url-safe id from a piece of English.
- *
- * Only ever used where the natural id is Latin — a verb's paradigm ("abandon-vt") and a
- * story's slug. A *word's* id is not made this way; see `saveWord`.
- */
-function slug(text: string, fallback: string): string {
-  const base = text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 60);
-  return base || fallback;
-}
-
-/**
- * Cyrillic to Latin, for minting a Russian verb id.
- *
- * `slug` above strips everything that is not a–z, which would reduce делать to nothing at
- * all — so Cyrillic is transliterated first rather than discarded. The table is the plain
- * BGN-ish one and its output is never read by anybody; what matters is only that it is
- * *stable*, because an id, once minted, is cited by study records and story tokens.
- */
-const CYRILLIC: Record<string, string> = {
-  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i', й: 'y',
-  к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f',
-  х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya',
-};
-
-function slugCyrillic(text: string): string {
-  return [...text.toLowerCase()].map(letter => CYRILLIC[letter] ?? letter).join('');
-}
-
-/**
- * Ids a story may not take, because the reader's routes spend them on something else.
- *
- * `/stories/category/folk-tales` is a shelf, so a story whose slug came out as "category"
- * would own a URL that already means something — and would lose, since a static segment
- * outranks `:storyId`. Treated as "taken" rather than refused: the story is called whatever
- * it is called, and `category-2` is a better answer than an error about routing.
- */
-const RESERVED_STORY_IDS = new Set(['category']);
-
-/** `${base}`, then `${base}-2`, until nothing has it. */
-async function freeId(tx: Tx, table: 'verbs' | 'stories' | 'storyCategories', base: string): Promise<string> {
-  const target =
-    table === 'verbs' ? schema.kaVerbs : table === 'stories' ? schema.stories : schema.storyCategories;
-  for (let n = 1; n < 500; n += 1) {
-    const id = n === 1 ? base : `${base}-${n}`;
-    if (table === 'stories' && RESERVED_STORY_IDS.has(id)) continue;
-    const [taken] = await tx.select({ id: target.id }).from(target).where(eq(target.id, id)).limit(1);
-    if (!taken) return id;
-  }
-  return `${base}-${randomUUID().slice(0, 8)}`;
-}
-
-/** The next free position, so a new row lands at the end of the list rather than at 0. */
-async function nextPosition(
-  tx: Tx,
-  table: typeof schema.words | typeof schema.kaVerbs | typeof schema.ruVerbs,
-): Promise<number> {
-  const [row] = await tx.select({ max: raw<number | null>`max(${table.position})` }).from(table);
-  return (row?.max ?? -1) + 1;
-}
-
-/**
- * Recounts the categories named, so the grid's counts stay true.
- *
- * Both the old and the new category have to be recounted when a word moves between them,
- * which is why this takes a list rather than one id.
- */
-async function recountCategories(tx: Tx, categoryIds: string[]): Promise<void> {
-  const ids = [...new Set(categoryIds.filter(Boolean))];
-  if (!ids.length) return;
-
-  const counts = await tx
-    .select({ categoryId: schema.words.categoryId, total: count() })
-    .from(schema.words)
-    .where(inArray(schema.words.categoryId, ids))
-    .groupBy(schema.words.categoryId);
-
-  const byId = new Map(counts.map(row => [row.categoryId, Number(row.total)]));
-  for (const id of ids) {
-    await tx
-      .update(schema.categories)
-      .set({ wordCount: byId.get(id) ?? 0 })
-      .where(eq(schema.categories.id, id));
-  }
-}
 
 /** Recounts a verb group, for the same reason. */
 async function recountVerbGroups(tx: Tx, groupIds: (string | null)[]): Promise<void> {
@@ -153,6 +83,32 @@ async function recountVerbGroups(tx: Tx, groupIds: (string | null)[]): Promise<v
   }
 }
 
+/**
+ * A story the dictionary publishes, by id, and a refusal for one that belongs to a reader.
+ *
+ * Every story procedure below goes through it. Nothing in the admin screens can *reach* a
+ * private story: the snapshot they list from has none in it, and the reader hands an admin null
+ * for one that is not theirs. So this guards against a request typed by hand rather than
+ * against anything the app can do. It is worth having anyway. Admin means "may edit the
+ * dictionary", and somebody's own notebook is not the dictionary.
+ */
+async function publicStory(tx: Tx, id: string) {
+  const [story] = await tx
+    .select({
+      id: schema.stories.id,
+      lang: schema.stories.lang,
+      categoryId: schema.stories.categoryId,
+      ownerId: schema.stories.ownerId,
+    })
+    .from(schema.stories)
+    .where(eq(schema.stories.id, id))
+    .limit(1);
+
+  if (!story) fail('There is no such story.');
+  if (story.ownerId) fail('That story belongs to a reader\u2019s own library, and is theirs to edit.');
+  return story;
+}
+
 /* ------------------------------------------------------------------- lexicon */
 
 /**
@@ -165,11 +121,13 @@ async function recountVerbGroups(tx: Tx, groupIds: (string | null)[]): Promise<v
  */
 async function writeWord(tx: Tx, input: WordInput): Promise<string> {
   const [category] = await tx
-    .select({ id: schema.categories.id, name: schema.categories.name })
+    .select({ id: schema.categories.id, name: schema.categories.name, ownerId: schema.categories.ownerId })
     .from(schema.categories)
     .where(eq(schema.categories.id, input.categoryId))
     .limit(1);
-  if (!category) fail(`There is no category "${input.categoryId}".`);
+  // A reader's own shelf is not a shelf of the dictionary's, and neither is anything on it.
+  // See `publicStory` for why these guards exist at all when no screen can reach one.
+  if (!category || category.ownerId) fail(`There is no category "${input.categoryId}".`);
 
   if (input.verbId) {
     const [verb] = await tx
@@ -187,14 +145,19 @@ async function writeWord(tx: Tx, input: WordInput): Promise<string> {
   const existing = input.id
     ? (
         await tx
-          .select({ id: schema.words.id, position: schema.words.position, categoryId: schema.words.categoryId })
+          .select({
+            id: schema.words.id,
+            position: schema.words.position,
+            categoryId: schema.words.categoryId,
+            ownerId: schema.words.ownerId,
+          })
           .from(schema.words)
           .where(eq(schema.words.id, input.id))
           .limit(1)
       )[0]
     : undefined;
 
-  if (input.id && !existing) fail(`There is no word "${input.id}".`);
+  if (input.id && (!existing || existing.ownerId)) fail(`There is no word "${input.id}".`);
 
   // A new lemma gets `w:<headword>`, which is what scripts/lexicon.json has always minted
   // for a hand-written entry — so a word added here and one added there are indistinguishable
@@ -372,323 +335,6 @@ async function writeKaVerb(tx: Tx, input: KaVerbInput): Promise<string> {
 
 /* -------------------------------------------------------------------- stories */
 
-/**
- * Every hand-made token in one chapter, keyed so a relink can put them back.
- *
- * See `story_tokens.via`: a person's decision is a token marked `name` or `override`, and
- * everything else is the resolver's own working. This reads the first kind out before the
- * rows are replaced.
- *
- * Scoped to a chapter because a relink is: the key is `paragraph:position:form`, which two
- * chapters of one story collide on constantly — every chapter has a paragraph 0.
- */
-async function readPinned(tx: Tx, storyId: string, chapter: number): Promise<Pinned> {
-  const rows = await tx
-    .select()
-    .from(schema.storyTokens)
-    .where(and(eq(schema.storyTokens.storyId, storyId), eq(schema.storyTokens.chapter, chapter)));
-  const pinned: Pinned = new Map();
-
-  for (const row of rows) {
-    if (!isHandMade(row.via)) continue;
-    const token: StoryToken = { form: row.form, via: row.via };
-    if (row.wordId) token.word = row.wordId;
-    if (row.sense != null) token.sense = row.sense;
-    if (row.gram) token.gram = row.gram;
-    if (row.name) token.name = row.name;
-    // A hand-made link may still be flagged as a guess, and that flag is as much a decision
-    // as the link itself — so it survives a relink alongside it.
-    if (row.needsCheck) token.check = true;
-    if (row.alts.length) token.alts = row.alts;
-    if (row.comment) token.comment = row.comment;
-    pinned.set(pinKey(row.paragraph, row.position, row.form), token);
-  }
-
-  return pinned;
-}
-
-/** One chapter's prose, as everything that links or relinks needs it. */
-interface Chapter {
-  position: number;
-  paragraphs: string[];
-}
-
-/**
- * A story's language and every chapter's prose, read before any transaction is opened, so
- * the tagger can be asked about it. Fails the request if there is no such story, which is
- * the same check the caller's own transaction repeats against a consistent snapshot.
- */
-async function storyProse(storyId: string): Promise<{ lang: Lang; chapters: Chapter[] }> {
-  const [story] = await db
-    .select({ lang: schema.stories.lang })
-    .from(schema.stories)
-    .where(eq(schema.stories.id, storyId))
-    .limit(1);
-  if (!story) fail('There is no such story.');
-
-  const chapters = await db
-    .select({ position: schema.storyChapters.position, paragraphs: schema.storyChapters.paragraphs })
-    .from(schema.storyChapters)
-    .where(eq(schema.storyChapters.storyId, storyId))
-    .orderBy(asc(schema.storyChapters.position));
-
-  return { lang: story.lang, chapters };
-}
-
-/**
- * What the tagger makes of a story's words, or null when there is no tagger.
- *
- * Always called *before* `db.transaction`, never inside one. It is an HTTP round trip to a
- * Python process that holds a gigabyte of models, and a transaction left open across it
- * would turn one admin's button press into a lock held on the stories table for as long as
- * a container somewhere else takes to answer. Nothing here needs to be atomic with the
- * write: the tags describe the prose, and if the prose changes underneath them linkStory
- * notices the token counts disagree and links without them.
- */
-async function tagsFor(lang: Lang, paragraphs: string[]): Promise<Tags | null> {
-  return analyse(lang, paragraphs);
-}
-
-/**
- * A pasted text and its translation, cut into paragraphs and checked against each other.
- *
- * The check is the reason this is one function rather than two calls to `readLines`: the
- * split view pairs the two by position and has no other way to tell which English paragraph
- * belongs to which, so a translation of a different length is not a translation of this
- * text. Refusing here is the only place that can be caught — by the time it is rows, the
- * two are separate columns and nothing looks at them together again.
- */
-function readChapter(
-  titled: boolean,
-  text: string,
-  translation: string,
-): { title: string; titleEnglish: string; paragraphs: string[]; translation: string[] } {
-  const native = readLines(text, titled);
-  const english = translation.trim() ? readLines(translation, titled) : null;
-
-  if (english && english.paragraphs.length !== native.paragraphs.length) {
-    fail(
-      `The translation has ${english.paragraphs.length} paragraph(s) and the text has ` +
-        `${native.paragraphs.length}. The side-by-side view pairs them by position, so they ` +
-        'would drift out of step.',
-    );
-  }
-
-  return {
-    title: native.title,
-    titleEnglish: english?.title ?? '',
-    paragraphs: native.paragraphs,
-    translation: english?.paragraphs ?? [],
-  };
-}
-
-/**
- * Moves a chapter to a position nothing occupies, tokens and all.
- *
- * The tokens move with it in the same breath, and that pairing is the reason there is no
- * foreign key between the two tables — see the note under `storyTokens` in schema.ts. Every
- * caller must leave `to` free: `(story_id, position)` is a primary key, and the update would
- * otherwise fail rather than overwrite.
- */
-async function shiftChapter(tx: Tx, storyId: string, from: number, to: number): Promise<void> {
-  await tx
-    .update(schema.storyChapters)
-    .set({ position: to })
-    .where(and(eq(schema.storyChapters.storyId, storyId), eq(schema.storyChapters.position, from)));
-  await tx
-    .update(schema.storyTokens)
-    .set({ chapter: to })
-    .where(and(eq(schema.storyTokens.storyId, storyId), eq(schema.storyTokens.chapter, from)));
-}
-
-/**
- * The counts of a text with nothing in it.
- *
- * Written on insert rather than left as `{}`, because a story or chapter with no prose yet is
- * a state the screens actually reach — creating a story and uploading its chapters after is
- * the whole point of the two being separate — and every reader of `stats` would otherwise get
- * `undefined` where it expects a number. The index card would say "undefined words" and size
- * its progress bar to `NaN%`.
- */
-const NO_STATS = {
-  tokens: 0,
-  distinctForms: 0,
-  covered: 0,
-  coverage: 0,
-  names: 0,
-  unresolved: 0,
-  flagged: 0,
-};
-
-/** The two lists a link report hands back, which several signatures below pass around. */
-interface LinkLists {
-  unresolved: { form: string; count: number }[];
-  flagged: { form: string; count: number }[];
-}
-
-/** Merges the reports of several chapters into one, commonest spelling first. */
-function mergeLists(reports: LinkLists[]): LinkLists {
-  const gather = (pick: (report: LinkLists) => { form: string; count: number }[]) => {
-    const totals = new Map<string, number>();
-    for (const report of reports) {
-      for (const entry of pick(report)) totals.set(entry.form, (totals.get(entry.form) ?? 0) + entry.count);
-    }
-    return [...totals]
-      .map(([form, count]) => ({ form, count }))
-      .sort((a, b) => b.count - a.count || a.form.localeCompare(b.form));
-  };
-
-  return { unresolved: gather(report => report.unresolved), flagged: gather(report => report.flagged) };
-}
-
-/**
- * Re-resolves one chapter from the lexicon as it now stands, keeping every hand-made token,
- * and writes the result. The caller supplies the paragraphs so this serves both "the text
- * changed" and "the dictionary changed", and the tags because fetching them is not this
- * function's job to do inside a transaction — see `tagsFor`.
- *
- * A chapter at a time, and only the chapter named: relinking chapter 3 must not touch the
- * tokens of chapter 2, and the delete below is scoped accordingly. The story's own stats are
- * not written here — they are every chapter's together, so `recountStory` does it after.
- */
-async function relink(
-  tx: Tx,
-  lang: Lang,
-  storyId: string,
-  chapter: number,
-  paragraphs: string[],
-  pinned: Pinned,
-  tags: Tags | null,
-): Promise<LinkLists> {
-  const indexes = await buildIndexes(lang);
-  const report = linkStory(lang, paragraphs, indexes, pinned, tags);
-
-  // A pin may cite a word that has since been deleted. Better a token that falls back to
-  // plain text than a write that fails on a foreign key and loses the whole edit.
-  const known = new Set(indexes.byId.keys());
-
-  await tx
-    .delete(schema.storyTokens)
-    .where(and(eq(schema.storyTokens.storyId, storyId), eq(schema.storyTokens.chapter, chapter)));
-
-  if (report.tokens.length) {
-    const rows = report.tokens.map(token => ({
-      storyId,
-      chapter,
-      paragraph: token.paragraph,
-      position: token.position,
-      form: token.form,
-      wordId: token.wordId && known.has(token.wordId) ? token.wordId : null,
-      sense: token.sense,
-      gram: token.gram,
-      name: token.name,
-      via: token.via,
-      needsCheck: token.needsCheck,
-      alts: token.alts,
-      comment: token.comment,
-    }));
-    // postgres.js binds one parameter per column per row and a statement may carry 65,535 of
-    // them, so a long story goes up in batches, as the seed does.
-    for (let index = 0; index < rows.length; index += 2_000) {
-      await tx.insert(schema.storyTokens).values(rows.slice(index, index + 2_000));
-    }
-  }
-
-  await tx
-    .update(schema.storyChapters)
-    .set({ stats: report.stats })
-    .where(and(eq(schema.storyChapters.storyId, storyId), eq(schema.storyChapters.position, chapter)));
-
-  return { unresolved: report.unresolved, flagged: report.flagged };
-}
-
-/** The story as the reader wants it, opened at one chapter, plus what linking it turned up. */
-async function linkResult(storyId: string, chapter: number, extra: LinkLists): Promise<StoryLinkResult> {
-  const story = await loadStory(storyId, chapter);
-  if (!story) fail('That story disappeared while it was being saved.');
-  return { story: story as Story, ...extra };
-}
-
-/**
- * Recounts the story from its tokens, and every chapter with it.
- *
- * Two reasons this reads the table rather than adding up what a linker just reported. One is
- * that pinning a token is not a relink — the other 975 have not changed and re-deriving them
- * would be a second of work to produce identical rows — so there is no report to add up.
- * The other is `distinctForms`, which does not sum: two chapters share spellings constantly,
- * and adding their counts would claim a story has more distinct words than it has words.
- */
-async function recountStory(tx: Tx, storyId: string): Promise<void> {
-  const rows = await tx
-    .select({
-      chapter: schema.storyTokens.chapter,
-      form: schema.storyTokens.form,
-      wordId: schema.storyTokens.wordId,
-      name: schema.storyTokens.name,
-      needsCheck: schema.storyTokens.needsCheck,
-    })
-    .from(schema.storyTokens)
-    .where(eq(schema.storyTokens.storyId, storyId));
-
-  const tally = (of: typeof rows) => {
-    const names = of.filter(row => row.name).length;
-    const linked = of.filter(row => row.wordId).length;
-    const covered = names + linked;
-    const total = of.length;
-    return {
-      tokens: total,
-      distinctForms: new Set(of.map(row => row.form)).size,
-      covered,
-      coverage: total ? Number(((covered / total) * 100).toFixed(1)) : 0,
-      names,
-      unresolved: total - covered,
-      flagged: of.filter(row => row.needsCheck).length,
-    };
-  };
-
-  await tx.update(schema.stories).set({ stats: tally(rows) }).where(eq(schema.stories.id, storyId));
-
-  // Every chapter, including the ones with no tokens at all: a chapter emptied by an edit
-  // has to have its stats cleared, and it has no rows here to be found by.
-  const chapters = await tx
-    .select({ position: schema.storyChapters.position })
-    .from(schema.storyChapters)
-    .where(eq(schema.storyChapters.storyId, storyId));
-
-  for (const chapter of chapters) {
-    await tx
-      .update(schema.storyChapters)
-      .set({ stats: tally(rows.filter(row => row.chapter === chapter.position)) })
-      .where(
-        and(eq(schema.storyChapters.storyId, storyId), eq(schema.storyChapters.position, chapter.position)),
-      );
-  }
-}
-
-/**
- * Recounts the shelves named, so the list's counts stay true. The same job
- * `recountCategories` does for words, and for the same reason: both the shelf a story left
- * and the one it joined have to be counted again.
- */
-async function recountStoryCategories(tx: Tx, categoryIds: (string | null)[]): Promise<void> {
-  const ids = [...new Set(categoryIds.filter((id): id is string => Boolean(id)))];
-  if (!ids.length) return;
-
-  const counts = await tx
-    .select({ categoryId: schema.stories.categoryId, total: count() })
-    .from(schema.stories)
-    .where(inArray(schema.stories.categoryId, ids))
-    .groupBy(schema.stories.categoryId);
-
-  const byId = new Map(counts.map(row => [row.categoryId, Number(row.total)]));
-  for (const id of ids) {
-    await tx
-      .update(schema.storyCategories)
-      .set({ storyCount: byId.get(id) ?? 0 })
-      .where(eq(schema.storyCategories.id, id));
-  }
-}
-
 /* --------------------------------------------------------------------- users */
 
 /**
@@ -813,6 +459,13 @@ async function writeRuVerb(tx: Tx, input: RuVerbInput): Promise<string> {
 /* -------------------------------------------------------------------- routes */
 
 export const adminRouter = os.admin.router({
+  // The quiz and lesson procedures, written in adminQuiz.ts and adminLesson.ts and part of this
+  // namespace all the same. A division of the source and not of the API: this file was already
+  // sixty kilobytes of lexicon, paradigms and story linking before either existed, and nothing
+  // about the contract or the client can tell where the split falls.
+  ...quizAdminRoutes,
+  ...lessonAdminRoutes,
+
   /* ---- the lexicon ---- */
 
   saveWord: os.admin.saveWord.use(adminOnly).handler(async ({ input }) =>
@@ -830,11 +483,12 @@ export const adminRouter = os.admin.router({
           lang: schema.words.lang,
           headword: schema.words.headword,
           categoryId: schema.words.categoryId,
+          ownerId: schema.words.ownerId,
         })
         .from(schema.words)
         .where(eq(schema.words.id, input.id))
         .limit(1);
-      if (!word) fail('There is no such word.');
+      if (!word || word.ownerId) fail('There is no such word.');
 
       // The foreign key is ON DELETE SET NULL, so this would succeed and quietly unlink every
       // occurrence. Saying which stories, and how many, is what lets somebody decide.
@@ -939,17 +593,7 @@ export const adminRouter = os.admin.router({
     const tags = first ? await tagsFor(input.lang, first.paragraphs) : null;
 
     const result = await db.transaction(async tx => {
-      const existing = input.id
-        ? (
-            await tx
-              .select({ id: schema.stories.id, lang: schema.stories.lang, categoryId: schema.stories.categoryId })
-              .from(schema.stories)
-              .where(eq(schema.stories.id, input.id))
-              .limit(1)
-          )[0]
-        : undefined;
-
-      if (input.id && !existing) fail('There is no such story.');
+      const existing = input.id ? await publicStory(tx, input.id) : undefined;
 
       // A story does not change language. Refusing is not pedantry: the tokens are already
       // cut by one language's rules and linked against one language's lexicon, and an edit
@@ -1035,12 +679,7 @@ export const adminRouter = os.admin.router({
 
   deleteStory: os.admin.deleteStory.use(adminOnly).handler(async ({ input }) =>
     db.transaction(async tx => {
-      const [story] = await tx
-        .select({ id: schema.stories.id, lang: schema.stories.lang, categoryId: schema.stories.categoryId })
-        .from(schema.stories)
-        .where(eq(schema.stories.id, input.id))
-        .limit(1);
-      if (!story) fail('There is no such story.');
+      const story = await publicStory(tx, input.id);
 
       // The chapters and their tokens cascade, and here that is right: they are this story's
       // and nothing else points at them.
@@ -1052,6 +691,10 @@ export const adminRouter = os.admin.router({
 
   relinkStory: os.admin.relinkStory.use(adminOnly).handler(async ({ input }) => {
     const prose = await storyProse(input.id);
+    // Before the tagger sees a line of it. The transaction below refuses too (see
+    // `publicStory`), but by then somebody's private text would already have been posted to a
+    // language model in another container.
+    if (prose.ownerId) fail('That story belongs to a reader\u2019s own library, and is theirs to edit.');
     // One call to the tagger per chapter, and all of them before the transaction opens. See
     // `tagsFor`: a transaction held across an HTTP round trip to the analyser would lock the
     // stories table for as long as a container somewhere else takes to answer, and a book of
@@ -1059,12 +702,7 @@ export const adminRouter = os.admin.router({
     const tags = await Promise.all(prose.chapters.map(chapter => tagsFor(prose.lang, chapter.paragraphs)));
 
     const report = await db.transaction(async tx => {
-      const [story] = await tx
-        .select({ id: schema.stories.id, lang: schema.stories.lang })
-        .from(schema.stories)
-        .where(eq(schema.stories.id, input.id))
-        .limit(1);
-      if (!story) fail('There is no such story.');
+      const story = await publicStory(tx, input.id);
 
       const reports: LinkLists[] = [];
       for (const [index, chapter] of prose.chapters.entries()) {
@@ -1086,18 +724,14 @@ export const adminRouter = os.admin.router({
 
   saveChapter: os.admin.saveChapter.use(adminOnly).handler(async ({ input }) => {
     const chapter = readChapter(input.titled, input.text, input.translation);
-    if (!chapter.paragraphs.length) fail('There is no text — a title on its own is not a chapter.');
+    if (!chapter.paragraphs.length) fail('There is no text: a title on its own is not a chapter.');
 
     const story = await storyProse(input.storyId);
+    if (story.ownerId) fail('That story belongs to a reader\u2019s own library, and is theirs to edit.');
     const tags = await tagsFor(story.lang, chapter.paragraphs);
 
     const result = await db.transaction(async tx => {
-      const [row] = await tx
-        .select({ id: schema.stories.id, lang: schema.stories.lang })
-        .from(schema.stories)
-        .where(eq(schema.stories.id, input.storyId))
-        .limit(1);
-      if (!row) fail('There is no such story.');
+      const row = await publicStory(tx, input.storyId);
 
       const existing = await tx
         .select({ position: schema.storyChapters.position })
@@ -1154,12 +788,7 @@ export const adminRouter = os.admin.router({
 
   deleteChapter: os.admin.deleteChapter.use(adminOnly).handler(async ({ input }) =>
     db.transaction(async tx => {
-      const [story] = await tx
-        .select({ id: schema.stories.id, lang: schema.stories.lang })
-        .from(schema.stories)
-        .where(eq(schema.stories.id, input.storyId))
-        .limit(1);
-      if (!story) fail('There is no such story.');
+      const story = await publicStory(tx, input.storyId);
 
       const chapters = await tx
         .select({ position: schema.storyChapters.position })
@@ -1206,12 +835,7 @@ export const adminRouter = os.admin.router({
 
   moveChapter: os.admin.moveChapter.use(adminOnly).handler(async ({ input }) =>
     db.transaction(async tx => {
-      const [story] = await tx
-        .select({ id: schema.stories.id, lang: schema.stories.lang })
-        .from(schema.stories)
-        .where(eq(schema.stories.id, input.storyId))
-        .limit(1);
-      if (!story) fail('There is no such story.');
+      const story = await publicStory(tx, input.storyId);
 
       const chapters = await tx
         .select({ position: schema.storyChapters.position })
@@ -1302,12 +926,7 @@ export const adminRouter = os.admin.router({
 
   setStoryToken: os.admin.setStoryToken.use(adminOnly).handler(async ({ input }) => {
     await db.transaction(async tx => {
-      const [story] = await tx
-        .select({ id: schema.stories.id, lang: schema.stories.lang })
-        .from(schema.stories)
-        .where(eq(schema.stories.id, input.storyId))
-        .limit(1);
-      if (!story) fail('There is no such story.');
+      const story = await publicStory(tx, input.storyId);
 
       const [token] = await tx
         .select({ form: schema.storyTokens.form })
@@ -1335,11 +954,17 @@ export const adminRouter = os.admin.router({
 
       if (input.wordId) {
         const [word] = await tx
-          .select({ id: schema.words.id, lang: schema.words.lang })
+          .select({ id: schema.words.id, lang: schema.words.lang, ownerId: schema.words.ownerId })
           .from(schema.words)
           .where(eq(schema.words.id, input.wordId))
           .limit(1);
         if (!word) fail('There is no such entry in the dictionary.');
+        // Somebody's private entry, which a published story must never cite. The picker on this
+        // screen cannot offer one, since the snapshot it searches has none in it, so this
+        // guards against a hand-made request. A published token pointing at a private word
+        // would show one person's note to every reader, and would vanish from the page the day
+        // they deleted it.
+        if (word.ownerId) fail('There is no such entry in the dictionary.');
         // Reachable only from a picker searching the wrong snapshot, but the failure it
         // prevents is a token in a Russian story pointing at a Georgian headword, which
         // nothing downstream would notice and no reader could make sense of.
@@ -1396,6 +1021,7 @@ export const adminRouter = os.admin.router({
 
   resetStoryToken: os.admin.resetStoryToken.use(adminOnly).handler(async ({ input }) => {
     const prose = await storyProse(input.storyId);
+    if (prose.ownerId) fail('That story belongs to a reader\u2019s own library, and is theirs to edit.');
     // Undoing a pin "everywhere" reaches every chapter, so every chapter is relinked and
     // every chapter needs its tags. Otherwise only the one the word stands in.
     const touching = input.everywhere
@@ -1404,12 +1030,7 @@ export const adminRouter = os.admin.router({
     const tags = await Promise.all(touching.map(chapter => tagsFor(prose.lang, chapter.paragraphs)));
 
     const report = await db.transaction(async tx => {
-      const [story] = await tx
-        .select({ id: schema.stories.id, lang: schema.stories.lang })
-        .from(schema.stories)
-        .where(eq(schema.stories.id, input.storyId))
-        .limit(1);
-      if (!story) fail('There is no such story.');
+      const story = await publicStory(tx, input.storyId);
 
       // Drop the pin, then relink. The token has to go back through the resolver to find out
       // what it would have been without the decision, and there is no cheaper way to know

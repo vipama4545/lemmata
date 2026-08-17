@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/select';
 import { KNOW_BUTTON } from '../components/StoryReader';
 import { api } from '../api/client';
-import { kaVerbData, lang, wordData } from '../content/store';
+import { kaVerbData, lang, publishedWordData } from '../content/store';
 import {
   ADMIN_INPUT_GEO,
   ADMIN_INPUT_NARROW,
@@ -123,7 +123,7 @@ function draftFrom(word: Word | null, fallbackCategory: string): Draft {
 function WordEditor() {
   const { wordId } = useParams<{ wordId: string }>();
   const navigate = useNavigate();
-  const { categories, words } = wordData();
+  const { categories, words } = publishedWordData();
   const { busy, error, run } = useEdit();
 
   const existing = useMemo(() => words.find(word => word.id === wordId) ?? null, [words, wordId]);

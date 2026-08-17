@@ -79,6 +79,11 @@ export interface Category {
   /** The category's name in the language being learned. */
   nameNative: string;
   wordCount: number;
+  /**
+   * Set on a shelf of your own, absent on the dictionary's. See `Word.mine` for why it is
+   * optional rather than a boolean that is always present.
+   */
+  mine?: boolean;
 }
 
 export interface Word {
@@ -129,6 +134,15 @@ export interface Word {
   note?: string;
   /** Russian nominal grammar. Absent for every Georgian entry and for Russian verbs. */
   ru?: RuWordGrammar;
+  /**
+   * An entry of your own rather than the dictionary's: yours to edit, and nobody else's to see.
+   *
+   * Optional, and absent rather than false on a published entry. The snapshot is cached in the
+   * browser between visits, so a field that had to be present on all 30,000 published words
+   * would have made every cached copy wrong the day it was added. Absent reads as "not mine"
+   * everywhere, including in a browser holding a snapshot from before this existed.
+   */
+  mine?: boolean;
 }
 
 export interface WordData {
@@ -602,6 +616,14 @@ export interface Story {
    * the same tokeniser src/utils/story.ts re-runs to render them.
    */
   tokens: StoryToken[][];
+  /**
+   * A story of your own rather than one the dictionary publishes.
+   *
+   * It decides whether the Edit button is drawn, and nothing more. The server does not trust
+   * it: `library.saveStory` reads the owner off the row every time. See `Word.mine` for why it
+   * is optional rather than a boolean that is always present.
+   */
+  mine?: boolean;
 }
 
 /**
@@ -652,6 +674,303 @@ export interface StoryFile {
   category: string;
   stats: StoryStats;
   chapters: StoryFileChapter[];
+}
+
+/* ----------------------------------------------------------------- quizzes */
+
+/**
+ * What answering a question looks like. Three, and the note on `quiz_questions` in schema.ts
+ * says why three covers the six things a question was wanted for.
+ *
+ *   'choice' — pick one of the options, or several of them.
+ *   'order'  — take the right words out of a bank and put them in the right order.
+ *   'type'   — write it out.
+ */
+export type QuizKind = 'choice' | 'order' | 'type';
+
+export const QUIZ_KINDS: readonly QuizKind[] = ['choice', 'order', 'type'];
+
+export function isQuizKind(value: string): value is QuizKind {
+  return value === 'choice' || value === 'order' || value === 'type';
+}
+
+/** A shelf to file quizzes on. The same shape as a `StoryCategory`, and hand-made as one is. */
+export interface QuizCategory {
+  id: string;
+  lang: Lang;
+  name: string;
+  /** The category's name in the language being learned. Often empty. */
+  nameNative: string;
+  note: string;
+  quizCount: number;
+}
+
+/**
+ * Where a question's sound comes from, if it has any.
+ *
+ * A shape rather than two loose fields because the same choice is offered in three places —
+ * a question's prompt, each of its options, and nothing else in the app — and writing it once
+ * means the player has one function to point at all of them.
+ */
+export interface QuizAudio {
+  /**
+   * What a voice should read out. Empty for a question with nothing to hear.
+   *
+   * Not the same text as the prompt, necessarily: "choose the word you heard" is a `say` with
+   * an empty `promptNative` beside it, which is the whole of how that question is built.
+   */
+  say: string;
+  /** An uploaded clip, which is played instead of synthesising `say`. Null for most. */
+  clipId: string | null;
+}
+
+/**
+ * One option of a `choice` question, or one word of an `order` question's bank.
+ *
+ * `correct` means something slightly different in each and the difference is the point — for
+ * a choice it marks an answer, and for an ordering it marks a word that belongs *and* fixes
+ * where it belongs, since the correct entries are in order among themselves. See the note on
+ * the `quiz_choices` table.
+ */
+export interface QuizChoice {
+  /** 0-based, and its place in the answer for an `order` question. */
+  position: number;
+  text: string;
+  correct: boolean;
+  audio: QuizAudio;
+}
+
+export interface QuizQuestion {
+  /** 0-based. The runner shows this plus one. */
+  position: number;
+  kind: QuizKind;
+  /** The instruction, in English. */
+  prompt: string;
+  /** The material being asked about, in the language being learned. Set larger on screen. */
+  promptNative: string;
+  audio: QuizAudio;
+  /** More than one option is right, and all of them are wanted. `choice` only. */
+  multiple: boolean;
+  /** Every spelling that counts. `type` only, and empty for the other two. */
+  answers: string[];
+  hint: string;
+  /** Shown after answering, right or wrong. Where a quiz does its teaching. */
+  explanation: string;
+  /** The options, or the word bank. Empty for a `type` question. */
+  choices: QuizChoice[];
+}
+
+/**
+ * A quiz with its questions — what the runner is handed, and the only payload that carries
+ * the answers.
+ *
+ * The answers are in it, and that is deliberate rather than an oversight to be fixed later.
+ * A question is marked the instant it is answered, with the explanation underneath, and that
+ * is what makes a quiz teach rather than test; doing it over the network would put a round
+ * trip between an answer and the reaction to it. The same rule the study deck already lives
+ * by — the browser scores its own cards — and the recorded result is still the server's own
+ * work: `quiz.finish` re-marks the submitted answers against these same rows rather than
+ * believing a score it is told. See `mark()` in quiz.ts.
+ */
+export interface Quiz {
+  id: string;
+  lang: Lang;
+  title: string;
+  titleNative: string;
+  description: string;
+  level: string;
+  /** Null when the quiz has not been filed on any shelf. */
+  categoryId: string | null;
+  /** That category's English name, for a card that would otherwise have to look it up. */
+  category: string;
+  shuffleQuestions: boolean;
+  shuffleOptions: boolean;
+  /**
+   * How many of `questions` one run asks, drawn at random, or 0 for all of them.
+   *
+   * The whole pool is still sent. The draw happens in the runner, where `shuffleQuestions` and
+   * `shuffleOptions` already happen, and for the same reason: a run is a thing the browser
+   * deals, and moving one of the three to the server would mean two places decide what a run
+   * looks like. See `quizzes.ask_count`.
+   */
+  askCount: number;
+  /** The share of the questions a run has to get right to pass, 0–100. */
+  passMark: number;
+  note: string;
+  questions: QuizQuestion[];
+}
+
+/**
+ * A quiz as the index knows it: enough to draw a card and decide whether to open it.
+ *
+ * No questions, for the reason a `StorySummary` carries no prose — the index would otherwise
+ * download every answer of every quiz to show a list of titles. `kinds` and `hasAudio` are
+ * summarised up from the questions here so a card can say "listening, 8 questions" without
+ * any of them crossing the wire.
+ */
+export interface QuizSummary {
+  id: string;
+  lang: Lang;
+  title: string;
+  titleNative: string;
+  description: string;
+  level: string;
+  categoryId: string | null;
+  category: string;
+  passMark: number;
+  questionCount: number;
+  /** Which kinds of question it holds, in a fixed order. Empty for a quiz not written yet. */
+  kinds: QuizKind[];
+  /** Whether anything in it is meant to be heard, which is what the index badges. */
+  hasAudio: boolean;
+}
+
+/**
+ * One question's answer, in the one shape all three kinds fit.
+ *
+ * A flat record rather than a union of three, because this is what crosses the wire when a run
+ * is submitted and a union costs a discriminant on every entry to say something the question's
+ * own `kind` already says. Which field carries the answer follows from that kind:
+ *
+ *   'choice' — `picked`, as a set. The order they were clicked in means nothing.
+ *   'order'  — `picked`, as a sequence. The order is the entire answer.
+ *   'type'   — `text`, compared forgivingly. See `normalise` in quiz.ts.
+ *
+ * The unused field is empty rather than absent, so nothing has to check for undefined.
+ */
+export interface QuizAnswer {
+  /** Option positions, in the order they were placed for an `order` question. */
+  picked: number[];
+  /** What was typed, for a `type` question. */
+  text: string;
+}
+
+/**
+ * How one person last got on with one quiz.
+ *
+ * Only ever the last run. Re-taking replaces it, including replacing a pass with a fail; see
+ * the note on the `quiz_results` table for why that is the useful thing to keep rather than
+ * a best-ever that can only go up.
+ */
+export interface QuizResult {
+  quizId: string;
+  passed: boolean;
+  score: number;
+  total: number;
+  /** Epoch ms, as every instant that crosses this wire is. See `StudyCardWire`. */
+  finishedAt: number;
+}
+
+/* ----------------------------------------------------------------- lessons */
+
+/**
+ * Which of the two reading sections a lesson belongs to.
+ *
+ * They are the same thing wearing two labels, and that is the point rather than a compromise:
+ * a lesson and a grammar topic are both a title, a shelf and a body of markup, and building
+ * them out of one table means a table written for a lesson works in a grammar topic, an
+ * embedded quiz works in both, and there is one editor to learn rather than two.
+ *
+ * What the section actually decides is which sidebar link a lesson appears under and which of
+ * the two index pages lists it. A category carries one too, so "Verbs" as a grammar shelf and
+ * "Verbs" as a lesson shelf are two shelves — which is what stops the grammar reference from
+ * being reorganised every time somebody files a lesson.
+ */
+export type LessonSection = 'lessons' | 'grammar';
+
+export const LESSON_SECTIONS: readonly LessonSection[] = ['lessons', 'grammar'];
+
+export function isLessonSection(value: string): value is LessonSection {
+  return value === 'lessons' || value === 'grammar';
+}
+
+/** A shelf to file lessons on. The same shape as a `QuizCategory`, plus the section it is in. */
+export interface LessonCategory {
+  id: string;
+  lang: Lang;
+  section: LessonSection;
+  name: string;
+  /** The category's name in the language being learned. Often empty. */
+  nameNative: string;
+  note: string;
+  lessonCount: number;
+}
+
+/**
+ * A lesson as the index knows it: enough to draw a card and decide whether to open it.
+ *
+ * No body, for the reason a `QuizSummary` carries no questions — a section of forty lessons
+ * would otherwise put forty bodies in the snapshot to show a list of titles. The three facts
+ * that need the body to work out are summarised up at assembly time, so a card can say "8
+ * minutes, has audio, two quizzes" without any of it crossing the wire.
+ */
+export interface LessonSummary {
+  id: string;
+  lang: Lang;
+  section: LessonSection;
+  title: string;
+  /** The title in the language being learned. Display only. */
+  titleNative: string;
+  /** The author's own one-line description. `excerpt` is what shows when this is empty. */
+  summary: string;
+  level: string;
+  /** Null when the lesson has not been filed on any shelf. */
+  categoryId: string | null;
+  /** That category's English name, for a card that would otherwise have to look it up. */
+  category: string;
+  /** The opening paragraph, cut short. Derived from the body; see `lessonExcerpt`. */
+  excerpt: string;
+  /**
+   * How many blocks the body parses to.
+   *
+   * Zero means a lesson with nothing in it yet, and that is the whole of what stands in for a
+   * draft flag — the reader's index drops it, the admin list shows it and says so. Exactly the
+   * bargain a quiz with no questions strikes; see the note on the `quizzes` table.
+   */
+  blocks: number;
+  /** Whether anything in it can be played, which is what the index badges. */
+  hasAudio: boolean;
+  /**
+   * The quizzes it embeds, in the order they are written and without repeats.
+   *
+   * The list rather than a count of it, because this is what a lesson's progress is measured
+   * against: a lesson is done when every quiz named here has been passed, and the index cannot
+   * work that out from a number. The count is `quizIds.length` wherever one is wanted.
+   */
+  quizIds: string[];
+  /** How many YouTube videos it embeds. */
+  videos: number;
+}
+
+/**
+ * What the page needs to know about an uploaded picture before its bytes arrive.
+ *
+ * Three fields rather than the whole `lesson_media` row, and public rather than admin-only,
+ * because the page cannot draw the picture properly without them: the size reserves the space
+ * so a paragraph is not shoved down the screen when the image lands, and the alt text is what a
+ * screen reader is given. Both are facts about a file this server already serves to anyone.
+ *
+ * Not on the block that draws it, which was the alternative — `::image <id> "alt"` in the
+ * markup. A picture means the same thing wherever it is used, so describing it belongs to the
+ * upload; putting it in the markup means describing it again at every use, which is the version
+ * that does not get done.
+ */
+export interface LessonImage {
+  /** Pixels. Zero where the header could not be read; the page then simply has no hint. */
+  width: number;
+  height: number;
+  alt: string;
+}
+
+/** Keyed by media id. Only pictures are in here — a recording has nothing to lay out. */
+export type LessonImageMap = Record<string, LessonImage>;
+
+/** A lesson with its markup — what the page is drawn from, and what the editor edits. */
+export interface Lesson extends LessonSummary {
+  /** The markup itself. The language is described at the head of shared/lesson.ts. */
+  body: string;
+  /** For whoever edits it next. Never shown to a reader. */
+  note: string;
 }
 
 /* ----------------------------------------------------------------- study */

@@ -1,0 +1,10 @@
+A first conversation
+
+Nino: Hello!
+John: Hello. What is your name?
+Nino: My name is Nino. And you?
+John: My name is John.
+Nino: Where are you from?
+John: I am American. Are you Georgian?
+Nino: Yes, I am Georgian.
+John: Very nice to meet you.

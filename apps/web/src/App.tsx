@@ -9,12 +9,16 @@ import WordSearch from "./components/WordSearch";
 import CategoryThumb from "./components/CategoryThumb";
 import VerbList from "./components/VerbList";
 import VerbDetail from "./components/VerbDetail";
-import GrammarIndex from "./components/GrammarIndex";
-import GrammarTopic from "./components/GrammarTopic";
 import WordOfTheDay from "./components/WordOfTheDay";
 import StoryIndex from "./components/StoryIndex";
 import StoryCategoryView from "./components/StoryCategoryView";
 import StoryReader from "./components/StoryReader";
+import QuizIndex from "./components/QuizIndex";
+import QuizCategoryView from "./components/QuizCategoryView";
+import QuizPage from "./components/QuizPage";
+import LessonIndex from "./components/LessonIndex";
+import LessonCategoryView from "./components/LessonCategoryView";
+import LessonPage from "./components/LessonPage";
 import Sidebar from "./components/Sidebar";
 import ScrollManager from "./components/ScrollManager";
 import Account from "./components/Account";
@@ -26,6 +30,7 @@ import { SearchField } from "@/components/ui/search-field";
 import { AdminGate } from "./admin/AdminHome";
 import { categoryImageCredits } from "./utils/categoryImages";
 import { content, useContent, lang, wordData as allData } from "./content/store";
+import { useLibrarySync } from "./library/store";
 import { isLang } from "@georgian/shared/grammar";
 import RuVerbDetail from "./components/RuVerbDetail";
 import RuVerbList from "./components/RuVerbList";
@@ -46,6 +51,10 @@ const VERB_CATEGORY: Category = {
 };
 
 const AdminRoutes = lazy(() => import("./admin/AdminRoutes"));
+
+// The reader's own stories and words. In a chunk of its own for the reason the admin screens
+// are: forms are a fair amount of code, and most visits never open one.
+const LibraryRoutes = lazy(() => import("./library/LibraryRoutes"));
 
 function useTheme() {
   const [dark, setDark] = useState(() => {
@@ -160,23 +169,36 @@ function App() {
   // subscription at the top is all it takes for an edit to reach the one showing that word.
   useContent();
 
+  // And fetches this reader's own stories and words on top of it, again whenever the session or
+  // the language changes. One call, mounted once: everything below reads the two as one object.
+  useLibrarySync();
+
   const { categories, words } = allData();
 
+  // One pass over the dictionary, tallying into a map, rather than a scan of all of it per
+  // category. The nested version read better but did 45 x 4,083 = 183,735 comparisons for
+  // every keystroke — and a `toLowerCase()` allocation inside all of them, since the same word
+  // was lowercased again for each category it did not belong to. That was 72ms a keystroke on
+  // a mid-range phone, which is a filter you can feel lagging behind your typing. This is the
+  // same answer in 4,083 comparisons and one `toLowerCase()` per word.
   const filteredCategories = useMemo(() => {
     if (!searchTerm && selectedLevel === "all") return categories;
     const lowerSearch = searchTerm.toLowerCase();
+
+    const counts = new Map<string, number>();
+    for (const w of words) {
+      if (selectedLevel !== "all" && w.level !== selectedLevel) continue;
+      // Georgian has no case, so the headword is compared as it is; the gloss is English and
+      // has to be folded. Same test as before, just not repeated per category.
+      if (searchTerm && !w.headword.includes(lowerSearch) && !w.english.toLowerCase().includes(lowerSearch)) continue;
+      counts.set(w.categoryId, (counts.get(w.categoryId) ?? 0) + 1);
+    }
+
+    // `wordCount` is the count after the filter rather than the category's total, which is what
+    // the card shows and why this rebuilds the objects instead of returning the rows as they are.
     return categories
-      .map((cat) => ({
-        ...cat,
-        wordCount: words.filter((w) => {
-          const inCategory = w.categoryId === cat.id;
-          const matchesSearch =
-            !searchTerm || w.headword.includes(lowerSearch) || w.english.toLowerCase().includes(lowerSearch);
-          const matchesLevel = selectedLevel === "all" || w.level === selectedLevel;
-          return inCategory && matchesSearch && matchesLevel;
-        }).length,
-      }))
-      .filter((cat) => cat.wordCount > 0);
+      .filter((cat) => counts.has(cat.id))
+      .map((cat) => ({ ...cat, wordCount: counts.get(cat.id)! }));
   }, [categories, words, searchTerm, selectedLevel]);
 
   // Verbs are filtered on their own fields, and only when no level is selected. The fields
@@ -291,8 +313,46 @@ function App() {
                 {/* 1-based, and absent for the first: a story that never gains a second
                     chapter keeps the address it has always had. */}
                 <Route path="/:lang/stories/:storyId/:chapter" element={<StoryReader />} />
-                <Route path="/:lang/grammar" element={<GrammarIndex />} />
-                <Route path="/:lang/grammar/:topicId" element={<GrammarTopic />} />
+                <Route path="/:lang/quizzes" element={<QuizIndex />} />
+                {/* Above the quiz's own route in specificity, not merely in order — the same
+                    arrangement the stories have, and `saveQuiz` refuses to mint "category" as
+                    an id, which is the other half of that guarantee. */}
+                <Route path="/:lang/quizzes/category" element={<Navigate to={`/${lang()}/quizzes`} replace />} />
+                <Route path="/:lang/quizzes/category/:categoryId" element={<QuizCategoryView />} />
+                <Route path="/:lang/quizzes/:quizId" element={<QuizPage />} />
+                {/* Two sections, one set of components, one table behind them. The section is
+                    a prop rather than something read out of the URL inside the components,
+                    because it is the *route* that decides which of the two a reader is in — a
+                    lesson filed under grammar is reached at /grammar even though the row it
+                    comes from is indistinguishable from any other. `LessonPage` checks the two
+                    agree and redirects when they do not; see the note there. */}
+                <Route path="/:lang/lessons" element={<LessonIndex section="lessons" />} />
+                <Route path="/:lang/lessons/category" element={<Navigate to={`/${lang()}/lessons`} replace />} />
+                <Route
+                  path="/:lang/lessons/category/:categoryId"
+                  element={<LessonCategoryView section="lessons" />}
+                />
+                <Route path="/:lang/lessons/:lessonId" element={<LessonPage section="lessons" />} />
+
+                <Route path="/:lang/grammar" element={<LessonIndex section="grammar" />} />
+                <Route path="/:lang/grammar/category" element={<Navigate to={`/${lang()}/grammar`} replace />} />
+                <Route
+                  path="/:lang/grammar/category/:categoryId"
+                  element={<LessonCategoryView section="grammar" />}
+                />
+                <Route path="/:lang/grammar/:lessonId" element={<LessonPage section="grammar" />} />
+
+                {/* A reader's own stories and words. Signed-in only, and the section says so
+                    itself rather than being hidden: somebody following a link to it should be
+                    told what it is and offered a way in, not sent to the home page. */}
+                <Route
+                  path="/:lang/library/*"
+                  element={
+                    <Suspense fallback={<Page />}>
+                      <LibraryRoutes />
+                    </Suspense>
+                  }
+                />
 
                 {/* Admin-only, and in a chunk of its own — the editors are a fair amount of
                     code for a section almost nobody who opens this app will reach, so it is

@@ -73,6 +73,17 @@ x-server: &server
     # data-loss decision — lower it freely if the box is tight.
     TTS_CACHE_MAX_BYTES: ${TTS_CACHE_MAX_BYTES:-2000000000}
 
+    # Audio uploaded for quiz questions. A separate volume from the cache above and not merely
+    # a separate path on it, because the two want opposite treatment: that one evicts itself
+    # when it fills and is worth nothing if lost, and this one is never evicted and is the only
+    # content in this stack that does not also exist in Postgres. **Back this volume up.**
+    #
+    # Quiz clips sit at the root of it and lesson uploads under lesson/; the path is unchanged
+    # from when quizzes were the only thing that uploaded anything, so an existing volume needs
+    # nothing done to it.
+    MEDIA_DIR: /media/quiz
+    MEDIA_MAX_BYTES: ${MEDIA_MAX_BYTES:-8000000}
+
     # Only the server enforces these — assertMailConfigured runs in index.ts, not in migrate
     # or seed — but the stack is not deployable without them, so they fail here too.
     MAILGUN_API_KEY: ${MAILGUN_API_KEY:?set MAILGUN_API_KEY}
@@ -86,6 +97,7 @@ x-server: &server
   # second copy of this whole block to leave it out of.
   volumes:
     - tts-cache:/cache/tts
+    - quiz-media:/media/quiz
   depends_on:
     db:
       condition: service_healthy
@@ -282,3 +294,8 @@ volumes:
   # the text it was made from, so an empty volume costs one re-synthesis per line and nothing
   # else. It is a volume rather than a bind mount so that `down` leaves it alone.
   tts-cache:
+  # Audio uploaded for quiz questions — and the exact opposite of the volume above it. Nothing
+  # here can be regenerated: a recording that is gone is gone, and the `quiz_audio` rows in the
+  # database backup would be left naming files that no longer exist. **Back this one up**, with
+  # the database and at the same time as it.
+  quiz-media:

@@ -17,10 +17,18 @@
 // should. It sends rules, not paradigms: `conjugate()` runs in the browser off class
 // definitions already in the bundle, so 500 verbs cross as 500 short records instead of
 // 10,000 conjugated strings. See the head of grammar/ru.ts.
+//
+// **Nothing owned by anybody is in here.** Every query that reads a content table asks for
+// `owner_id is null`, because this object is built once per language and handed to every
+// visitor and every cache: one row that varied per person would make the whole of it vary per
+// person. A reader's own stories and words come from router/library.ts as a small separate
+// payload, assembled by the same functions below (`assembleWords`, `summariseStories`), so a
+// private word is the same shape of thing as a published one and nothing downstream can tell
+// them apart. See the note on `owner_id` in schema.ts.
 
 import { randomUUID } from 'node:crypto';
 import { ORPCError } from '@orpc/server';
-import { and, asc, eq, inArray, sql as raw } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull, sql as raw } from 'drizzle-orm';
 import type {
   Category,
   ImageMap,
@@ -28,7 +36,15 @@ import type {
   KaVerb,
   Lang,
   Language,
+  Lesson,
+  LessonCategory,
+  LessonImageMap,
+  LessonSection,
+  LessonSummary,
   PersonKey,
+  QuizCategory,
+  QuizKind,
+  QuizSummary,
   RuSlotKey,
   RuVerb,
   Sense,
@@ -42,7 +58,9 @@ import type {
   WordData,
   WordForm,
 } from '@georgian/shared/types';
-import type { ContentSnapshot, VerbContent } from '@georgian/shared/contract';
+import type { ContentSnapshot, PrivateContent, VerbContent } from '@georgian/shared/contract';
+import { QUIZ_KINDS, isQuizKind } from '@georgian/shared/types';
+import { lessonExcerpt, lessonHasAudio, lessonQuizIds, parseLesson } from '@georgian/shared/lesson';
 import { isAdminOnlyLang } from '@georgian/shared/grammar';
 import { db, schema } from '../db/index.ts';
 import type { Tx } from '../db/index.ts';
@@ -154,7 +172,19 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
   // One round trip each, in parallel. Grouping happens below, in JavaScript: Postgres could
   // do it with json_agg, but then the shape of the response would live in a SQL string
   // instead of in the types, and this runs once per deploy.
-  const [metaRow, languageRows, categoryRows, wordRows, storyRows, storyCategoryRows] = await Promise.all([
+  const [
+    metaRow,
+    languageRows,
+    categoryRows,
+    wordRows,
+    storyRows,
+    storyCategoryRows,
+    quizRows,
+    quizCategoryRows,
+    lessonRows,
+    lessonCategoryRows,
+    lessonImageRows,
+  ] = await Promise.all([
     db.select().from(schema.contentVersion).where(eq(schema.contentVersion.lang, lang)).limit(1),
     db.select().from(schema.languages).orderBy(asc(schema.languages.position)),
     // Ordered explicitly, everywhere it is an array on the way out. A table has no order of
@@ -163,25 +193,73 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
     db
       .select()
       .from(schema.categories)
-      .where(eq(schema.categories.lang, lang))
+      .where(and(eq(schema.categories.lang, lang), isNull(schema.categories.ownerId)))
       .orderBy(asc(schema.categories.position)),
-    db.select().from(schema.words).where(eq(schema.words.lang, lang)).orderBy(asc(schema.words.position)),
-    db.select().from(schema.stories).where(eq(schema.stories.lang, lang)).orderBy(asc(schema.stories.id)),
+    // `owner_id is null` on these three, and it is the line that keeps one person's private
+    // library out of everybody else's dictionary. See the note at the head of this file.
+    db
+      .select()
+      .from(schema.words)
+      .where(and(eq(schema.words.lang, lang), isNull(schema.words.ownerId)))
+      .orderBy(asc(schema.words.position)),
+    db
+      .select()
+      .from(schema.stories)
+      .where(and(eq(schema.stories.lang, lang), isNull(schema.stories.ownerId)))
+      .orderBy(asc(schema.stories.id)),
     db
       .select()
       .from(schema.storyCategories)
       .where(eq(schema.storyCategories.lang, lang))
       .orderBy(asc(schema.storyCategories.position)),
+    db.select().from(schema.quizzes).where(eq(schema.quizzes.lang, lang)).orderBy(asc(schema.quizzes.position)),
+    db
+      .select()
+      .from(schema.quizCategories)
+      .where(eq(schema.quizCategories.lang, lang))
+      .orderBy(asc(schema.quizCategories.position)),
+    // The bodies come with them, and they are the one thing in this query that is fetched and
+    // then thrown away. Four facts on a lesson card — how long it is, whether it has audio, how
+    // many quizzes it embeds, what its opening line says — can only be had by parsing the
+    // markup, and the alternative is four stored columns that go stale the day the parser
+    // learns a new block. Parsing every lesson here costs one pass per *version*, because this
+    // whole function runs once and is then cached; a stored column would cost a re-save of
+    // every lesson to correct. See `LessonSummary`.
+    db
+      .select()
+      .from(schema.lessons)
+      .where(eq(schema.lessons.lang, lang))
+      .orderBy(asc(schema.lessons.position)),
+    db
+      .select()
+      .from(schema.lessonCategories)
+      .where(eq(schema.lessonCategories.lang, lang))
+      .orderBy(asc(schema.lessonCategories.position)),
+    // Every language's pictures, not this one's. A photograph of a Georgian street sign
+    // uploaded while the Georgian dictionary was open is a perfectly good illustration for a
+    // Russian lesson about signage, and `lesson_media.lang` records where it was uploaded
+    // rather than who may use it. There are tens of these rows and each is four short fields.
+    db
+      .select({
+        id: schema.lessonMedia.id,
+        width: schema.lessonMedia.width,
+        height: schema.lessonMedia.height,
+        alt: schema.lessonMedia.alt,
+      })
+      .from(schema.lessonMedia)
+      .where(eq(schema.lessonMedia.kind, 'image')),
   ]);
 
   const meta = metaRow[0]?.meta ?? {};
   const wordIds = wordRows.map(row => row.id);
   const storyIds = storyRows.map(row => row.id);
+  const quizIds = quizRows.map(row => row.id);
 
   // The children of the rows above. Fetched in a second round rather than joined, and scoped
   // by the ids just found: `word_senses` has no `lang` of its own, and getting one would mean
   // a column that could disagree with the word it hangs off.
-  const [senseRows, formRows, ruGrammarRows, imageRows, chapterRows] = await Promise.all([
+  const [senseRows, formRows, ruGrammarRows, imageRows, chapterRows, quizKindRows, quizChoiceAudioRows] =
+    await Promise.all([
     wordIds.length
       ? db
           .select()
@@ -203,92 +281,40 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
     // Counted in Postgres rather than fetched and measured here. The snapshot wants how many
     // paragraphs a chapter has and its opening line, not the chapter — and a story with
     // forty of them would otherwise put a whole book in a payload that shows a card.
-    storyIds.length
+    chapterCounts(storyIds),
+    // What kinds of question each quiz holds, and whether any of them is meant to be heard —
+    // aggregated in Postgres, because the alternative is fetching every question of every
+    // quiz to derive two badges from them, and the questions carry the answers. A summary
+    // that had to read the answers to be built would be one edit away from leaking them.
+    quizIds.length
       ? db
           .select({
-            storyId: schema.storyChapters.storyId,
-            position: schema.storyChapters.position,
-            title: schema.storyChapters.title,
-            titleEnglish: schema.storyChapters.titleEnglish,
-            stats: schema.storyChapters.stats,
-            paragraphs: raw<number>`jsonb_array_length(${schema.storyChapters.paragraphs})`,
-            translated: raw<boolean>`jsonb_array_length(${schema.storyChapters.translation}) > 0`,
-            opening: raw<string | null>`${schema.storyChapters.paragraphs}->>0`,
+            quizId: schema.quizQuestions.quizId,
+            kind: schema.quizQuestions.kind,
+            audible: raw<boolean>`bool_or(${schema.quizQuestions.say} <> '' or ${schema.quizQuestions.audioId} is not null)`,
           })
-          .from(schema.storyChapters)
-          .where(inArray(schema.storyChapters.storyId, storyIds))
-          .orderBy(asc(schema.storyChapters.storyId), asc(schema.storyChapters.position))
+          .from(schema.quizQuestions)
+          .where(inArray(schema.quizQuestions.quizId, quizIds))
+          .groupBy(schema.quizQuestions.quizId, schema.quizQuestions.kind)
+      : [],
+    // The options carry sound of their own — "which of these three did you hear" is audio on
+    // every option and none on the prompt — so a quiz is audible if either table says so.
+    quizIds.length
+      ? db
+          .select({
+            quizId: schema.quizChoices.quizId,
+            audible: raw<boolean>`bool_or(${schema.quizChoices.say} <> '' or ${schema.quizChoices.audioId} is not null)`,
+          })
+          .from(schema.quizChoices)
+          .where(inArray(schema.quizChoices.quizId, quizIds))
+          .groupBy(schema.quizChoices.quizId)
       : [],
   ]);
 
   /* -- words ------------------------------------------------------------- */
 
-  const sensesByWord = new Map<string, Sense[]>();
-  for (const row of senseRows) {
-    const list = sensesByWord.get(row.wordId) ?? [];
-    list.push({ id: `${row.wordId}.${row.position}`, english: row.english });
-    sensesByWord.set(row.wordId, list);
-  }
-
-  const formsByWord = new Map<string, WordForm[]>();
-  for (const row of formRows) {
-    const list = formsByWord.get(row.wordId) ?? [];
-    const form: WordForm = { form: row.form };
-    if (row.gram) form.gram = row.gram;
-    if (row.english) form.english = row.english;
-    if (row.accented) form.accented = row.accented;
-    list.push(form);
-    formsByWord.set(row.wordId, list);
-  }
-
-  const grammarByWord = new Map(ruGrammarRows.map(row => [row.wordId, row]));
-
-  const words: Word[] = wordRows.map(row => {
-    const senses = sensesByWord.get(row.id) ?? [];
-    const forms = formsByWord.get(row.id);
-    const word: Word = {
-      id: row.id,
-      lang: row.lang,
-      headword: row.headword,
-      english: row.english,
-      // Exactly the senses as plain text — checked against the generated file, where the
-      // two never disagree — so it is derived here rather than stored twice.
-      englishFull: senses.map(sense => sense.english),
-      definition: row.definition,
-      level: row.level as Word['level'],
-      partOfSpeech: row.partOfSpeech,
-      category: row.category,
-      categoryId: row.categoryId,
-      origin: row.origin as Word['origin'],
-      senses,
-    };
-    if (row.accented) word.accented = row.accented;
-    if (row.defaultSense != null) word.defaultSense = row.defaultSense;
-    if (row.verbId) word.verbId = row.verbId;
-    if (forms?.length) word.forms = forms;
-    if (row.needsCheck) word.check = true;
-    if (row.note) word.note = row.note;
-
-    const grammar = grammarByWord.get(row.id);
-    if (grammar) {
-      word.ru = {
-        ...(grammar.gender ? { gender: grammar.gender } : {}),
-        ...(grammar.animacy ? { animacy: grammar.animacy } : {}),
-        ...(grammar.declension ? { declension: grammar.declension } : {}),
-        ...(grammar.stressPattern ? { stressPattern: grammar.stressPattern } : {}),
-        ...(grammar.needsCheck ? { check: true } : {}),
-      };
-    }
-    return word;
-  });
-
-  const categories: Category[] = categoryRows.map(row => ({
-    id: row.id,
-    lang: row.lang,
-    name: row.name,
-    nameNative: row.nameNative,
-    wordCount: row.wordCount,
-  }));
+  const words = assembleWords(wordRows, senseRows, formRows, ruGrammarRows);
+  const categories = categoryRows.map(toCategory);
 
   const wordData: WordData = { note: meta.words ?? '', lang, categories, words };
 
@@ -331,7 +357,216 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
   }));
 
   const categoryNames = new Map(storyCategoryRows.map(row => [row.id, row.name]));
+  const stories = summariseStories(storyRows, chapterRows, categoryNames);
 
+  /* -- quizzes ----------------------------------------------------------- */
+
+  const quizCategories: QuizCategory[] = quizCategoryRows.map(row => ({
+    id: row.id,
+    lang: row.lang,
+    name: row.name,
+    nameNative: row.nameNative,
+    note: row.note,
+    quizCount: row.quizCount,
+  }));
+
+  const quizCategoryNames = new Map(quizCategoryRows.map(row => [row.id, row.name]));
+
+  const kindsByQuiz = new Map<string, QuizKind[]>();
+  const audibleQuizzes = new Set<string>();
+  for (const row of quizKindRows) {
+    if (row.audible) audibleQuizzes.add(row.quizId);
+    if (!isQuizKind(row.kind)) continue;
+    kindsByQuiz.set(row.quizId, [...(kindsByQuiz.get(row.quizId) ?? []), row.kind]);
+  }
+  for (const row of quizChoiceAudioRows) {
+    if (row.audible) audibleQuizzes.add(row.quizId);
+  }
+
+  const quizzes: QuizSummary[] = quizRows.map(row => ({
+    id: row.id,
+    lang: row.lang,
+    title: row.title,
+    titleNative: row.titleNative,
+    description: row.description,
+    level: row.level,
+    categoryId: row.categoryId,
+    category: row.categoryId ? quizCategoryNames.get(row.categoryId) ?? '' : '',
+    passMark: row.passMark,
+    questionCount: row.questionCount,
+    // In the order QUIZ_KINDS declares rather than the order Postgres grouped them, so the
+    // badges on two cards holding the same kinds read the same way round.
+    kinds: QUIZ_KINDS.filter(kind => kindsByQuiz.get(row.id)?.includes(kind)),
+    hasAudio: audibleQuizzes.has(row.id),
+  }));
+
+  /* -- lessons ----------------------------------------------------------- */
+
+  const lessonCategories: LessonCategory[] = lessonCategoryRows.map(row => ({
+    id: row.id,
+    lang: row.lang,
+    section: row.section as LessonSection,
+    name: row.name,
+    nameNative: row.nameNative,
+    note: row.note,
+    lessonCount: row.lessonCount,
+  }));
+
+  const lessonCategoryNames = new Map(lessonCategoryRows.map(row => [row.id, row.name]));
+
+  const lessons: LessonSummary[] = lessonRows.map(row => summariseLesson(row, lessonCategoryNames));
+
+  const lessonImages: LessonImageMap = Object.fromEntries(
+    lessonImageRows.map(row => [row.id, { width: row.width, height: row.height, alt: row.alt }]),
+  );
+
+  const languages: Language[] = languageRows.map(row => ({
+    id: row.id,
+    name: row.name,
+    nativeName: row.nativeName,
+    script: row.script,
+    enabled: row.enabled,
+  }));
+
+  return {
+    version,
+    lang,
+    languages,
+    words: wordData,
+    verbs,
+    images,
+    categoryImages,
+    stories,
+    storyCategories,
+    quizzes,
+    quizCategories,
+    lessons,
+    lessonCategories,
+    lessonImages,
+  };
+}
+
+/* ------------------------------------------------- words, from rows to records */
+
+type WordRow = typeof schema.words.$inferSelect;
+type SenseRow = { wordId: string; position: number; english: string };
+type FormRow = typeof schema.wordForms.$inferSelect;
+type RuGrammarRow = typeof schema.ruWordGrammar.$inferSelect;
+
+/**
+ * Rows to `Word`s: the senses and forms gathered under the entries they belong to.
+ *
+ * A function rather than a passage inside `assemble`, because the private overlay is built
+ * from it too. A word somebody added themselves crosses the wire in the shape a published one
+ * does, so the search box, the deck, the story card and the export cannot tell the two apart
+ * and none of them needs to. The one field that differs is `mine`, set by the caller that
+ * knows. See `loadOwned`.
+ */
+function assembleWords(
+  wordRows: WordRow[],
+  senseRows: SenseRow[],
+  formRows: FormRow[],
+  ruGrammarRows: RuGrammarRow[],
+): Word[] {
+  const sensesByWord = new Map<string, Sense[]>();
+  for (const row of senseRows) {
+    const list = sensesByWord.get(row.wordId) ?? [];
+    list.push({ id: `${row.wordId}.${row.position}`, english: row.english });
+    sensesByWord.set(row.wordId, list);
+  }
+
+  const formsByWord = new Map<string, WordForm[]>();
+  for (const row of formRows) {
+    const list = formsByWord.get(row.wordId) ?? [];
+    const form: WordForm = { form: row.form };
+    if (row.gram) form.gram = row.gram;
+    if (row.english) form.english = row.english;
+    if (row.accented) form.accented = row.accented;
+    list.push(form);
+    formsByWord.set(row.wordId, list);
+  }
+
+  const grammarByWord = new Map(ruGrammarRows.map(row => [row.wordId, row]));
+
+  return wordRows.map(row => {
+    const senses = sensesByWord.get(row.id) ?? [];
+    const forms = formsByWord.get(row.id);
+    const word: Word = {
+      id: row.id,
+      lang: row.lang,
+      headword: row.headword,
+      english: row.english,
+      // Exactly the senses as plain text — checked against the generated file, where the
+      // two never disagree — so it is derived here rather than stored twice.
+      englishFull: senses.map(sense => sense.english),
+      definition: row.definition,
+      level: row.level as Word['level'],
+      partOfSpeech: row.partOfSpeech,
+      category: row.category,
+      categoryId: row.categoryId,
+      origin: row.origin as Word['origin'],
+      senses,
+    };
+    if (row.accented) word.accented = row.accented;
+    if (row.defaultSense != null) word.defaultSense = row.defaultSense;
+    if (row.verbId) word.verbId = row.verbId;
+    if (forms?.length) word.forms = forms;
+    if (row.needsCheck) word.check = true;
+    if (row.note) word.note = row.note;
+    if (row.ownerId) word.mine = true;
+
+    const grammar = grammarByWord.get(row.id);
+    if (grammar) {
+      word.ru = {
+        ...(grammar.gender ? { gender: grammar.gender } : {}),
+        ...(grammar.animacy ? { animacy: grammar.animacy } : {}),
+        ...(grammar.declension ? { declension: grammar.declension } : {}),
+        ...(grammar.stressPattern ? { stressPattern: grammar.stressPattern } : {}),
+        ...(grammar.needsCheck ? { check: true } : {}),
+      };
+    }
+    return word;
+  });
+}
+
+function toCategory(row: typeof schema.categories.$inferSelect): Category {
+  const category: Category = {
+    id: row.id,
+    lang: row.lang,
+    name: row.name,
+    nameNative: row.nameNative,
+    wordCount: row.wordCount,
+  };
+  if (row.ownerId) category.mine = true;
+  return category;
+}
+
+/* ----------------------------------------------- stories, from rows to records */
+
+type StoryRow = typeof schema.stories.$inferSelect;
+
+/** One chapter as the snapshot counts it: measured in Postgres, never fetched whole. */
+interface ChapterCount {
+  storyId: string;
+  position: number;
+  title: string;
+  titleEnglish: string;
+  stats: unknown;
+  paragraphs: number;
+  translated: boolean;
+  opening: string | null;
+}
+
+/**
+ * Rows to `StorySummary`s. Shared with the private overlay for the reason `assembleWords` is:
+ * a story of somebody's own is listed, opened and read by the same components as a published
+ * one, so it had better be the same record.
+ */
+function summariseStories(
+  storyRows: StoryRow[],
+  chapterRows: ChapterCount[],
+  categoryNames: Map<string, string>,
+): StorySummary[] {
   const chaptersByStory = new Map<string, StoryChapterSummary[]>();
   for (const row of chapterRows) {
     const list = chaptersByStory.get(row.storyId) ?? [];
@@ -346,10 +581,10 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
     chaptersByStory.set(row.storyId, list);
   }
 
-  const stories: StorySummary[] = storyRows.map(row => {
+  return storyRows.map(row => {
     const chapters = chaptersByStory.get(row.id) ?? [];
     const opening = chapterRows.find(chapter => chapter.storyId === row.id && chapter.position === 0);
-    return {
+    const summary: StorySummary = {
       note: row.note,
       id: row.id,
       lang: row.lang,
@@ -366,17 +601,120 @@ async function assemble(lang: Lang, version: string): Promise<ContentSnapshot> {
       translated: chapters.some(chapter => chapter.translated),
       excerpt: opening?.opening ?? '',
     };
+    if (row.ownerId) summary.mine = true;
+    return summary;
   });
+}
 
-  const languages: Language[] = languageRows.map(row => ({
+/** The same chapter measurements the snapshot takes, for a given set of stories. */
+function chapterCounts(storyIds: string[]): Promise<ChapterCount[]> {
+  if (!storyIds.length) return Promise.resolve([]);
+  return db
+    .select({
+      storyId: schema.storyChapters.storyId,
+      position: schema.storyChapters.position,
+      title: schema.storyChapters.title,
+      titleEnglish: schema.storyChapters.titleEnglish,
+      stats: schema.storyChapters.stats,
+      paragraphs: raw<number>`jsonb_array_length(${schema.storyChapters.paragraphs})`,
+      translated: raw<boolean>`jsonb_array_length(${schema.storyChapters.translation}) > 0`,
+      opening: raw<string | null>`${schema.storyChapters.paragraphs}->>0`,
+    })
+    .from(schema.storyChapters)
+    .where(inArray(schema.storyChapters.storyId, storyIds))
+    .orderBy(asc(schema.storyChapters.storyId), asc(schema.storyChapters.position));
+}
+
+/* ------------------------------------------------------------ private content */
+
+/**
+ * One person's own stories, words and shelves in one language: the overlay the browser lays
+ * over the snapshot.
+ *
+ * Every query here is `owner_id = :owner`, and none of them is `or owner_id is null`. What
+ * comes back is only the caller's, because the published half is already in hand. That is the
+ * whole delivery model: the big shared thing is cached, the small private thing is not, and
+ * neither is ever assembled with the other inside it.
+ *
+ * Cheap enough to answer on every mutation. A person's library is tens of records where the
+ * dictionary is tens of thousands, and re-sending the lot saves the browser from merging a
+ * patch into an index it built at boot.
+ */
+export async function loadOwned(owner: string, lang: Lang): Promise<PrivateContent> {
+  const [categoryRows, wordRows, storyRows] = await Promise.all([
+    db
+      .select()
+      .from(schema.categories)
+      .where(and(eq(schema.categories.lang, lang), eq(schema.categories.ownerId, owner)))
+      .orderBy(asc(schema.categories.position)),
+    db
+      .select()
+      .from(schema.words)
+      .where(and(eq(schema.words.lang, lang), eq(schema.words.ownerId, owner)))
+      .orderBy(asc(schema.words.position)),
+    db
+      .select()
+      .from(schema.stories)
+      .where(and(eq(schema.stories.lang, lang), eq(schema.stories.ownerId, owner)))
+      .orderBy(asc(schema.stories.id)),
+  ]);
+
+  const wordIds = wordRows.map(row => row.id);
+  const [senseRows, formRows, ruGrammarRows, chapterRows] = await Promise.all([
+    wordIds.length
+      ? db
+          .select()
+          .from(schema.wordSenses)
+          .where(inArray(schema.wordSenses.wordId, wordIds))
+          .orderBy(asc(schema.wordSenses.position))
+      : [],
+    wordIds.length
+      ? db
+          .select()
+          .from(schema.wordForms)
+          .where(inArray(schema.wordForms.wordId, wordIds))
+          .orderBy(asc(schema.wordForms.position))
+      : [],
+    lang === 'ru' && wordIds.length
+      ? db.select().from(schema.ruWordGrammar).where(inArray(schema.ruWordGrammar.wordId, wordIds))
+      : [],
+    chapterCounts(storyRows.map(row => row.id)),
+  ]);
+
+  return {
+    lang,
+    // No shelf names to look up: a private story is never filed on one. See `stories.owner_id`.
+    stories: summariseStories(storyRows, chapterRows, new Map()),
+    words: assembleWords(wordRows, senseRows, formRows, ruGrammarRows),
+    categories: categoryRows.map(toCategory),
+  };
+}
+
+/** One `lessons` row, minus its body, with the four facts that need the body worked out. */
+type LessonRow = typeof schema.lessons.$inferSelect;
+
+function summariseLesson(row: LessonRow, categoryNames: Map<string, string>): LessonSummary {
+  const doc = parseLesson(row.body);
+
+  return {
     id: row.id,
-    name: row.name,
-    nativeName: row.nativeName,
-    script: row.script,
-    enabled: row.enabled,
-  }));
-
-  return { version, lang, languages, words: wordData, verbs, images, categoryImages, stories, storyCategories };
+    lang: row.lang,
+    section: row.section as LessonSection,
+    title: row.title,
+    titleNative: row.titleNative,
+    summary: row.summary,
+    level: row.level,
+    categoryId: row.categoryId,
+    category: row.categoryId ? categoryNames.get(row.categoryId) ?? '' : '',
+    excerpt: lessonExcerpt(doc),
+    blocks: doc.blocks.length,
+    // Every kind of sound counts — a block read aloud, an uploaded recording, a button inside a
+    // table cell — because the reader is being told there is a play button on the page and not
+    // which sort of button it is.
+    hasAudio: lessonHasAudio(doc),
+    quizIds: lessonQuizIds(doc),
+    videos: doc.blocks.filter(block => block.kind === 'video').length,
+  };
 }
 
 /* ---------------------------------------------------------- Georgian verbs */
@@ -521,8 +859,13 @@ async function assembleRuVerbs(meta: Record<string, string>): Promise<VerbConten
  *
  * A chapter past the end lands on the last one rather than failing. The number comes out of
  * a URL, and a bookmark to a chapter that has since been deleted should open the book.
+ *
+ * `viewer` decides one field, `mine`, and no more. This function polices nothing: it will
+ * happily assemble a story belonging to somebody else, because the caller is the one that knows
+ * whether it should have asked. See the `story` procedure, which refuses first and loads
+ * second.
  */
-export async function loadStory(id: string, chapter = 0): Promise<Story | null> {
+export async function loadStory(id: string, chapter = 0, viewer: string | null = null): Promise<Story | null> {
   const [row] = await db.select().from(schema.stories).where(eq(schema.stories.id, id)).limit(1);
   if (!row) return null;
 
@@ -590,6 +933,8 @@ export async function loadStory(id: string, chapter = 0): Promise<Story | null> 
     category: categoryName,
     stats: row.stats as StoryStats,
     chapters,
+    // Absent unless it really is this reader's, which is what puts the Edit button on the page.
+    ...(row.ownerId && row.ownerId === viewer ? { mine: true } : {}),
     // Whatever was actually opened, not what was asked for. The reader corrects its URL
     // from this, so a request for chapter 9 of an eight-chapter story does not leave the
     // address bar claiming a chapter that is not on screen.
@@ -602,19 +947,66 @@ export async function loadStory(id: string, chapter = 0): Promise<Story | null> 
   };
 }
 
+/* ------------------------------------------------------------ one lesson */
+
+/**
+ * One lesson, with its markup.
+ *
+ * The only thing this adds to what the snapshot already carries is `body` and `note`, and it is
+ * a call of its own for that reason: a section of forty lessons would otherwise put forty
+ * documents in a payload that draws a list of cards. The same division the stories and the
+ * quizzes make.
+ *
+ * The summary half is worked out here rather than looked up in the cached snapshot, so that
+ * this answers correctly for a language whose snapshot has not been assembled yet and cannot
+ * disagree with itself about a lesson somebody has just saved.
+ */
+export async function loadLesson(id: string): Promise<Lesson | null> {
+  const [row] = await db.select().from(schema.lessons).where(eq(schema.lessons.id, id)).limit(1);
+  if (!row) return null;
+
+  const names = new Map<string, string>();
+  if (row.categoryId) {
+    const [category] = await db
+      .select({ name: schema.lessonCategories.name })
+      .from(schema.lessonCategories)
+      .where(eq(schema.lessonCategories.id, row.categoryId))
+      .limit(1);
+    if (category) names.set(row.categoryId, category.name);
+  }
+
+  return { ...summariseLesson(row, names), body: row.body, note: row.note };
+}
+
 /* -------------------------------------------------------- who may read what */
 
-// Russian is not released yet — see ADMIN_ONLY_LANGS in grammar/index.ts. The switcher does
-// not offer it, and this is the other half of that: hidden in the browser, refused here, the
-// same division the admin screens use. Without it "not offered" would mean nothing more than
-// "not linked", and the whole dictionary would be one typed URL away.
+// Both dictionaries are open — ADMIN_ONLY_LANGS in grammar/index.ts is empty, so everything
+// below is a pair of no-ops today. It stays because it is the half of the gate that cannot be
+// done in the browser: the switcher merely stops *offering* an unreleased language, and
+// without a refusal here "not offered" would mean nothing more than "not linked", with the
+// whole dictionary one typed URL away. The next language to be built will want it.
 
-/** The language a story belongs to, without assembling the story to find out. */
-async function storyLang(id: string): Promise<Lang | null> {
+/**
+ * The language a story belongs to and whose it is, without assembling the story to find out.
+ *
+ * Both facts in one query because both are needed before a word of it is read: one decides
+ * whether this dictionary is open to the caller, the other whether this *story* is.
+ */
+async function storyMeta(id: string): Promise<{ lang: Lang; ownerId: string | null } | null> {
   const [row] = await db
-    .select({ lang: schema.stories.lang })
+    .select({ lang: schema.stories.lang, ownerId: schema.stories.ownerId })
     .from(schema.stories)
     .where(eq(schema.stories.id, id))
+    .limit(1);
+  return row ?? null;
+}
+
+/** The same, for a lesson — asked before its body is read rather than after. */
+async function lessonLang(id: string): Promise<Lang | null> {
+  const [row] = await db
+    .select({ lang: schema.lessons.lang })
+    .from(schema.lessons)
+    .where(eq(schema.lessons.id, id))
     .limit(1);
   return row?.lang ?? null;
 }
@@ -657,10 +1049,25 @@ export const contentRouter = os.content.router({
   }),
 
   story: os.content.story.handler(async ({ input, context }) => {
-    const lang = await storyLang(input.id);
+    const story = await storyMeta(input.id);
+    if (!story) return null;
+    await assertMayRead(story.lang, context);
+
+    // Somebody else's private story answers exactly as one that does not exist, and null
+    // rather than FORBIDDEN is the point: a refusal would confirm that a story is filed under
+    // that id, which is a thing about another person's library that this reader has no
+    // business learning. The reader already renders "that story does not exist".
+    const viewer = context.session?.user?.id ?? null;
+    if (story.ownerId && story.ownerId !== viewer) return null;
+
+    return loadStory(input.id, input.chapter, viewer);
+  }),
+
+  lesson: os.content.lesson.handler(async ({ input, context }) => {
+    const lang = await lessonLang(input.id);
     if (!lang) return null;
     await assertMayRead(lang, context);
-    return loadStory(input.id, input.chapter);
+    return loadLesson(input.id);
   }),
 
   languages: os.content.languages.handler(async ({ context }) => ({

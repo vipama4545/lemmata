@@ -9,14 +9,25 @@
 //     writes it back out to data/, and `npm run db:seed` refuses to overwrite edited
 //     content without --force. See `contentVersion.source`.
 //
+//   quizzes — content too, and versioned with it, but the one group with no generated file
+//     behind it. There was never a build script that produced a quiz: they are written in
+//     the admin screens and nowhere else, so the seed has nothing to load and the export has
+//     no file to keep in step. The seed deletes nothing, so this is safe rather than merely
+//     unhandled — see the head of db/seed.ts.
+//
 //   morphology — one set of tables per language, because this is the one place the two do
 //     not have the same shape. See the block comment above `kaVerbs`.
 //
 //   auth — Better Auth's four tables. Their column names are fixed by the library rather
 //     than chosen here; see the note above them before renaming anything.
 //
-//   study — one row per side of one item per user. This is the only table that holds
-//     something a user would miss.
+//   study — one row per side of one item per user, and one row per quiz somebody has taken.
+//     `study_cards` is the only table that holds something a user would badly miss;
+//     `quiz_results` is the same shape of ownership and a far smaller loss. See both.
+//
+//   private content — not a group of tables but a column, `owner_id`, on three of the content
+//     ones. A reader may write their own stories and their own vocabulary, and those rows sit
+//     in the same tables the dictionary's own do. See the note on `owner_id` below.
 //
 //   speech — an index over the synthesised audio cached on disk. The only group here that is
 //     wholly disposable: every row can be deleted at any moment and is simply made again the
@@ -48,9 +59,39 @@
  * That is a stronger guarantee than a WHERE clause somebody has to remember.
  * -------------------------------------------------------------------------- */
 
+/* --------------------------------------------------------------------------
+ * On `owner_id`
+ *
+ * Three content tables carry it: `stories`, `words` and `categories`. On all three, null
+ * means the row is the dictionary's own, which covers everything that existed before readers
+ * could write anything. A row with an owner is one person's private content. They may edit
+ * it, nobody else can see it, and it is deleted with the account.
+ *
+ * A column rather than parallel `user_stories` tables, because a private story has to be the
+ * same kind of thing as a published one. It is cut into tokens by the same tokeniser, linked
+ * against the same lexicon by the same resolver, read by the same reader and spoken by the
+ * same voice. A second set of tables would mean a second copy of all of that, and the two
+ * would drift apart one fix at a time.
+ *
+ * The cost is that every read has to say which rows it wants. There are two answers:
+ *
+ *   the snapshot: `owner_id is null`, always. router/content.ts assembles one object per
+ *     language, shared by every visitor and cached in every browser, so a row that varies per
+ *     person cannot be in it. See `assemble`.
+ *
+ *   the private overlay: `owner_id = :viewer`, and nothing else. router/library.ts answers
+ *     with one person's rows and the client lays them over the snapshot.
+ *
+ * The resolver is the one place that wants both at once. Linking somebody's own story has to
+ * see the public lexicon as well as their own words, or a word they added would not be found
+ * in the text they added it for. That is `loadLexicon`'s `owner` argument, and it is the only
+ * query here that reads across the line.
+ * -------------------------------------------------------------------------- */
+
 import { relations } from 'drizzle-orm';
 import {
   boolean,
+  customType,
   index,
   integer,
   jsonb,
@@ -64,6 +105,17 @@ import {
 } from 'drizzle-orm/pg-core';
 import type { Lang } from './grammar/index.ts';
 import type { RuSlotKey } from './types.ts';
+
+/**
+ * Raw bytes. Hand-rolled because drizzle-orm's pg-core has no `bytea` of its own.
+ *
+ * postgres-js already hands a `bytea` back as a Buffer and takes one on the way in, so both
+ * directions here are the identity function and the type is the whole point of the wrapper:
+ * without it a column of bytes is `unknown` at every call site.
+ */
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType: () => 'bytea',
+});
 
 /* ==================================================================== content */
 
@@ -146,9 +198,26 @@ export const categories = pgTable(
     name: text('name').notNull(),
     /** The category's name in the language being learned. */
     nameNative: text('name_native').notNull().default(''),
+    /**
+     * How many words are in it, of the same ownership as the category itself.
+     *
+     * A public category counts the public words filed under it and nothing else, because this
+     * number rides in the shared snapshot and has to mean the same thing to everybody. A
+     * reader who files one of their own words under "Food & drink" does not move it; the
+     * browser adds their own in when it lays the overlay over the snapshot. An owned category
+     * counts its owner's words, which is the only kind it can hold.
+     */
     wordCount: integer('word_count').notNull().default(0),
+    /**
+     * Whose shelf this is, or null for the dictionary's own. See the note at the head of this
+     * file.
+     *
+     * One is made for a reader, called "My words", the first time they add a word:
+     * `words.category_id` is not null, so something has to stand there. They may make more.
+     */
+    ownerId: text('owner_id').references(() => user.id, { onDelete: 'cascade' }),
   },
-  table => [index('categories_lang_idx').on(table.lang)],
+  table => [index('categories_lang_idx').on(table.lang), index('categories_owner_idx').on(table.ownerId, table.lang)],
 );
 
 export const words = pgTable(
@@ -203,9 +272,20 @@ export const words = pgTable(
     /** Set when the meaning itself is a guess and wants verifying. */
     needsCheck: boolean('needs_check').notNull().default(false),
     note: text('note'),
+    /**
+     * Whose entry this is, or null for the dictionary's own. See the note at the head of this
+     * file.
+     *
+     * A private entry is a full lemma as far as its owner is concerned: searched, studied,
+     * carrying senses and inflected forms, and linked into their stories by the resolver. No
+     * snapshot carries it, and `loadLexicon` will not show it to a story it does not belong to.
+     */
+    ownerId: text('owner_id').references(() => user.id, { onDelete: 'cascade' }),
   },
   table => [
     index('words_category_idx').on(table.categoryId),
+    // The overlay's only query: this person's vocabulary, in the language on screen.
+    index('words_owner_idx').on(table.ownerId, table.lang),
     // Lang first: every lookup that matters is "this spelling, in this language".
     index('words_headword_idx').on(table.lang, table.headword),
     index('words_verb_idx').on(table.verbId),
@@ -599,8 +679,30 @@ export const stories = pgTable(
     categoryId: text('category_id').references(() => storyCategories.id, { onDelete: 'set null' }),
     /** tokens, distinctForms, covered, coverage, names, unresolved, flagged — every chapter. */
     stats: jsonb('stats').$type<Record<string, number>>().notNull().default({}),
+    /**
+     * Whose story this is, or null for one the dictionary publishes.
+     *
+     * This is the column a reader's own library is built on, and the reason there is no
+     * `user_stories` table: a private story is chaptered, tokenised, linked, coloured by what
+     * you know and read aloud by the same code as a published one. See the note at the head of
+     * this file.
+     *
+     * `on delete cascade` rather than `set null`: a private story orphaned by a closed account
+     * would become a published story nobody wrote and nobody can delete. The chapters and
+     * tokens follow through their own keys.
+     *
+     * A private story is never filed on a shelf, so `category_id` stays null on all of them.
+     * The shelves belong to the dictionary, and one person's own story appearing on "Folk
+     * tales" for them alone would make that shelf mean two things to two people.
+     */
+    ownerId: text('owner_id').references(() => user.id, { onDelete: 'cascade' }),
   },
-  table => [index('stories_lang_idx').on(table.lang), index('stories_category_idx').on(table.categoryId)],
+  table => [
+    index('stories_lang_idx').on(table.lang),
+    index('stories_category_idx').on(table.categoryId),
+    // The overlay's only query: this person's own stories, in the language on screen.
+    index('stories_owner_idx').on(table.ownerId, table.lang),
+  ],
 );
 
 /**
@@ -721,6 +823,422 @@ export const storyTokens = pgTable(
 // itself and `moveChapter` carries them along. The key on `story_id` still stands: deleting
 // a story takes everything with it, which is the case that would actually lose data.
 
+/* ----------------------------------------------------------------- quizzes */
+
+/**
+ * A shelf to file quizzes under — "Verbs", "Listening", "Week 3".
+ *
+ * The same shape as `story_categories` and, like it, a separate table rather than a `kind`
+ * column on one shared one. The reason is the one given there: these are hand-made and named
+ * by whoever is filing, and a shared table would mean two of `word_count`, `story_count` and
+ * `quiz_count` being null on every row in it.
+ */
+export const quizCategories = pgTable(
+  'quiz_categories',
+  {
+    id: text('id').primaryKey(),
+    lang: text('lang')
+      .notNull()
+      .$type<Lang>()
+      .default('ka')
+      .references(() => languages.id, { onDelete: 'cascade' }),
+    /** Where it sits in the list, which is chosen rather than alphabetical. */
+    position: integer('position').notNull().default(0),
+    name: text('name').notNull(),
+    /** The category's name in the language being learned. Optional, as a story's is. */
+    nameNative: text('name_native').notNull().default(''),
+    note: text('note').notNull().default(''),
+    /** Maintained by the writers, the way `story_categories.story_count` is. */
+    quizCount: integer('quiz_count').notNull().default(0),
+  },
+  table => [index('quiz_categories_lang_idx').on(table.lang)],
+);
+
+/**
+ * A quiz: everything true of the whole of it, and none of its questions.
+ *
+ * There is no `published` column, and its absence is a decision rather than an oversight. A
+ * quiz with no questions in it is not offered to anybody — there is nothing to answer — so
+ * "started and not finished" is already a state the data has, and it needs no flag to say so.
+ * Adding one would mean every read in the app growing a filter that the snapshot cache, which
+ * is one object shared by every visitor, cannot vary per person anyway.
+ */
+export const quizzes = pgTable(
+  'quizzes',
+  {
+    id: text('id').primaryKey(),
+    lang: text('lang')
+      .notNull()
+      .$type<Lang>()
+      .default('ka')
+      .references(() => languages.id, { onDelete: 'cascade' }),
+    position: integer('position').notNull().default(0),
+    title: text('title').notNull(),
+    /** The title in the language being learned. Display only. */
+    titleNative: text('title_native').notNull().default(''),
+    /** What this quiz is for, shown on its card and above the first question. */
+    description: text('description').notNull().default(''),
+    /** A CEFR level as plain text, on the same terms as a story's. */
+    level: text('level').notNull().default(''),
+    /**
+     * Null is "not filed yet" rather than a category called "Uncategorised", and the key is
+     * `set null` for the reason the stories' is: a shelf is thrown away far more readily than
+     * what stands on it. See `stories.category_id`.
+     */
+    categoryId: text('category_id').references(() => quizCategories.id, { onDelete: 'set null' }),
+    /**
+     * Ask the questions in a different order each run.
+     *
+     * On by default, on the same reasoning as `shuffle_options` below: questions are written in
+     * the order they occurred to whoever wrote them, and a run that always asked them in that
+     * order lets a second attempt be answered from the shape of the list rather than the
+     * language. It is settable because a quiz whose questions build on each other — one that
+     * walks through a conjugation a person at a time — wants the order it was written in.
+     */
+    shuffleQuestions: boolean('shuffle_questions').notNull().default(true),
+    /**
+     * Shuffle the options within a question.
+     *
+     * On by default, and it is doing real work: the answer to a `choice` question is stored
+     * first in `quiz_choices` more often than not, simply because that is the order it was
+     * typed in, and a run that always rewarded the top option would be a quiz about typing
+     * habits. It is settable because one kind of question genuinely wants a fixed order —
+     * options that read "1985 / 1995 / 2005".
+     */
+    shuffleOptions: boolean('shuffle_options').notNull().default(true),
+    /**
+     * How many questions one run asks, drawn at random, or 0 to ask them all.
+     *
+     * For the quiz that is a drill rather than a test: thirty-three letters is the whole
+     * alphabet and nobody sits thirty-three questions twice, but ten of them drawn fresh is a
+     * thing somebody will do every morning. The questions that were not drawn are not hidden —
+     * they are the rest of the pool, and the next run deals from the same deck.
+     *
+     * Held as "how many to ask" rather than "how many to leave out" because the number a writer
+     * has in mind is the length of the run, and because a pool that grows should lengthen the
+     * odds rather than the quiz: adding a question to a 33-of-10 quiz still asks ten.
+     *
+     * A value larger than the pool asks the pool. That is deliberate rather than a validation
+     * error — a quiz being written towards twenty questions should work at question five — and
+     * it is why the drawing clamps instead of the editor refusing.
+     */
+    askCount: integer('ask_count').notNull().default(0),
+    /** The share of the marks a run has to reach to count as passed, 0–100. */
+    passMark: smallint('pass_mark').notNull().default(70),
+    /** Maintained by the writers, so a card can say how long the quiz is without loading it. */
+    questionCount: integer('question_count').notNull().default(0),
+    note: text('note').notNull().default(''),
+  },
+  table => [index('quizzes_lang_idx').on(table.lang), index('quizzes_category_idx').on(table.categoryId)],
+);
+
+/**
+ * An uploaded audio clip, bytes and all.
+ *
+ * Unlike `tts_cache`, which is an index over files on disk, the recording itself is a column
+ * here. The two are the same shape and the opposite lifetime, and the lifetime is what decides
+ * where the bytes go: **this is content and that is a cache.** A synthesised line can be
+ * deleted at any moment and made again from the text, so it can live in a directory that is not
+ * backed up. An uploaded recording cannot be made again from anything, so it belongs where
+ * everything else that cannot be made again already is — in the database, inside the same dump
+ * and the same restore as the question that plays it.
+ *
+ * That is a change from how this started. The clips were files under MEDIA_DIR, and the cost
+ * showed up the first time the database moved without them: 417 rows arrived on a host whose
+ * volume was empty, every one of them a play button that 503s. A row and its bytes travelling
+ * separately is a bug waiting for the next migration, and at the size these actually are — a
+ * few hundred kilobytes each, a handful of megabytes in total — there is nothing to be bought
+ * by keeping them apart. Postgres is a poor place to stream gigabytes from; this is not that.
+ *
+ * `id` stays a random name rather than a hash of the contents: two uploads of the same
+ * recording are two clips, because one of them may be deleted while the other is still wanted.
+ *
+ * Declared above the two tables that point at it, as every referenced table in this file is:
+ * Drizzle resolves an inline `references()` while the referring table is being built, so a
+ * forward reference is a TDZ error at import time rather than a later one.
+ */
+export const quizAudio = pgTable('quiz_audio', {
+  /** A random 16-character name. Once the file's on disk too; now only a key. */
+  id: text('id').primaryKey(),
+  lang: text('lang').notNull().$type<Lang>().default('ka'),
+  /** 'audio/mpeg', 'audio/ogg', 'audio/wav'. What the serving route sends back. */
+  mime: text('mime').notNull(),
+  bytes: integer('bytes').notNull(),
+  /**
+   * The recording.
+   *
+   * Nullable only because the rows existed before the column did: a clip uploaded under the
+   * old scheme whose file had already gone missing has nothing to backfill from, and a null
+   * says so honestly. Everything written since is non-null, and the serving route treats a
+   * null exactly as it treated an unreadable file — 410, the row outlived its bytes.
+   */
+  data: bytea('data'),
+  /** What it was called when it was uploaded, so the editor can show something recognisable. */
+  name: text('name').notNull().default(''),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * One question, keyed by where it stands in its quiz.
+ *
+ * Keyed by `(quiz_id, position)` rather than by an id of its own, for the reason a chapter is:
+ * a question has no identity apart from its place in the quiz it belongs to, nothing outside
+ * that quiz ever cites one, and a surrogate key would be a second name for the same fact.
+ *
+ * **Three kinds, not six.** The list this was built from named six things a question could
+ * be — pick an option, pick the word you heard, order some words, type a form, type what you
+ * heard, choose a reply — and they are three shapes with two ways of being asked. What varies
+ * between "choose the correct option" and "choose the word you heard" is not the question, it
+ * is whether the prompt is written or spoken. So `kind` says what *answering* looks like:
+ *
+ *   'choice'  — pick from `quiz_choices`. One right answer, or several when `multiple`.
+ *   'order'   — put the right words in the right order, from a bank that holds wrong ones too.
+ *   'type'    — write it, and `answers` holds every spelling that counts.
+ *
+ * and `say`/`audio_id` say whether it is heard as well as read. Every one of the six falls out
+ * of that pair, and so does the seventh nobody has asked for yet.
+ */
+export const quizQuestions = pgTable(
+  'quiz_questions',
+  {
+    quizId: text('quiz_id')
+      .notNull()
+      .references(() => quizzes.id, { onDelete: 'cascade' }),
+    /** 0-based. The runner shows this plus one. */
+    position: smallint('position').notNull(),
+    /** 'choice' | 'order' | 'type'. See the note above. */
+    kind: text('kind').notNull().default('choice'),
+    /** The instruction, in English: "Which of these means 'wolf'?" */
+    prompt: text('prompt').notNull().default(''),
+    /** The material being asked about, in the language being learned. Set larger on screen. */
+    promptNative: text('prompt_native').notNull().default(''),
+    /**
+     * What a voice should read out, or empty for a question with nothing to hear.
+     *
+     * Held rather than derived from `prompt_native`, because the two are not always the same
+     * text: "choose the word you heard" wants the word spoken and *nothing* written, which is
+     * exactly a `say` with an empty `prompt_native` beside it. Synthesis is by the same cache
+     * the stories use — see `tts_cache` — so an unchanged question is only ever spoken once.
+     */
+    say: text('say').notNull().default(''),
+    /**
+     * An uploaded clip to play instead of synthesising `say`.
+     *
+     * Both exist because the voices are not good at everything. A recording of a real speaker,
+     * or a line lifted from something, is worth more than any synthesis for a listening
+     * question — and typing the text is worth more than hunting for a recording for the other
+     * forty. Whichever is set wins; when both are, the clip does.
+     */
+    audioId: text('audio_id').references(() => quizAudio.id, { onDelete: 'set null' }),
+    /** More than one option is right, and all of them must be picked. `choice` only. */
+    multiple: boolean('multiple').notNull().default(false),
+    /**
+     * Every spelling that counts as correct, for a `type` question. Empty for the others.
+     *
+     * A list rather than one string because a form often has more than one right answer —
+     * ჩემი and ჩემი კი, был and бы́л — and because the comparison is deliberately forgiving
+     * about case, spacing, punctuation and Russian stress marks. See `packages/shared/quiz.ts`,
+     * which is the one place that rule lives and is imported by both the browser and the
+     * server, so a run cannot be marked one way on screen and another in the record.
+     */
+    answers: jsonb('answers').$type<string[]>().notNull().default([]),
+    /** Shown on request during the question. Empty for one that needs no help. */
+    hint: text('hint').notNull().default(''),
+    /** Shown after answering, right or wrong. This is where a quiz does its teaching. */
+    explanation: text('explanation').notNull().default(''),
+  },
+  table => [primaryKey({ columns: [table.quizId, table.position] })],
+);
+
+/**
+ * One option of one question — and, for an `order` question, one word of the bank.
+ *
+ * The two are one table because they are one thing wearing two labels: a row that is part of
+ * the answer, or a row that is not. What differs is only how the runner draws them, and
+ * `correct` is read the same way by both:
+ *
+ *   'choice' — the rows with `correct` set are the answers. The rest are distractors.
+ *   'order'  — the rows with `correct` set are the answer *in `position` order*, and the rest
+ *              are words that belong to no part of it. That is what makes "choose the correct
+ *              words and put them in the correct order" one question rather than two.
+ *
+ * Keyed by `(quiz_id, question, position)`, so a question's options are ordered the way its
+ * questions are, and for the same reason.
+ */
+export const quizChoices = pgTable(
+  'quiz_choices',
+  {
+    quizId: text('quiz_id')
+      .notNull()
+      .references(() => quizzes.id, { onDelete: 'cascade' }),
+    /** Which question, 0-based. Part of the key: every question has an option 0. */
+    question: smallint('question').notNull(),
+    /** 0-based. For `order`, the correct rows' relative order *is* the answer. */
+    position: smallint('position').notNull(),
+    text: text('text').notNull().default(''),
+    /** Part of the answer. See the note above for what that means per kind. */
+    correct: boolean('correct').notNull().default(false),
+    /** What a voice should read out for this option. Empty for one that is only read. */
+    say: text('say').notNull().default(''),
+    /** An uploaded clip for this option, which wins over `say`. See `quiz_questions.audio_id`. */
+    audioId: text('audio_id').references(() => quizAudio.id, { onDelete: 'set null' }),
+  },
+  table => [primaryKey({ columns: [table.quizId, table.question, table.position] })],
+);
+
+// As with `story_tokens` and `story_chapters`, there is deliberately no foreign key from
+// `(quiz_id, question)` to `quiz_questions`, and for the same reason: a question's position is
+// its identity, so reordering the quiz means writing new positions, and a non-deferrable key
+// cannot be satisfied part-way through a swap in either order. `writeQuiz` sidesteps the
+// problem rather than working around it — it deletes every question and option of the quiz and
+// writes the submitted set back in one transaction, so no row is ever half-moved. The key on
+// `quiz_id` still stands, which is the one that would actually lose data.
+
+/* ----------------------------------------------------------------- lessons */
+
+/**
+ * A shelf to file lessons on — "The alphabet", "Week 1", "Verbs".
+ *
+ * A third table with the same shape as `story_categories` and `quiz_categories`, for the reason
+ * given on the first of them, and one column more: `section`. A shelf belongs to the lessons
+ * section or to the grammar section, never to both, so "Verbs" as a grammar heading and "Verbs"
+ * as a lesson heading are two rows. That is what keeps the reference from being reorganised
+ * every time somebody files a lesson.
+ */
+export const lessonCategories = pgTable(
+  'lesson_categories',
+  {
+    id: text('id').primaryKey(),
+    lang: text('lang')
+      .notNull()
+      .$type<Lang>()
+      .default('ka')
+      .references(() => languages.id, { onDelete: 'cascade' }),
+    /** 'lessons' | 'grammar'. A `LessonSection`; see the note on that type. */
+    section: text('section').notNull().default('lessons'),
+    /** Where it sits in the list, which is chosen rather than alphabetical. */
+    position: integer('position').notNull().default(0),
+    name: text('name').notNull(),
+    /** The category's name in the language being learned. Optional, as a quiz shelf's is. */
+    nameNative: text('name_native').notNull().default(''),
+    note: text('note').notNull().default(''),
+    /** Maintained by the writers, the way `quiz_categories.quiz_count` is. */
+    lessonCount: integer('lesson_count').notNull().default(0),
+  },
+  table => [index('lesson_categories_lang_idx').on(table.lang, table.section)],
+);
+
+/**
+ * A lesson: its own fields, and its whole body as one string of markup.
+ *
+ * **The body is text, not a tree.** That is the decision this table turns on, and the
+ * alternative — a `lesson_blocks` table, or jsonb holding a parsed document — was rejected for
+ * one reason: the author writes markup. Storing anything else would mean the thing in the
+ * database is a *rendering* of what was typed, so the editor could no longer show back exactly
+ * what was written, a round trip through the parser could quietly lose a stray character, and
+ * fixing a typo in a table would be an update to a row nobody can see. Held as text, the column
+ * is the document, and every reading of it — the page, the excerpt, the speech route — comes
+ * from one parser in shared/lesson.ts.
+ *
+ * What that gives up is referential integrity with what the body names. A `::quiz` naming a
+ * deleted quiz and a `::image` naming a deleted upload are both text pointing at nothing, and
+ * no foreign key can say so. The remedy is at the other end: deleting an upload is refused
+ * while any body still mentions it, and an embedded quiz that has gone renders as a line saying
+ * so rather than as a hole.
+ *
+ * Both reading sections are this one table — see `LessonSection`. There is no `published`
+ * column, for the reason the quizzes have none: a lesson with an empty body has nothing to
+ * read, so "started and not finished" is already a state the data has.
+ */
+export const lessons = pgTable(
+  'lessons',
+  {
+    id: text('id').primaryKey(),
+    lang: text('lang')
+      .notNull()
+      .$type<Lang>()
+      .default('ka')
+      .references(() => languages.id, { onDelete: 'cascade' }),
+    /** 'lessons' | 'grammar'. Which of the two indexes lists it. */
+    section: text('section').notNull().default('lessons'),
+    position: integer('position').notNull().default(0),
+    title: text('title').notNull(),
+    /** The title in the language being learned. Display only. */
+    titleNative: text('title_native').notNull().default(''),
+    /** One line for the card. The opening paragraph stands in when it is empty. */
+    summary: text('summary').notNull().default(''),
+    /** A CEFR level as plain text, on the same terms as a story's. */
+    level: text('level').notNull().default(''),
+    /**
+     * Null is "not filed yet" rather than a category called "Uncategorised", and the key is
+     * `set null` for the reason the quizzes' is. See `quizzes.category_id`.
+     */
+    categoryId: text('category_id').references(() => lessonCategories.id, { onDelete: 'set null' }),
+    /** The markup. See the note above, and the head of shared/lesson.ts for the language. */
+    body: text('body').notNull().default(''),
+    note: text('note').notNull().default(''),
+  },
+  table => [
+    index('lessons_lang_idx').on(table.lang, table.section),
+    index('lessons_category_idx').on(table.categoryId),
+  ],
+);
+
+/**
+ * A picture or a recording somebody uploaded for a lesson, bytes and all.
+ *
+ * The same division of labour as `quiz_audio` — the upload in a column, the facts about it
+ * alongside — and a separate table rather than more rows in that one, which is worth defending
+ * because "an upload is an upload" is a fair objection.
+ *
+ * Three things make them different. This one holds pictures, and a picture has a width, a
+ * height and a line of alt text that mean nothing whatever to a quiz clip. What counts as "in
+ * use" is a different question in each: a quiz clip is used when a `quiz_questions` row cites
+ * its id in a column, and one of these is used when the *text* of some lesson body mentions it,
+ * which is a different query and a different guard. And a quiz clip is reached at a URL under
+ * /api/quiz, which is where a listening question's sound has always come from.
+ *
+ * What they share is the lifetime, and it is the opposite of the speech cache's: a synthesised
+ * line is disposable because the text can make it again, and a photograph somebody scanned
+ * cannot be made again by anything. So nothing here is ever evicted, and `id` is a random name
+ * rather than a hash of the contents — two uploads of one picture are two rows, deliberately,
+ * because one of them may be deleted while the other is still on a page.
+ */
+export const lessonMedia = pgTable(
+  'lesson_media',
+  {
+    /** A random 16-character name. Once the file's on disk too; now only a key. */
+    id: text('id').primaryKey(),
+    lang: text('lang').notNull().$type<Lang>().default('ka'),
+    /** 'image' | 'audio'. What the editor lists it under and what a body may name it in. */
+    kind: text('kind').notNull(),
+    /** 'image/png', 'audio/mpeg'. What the serving route sends back. See `quiz_audio.mime`. */
+    mime: text('mime').notNull(),
+    bytes: integer('bytes').notNull(),
+    /** The picture or the recording. Nullable for the reason `quiz_audio.data` is. */
+    data: bytea('data'),
+    /** What it was called when it was uploaded, so the picker can show something recognisable. */
+    name: text('name').notNull().default(''),
+    /**
+     * The picture's size in pixels; zero for a recording, and zero for a picture whose header
+     * this server could not read. Held so the page can reserve the space before the bytes
+     * arrive — an image that pops in and shoves the paragraph below it down the screen is the
+     * one layout fault a reader notices every time.
+     */
+    width: integer('width').notNull().default(0),
+    height: integer('height').notNull().default(0),
+    /**
+     * What a screen reader says instead of showing it.
+     *
+     * On the upload rather than on the `::image` that draws it, because a picture means the same
+     * thing wherever it is used and describing it once is the version that actually gets done.
+     */
+    alt: text('alt').notNull().default(''),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  table => [index('lesson_media_kind_idx').on(table.kind)],
+);
+
 /* ======================================================================= auth */
 
 // Better Auth owns the shape of the next four tables: it queries them by these exact table
@@ -732,6 +1250,12 @@ export const storyTokens = pgTable(
 //   user.marketingOptIn — whether we may send anything that is not transactional.
 //   user.isAdmin — may edit the dictionary. See the note on the column.
 //   user.lang — which dictionary they were last in. See the note on the column.
+//
+// The three `owner_id` columns above reference `user.id` from before it is declared. That is
+// safe for a plain `references()` on a column: the argument is a thunk Drizzle calls after
+// this module has finished evaluating, and only the table-level helpers need their target
+// already built. Moving this block to the top of the file to avoid the question would put the
+// auth library's tables in front of the ones this app actually models.
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -898,6 +1422,47 @@ export const studyCards = pgTable(
   ],
 );
 
+/**
+ * How one person last got on with one quiz.
+ *
+ * **One row per person per quiz, overwritten every time.** Not an attempt log: what is worth
+ * keeping is whether this quiz is behind you, and a table that grew a row per run would be a
+ * history nothing reads, on one of the two tables here that grow with use rather than with
+ * content. Re-taking a quiz replaces what it says, including replacing a pass with a fail —
+ * the record is "how it went last time", and a "best ever" that could never be lost would
+ * stop meaning anything after the first lucky run.
+ *
+ * Signed-in only, and unlike `study_cards` there is no browser-side copy to merge up. That
+ * asymmetry is deliberate: a deck is months of work and must survive a cleared cache, and
+ * this is a fact about one afternoon. A signed-out visitor takes the quiz, is told how they
+ * did, and nothing is written anywhere — which is why nothing in the runner needs an account
+ * to work.
+ */
+export const quizResults = pgTable(
+  'quiz_results',
+  {
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    quizId: text('quiz_id')
+      .notNull()
+      .references(() => quizzes.id, { onDelete: 'cascade' }),
+    /** Stored rather than joined, because the index filters on it. See `study_cards.lang`. */
+    lang: text('lang').notNull().$type<Lang>().default('ka'),
+    /** Whether `score` reached the quiz's pass mark, as it stood at the time. */
+    passed: boolean('passed').notNull().default(false),
+    /** Questions answered correctly, and how many there were. */
+    score: smallint('score').notNull().default(0),
+    total: smallint('total').notNull().default(0),
+    finishedAt: timestamp('finished_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  table => [
+    primaryKey({ columns: [table.userId, table.quizId] }),
+    // The index's only query: everything this person has taken, in the language on screen.
+    index('quiz_results_user_lang_idx').on(table.userId, table.lang),
+  ],
+);
+
 /* ===================================================================== speech */
 
 /**
@@ -1039,10 +1604,56 @@ export const storyTokensRelations = relations(storyTokens, ({ one }) => ({
   word: one(words, { fields: [storyTokens.wordId], references: [words.id] }),
 }));
 
+export const quizCategoriesRelations = relations(quizCategories, ({ many, one }) => ({
+  language: one(languages, { fields: [quizCategories.lang], references: [languages.id] }),
+  quizzes: many(quizzes),
+}));
+
+export const quizzesRelations = relations(quizzes, ({ many, one }) => ({
+  language: one(languages, { fields: [quizzes.lang], references: [languages.id] }),
+  category: one(quizCategories, { fields: [quizzes.categoryId], references: [quizCategories.id] }),
+  questions: many(quizQuestions),
+  choices: many(quizChoices),
+  results: many(quizResults),
+}));
+
+export const quizQuestionsRelations = relations(quizQuestions, ({ many, one }) => ({
+  quiz: one(quizzes, { fields: [quizQuestions.quizId], references: [quizzes.id] }),
+  clip: one(quizAudio, { fields: [quizQuestions.audioId], references: [quizAudio.id] }),
+  choices: many(quizChoices),
+}));
+
+export const quizChoicesRelations = relations(quizChoices, ({ one }) => ({
+  quiz: one(quizzes, { fields: [quizChoices.quizId], references: [quizzes.id] }),
+  question: one(quizQuestions, {
+    fields: [quizChoices.quizId, quizChoices.question],
+    references: [quizQuestions.quizId, quizQuestions.position],
+  }),
+  clip: one(quizAudio, { fields: [quizChoices.audioId], references: [quizAudio.id] }),
+}));
+
+export const quizResultsRelations = relations(quizResults, ({ one }) => ({
+  user: one(user, { fields: [quizResults.userId], references: [user.id] }),
+  quiz: one(quizzes, { fields: [quizResults.quizId], references: [quizzes.id] }),
+}));
+
+export const lessonCategoriesRelations = relations(lessonCategories, ({ many, one }) => ({
+  language: one(languages, { fields: [lessonCategories.lang], references: [languages.id] }),
+  lessons: many(lessons),
+}));
+
+export const lessonsRelations = relations(lessons, ({ one }) => ({
+  language: one(languages, { fields: [lessons.lang], references: [languages.id] }),
+  category: one(lessonCategories, { fields: [lessons.categoryId], references: [lessonCategories.id] }),
+  // No relation to `lesson_media`: what a lesson uses is named in its body as text, and there
+  // is nothing for Drizzle to join on. See the note on the `lessons` table.
+}));
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
   cards: many(studyCards),
+  quizResults: many(quizResults),
 }));
 
 export const studyCardsRelations = relations(studyCards, ({ one }) => ({

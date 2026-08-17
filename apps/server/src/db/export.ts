@@ -23,7 +23,7 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq, isNull } from 'drizzle-orm';
 import { LANGS, isLang } from '@georgian/shared/grammar';
 import { PERSONS, SCREEVES, SERIES } from '@georgian/shared/grammar/ka';
 import type { KaVerbData, Lang, RuVerbData, StoryCategory, StoryFile, WordData } from '@georgian/shared/types';
@@ -156,10 +156,14 @@ for (const lang of langs) {
   // seed would put deleted ones back.
   write(lang, 'storyCategories.json', snapshot.storyCategories satisfies StoryCategory[]);
 
+  // Published stories only. A reader's own belong to the person who wrote them rather than to
+  // data/, and writing them out would put somebody's private notebook into the repository on
+  // the next `git add`. The snapshot above already excludes them (see `assemble`), so this is
+  // the only other place the question comes up.
   const storyRows = await db
     .select({ id: schema.stories.id })
     .from(schema.stories)
-    .where(eq(schema.stories.lang, lang))
+    .where(and(eq(schema.stories.lang, lang), isNull(schema.stories.ownerId)))
     .orderBy(asc(schema.stories.id));
 
   for (const row of storyRows) {

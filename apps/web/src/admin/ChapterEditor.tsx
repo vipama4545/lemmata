@@ -17,9 +17,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
 import { cn } from '@/lib/utils';
 import { KNOW_BUTTON } from '../components/StoryReader';
+import { replaceStory } from '../data/stories';
 import { chapterHref } from '../utils/story';
 import { api } from '../api/client';
-import { lang, langName, storySummaries } from '../content/store';
+import { lang, langName, publishedStories } from '../content/store';
 import {
   ADMIN_INPUT_GEO,
   AdminActions,
@@ -71,7 +72,7 @@ function ChapterEditor() {
   // Straight out of the snapshot, unmemoised: saving a chapter relinks it and bumps the
   // content version, and the counts in the header are this chapter's own. See the same note
   // in StoryEditor.
-  const summary = storySummaries().find(story => story.id === storyId) ?? null;
+  const summary = publishedStories().find(story => story.id === storyId) ?? null;
   const chapter =
     position === null ? null : summary?.chapters.find(entry => entry.position === position) ?? null;
 
@@ -153,6 +154,10 @@ function ChapterEditor() {
 
     if (result) {
       setReport(result);
+      // The reader caches fetched chapters for the session, so opening the story after this
+      // would otherwise show the text as it was before the save. The server has handed back the
+      // relinked chapter, so it goes straight in.
+      replaceStory(result.story);
       if (isNew) {
         navigate(`/admin/stories/${encodeURIComponent(storyId)}/chapters/${result.story.chapter}`, {
           replace: true,

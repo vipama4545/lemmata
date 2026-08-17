@@ -77,6 +77,33 @@ const schema = z.object({
    */
   TTS_CACHE_MAX_BYTES: z.coerce.number().int().positive().default(2_000_000_000),
 
+  /**
+   * Where uploads *used* to be kept — quiz clips, and the pictures and recordings in lessons.
+   *
+   * Nothing writes here any more. The bytes are columns on `lesson_media` and `quiz_audio` as
+   * of migration 0011, because an upload and the row describing it travelling separately meant
+   * that moving the database to a new host left every picture and every play button broken on
+   * the other side. See the note on the `quiz_audio` table.
+   *
+   * Still read for two things: `npm run db:media-import`, which is how the files got into the
+   * database and is safe to re-run, and the `discard` in each media module, which deletes an
+   * old file when its row goes. A deployment that never had files can leave this unset — the
+   * default is a directory that simply will not exist, and nothing looks in it.
+   *
+   * Once `db:media-import` has run and the pictures still draw, the directory and the volume
+   * behind it can go. Take a backup of the database first; it is now the only copy.
+   */
+  MEDIA_DIR: z.string().default(new URL('../../../.media', import.meta.url).pathname),
+
+  /**
+   * The largest file that may be uploaded — a quiz clip, or a lesson's picture or recording.
+   *
+   * Eight megabytes is several minutes of speech at any sensible bitrate and a photograph
+   * larger than any page needs. It is a bound on what one admin can put on the disk in one
+   * request rather than a judgement about quality.
+   */
+  MEDIA_MAX_BYTES: z.coerce.number().int().positive().default(8_000_000),
+
   // Optional as a pair: both or neither. See mail/mailgun.ts.
   MAILGUN_API_KEY: z.string().min(1).optional(),
   /** The sending domain as Mailgun knows it — `mg.example.com`, not a URL. */

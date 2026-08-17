@@ -13,10 +13,6 @@ import type { Story, StorySummary } from '@georgian/shared/types';
 import { api } from '../api/client';
 import { storySummaries } from '../content/store';
 
-export function stories(): StorySummary[] {
-  return storySummaries();
-}
-
 export function storySummary(id: string | undefined): StorySummary | undefined {
   return id ? storySummaries().find(story => story.id === id) : undefined;
 }
@@ -53,6 +49,41 @@ export function replaceStory(story: Story): void {
     if (cached.startsWith(`${story.id}#`)) loaded.delete(cached);
   }
   loaded.set(key(story.id, story.chapter), story);
+}
+
+/**
+ * Drops every cached chapter of one story, so the next visit fetches it again.
+ *
+ * What editing has to call. The cache is keyed on `id#chapter` and nothing expires it, which
+ * was safe while a story could only change under an admin who then reloaded; now the prose is
+ * edited two clicks from the reader, and a stale copy means saving a chapter and reading back
+ * the version before it. `replaceStory` is the better call where the server has just handed
+ * back the chapter in question, because it refills the cache instead of only emptying it.
+ */
+export function forgetStory(id: string): void {
+  for (const cached of [...loaded.keys()]) {
+    if (cached.startsWith(`${id}#`)) loaded.delete(cached);
+  }
+  for (const pending of [...inFlight.keys()]) {
+    if (pending.startsWith(`${id}#`)) inFlight.delete(pending);
+  }
+}
+
+/**
+ * Empties the cache. Called when the session changes.
+ *
+ * Chapters are held for the session, which was safe when every story in here was one anybody
+ * could read. A reader's own are not: signing out on a shared laptop and handing it over should
+ * not leave somebody's private text one Back button away. After this, opening it again asks the
+ * server, and the server answers as if it did not exist.
+ *
+ * It does not reach a page already on screen. That copy is in component state, and the reader
+ * goes on showing it until it navigates. What this buys is that nothing is *re-shown* from
+ * memory afterwards, which is the case that matters.
+ */
+export function forgetStories(): void {
+  loaded.clear();
+  inFlight.clear();
 }
 
 function fetchStory(id: string, chapter: number): Promise<Story | null> {

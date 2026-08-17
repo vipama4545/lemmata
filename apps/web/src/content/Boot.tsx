@@ -11,9 +11,18 @@
 
 import { useEffect, useState, lazy, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
+import { isEmbedRoute } from './embed';
 import { loadContent } from './store';
 
 const App = lazy(() => import('../App'));
+
+/**
+ * An embedded quiz, which is the one thing this app renders without a dictionary behind it.
+ *
+ * In its own chunk, so the ordinary visit does not carry it and the embed does not carry the
+ * app. Between them that is the whole cost of the feature to somebody who never opens one.
+ */
+const QuizEmbed = lazy(() => import('../components/QuizEmbed'));
 
 type State = { status: 'loading' } | { status: 'ready' } | { status: 'failed'; error: Error };
 
@@ -27,7 +36,14 @@ export default function Boot() {
   const [state, setState] = useState<State>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
 
+  // Decided once, from the URL the page was opened with, and never re-read. An embed is a whole
+  // document that exists to show one quiz; there is nothing in it that could navigate out of the
+  // embed and no reason to keep watching in case something did.
+  const [embedded] = useState(() => isEmbedRoute(globalThis.location.hash));
+
   useEffect(() => {
+    if (embedded) return undefined;
+
     let live = true;
 
     void loadContent().then(
@@ -42,7 +58,18 @@ export default function Boot() {
     return () => {
       live = false;
     };
-  }, [attempt]);
+  }, [attempt, embedded]);
+
+  // Before every branch below, because all of them are about the dictionary and an embed is not
+  // waiting for one. Its own Suspense rather than the app's: this chunk is the only thing that
+  // has to arrive, and it is a fraction of the size.
+  if (embedded) {
+    return (
+      <Suspense fallback={<div className={SCREEN} />}>
+        <QuizEmbed />
+      </Suspense>
+    );
+  }
 
   if (state.status === 'failed') {
     return (

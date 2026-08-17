@@ -41,6 +41,16 @@ export function BreadcrumbSeparator() {
   );
 }
 
+/**
+ * The previous/next links at the foot of a page that is one of a sequence.
+ *
+ * A constant rather than a component because both users put their own arrow on either side of
+ * the label and one of them puts a spacer where a link would be. It lived in GrammarTopic until
+ * that page was replaced by the lessons, which is a poor home for something the verb pages also
+ * use; here it sits with the rest of the page furniture.
+ */
+export const NAV_LINK = 'flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary';
+
 /** A quiet heading over a band of cards — smaller and lighter than an <h2> would read. */
 export function SectionHeading({ className, ...props }: ComponentProps<"h2">) {
   return <h2 className={cn("mb-3 text-[15px] font-semibold text-muted-foreground", className)} {...props} />;

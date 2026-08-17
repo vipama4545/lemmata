@@ -1,0 +1,228 @@
+{
+ "note": "Reading data for one story: the prose in \"paragraphs\", and one record per word occurrence in \"tokens\" — an array per paragraph, in reading order, so a record's position in it is the position of the word in the text. A record carries no meaning of its own: \"word\" is a words.json id and \"sense\" is a 1-based index into that entry's senses, which is how one spelling can mean different things in different lines. \"gram\" is how the form differs from the headword, \"via\" how the link was reached, \"check\" marks a guess worth a human eye, and \"name\" is a proper noun glossed here rather than added to the dictionary. Corrections go in scripts/storyOverrides.json, NOT here, or the next build will drop them. Regenerate with: node scripts/buildStoryData.cjs",
+ "id": "first-conversation",
+ "lang": "ka",
+ "title": "პირველი დიალოგი",
+ "titleEnglish": "A first conversation",
+ "level": "A1",
+ "source": "",
+ "stats": {
+  "tokens": 31,
+  "distinctForms": 16,
+  "covered": 27,
+  "coverage": 87.1,
+  "names": 10,
+  "unresolved": 4,
+  "flagged": 0
+ },
+ "paragraphs": [
+  "ნინო: გამარჯობა!",
+  "ჯონი: გამარჯობა. რა გქვია?",
+  "ნინო: მე მქვია ნინო. შენ?",
+  "ჯონი: მე მქვია ჯონი.",
+  "ნინო: საიდან ხარ?",
+  "ჯონი: ამერიკელი ვარ. შენ ქართველი ხარ?",
+  "ნინო: დიახ, ქართველი ვარ.",
+  "ჯონი: ძალიან სასიამოვნოა."
+ ],
+ "translation": [
+  "Nino: Hello!",
+  "John: Hello. What is your name?",
+  "Nino: My name is Nino. And you?",
+  "John: My name is John.",
+  "Nino: Where are you from?",
+  "John: I am American. Are you Georgian?",
+  "Nino: Yes, I am Georgian.",
+  "John: Very nice to meet you."
+ ],
+ "tokens": [
+  [
+   {
+    "form": "ნინო",
+    "name": "Nino, the Georgian half of the conversation",
+    "via": "name"
+   },
+   {
+    "form": "გამარჯობა",
+    "word": "157",
+    "sense": 1,
+    "via": "headword"
+   }
+  ],
+  [
+   {
+    "form": "ჯონი",
+    "name": "John, the American half of the conversation",
+    "via": "name"
+   },
+   {
+    "form": "გამარჯობა",
+    "word": "157",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "რა",
+    "word": "1907",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "გქვია",
+    "via": "unresolved"
+   }
+  ],
+  [
+   {
+    "form": "ნინო",
+    "name": "Nino, the Georgian half of the conversation",
+    "via": "name"
+   },
+   {
+    "form": "მე",
+    "word": "40",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "მქვია",
+    "via": "unresolved"
+   },
+   {
+    "form": "ნინო",
+    "name": "Nino, the Georgian half of the conversation",
+    "via": "name"
+   },
+   {
+    "form": "შენ",
+    "word": "2119",
+    "sense": 1,
+    "via": "headword"
+   }
+  ],
+  [
+   {
+    "form": "ჯონი",
+    "name": "John, the American half of the conversation",
+    "via": "name"
+   },
+   {
+    "form": "მე",
+    "word": "40",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "მქვია",
+    "via": "unresolved"
+   },
+   {
+    "form": "ჯონი",
+    "name": "John, the American half of the conversation",
+    "via": "name"
+   }
+  ],
+  [
+   {
+    "form": "ნინო",
+    "name": "Nino, the Georgian half of the conversation",
+    "via": "name"
+   },
+   {
+    "form": "საიდან",
+    "word": "w:საიდან",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "ხარ",
+    "word": "148",
+    "sense": 1,
+    "gram": "Present 2sg",
+    "via": "paradigm"
+   }
+  ],
+  [
+   {
+    "form": "ჯონი",
+    "name": "John, the American half of the conversation",
+    "via": "name"
+   },
+   {
+    "form": "ამერიკელი",
+    "word": "465",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "ვარ",
+    "word": "148",
+    "sense": 1,
+    "gram": "Present 1sg",
+    "via": "form index"
+   },
+   {
+    "form": "შენ",
+    "word": "2119",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "ქართველი",
+    "word": "w:ქართველი",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "ხარ",
+    "word": "148",
+    "sense": 1,
+    "gram": "Present 2sg",
+    "via": "paradigm"
+   }
+  ],
+  [
+   {
+    "form": "ნინო",
+    "name": "Nino, the Georgian half of the conversation",
+    "via": "name"
+   },
+   {
+    "form": "დიახ",
+    "word": "197",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "ქართველი",
+    "word": "w:ქართველი",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "ვარ",
+    "word": "148",
+    "sense": 1,
+    "gram": "Present 1sg",
+    "via": "form index"
+   }
+  ],
+  [
+   {
+    "form": "ჯონი",
+    "name": "John, the American half of the conversation",
+    "via": "name"
+   },
+   {
+    "form": "ძალიან",
+    "word": "w:ძალიან",
+    "sense": 1,
+    "via": "headword"
+   },
+   {
+    "form": "სასიამოვნოა",
+    "via": "unresolved"
+   }
+  ]
+ ]
+}

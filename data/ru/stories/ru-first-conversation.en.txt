@@ -1,0 +1,12 @@
+A first conversation
+
+Anna: Hello!
+John: Hello. What is your name?
+Anna: My name is Anna. And you?
+John: My name is John.
+Anna: Very nice to meet you. Where are you from?
+John: I am from America. I am American. And are you Russian?
+Anna: Yes, I am Russian. I am from Moscow.
+John: Very nice to meet you.
+Anna: Goodbye!
+John: Goodbye!

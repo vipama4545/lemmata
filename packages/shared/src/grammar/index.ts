@@ -29,14 +29,18 @@ export function isLang(value: string | undefined | null): value is Lang {
 /**
  * Languages only an administrator may open.
  *
- * Russian is here while it is being built: the verbs conjugate and the word list is still
- * being checked, and neither is something to hand a learner yet. It is not a half-measure —
- * the switcher does not list it, and the server does not serve it to anyone else, so a
- * hand-typed `#/ru/verbs` gets the Georgian dictionary rather than a preview.
+ * Empty, and Russian is the reason it is worth keeping empty rather than deleting. It sat here
+ * while Russian was being built — the switcher did not list it, and the server refused it to
+ * everybody else, so a hand-typed `#/ru/verbs` got the Georgian dictionary rather than a
+ * preview — and it came out when the starter course landed and there was something for a
+ * learner to arrive at. Putting a language in is the whole of unreleasing it, and the next
+ * language will want exactly that while its word list is still being checked.
  *
- * Taking Russian out of this array is the whole of releasing it. Nothing else has to change.
+ * The machinery either side of this — `visibleTo` and `assertMayRead` in router/content.ts,
+ * the filter in LanguageSwitcher — is correct against an empty array and costs nothing to
+ * leave standing.
  */
-export const ADMIN_ONLY_LANGS: readonly Lang[] = ['ru'];
+export const ADMIN_ONLY_LANGS: readonly Lang[] = [];
 
 export function isAdminOnlyLang(lang: Lang): boolean {
   return ADMIN_ONLY_LANGS.includes(lang);

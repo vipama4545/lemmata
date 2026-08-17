@@ -1,0 +1,1847 @@
+{
+  "note": "The Russian starter course, written by scripts/ruStarterLessons.ts. The alphabet lessons play native recordings uploaded by scripts/ruAlphabetAudio.ts; every other play button is Azure speech uploaded by scripts/ruVoiceAzure.ts. The three texts the lessons embed are in the library — see scripts/ruStories.ts. Edited in the admin screens from here on; `npm run db:lessons -- --lang ru` loads it, and leaves alone anything already in the database.",
+  "lang": "ru",
+  "categories": [
+    {
+      "id": "ru-start-here",
+      "section": "lessons",
+      "name": "Start here",
+      "nameNative": "",
+      "note": "What Russian asks of you, and the order to take this in."
+    },
+    {
+      "id": "ru-alphabet",
+      "section": "lessons",
+      "name": "The alphabet",
+      "nameNative": "Алфавит",
+      "note": "All 33 letters, then five sittings grouped by what makes each of them hard."
+    },
+    {
+      "id": "ru-introductions",
+      "section": "lessons",
+      "name": "Introductions",
+      "nameNative": "Знакомство",
+      "note": "Hello, your name, where you are from, and a first conversation."
+    }
+  ],
+  "lessons": [
+    {
+      "id": "ru-start-here",
+      "section": "lessons",
+      "title": "Start here",
+      "titleNative": "Начнём",
+      "summary": "What Russian asks of you, what it does not, and the order to take this in.",
+      "level": "A1",
+      "categoryId": "ru-start-here",
+      "body": "Russian has a reputation, and about half of it is deserved. The half that is not is the alphabet — which is what everybody thinks of first, and which is a week's work at the outside. Five of its thirty-three letters are the English letters they look like, doing the job you already expect. Another ten are new shapes for sounds your mouth already makes. What is genuinely new is small enough to fit on one page.\n\nThe half that is deserved arrives later: six cases, verbs that come in pairs, and a stress that moves around inside a word and is never written down. None of that is in this course, and none of it is a reason to put off the alphabet.\n\n## What Russian will not do to you\n\n- **No articles.** There is no *the* and no *a*. Ever.\n- **No present tense of \"to be\".** \"I am a student\" is two words — *я студент* — and the verb is simply not there.\n- **Spelling follows sound.** Not perfectly, but there is nothing like English *though, through, thought* to memorise.\n\n## How this works\n\n- Every lesson is short — one table, one idea, ten minutes.\n- Each one ends in a few questions you answer here on the page. They are marked as you go, with the reason underneath.\n- Anything with a play button beside it can be heard. The letters are read by a person; the words and phrases are synthesised.\n\n## The order\n\n1. **The alphabet.** All 33 at once to see the shape of it, then five sittings grouped by what makes each of them hard. The false friends — the letters that look English and are not — come second, on purpose.\n2. **Introductions.** Hello, your name, where you are from, and a conversation that uses the lot.\n\nThe alphabet section ends in a short reading that is worth getting to. It is made entirely of words you will be able to read and have never studied.\n\nStart with the alphabet. Do not try to learn all 33 today.",
+      "note": ""
+    },
+    {
+      "id": "ru-alphabet-all",
+      "section": "lessons",
+      "title": "The whole alphabet",
+      "titleNative": "Русский алфавит",
+      "summary": "All 33 letters in one table, with a word that uses each. Read it once and move on.",
+      "level": "A1",
+      "categoryId": "ru-alphabet",
+      "body": "Here is the whole thing at once. It is not for memorising — it is so that the five lessons after it have somewhere to point back to, and so you can see how much of it you get for nothing.\n\nPress the button beside a letter to hear its **name**, read by a Russian. A letter's name is not the sound it makes, any more than \"aitch\" is the sound of *h*; the sound is in the third column, and the example word is where you will actually hear it.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| А а | а (ah) | a as in \"father\" | {red:а}дрес — address {say:адрес} |\n| Б б | бэ (beh) | b | {red:б}рат — brother {say:брат} |\n| В в | вэ (veh) | v — never b | {red:в}ода — water {say:вода} |\n| Г г | гэ (geh) | g, always hard as in \"go\" | {red:г}ород — city {say:город} |\n| Д д | дэ (deh) | d | {red:д}ом — house, home {say:дом} |\n| Е е | е (yeh) | ye as in \"yes\" | {red:е}да — food {say:еда} |\n| Ё ё | ё (yo) | yo as in \"yonder\" — always stressed | {red:ё}лка — fir tree {say:ёлка} |\n| Ж ж | жэ (zheh) | like the s in \"measure\" | {red:ж}ена — wife {say:жена} |\n| З з | зэ (zeh) | z | {red:з}има — winter {say:зима} |\n| И и | и (ee) | ee as in \"machine\" | {red:и}мя — name {say:имя} |\n| Й й | и краткое (ee KRAT-ko-ye) | y as in \"boy\" — a glide, never alone | ча{red:й} — tea {say:чай} |\n| К к | ка (kah) | k, with no puff of breath after it | {red:к}от — tomcat {say:кот} |\n| Л л | эль (ell) | l, heavier and further back than English | {red:л}уна — moon {say:луна} |\n| М м | эм (em) | m | {red:м}ама — mum {say:мама} |\n| Н н | эн (en) | n — never h | {red:н}ос — nose {say:нос} |\n| О о | о (oh) | o as in \"more\" when stressed, nearer \"a\" when not | {red:о}стров — island {say:остров} |\n| П п | пэ (peh) | p, with no puff of breath after it | {red:п}арк — park {say:парк} |\n| Р р | эр (err) | r, tapped or rolled — never the English r | {red:р}ука — hand, arm {say:рука} |\n| С с | эс (ess) | s — never k | {red:с}тол — table {say:стол} |\n| Т т | тэ (teh) | t, with no puff of breath after it | {red:т}ам — there {say:там} |\n| У у | у (oo) | oo as in \"boot\" | {red:у}тро — morning {say:утро} |\n| Ф ф | эф (ef) | f | {red:ф}ильм — film {say:фильм} |\n| Х х | ха (khah) | kh as in Scottish \"loch\" | {red:х}леб — bread {say:хлеб} |\n| Ц ц | цэ (tseh) | ts as in \"cats\" | {red:ц}вет — colour {say:цвет} |\n| Ч ч | че (cheh) | ch as in \"chair\" | {red:ч}ас — hour {say:час} |\n| Ш ш | ша (shah) | sh as in \"shop\", hard and hollow | {red:ш}кола — school {say:школа} |\n| Щ щ | ща (shchah) | a longer, softer sh | {red:щ}енок — puppy {say:щенок} |\n| Ъ ъ | твёрдый знак (the hard sign) | no sound — a break before the next vowel | под{red:ъ}езд — entrance, stairwell {say:подъезд} |\n| Ы ы | ы (ih) | no English equivalent — i with the tongue pulled back | с{red:ы}н — son {say:сын} |\n| Ь ь | мягкий знак (the soft sign) | no sound — it softens the letter before it | ден{red:ь} — day {say:день} |\n| Э э | э (eh) | e as in \"end\" | {red:э}то — this is {say:это} |\n| Ю ю | ю (yoo) | yu as in \"you\" | {red:ю}г — south {say:юг} |\n| Я я | я (yah) | ya as in \"yard\" | {red:я}блоко — apple {say:яблоко} |\n\n> Every letter has a capital and a small shape, and for most of them the small one is the capital drawn smaller — **К к**, **О о**, **Ш ш**. Four are worth a second look, because the small shape is not the capital shrunk: **Б б**, **Д д**, **Р р**, **У у**. The last two are the ones that catch people out in print, because they hang below the line exactly where an English *p* and *y* do.\n\nNow take them a sitting at a time, in the order the next five lessons put them — which is not this one.\n\n> The letters are read by a native speaker: the [Russian alphabet recordings](https://commons.wikimedia.org/wiki/Category:Russian_pronunciation) by Cherus on Wikimedia Commons, used under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). The example words and the phrases are synthesised.\n\n::quiz ru-alphabet-all-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-letters-1",
+      "section": "lessons",
+      "title": "The ones you already know",
+      "titleNative": "А а  К к  М м  О о  Т т",
+      "summary": "Five letters that look like English letters and sound like them too.",
+      "level": "A1",
+      "categoryId": "ru-alphabet",
+      "body": "Start with the free ones. These five are the letters you already read, doing the job you already expect — which means that after ten minutes you can read a fair number of Russian words without having learned anything at all.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| А а | а (ah) | a as in \"father\" | {red:а}дрес — address {say:адрес} |\n| К к | ка (kah) | k, with no puff of breath after it | {red:к}от — tomcat {say:кот} |\n| М м | эм (em) | m | {red:м}ама — mum {say:мама} |\n| О о | о (oh) | o as in \"more\" when stressed, nearer \"a\" when not | {red:о}стров — island {say:остров} |\n| Т т | тэ (teh) | t, with no puff of breath after it | {red:т}ам — there {say:там} |\n\n> Russian has two shapes for every letter, a capital and a small one, exactly as English does. The Georgian alphabet has one shape per letter and no capitals at all — so this is the one thing Cyrillic asks of you that Georgian does not.\n\n> The letters are read by a native speaker: the [Russian alphabet recordings](https://commons.wikimedia.org/wiki/Category:Russian_pronunciation) by Cherus on Wikimedia Commons, used under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). The example words and the phrases are synthesised.\n\n::quiz ru-letters-1-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-letters-2",
+      "section": "lessons",
+      "title": "The false friends",
+      "titleNative": "В в  Е е  Н н  Р р  С с  У у  Х х",
+      "summary": "Seven letters that look like English letters and are not.",
+      "level": "A1",
+      "categoryId": "ru-alphabet",
+      "body": "These are the seven that will trip you for a fortnight, and they are worth more of your time than the other twenty-six put together. Every one of them is a letter you can already read — as the wrong sound. Until they are automatic, you will read РЕСТОРАН as \"pectopah\", which is what everybody does.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| В в | вэ (veh) | v — never b | {red:в}ода — water {say:вода} |\n| Е е | е (yeh) | ye as in \"yes\" | {red:е}да — food {say:еда} |\n| Н н | эн (en) | n — never h | {red:н}ос — nose {say:нос} |\n| Р р | эр (err) | r, tapped or rolled — never the English r | {red:р}ука — hand, arm {say:рука} |\n| С с | эс (ess) | s — never k | {red:с}тол — table {say:стол} |\n| У у | у (oo) | oo as in \"boot\" | {red:у}тро — morning {say:утро} |\n| Х х | ха (khah) | kh as in Scottish \"loch\" | {red:х}леб — bread {say:хлеб} |\n\n> The mnemonic that works is a word you already know: **РЕСТОРАН** is *restoran*. Four of these seven are in it — Р is r, Е is ye, С is s, Н is n — and the other three letters, Т О А, are ones you could already read. That single word is most of this lesson.\n\n> The letters are read by a native speaker: the [Russian alphabet recordings](https://commons.wikimedia.org/wiki/Category:Russian_pronunciation) by Cherus on Wikimedia Commons, used under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). The example words and the phrases are synthesised.\n\n::quiz ru-letters-2-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-letters-3",
+      "section": "lessons",
+      "title": "New shapes, familiar sounds",
+      "titleNative": "Б б  Г г  Д д  З з  И и  Й й  Л л  П п  Ф ф  Э э",
+      "summary": "Ten letters that look like nothing in English, and make sounds you already have.",
+      "level": "A1",
+      "categoryId": "ru-alphabet",
+      "body": "The easy half of the alphabet, and the largest group here for that reason. Every sound in this lesson is one your mouth already makes; only the shape is new, and a shape with nothing to unlearn behind it is a much smaller job than В was.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| Б б | бэ (beh) | b | {red:б}рат — brother {say:брат} |\n| Г г | гэ (geh) | g, always hard as in \"go\" | {red:г}ород — city {say:город} |\n| Д д | дэ (deh) | d | {red:д}ом — house, home {say:дом} |\n| З з | зэ (zeh) | z | {red:з}има — winter {say:зима} |\n| И и | и (ee) | ee as in \"machine\" | {red:и}мя — name {say:имя} |\n| Й й | и краткое (ee KRAT-ko-ye) | y as in \"boy\" — a glide, never alone | ча{red:й} — tea {say:чай} |\n| Л л | эль (ell) | l, heavier and further back than English | {red:л}уна — moon {say:луна} |\n| П п | пэ (peh) | p, with no puff of breath after it | {red:п}арк — park {say:парк} |\n| Ф ф | эф (ef) | f | {red:ф}ильм — film {say:фильм} |\n| Э э | э (eh) | e as in \"end\" | {red:э}то — this is {say:это} |\n\n> Й is the odd one. It is not a vowel and it never stands alone — it is the glide at the end of \"boy\", stuck on to the vowel in front of it. Its name, **и краткое**, means \"short и\", which is exactly what it is.\n\n> The letters are read by a native speaker: the [Russian alphabet recordings](https://commons.wikimedia.org/wiki/Category:Russian_pronunciation) by Cherus on Wikimedia Commons, used under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). The example words and the phrases are synthesised.\n\n::quiz ru-letters-3-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-letters-4",
+      "section": "lessons",
+      "title": "The hushers",
+      "titleNative": "Ж ж  Ц ц  Ч ч  Ш ш  Щ щ",
+      "summary": "Five letters for the sounds English writes with two or three.",
+      "level": "A1",
+      "categoryId": "ru-alphabet",
+      "body": "English spells these with digraphs — sh, ch, ts — or does not have them at all. Russian gives each one a letter, which is why a Russian word can look short and take a long time to say.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| Ж ж | жэ (zheh) | like the s in \"measure\" | {red:ж}ена — wife {say:жена} |\n| Ц ц | цэ (tseh) | ts as in \"cats\" | {red:ц}вет — colour {say:цвет} |\n| Ч ч | че (cheh) | ch as in \"chair\" | {red:ч}ас — hour {say:час} |\n| Ш ш | ша (shah) | sh as in \"shop\", hard and hollow | {red:ш}кола — school {say:школа} |\n| Щ щ | ща (shchah) | a longer, softer sh | {red:щ}енок — puppy {say:щенок} |\n\n> Ш and Щ are the pair to slow down for. **Ш** is hard and hollow, further back than the English sh; **Щ** is longer and softer, roughly the \"sh ch\" of \"fresh cheese\" run together. Nobody hears the difference on the first day, and shops are full of people who never quite make it.\n\n> The letters are read by a native speaker: the [Russian alphabet recordings](https://commons.wikimedia.org/wiki/Category:Russian_pronunciation) by Cherus on Wikimedia Commons, used under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). The example words and the phrases are synthesised.\n\n::quiz ru-letters-4-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-letters-5",
+      "section": "lessons",
+      "title": "The soft vowels and the two signs",
+      "titleNative": "Ё ё  Ъ ъ  Ы ы  Ь ь  Ю ю  Я я",
+      "summary": "The last six: four vowels that begin with a y, and two letters that make no sound.",
+      "level": "A1",
+      "categoryId": "ru-alphabet",
+      "body": "The end of the alphabet, and the only part of it that is genuinely a new idea rather than a new shape. Four of these are vowels carrying a **y** in front of them, and two are not sounds at all — they are instructions about the letter beside them.\n\n| Letter | Name | Sound | Example |\n| --- | --- | --- | --- |\n| Ё ё | ё (yo) | yo as in \"yonder\" — always stressed | {red:ё}лка — fir tree {say:ёлка} |\n| Ъ ъ | твёрдый знак (the hard sign) | no sound — a break before the next vowel | под{red:ъ}езд — entrance, stairwell {say:подъезд} |\n| Ы ы | ы (ih) | no English equivalent — i with the tongue pulled back | с{red:ы}н — son {say:сын} |\n| Ь ь | мягкий знак (the soft sign) | no sound — it softens the letter before it | ден{red:ь} — day {say:день} |\n| Ю ю | ю (yoo) | yu as in \"you\" | {red:ю}г — south {say:юг} |\n| Я я | я (yah) | ya as in \"yard\" | {red:я}блоко — apple {say:яблоко} |\n\n> Ъ and Ь are silent, which sounds like a reason to ignore them and is not: **Ь** changes the word. **мать** is \"mother\" and **мат** is a chess mate. It is the one silent letter in the alphabet you cannot afford to skip.\n\n> The letters are read by a native speaker: the [Russian alphabet recordings](https://commons.wikimedia.org/wiki/Category:Russian_pronunciation) by Cherus on Wikimedia Commons, used under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). The example words and the phrases are synthesised.\n\n::quiz ru-letters-5-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-reading-first",
+      "section": "lessons",
+      "title": "You can already read this",
+      "titleNative": "Что вы уже читаете",
+      "summary": "A short text made of words you have never studied and can read anyway.",
+      "level": "A1",
+      "categoryId": "ru-alphabet",
+      "body": "Nothing below has been taught. Read it out loud anyway, slowly, one letter at a time, and listen to what comes out of your own mouth — most of these are words English has too, spelled in the alphabet you have just learned.\n\nThis is the point at which the week's work pays for itself, and it is worth doing before you know a single word of grammar.\n\n::story ru-signs-you-can-read\n\n> Sounding out is not cheating and it is not a stage to grow out of quickly. Every fluent reader of Russian did this for weeks. The letters become automatic by being used, not by being revised.\n\nTurn the English off and read it again.\n\n::quiz ru-reading-first-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-italics",
+      "section": "lessons",
+      "title": "Italics look like handwriting",
+      "titleNative": "Курсив",
+      "summary": "Six small letters change shape in italic type. One of them will stop you dead.",
+      "level": "A1",
+      "categoryId": "ru-alphabet",
+      "body": "Russian italic type is not upright type leaning to the right. It is a second set of shapes, taken from handwriting — so a word set in italics can look unreadable even when you know every letter in it. This catches out everybody who learned the alphabet from a printed table, and it is a ten-minute fix.\n\nSix small letters are the problem. The rest lean over and stay themselves.\n\n| Printed | Italic | By hand | An English eye reads it as |\n| --- | --- | --- | --- |\n| т | *т* | т | an **m** |\n| и | *и* | и | a **u** |\n| п | *п* | п | an **n** |\n| д | *д* | д | a **g** |\n| г | *г* | г | an **r** |\n| л | *л* | л | a narrow **л**, hooked at the start |\n\nNow look across each row rather than down the columns. The italic shape is not an arbitrary invention: it is the handwritten letter, tidied up and cut in metal. **т** is written as a joined-up *m* by hand, so that is how it is printed in italics. Once you have seen that, italics stop being a second alphabet to learn and become a reminder of the one you have just learned.\n\n## Reading it\n\nHere is the same phrase twice — upright, then in italics.\n\n| | |\n| --- | --- |\n| это тихий парк | {say:это тихий парк} |\n| *это тихий парк* | |\n\nThree letters changed and the other ten did not. Sound it out and it is *eto tikhiy park* — \"this is a quiet park\".\n\n> **й** goes the same way as **и** and keeps its breve. The capitals mostly leave you alone: **Т**, **И**, **П** and **Д** are their upright shapes slanted, so it is the small letters that are the work.\n\n> If the Printed and Italic columns above look identical on your screen, the font your browser has fallen back to carries no true Cyrillic italics and is simply slanting the upright shapes. That is a real thing that happens to Russian on the web — and what you will meet in any printed Russian book is the column beside it.\n\n::quiz ru-italics-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-greetings",
+      "section": "lessons",
+      "title": "Hello and goodbye",
+      "titleNative": "Здравствуйте",
+      "summary": "The formal greeting, the friendly one, and how to tell which you are owed.",
+      "level": "A1",
+      "categoryId": "ru-introductions",
+      "body": "Russian splits almost every greeting in two: one for people you are on formal terms with, and one for people you are not. Getting it wrong is not rude so much as odd, in the way that calling a stranger \"mate\" is odd.\n\n| Russian | English | |\n| --- | --- | --- |\n| здравствуйте | hello (to anyone) | {say:здравствуйте} |\n| привет | hi (to a friend) | {say:привет} |\n| доброе утро | good morning | {say:доброе утро} |\n| добрый день | good afternoon | {say:добрый день} |\n| добрый вечер | good evening | {say:добрый вечер} |\n| до свидания | goodbye | {say:до свидания} |\n| пока | bye (to a friend) | {say:пока} |\n\n**Здравствуйте** is the one to have first. It is long, it is a mouthful, and it is what you say to a shopkeeper, a taxi driver, a colleague and anybody you have not met. The first **в** is not pronounced — say *zdrast-vooy-tye* and nobody will notice anything.\n\n**Привет** and **пока** are the friendly pair, and they go together: if somebody opens with привет you may close with пока.\n\n> The three time-of-day greetings are the safe middle ground — polite, but shorter than здравствуйте and awkward with nobody. **доброе утро** until about noon, **добрый день** through the afternoon, **добрый вечер** after dark.\n\n::quiz ru-greetings-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-your-name",
+      "section": "lessons",
+      "title": "Saying your name",
+      "titleNative": "Как вас зовут?",
+      "summary": "Giving your name, asking for one, and the two words for \"you\".",
+      "level": "A1",
+      "categoryId": "ru-introductions",
+      "body": "Russian does not say \"my name is\". It says, near enough, **\"me they call\"** — and once you stop trying to find the word for *is* in it, the phrase is two words and a name.\n\n| Russian | English | |\n| --- | --- | --- |\n| меня зовут ... | my name is ... | {say:меня зовут} |\n| как вас зовут? | what is your name? (polite) | {say:как вас зовут} |\n| как тебя зовут? | what is your name? (to a friend) | {say:как тебя зовут} |\n| очень приятно | very nice to meet you | {say:очень приятно} |\n\n**Меня зовут Джон.** Меня is \"me\", зовут is \"they call\", and there is no *my*, no *name* and no *is* anywhere in it. The same shape asks the question: **как вас зовут?** — \"how do they call you?\"\n\n## The two you's\n\n**Вы** and **ты** are both \"you\", and choosing between them is the first piece of Russian etiquette you have to get right.\n\n| | Russian | Use it for |\n| --- | --- | --- |\n| polite | вы {say:вы} | anybody you have just met, anybody older, anybody at work |\n| familiar | ты {say:ты} | friends, family, children, and anybody who has offered |\n\nStart everybody on **вы**. Moving to ты is something the other person suggests, and it is a small friendly moment when they do; starting there uninvited is the mistake, and it is the one foreigners make.\n\n> **Очень приятно** — \"very pleasant\" — is what you say after an exchange of names, and it is the whole sentence. Nobody says who is pleased or what is pleasing. This is the same silence where \"am, are, is\" should be, and it has a lesson of its own further down this section.\n\n::quiz ru-your-name-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-where-from",
+      "section": "lessons",
+      "title": "Where are you from?",
+      "titleNative": "Откуда вы?",
+      "summary": "The second question anybody will ask you, and the two answers you need.",
+      "level": "A1",
+      "categoryId": "ru-introductions",
+      "body": "| Russian | English | |\n| --- | --- | --- |\n| откуда вы? | where are you from? (polite) | {say:откуда вы} |\n| откуда ты? | where are you from? (to a friend) | {say:откуда ты} |\n| я из Америки | I am from America | {say:я из Америки} |\n| я американец | I am American (a man) | {say:я американец} |\n| я американка | I am American (a woman) | {say:я американка} |\n| вы русский? | are you Russian? (to a man) | {say:вы русский} |\n\nA nationality in Russian is a word, not two, and it comes in a masculine and a feminine form: **американец** for a man, **американка** for a woman. So does **русский** — a Russian man — beside **русская**, a Russian woman. You cannot dodge this by picking one; you have to say the one that is true of you.\n\n**Я из Америки** is \"I am from America\", and it is the first case ending in this course. **из** — \"from\" — makes the word after it change: Америк**а** becomes Америк**и**, Москв**а** becomes Москв**ы**. Six cases do this to every noun in the language, and this is the whole of what you need to know about them today.\n\n| Russian | English | |\n| --- | --- | --- |\n| я из Америки | I am from America | {say:я из Америки} |\n| я из Москвы | I am from Moscow | {say:я из Москвы} |\n| я из Лондона | I am from London | {say:я из Лондона} |\n\n> There is no verb in any of these. **Я американец** is \"I American\", and it is a complete, ordinary, correct sentence. That is the next lesson.\n\n::quiz ru-where-from-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-polite",
+      "section": "lessons",
+      "title": "Please and thank you",
+      "titleNative": "Спасибо",
+      "summary": "Six words that make the difference between a tourist and a guest.",
+      "level": "A1",
+      "categoryId": "ru-introductions",
+      "body": "| Russian | English | |\n| --- | --- | --- |\n| спасибо | thank you | {say:спасибо} |\n| большое спасибо | thank you very much | {say:большое спасибо} |\n| пожалуйста | please, and also you are welcome | {say:пожалуйста} |\n| извините | excuse me, sorry | {say:извините} |\n| да | yes | {say:да} |\n| нет | no | {say:нет} |\n\n**Пожалуйста** does two jobs that English keeps apart. It is \"please\" when you ask for something, and it is \"you're welcome\" when somebody thanks you — so a shop exchange runs *спасибо* / *пожалуйста* and both people have said a whole word.\n\n**Извините** is \"excuse me\" before you interrupt a stranger and \"sorry\" after you have trodden on them. It is the polite form, built on вы; извини is the one for a friend.\n\n> Russians say **спасибо** less often than an English speaker expects, and this catches people out. Thanking a family member for passing the salt reads as faintly cold rather than warm. This is not a rule to worry about — nobody will mind — but it is why a Russian speaking English can sound abrupt when they are being perfectly friendly.\n\n::quiz ru-polite-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-no-verb-to-be",
+      "section": "lessons",
+      "title": "am, are, is",
+      "titleNative": "Я студент",
+      "summary": "The verb that is not there — and the six sentences you can build without it.",
+      "level": "A1",
+      "categoryId": "ru-introductions",
+      "body": "In Georgian the first verb you learn is \"to be\", because you cannot say anything without it. In Russian the first thing to learn about \"to be\" is that in the present tense it is **not said at all**.\n\n| Russian | English | |\n| --- | --- | --- |\n| я студент | I am a student | {say:я студент} |\n| ты врач | you are a doctor | {say:ты врач} |\n| он дома | he is at home | {say:он дома} |\n| она здесь | she is here | {say:она здесь} |\n| мы там | we are there | {say:мы там} |\n| они дома | they are at home | {say:они дома} |\n\nRead the Russian column and count the words. Two each. **Я студент** is \"I student\", and it is not baby talk or a shortcut — it is how the sentence is built. There is no form of the verb hiding anywhere; the present tense of *быть* simply is not used.\n\nThat is why so much of the last four lessons worked with no verb in it — *я американец*, *откуда вы?*, *очень приятно*. You have been speaking verbless Russian since the start of this section without being told so.\n\n**Меня зовут** is the one that does have a verb: зовут, \"they call\". That is why it looked strange when you met it, and it is the exception rather than the pattern.\n\n## The dash\n\nWhen both halves of the sentence are nouns, writing puts a dash where the verb would be. This is punctuation, not a word — nobody says anything there, and there is a small pause.\n\n| Russian | English | |\n| --- | --- | --- |\n| Москва — город | Moscow is a city | {say:Москва — город} |\n| мой брат — врач | my brother is a doctor | {say:мой брат — врач} |\n| мой папа — учитель | my father is a teacher | {say:мой папа — учитель} |\n\nYou do not need it for **я студент**, because a pronoun is not a noun. You do need it for *Москва — город*.\n\nHere is a short text with no present-tense verb anywhere in it. Every sentence is built the way the table above is.\n\n::story ru-about-myself\n\n> **Быть** does exist, and you will meet it — in the past (*был*, *была*) and in the future (*буду*, *будет*). It is only the present that is silent, and that is the tense you will spend your first month in.\n\n::quiz ru-no-verb-to-be-quiz",
+      "note": ""
+    },
+    {
+      "id": "ru-first-conversation",
+      "section": "lessons",
+      "title": "A first conversation",
+      "titleNative": "Первый разговор",
+      "summary": "Everything so far, in ten lines. Read it out loud.",
+      "level": "A1",
+      "categoryId": "ru-introductions",
+      "body": "Nothing here is new. Every line is built from the five lessons before it — which is the point, and is roughly how much of a real conversation those five lessons buy you.\n\n::story ru-first-conversation\n\n> **А вас?** on its own is \"and you?\" — the whole question, in two words. Russian does this constantly: if the context has already supplied the rest of the sentence, it is not said again.\n\nRead it aloud twice, then turn the English off and read it again. Hover any word you are not sure of.\n\n::quiz ru-first-conversation-quiz",
+      "note": ""
+    }
+  ],
+  "quizCategories": [
+    {
+      "id": "ru-lesson-quizzes",
+      "name": "From the lessons",
+      "nameNative": "",
+      "note": "The quizzes the lessons embed."
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "ru-alphabet-all-quiz",
+      "title": "The whole alphabet",
+      "titleNative": "",
+      "description": "A few things worth knowing before the letters start arriving a handful at a time.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "А",
+          "explanation": "А а — called а, as in адрес, “address”.",
+          "choices": [
+            {
+              "text": "А",
+              "correct": true
+            },
+            {
+              "text": "О"
+            },
+            {
+              "text": "У"
+            },
+            {
+              "text": "Ы"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Ж",
+          "explanation": "Ж ж — called жэ, as in жена, “wife”.",
+          "choices": [
+            {
+              "text": "Ж",
+              "correct": true
+            },
+            {
+              "text": "Б"
+            },
+            {
+              "text": "В"
+            },
+            {
+              "text": "Г"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "How many letters are in the Russian alphabet?",
+          "explanation": "33 — ten vowels, twenty-one consonants, and two letters that are neither.",
+          "choices": [
+            {
+              "text": "33",
+              "correct": true
+            },
+            {
+              "text": "26"
+            },
+            {
+              "text": "30"
+            },
+            {
+              "text": "36"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which of these sounds like the English letter it looks like?",
+          "explanation": "К is k. В is v, Р is r and С is s — those three are the false friends of the next lesson but one.",
+          "choices": [
+            {
+              "text": "К",
+              "correct": true
+            },
+            {
+              "text": "В"
+            },
+            {
+              "text": "Р"
+            },
+            {
+              "text": "С"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which of these letters makes no sound of its own?",
+          "explanation": "Ь, the soft sign. It softens the letter in front of it and is never pronounced alone.",
+          "choices": [
+            {
+              "text": "Ь",
+              "correct": true
+            },
+            {
+              "text": "Й"
+            },
+            {
+              "text": "Щ"
+            },
+            {
+              "text": "Э"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "A Russian Н is the English…",
+          "explanation": "Н is n. It looks like an H and is not one — the H sound is written Х.",
+          "choices": [
+            {
+              "text": "n",
+              "correct": true
+            },
+            {
+              "text": "h"
+            },
+            {
+              "text": "i"
+            },
+            {
+              "text": "p"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-letters-1-quiz",
+      "title": "The ones you already know",
+      "titleNative": "",
+      "description": "The letters А К М О Т, and one word for each.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "А",
+          "explanation": "А а — called а, as in адрес, “address”.",
+          "choices": [
+            {
+              "text": "А",
+              "correct": true
+            },
+            {
+              "text": "О"
+            },
+            {
+              "text": "У"
+            },
+            {
+              "text": "Ы"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "К",
+          "explanation": "К к — called ка, as in кот, “tomcat”.",
+          "choices": [
+            {
+              "text": "К",
+              "correct": true
+            },
+            {
+              "text": "Х"
+            },
+            {
+              "text": "Ш"
+            },
+            {
+              "text": "Щ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "М",
+          "explanation": "М м — called эм, as in мама, “mum”.",
+          "choices": [
+            {
+              "text": "М",
+              "correct": true
+            },
+            {
+              "text": "Л"
+            },
+            {
+              "text": "Н"
+            },
+            {
+              "text": "Р"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter does this word begin with?",
+          "promptNative": "",
+          "say": "остров",
+          "explanation": "остров — “island”. It begins with О о, о.",
+          "choices": [
+            {
+              "text": "О",
+              "correct": true
+            },
+            {
+              "text": "А"
+            },
+            {
+              "text": "У"
+            },
+            {
+              "text": "Ы"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes this sound: t, with no puff of breath after it?",
+          "explanation": "Т т — called тэ, as in там, “there”.",
+          "choices": [
+            {
+              "text": "Т",
+              "correct": true
+            },
+            {
+              "text": "Б"
+            },
+            {
+              "text": "В"
+            },
+            {
+              "text": "Г"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "остров",
+          "say": "остров",
+          "explanation": "остров — “island”.",
+          "choices": [
+            {
+              "text": "island",
+              "correct": true
+            },
+            {
+              "text": "morning"
+            },
+            {
+              "text": "son"
+            },
+            {
+              "text": "city"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-letters-2-quiz",
+      "title": "The false friends",
+      "titleNative": "",
+      "description": "The letters В Е Н Р С У Х, and one word for each.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "В",
+          "explanation": "В в — called вэ, as in вода, “water”.",
+          "choices": [
+            {
+              "text": "В",
+              "correct": true
+            },
+            {
+              "text": "Б"
+            },
+            {
+              "text": "Г"
+            },
+            {
+              "text": "Д"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Е",
+          "explanation": "Е е — called е, as in еда, “food”.",
+          "choices": [
+            {
+              "text": "Е",
+              "correct": true
+            },
+            {
+              "text": "Ё"
+            },
+            {
+              "text": "Ю"
+            },
+            {
+              "text": "Я"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Н",
+          "explanation": "Н н — called эн, as in нос, “nose”.",
+          "choices": [
+            {
+              "text": "Н",
+              "correct": true
+            },
+            {
+              "text": "Л"
+            },
+            {
+              "text": "М"
+            },
+            {
+              "text": "Р"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter does this word begin with?",
+          "promptNative": "",
+          "say": "рука",
+          "explanation": "рука — “hand, arm”. It begins with Р р, эр.",
+          "choices": [
+            {
+              "text": "Р",
+              "correct": true
+            },
+            {
+              "text": "Л"
+            },
+            {
+              "text": "М"
+            },
+            {
+              "text": "Н"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes this sound: kh as in Scottish \"loch\"?",
+          "explanation": "Х х — called ха, as in хлеб, “bread”.",
+          "choices": [
+            {
+              "text": "Х",
+              "correct": true
+            },
+            {
+              "text": "К"
+            },
+            {
+              "text": "Ш"
+            },
+            {
+              "text": "Щ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "утро",
+          "say": "утро",
+          "explanation": "утро — “morning”.",
+          "choices": [
+            {
+              "text": "morning",
+              "correct": true
+            },
+            {
+              "text": "school"
+            },
+            {
+              "text": "address"
+            },
+            {
+              "text": "winter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-letters-3-quiz",
+      "title": "New shapes, familiar sounds",
+      "titleNative": "",
+      "description": "The letters Б Г Д З И Й Л П Ф Э, and one word for each.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Б",
+          "explanation": "Б б — called бэ, as in брат, “brother”.",
+          "choices": [
+            {
+              "text": "Б",
+              "correct": true
+            },
+            {
+              "text": "В"
+            },
+            {
+              "text": "Г"
+            },
+            {
+              "text": "Д"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Г",
+          "explanation": "Г г — called гэ, as in город, “city”.",
+          "choices": [
+            {
+              "text": "Г",
+              "correct": true
+            },
+            {
+              "text": "Б"
+            },
+            {
+              "text": "В"
+            },
+            {
+              "text": "Д"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Д",
+          "explanation": "Д д — called дэ, as in дом, “house, home”.",
+          "choices": [
+            {
+              "text": "Д",
+              "correct": true
+            },
+            {
+              "text": "Б"
+            },
+            {
+              "text": "В"
+            },
+            {
+              "text": "Г"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter does this word begin with?",
+          "promptNative": "",
+          "say": "зима",
+          "explanation": "зима — “winter”. It begins with З з, зэ.",
+          "choices": [
+            {
+              "text": "З",
+              "correct": true
+            },
+            {
+              "text": "Б"
+            },
+            {
+              "text": "В"
+            },
+            {
+              "text": "Г"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes this sound: e as in \"end\"?",
+          "explanation": "Э э — called э, as in это, “this is”.",
+          "choices": [
+            {
+              "text": "Э",
+              "correct": true
+            },
+            {
+              "text": "А"
+            },
+            {
+              "text": "О"
+            },
+            {
+              "text": "У"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "фильм",
+          "say": "фильм",
+          "explanation": "фильм — “film”.",
+          "choices": [
+            {
+              "text": "film",
+              "correct": true
+            },
+            {
+              "text": "puppy"
+            },
+            {
+              "text": "brother"
+            },
+            {
+              "text": "name"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-letters-4-quiz",
+      "title": "The hushers",
+      "titleNative": "",
+      "description": "The letters Ж Ц Ч Ш Щ, and one word for each.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Ж",
+          "explanation": "Ж ж — called жэ, as in жена, “wife”.",
+          "choices": [
+            {
+              "text": "Ж",
+              "correct": true
+            },
+            {
+              "text": "Б"
+            },
+            {
+              "text": "В"
+            },
+            {
+              "text": "Г"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Ц",
+          "explanation": "Ц ц — called цэ, as in цвет, “colour”.",
+          "choices": [
+            {
+              "text": "Ц",
+              "correct": true
+            },
+            {
+              "text": "Б"
+            },
+            {
+              "text": "В"
+            },
+            {
+              "text": "Г"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Ч",
+          "explanation": "Ч ч — called че, as in час, “hour”.",
+          "choices": [
+            {
+              "text": "Ч",
+              "correct": true
+            },
+            {
+              "text": "Б"
+            },
+            {
+              "text": "В"
+            },
+            {
+              "text": "Г"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter does this word begin with?",
+          "promptNative": "",
+          "say": "школа",
+          "explanation": "школа — “school”. It begins with Ш ш, ша.",
+          "choices": [
+            {
+              "text": "Ш",
+              "correct": true
+            },
+            {
+              "text": "К"
+            },
+            {
+              "text": "Х"
+            },
+            {
+              "text": "Щ"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes this sound: a longer, softer sh?",
+          "explanation": "Щ щ — called ща, as in щенок, “puppy”.",
+          "choices": [
+            {
+              "text": "Щ",
+              "correct": true
+            },
+            {
+              "text": "К"
+            },
+            {
+              "text": "Х"
+            },
+            {
+              "text": "Ш"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "школа",
+          "say": "школа",
+          "explanation": "школа — “school”.",
+          "choices": [
+            {
+              "text": "school",
+              "correct": true
+            },
+            {
+              "text": "this is"
+            },
+            {
+              "text": "food"
+            },
+            {
+              "text": "mum"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-letters-5-quiz",
+      "title": "The soft vowels and the two signs",
+      "titleNative": "",
+      "description": "The letters Ё Ъ Ы Ь Ю Я, and one word for each.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Ё",
+          "explanation": "Ё ё — called ё, as in ёлка, “fir tree”.",
+          "choices": [
+            {
+              "text": "Ё",
+              "correct": true
+            },
+            {
+              "text": "Е"
+            },
+            {
+              "text": "Ю"
+            },
+            {
+              "text": "Я"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Ъ",
+          "explanation": "Ъ ъ — called твёрдый знак, as in подъезд, “entrance, stairwell”.",
+          "choices": [
+            {
+              "text": "Ъ",
+              "correct": true
+            },
+            {
+              "text": "И"
+            },
+            {
+              "text": "Й"
+            },
+            {
+              "text": "Ь"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter is this?",
+          "promptNative": "",
+          "say": "Ы",
+          "explanation": "Ы ы — called ы, as in сын, “son”.",
+          "choices": [
+            {
+              "text": "Ы",
+              "correct": true
+            },
+            {
+              "text": "А"
+            },
+            {
+              "text": "О"
+            },
+            {
+              "text": "У"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter does this word begin with?",
+          "promptNative": "",
+          "say": "юг",
+          "explanation": "юг — “south”. It begins with Ю ю, ю.",
+          "choices": [
+            {
+              "text": "Ю",
+              "correct": true
+            },
+            {
+              "text": "Е"
+            },
+            {
+              "text": "Ё"
+            },
+            {
+              "text": "Я"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which letter makes this sound: ya as in \"yard\"?",
+          "explanation": "Я я — called я, as in яблоко, “apple”.",
+          "choices": [
+            {
+              "text": "Я",
+              "correct": true
+            },
+            {
+              "text": "Е"
+            },
+            {
+              "text": "Ё"
+            },
+            {
+              "text": "Ю"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this word mean?",
+          "promptNative": "юг",
+          "say": "юг",
+          "explanation": "юг — “south”.",
+          "choices": [
+            {
+              "text": "south",
+              "correct": true
+            },
+            {
+              "text": "city"
+            },
+            {
+              "text": "tomcat"
+            },
+            {
+              "text": "there"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-reading-first-quiz",
+      "title": "You can already read this",
+      "titleNative": "",
+      "description": "Four words from the reading. Sound them out.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What is this?",
+          "promptNative": "ресторан",
+          "say": "ресторан",
+          "explanation": "ресторан — \"restaurant\". Р-Е-С-Т-О-Р-А-Н: four of the seven false friends in one word.",
+          "choices": [
+            {
+              "text": "a restaurant",
+              "correct": true
+            },
+            {
+              "text": "a pharmacy"
+            },
+            {
+              "text": "a museum"
+            },
+            {
+              "text": "a bank"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What is this?",
+          "promptNative": "аптека",
+          "say": "аптека",
+          "explanation": "аптека — \"pharmacy\". Not an English word, but the one on every green cross in Russia.",
+          "choices": [
+            {
+              "text": "a pharmacy",
+              "correct": true
+            },
+            {
+              "text": "a bus stop"
+            },
+            {
+              "text": "a café"
+            },
+            {
+              "text": "a post office"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which of these means \"bus\"?",
+          "explanation": "автобус — \"bus\", literally \"auto-bus\".",
+          "choices": [
+            {
+              "text": "автобус",
+              "correct": true
+            },
+            {
+              "text": "аптека"
+            },
+            {
+              "text": "адрес"
+            },
+            {
+              "text": "алфавит"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put the letters in order to spell the Russian for \"sport\".",
+          "explanation": "спорт — \"sport\".",
+          "choices": [
+            {
+              "text": "с",
+              "correct": true
+            },
+            {
+              "text": "п",
+              "correct": true
+            },
+            {
+              "text": "о",
+              "correct": true
+            },
+            {
+              "text": "р",
+              "correct": true
+            },
+            {
+              "text": "т",
+              "correct": true
+            },
+            {
+              "text": "ж"
+            },
+            {
+              "text": "ы"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-italics-quiz",
+      "title": "Italics look like handwriting",
+      "titleNative": "",
+      "description": "The six letters that change, and why they change.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "In italic type, Russian т is easily mistaken for which English letter?",
+          "explanation": "An m. By hand т is written as a joined-up m, and the italic type follows the hand.",
+          "choices": [
+            {
+              "text": "m",
+              "correct": true
+            },
+            {
+              "text": "t"
+            },
+            {
+              "text": "n"
+            },
+            {
+              "text": "w"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "And italic и?",
+          "explanation": "A u. Which means an italic word can look like it is full of English u’s.",
+          "choices": [
+            {
+              "text": "u",
+              "correct": true
+            },
+            {
+              "text": "n"
+            },
+            {
+              "text": "i"
+            },
+            {
+              "text": "m"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Why do the italic shapes differ from the printed ones at all?",
+          "explanation": "They were taken from handwriting. That is also the useful part: if an italic word looks like nonsense, read it as though it were handwritten.",
+          "choices": [
+            {
+              "text": "They are the handwritten forms, set in type",
+              "correct": true
+            },
+            {
+              "text": "They are an older spelling reform"
+            },
+            {
+              "text": "They come from Greek"
+            },
+            {
+              "text": "They are only used for foreign words"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this say?",
+          "promptNative": "*парк*",
+          "say": "парк",
+          "explanation": "парк — \"park\". Nothing in it changes shape in italics, which is most words.",
+          "choices": [
+            {
+              "text": "park",
+              "correct": true
+            },
+            {
+              "text": "bank"
+            },
+            {
+              "text": "market"
+            },
+            {
+              "text": "card"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-greetings-quiz",
+      "title": "Hello and goodbye",
+      "titleNative": "",
+      "description": "The greetings, and which of them is formal.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "здравствуйте",
+          "say": "здравствуйте",
+          "explanation": "здравствуйте — \"hello (to anyone)\".",
+          "choices": [
+            {
+              "text": "hello (to anyone)",
+              "correct": true
+            },
+            {
+              "text": "hi (to a friend)"
+            },
+            {
+              "text": "good morning"
+            },
+            {
+              "text": "good afternoon"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "привет",
+          "say": "привет",
+          "explanation": "привет — \"hi (to a friend)\".",
+          "choices": [
+            {
+              "text": "hi (to a friend)",
+              "correct": true
+            },
+            {
+              "text": "hello (to anyone)"
+            },
+            {
+              "text": "good morning"
+            },
+            {
+              "text": "good afternoon"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "доброе утро",
+          "say": "доброе утро",
+          "explanation": "доброе утро — \"good morning\".",
+          "choices": [
+            {
+              "text": "good morning",
+              "correct": true
+            },
+            {
+              "text": "hello (to anyone)"
+            },
+            {
+              "text": "hi (to a friend)"
+            },
+            {
+              "text": "good afternoon"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "You walk into a shop. What do you say?",
+          "explanation": "Здравствуйте. Привет is for friends, and a shopkeeper you have never met is not one.",
+          "choices": [
+            {
+              "text": "Здравствуйте",
+              "correct": true
+            },
+            {
+              "text": "Привет"
+            },
+            {
+              "text": "Пока"
+            },
+            {
+              "text": "До свидания"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-your-name-quiz",
+      "title": "Saying your name",
+      "titleNative": "",
+      "description": "Names, and the two words for \"you\".",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "меня зовут ...",
+          "say": "меня зовут",
+          "explanation": "меня зовут ... — \"my name is ...\".",
+          "choices": [
+            {
+              "text": "my name is ...",
+              "correct": true
+            },
+            {
+              "text": "what is your name? (polite)"
+            },
+            {
+              "text": "what is your name? (to a friend)"
+            },
+            {
+              "text": "very nice to meet you"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "как вас зовут?",
+          "say": "как вас зовут",
+          "explanation": "как вас зовут? — \"what is your name? (polite)\".",
+          "choices": [
+            {
+              "text": "what is your name? (polite)",
+              "correct": true
+            },
+            {
+              "text": "my name is ..."
+            },
+            {
+              "text": "what is your name? (to a friend)"
+            },
+            {
+              "text": "very nice to meet you"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "как тебя зовут?",
+          "say": "как тебя зовут",
+          "explanation": "как тебя зовут? — \"what is your name? (to a friend)\".",
+          "choices": [
+            {
+              "text": "what is your name? (to a friend)",
+              "correct": true
+            },
+            {
+              "text": "my name is ..."
+            },
+            {
+              "text": "what is your name? (polite)"
+            },
+            {
+              "text": "very nice to meet you"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "You are introduced to your friend’s grandmother. Which do you use?",
+          "explanation": "вы — she is somebody you have just met and older than you. Wait to be offered ты.",
+          "choices": [
+            {
+              "text": "вы",
+              "correct": true
+            },
+            {
+              "text": "ты"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-where-from-quiz",
+      "title": "Where are you from?",
+      "titleNative": "",
+      "description": "Asking and answering where somebody is from.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "откуда вы?",
+          "say": "откуда вы",
+          "explanation": "откуда вы? — \"where are you from? (polite)\".",
+          "choices": [
+            {
+              "text": "where are you from? (polite)",
+              "correct": true
+            },
+            {
+              "text": "where are you from? (to a friend)"
+            },
+            {
+              "text": "I am from America"
+            },
+            {
+              "text": "I am American (a man)"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "откуда ты?",
+          "say": "откуда ты",
+          "explanation": "откуда ты? — \"where are you from? (to a friend)\".",
+          "choices": [
+            {
+              "text": "where are you from? (to a friend)",
+              "correct": true
+            },
+            {
+              "text": "where are you from? (polite)"
+            },
+            {
+              "text": "I am from America"
+            },
+            {
+              "text": "I am American (a man)"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "я из Америки",
+          "say": "я из Америки",
+          "explanation": "я из Америки — \"I am from America\".",
+          "choices": [
+            {
+              "text": "I am from America",
+              "correct": true
+            },
+            {
+              "text": "where are you from? (polite)"
+            },
+            {
+              "text": "where are you from? (to a friend)"
+            },
+            {
+              "text": "I am American (a man)"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "A woman is asked “Вы русская?”. How does she answer yes?",
+          "explanation": "Да, я русская. Русский is the form for a man; the question already used the feminine.",
+          "choices": [
+            {
+              "text": "Да, я русская",
+              "correct": true
+            },
+            {
+              "text": "Да, я русский"
+            },
+            {
+              "text": "Да, я американец"
+            },
+            {
+              "text": "Нет, спасибо"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-polite-quiz",
+      "title": "Please and thank you",
+      "titleNative": "",
+      "description": "The polite words.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "спасибо",
+          "say": "спасибо",
+          "explanation": "спасибо — \"thank you\".",
+          "choices": [
+            {
+              "text": "thank you",
+              "correct": true
+            },
+            {
+              "text": "thank you very much"
+            },
+            {
+              "text": "please, and also you are welcome"
+            },
+            {
+              "text": "excuse me, sorry"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "большое спасибо",
+          "say": "большое спасибо",
+          "explanation": "большое спасибо — \"thank you very much\".",
+          "choices": [
+            {
+              "text": "thank you very much",
+              "correct": true
+            },
+            {
+              "text": "thank you"
+            },
+            {
+              "text": "please, and also you are welcome"
+            },
+            {
+              "text": "excuse me, sorry"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "пожалуйста",
+          "say": "пожалуйста",
+          "explanation": "пожалуйста — \"please, and also you are welcome\".",
+          "choices": [
+            {
+              "text": "please, and also you are welcome",
+              "correct": true
+            },
+            {
+              "text": "thank you"
+            },
+            {
+              "text": "thank you very much"
+            },
+            {
+              "text": "excuse me, sorry"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Somebody thanks you. What do you say?",
+          "explanation": "Пожалуйста. It is \"please\" when you ask and \"you’re welcome\" when you answer.",
+          "choices": [
+            {
+              "text": "Пожалуйста",
+              "correct": true
+            },
+            {
+              "text": "Спасибо"
+            },
+            {
+              "text": "Извините"
+            },
+            {
+              "text": "Здравствуйте"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-no-verb-to-be-quiz",
+      "title": "am, are, is",
+      "titleNative": "",
+      "description": "Sentences with the verb left out.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "How do you say “I am a student”?",
+          "explanation": "Я студент — two words. There is no present tense of \"to be\" to put between them.",
+          "choices": [
+            {
+              "text": "Я студент",
+              "correct": true
+            },
+            {
+              "text": "Я есть студент"
+            },
+            {
+              "text": "Я быть студент"
+            },
+            {
+              "text": "Я буду студент"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does this mean?",
+          "promptNative": "она здесь",
+          "say": "она здесь",
+          "explanation": "она здесь — \"she is here\". Two words, and the verb is not one of them.",
+          "choices": [
+            {
+              "text": "she is here",
+              "correct": true
+            },
+            {
+              "text": "she is there"
+            },
+            {
+              "text": "she is at home"
+            },
+            {
+              "text": "is she here?"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which sentence needs a dash where English puts “is”?",
+          "explanation": "Москва — город: both halves are nouns. A pronoun like я does not take one.",
+          "choices": [
+            {
+              "text": "Москва … город",
+              "correct": true
+            },
+            {
+              "text": "я … студент"
+            },
+            {
+              "text": "он … дома"
+            },
+            {
+              "text": "мы … там"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put these in order to say “they are at home”.",
+          "explanation": "они дома — and nothing in between.",
+          "choices": [
+            {
+              "text": "они",
+              "correct": true
+            },
+            {
+              "text": "дома",
+              "correct": true
+            },
+            {
+              "text": "есть"
+            },
+            {
+              "text": "быть"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-first-conversation-quiz",
+      "title": "A first conversation",
+      "titleNative": "",
+      "description": "Putting the introductions together.",
+      "level": "A1",
+      "categoryId": "ru-lesson-quizzes",
+      "passMark": 60,
+      "shuffleQuestions": true,
+      "shuffleOptions": true,
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Somebody says this to you. What are they asking?",
+          "promptNative": "как вас зовут?",
+          "say": "как вас зовут",
+          "explanation": "Как вас зовут? — \"how do they call you?\", which is how a name is asked for.",
+          "choices": [
+            {
+              "text": "What is your name?",
+              "correct": true
+            },
+            {
+              "text": "Where are you from?"
+            },
+            {
+              "text": "How are you?"
+            },
+            {
+              "text": "What is that?"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "How do you answer “Откуда вы?”",
+          "explanation": "Откуда вы? asks where you are from, so the answer is a place or a nationality.",
+          "choices": [
+            {
+              "text": "Я из Америки",
+              "correct": true
+            },
+            {
+              "text": "Меня зовут Джон"
+            },
+            {
+              "text": "Спасибо"
+            },
+            {
+              "text": "До свидания"
+            }
+          ]
+        },
+        {
+          "kind": "order",
+          "prompt": "Put these in order to say “my name is Anna”.",
+          "explanation": "Меня зовут Анна — literally \"me they call Anna\".",
+          "choices": [
+            {
+              "text": "меня",
+              "correct": true
+            },
+            {
+              "text": "зовут",
+              "correct": true
+            },
+            {
+              "text": "Анна",
+              "correct": true
+            },
+            {
+              "text": "вы"
+            },
+            {
+              "text": "да"
+            }
+          ]
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which of these is the greeting you use with anybody?",
+          "explanation": "Здравствуйте is the formal one and is never wrong. Привет is for friends.",
+          "choices": [
+            {
+              "text": "Здравствуйте",
+              "correct": true
+            },
+            {
+              "text": "Привет"
+            },
+            {
+              "text": "Пока"
+            },
+            {
+              "text": "Очень приятно"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

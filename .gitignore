@@ -51,3 +51,9 @@ backups/
 # Synthesised speech. A cache: every file in it is remade on demand from the text it
 # was hashed from, so it is never worth committing or backing up.
 .tts-cache/
+
+# Uploads, in development: audio for quiz questions, pictures and recordings for lessons.
+# Not a cache — nothing here can be remade — but not something to commit either: it is
+# content that belongs in a volume beside the database, and the production stack keeps it
+# in one. See MEDIA_DIR.
+.media/

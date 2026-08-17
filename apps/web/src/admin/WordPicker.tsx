@@ -10,11 +10,19 @@ import { useMemo, useState } from 'react';
 import type { Word } from '@georgian/shared/types';
 import { SearchField } from '@/components/ui/search-field';
 import { cn } from '@/lib/utils';
-import { langName, wordData } from '../content/store';
+import { langName } from '../content/store';
 import { searchWords } from './search';
 import { AdminHint, AdminLabel, AdminLinkButton } from './ui';
 
 interface WordPickerProps {
+  /**
+   * The entries to search.
+   *
+   * Passed in rather than read here, because who may cite what depends on whose story is being
+   * edited and this component cannot know that. The default is the published dictionary, which
+   * is the only safe one: a caller that wants a reader's own words as well has to say so.
+   */
+  words: Word[];
   /** Called with the chosen entry, or null when the Clear button is used. */
   onPick: (word: Word | null) => void;
   /** What is currently chosen, shown above the field. */
@@ -34,6 +42,7 @@ export const PICKED_GEO = 'text-base font-semibold';
 export const PICKED_EN = 'flex-1 text-[13.5px] text-muted-foreground';
 
 function WordPicker({
+  words,
   onPick,
   value = null,
   label = 'Dictionary entry',
@@ -42,7 +51,6 @@ function WordPicker({
   autoFocus = false,
 }: WordPickerProps) {
   const [term, setTerm] = useState('');
-  const { words } = wordData();
 
   const results = useMemo(() => searchWords(words, term), [words, term]);
 

@@ -101,9 +101,9 @@ function cellLabel(slot: RuSlotKey, aspect: 'impf' | 'pf'): string {
  * index of what делаешь is a form of, and the page that prints делаешь, must not be able to
  * disagree. 8,583 verbs expand to something over 200,000 forms in well under a second.
  */
-export async function buildRuIndexes(): Promise<RuIndexes> {
+export async function buildRuIndexes(owner: string | null = null): Promise<RuIndexes> {
   const [lexicon, verbRows, overrideRows] = await Promise.all([
-    loadLexicon('ru', foldRu),
+    loadLexicon('ru', foldRu, owner),
     db.select().from(schema.ruVerbs),
     db.select().from(schema.ruVerbForms),
   ]);

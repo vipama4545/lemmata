@@ -12,11 +12,12 @@
 // columns differ, because a Russian row carries one headword and an aspect where a Georgian
 // one carries two forms: the space that buys goes to the aspect, which decides everything else.
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { RU_CLASSES, RU_CONJUGATIONS } from '@georgian/shared/grammar/ru';
 import { Breadcrumb, BreadcrumbLink, BreadcrumbSeparator, Page } from '@/components/ui/page';
+import { Pagination, usePagination } from '@/components/ui/pagination';
 import { SearchField } from '@/components/ui/search-field';
 import {
   Select,
@@ -27,6 +28,7 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { lang, ruVerbData } from '../content/store';
+import { useEntryState } from '../utils/entryState';
 import { VERB_HEAD, VERB_ROW } from './VerbList';
 
 type Grouping = 'conjugation' | 'class';
@@ -48,10 +50,13 @@ const ROW_GRID =
   'max-md:grid-cols-[minmax(0,1fr)_auto] max-md:gap-x-3 max-md:gap-y-1';
 
 export default function RuVerbList() {
-  const [search, setSearch] = useState('');
-  const [aspect, setAspect] = useState<Aspect>('all');
-  const [grouping, setGrouping] = useState<Grouping>('conjugation');
-  const [group, setGroup] = useState('all');
+  // Remembered per history entry, like the Georgian index's: opening a verb and coming back
+  // to page 1 of every verb, rather than the page of the handful you had narrowed to, loses
+  // your place however carefully the scroll position is restored.
+  const [search, setSearch] = useEntryState('search', '');
+  const [aspect, setAspect] = useEntryState<Aspect>('aspect', 'all');
+  const [grouping, setGrouping] = useEntryState<Grouping>('grouping', 'conjugation');
+  const [group, setGroup] = useEntryState('group', 'all');
 
   const all = ruVerbData().verbs;
 
@@ -90,6 +95,8 @@ export default function RuVerbList() {
       return verb.infinitive.includes(needle) || verb.english.toLowerCase().includes(needle);
     });
   }, [all, search, aspect, group, bucketOf]);
+
+  const pager = usePagination(shown, `${search}|${aspect}|${grouping}|${group}`);
 
   return (
     <Page>
@@ -192,7 +199,7 @@ export default function RuVerbList() {
           <span>{grouping === 'class' ? 'Class' : 'Conjugation'}</span>
         </div>
 
-        {shown.map(verb => (
+        {pager.items.map(verb => (
           <Link
             key={verb.id}
             to={`/${lang()}/verbs/${verb.id}`}
@@ -217,6 +224,8 @@ export default function RuVerbList() {
 
         {shown.length === 0 && <p className="py-6 text-center text-muted-foreground">No verbs match that filter.</p>}
       </div>
+
+      <Pagination pager={pager} noun="verbs" />
     </Page>
   );
 }

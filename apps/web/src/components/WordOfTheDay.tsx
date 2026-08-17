@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { derived, kaVerbData, lang } from '../content/store';
 import { wordForDate, previousDays, isoDay } from "../utils/dailyWord";
 import { getWordImage, creditLine } from "../utils/images";
+import { sized } from "../utils/thumb";
 import { focusHref } from "../utils/scroll";
 
 const FULL_DATE: Intl.DateTimeFormatOptions = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
@@ -87,8 +88,11 @@ function WordOfTheDay() {
         <div className={cn(CARD, image && "items-start md:grid-cols-[240px_minmax(0,1fr)]")}>
           {image && (
             <figure>
+              {/* The 240px column this sits in, not the width the picture happens to be stored
+                  at. Not lazy, unlike the grid tiles: this one is the largest thing above the
+                  fold on the page everybody opens first, so it is what LCP is waiting for. */}
               <img
-                src={image.url}
+                {...sized(image.url, 240)}
                 alt={word.english}
                 className="block aspect-[4/3] w-full rounded-sm bg-muted object-cover"
               />
