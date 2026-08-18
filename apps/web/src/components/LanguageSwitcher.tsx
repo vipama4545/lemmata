@@ -37,7 +37,15 @@ const FLAG: Record<Lang, string> = {
   ru: "🇷🇺",
 };
 
-export default function LanguageSwitcher() {
+/**
+ * `label` puts a caption to the left of the control and is for the sidebar, where this sits in
+ * a column of labelled rows and a bare flag chip reads as something that fell out of the
+ * header. It is rendered here rather than by the caller so that it disappears with the control:
+ * a single-language install would otherwise be left with a row saying "Dictionary" and nothing
+ * beside it. The header passes nothing and gets the chip on its own, which is what it wants —
+ * it is a row of icons, not of rows.
+ */
+export default function LanguageSwitcher({ label }: { label?: string }) {
   const here = currentLang();
   const { isAdmin } = useIsAdmin();
 
@@ -65,7 +73,7 @@ export default function LanguageSwitcher() {
     globalThis.location.reload();
   };
 
-  return (
+  const control = (
     <div className="relative inline-flex h-8.5 items-center gap-1.5 rounded-sm border border-border bg-card pr-6.5 pl-2.5 text-foreground hover:border-border-strong">
       {/* Windows has no flag glyphs and falls back to two letters. Fixing the width stops the
           control jumping between platforms, and between languages on the same one. */}
@@ -90,6 +98,15 @@ export default function LanguageSwitcher() {
         ))}
       </select>
       <ChevronDown className="pointer-events-none absolute right-2 size-3 text-faint" aria-hidden="true" />
+    </div>
+  );
+
+  if (!label) return control;
+
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <span className="text-[14.5px] font-medium text-muted-foreground">{label}</span>
+      {control}
     </div>
   );
 }

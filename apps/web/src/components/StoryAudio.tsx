@@ -177,10 +177,12 @@ export function useStoryAudio(storyId: string, chapter: number): StoryAudioContr
       setLine(found);
 
       // Awaited, not fired and forgotten: this is the call that synthesises the line on the
-      // server, and seeking into audio that does not exist yet would land nowhere.
-      await timingsFor(position);
+      // server, and seeking into audio that does not exist yet would land nowhere. It is also
+      // where the key comes from, which is what keeps the address below in step with the prose
+      // — see `audioUrl`.
+      const timing = await timingsFor(position);
 
-      const url = audioUrl(storyId, chapter, found.paragraph, found.sentence);
+      const url = audioUrl(storyId, chapter, found.paragraph, found.sentence, timing?.key);
       if (!audio.src.endsWith(url) && audio.src !== url) {
         audio.src = url;
       }
@@ -202,9 +204,13 @@ export function useStoryAudio(storyId: string, chapter: number): StoryAudioContr
 
       // One line ahead. This is what keeps the queue seamless: by the time the next line is
       // wanted the server has already made it and the browser has already begun fetching it.
-      void timingsFor(position + 1).then(() => {
+      // The same key goes on this URL as will go on the one `start` builds for that line a
+      // moment later, or the prefetch warms an address nothing then asks for.
+      void timingsFor(position + 1).then(ahead => {
         const next = lines.current[position + 1];
-        if (next) new Audio(audioUrl(storyId, chapter, next.paragraph, next.sentence)).preload = "auto";
+        if (next) {
+          new Audio(audioUrl(storyId, chapter, next.paragraph, next.sentence, ahead?.key)).preload = "auto";
+        }
       });
     },
     [storyId, chapter, follow, halt, timingsFor],
@@ -381,14 +387,24 @@ export function useStoryAudio(storyId: string, chapter: number): StoryAudioContr
  * exception, so the bar is opened rather than dismissed. `onClose` puts it away again and is
  * expected to stop playback with it: a hidden bar that is still talking would leave no
  * control on screen to stop it with.
+ *
+ * Below `sm` it is the same controls, spelled shorter. Eight items at their desktop size come
+ * to well over three hundred pixels of chrome and ran off the side of a phone, so the two skip
+ * buttons drop their "5s" captions — the arrows say which way and the title says how far — and
+ * the three speed chips collapse to one that cycles. Nothing is taken away: a control a reader
+ * cannot reach because it is past the edge of the screen is worse than a shorter label.
  */
 export function StoryAudioBar({ audio, onClose }: { audio: StoryAudioController; onClose: () => void }) {
   if (!audio.available) return null;
 
+  // What the one mobile chip moves to. Wraps, so a third tap comes back to where it started —
+  // a cycling control that dead-ends at the last value is a control you cannot undo.
+  const nextRate = RATES[(RATES.indexOf(audio.rate) + 1) % RATES.length];
+
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center p-4">
-      <div className="pointer-events-auto flex w-full max-w-[560px] flex-col gap-2 rounded-lg border border-border bg-card/95 px-4 py-3 shadow-card backdrop-blur">
-        <div className="flex items-center gap-2">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center p-4 max-sm:p-2">
+      <div className="pointer-events-auto flex w-full max-w-[560px] flex-col gap-2 rounded-lg border border-border bg-card/95 px-4 py-3 shadow-card backdrop-blur max-sm:gap-1.5 max-sm:px-2.5 max-sm:py-2">
+        <div className="flex items-center gap-2 max-sm:gap-1">
           <Button
             type="button"
             variant="control"
@@ -411,33 +427,37 @@ export function StoryAudioBar({ audio, onClose }: { audio: StoryAudioController;
             <Square />
           </Button>
 
+          {/* The caption goes below `sm` and the button becomes a square. `aria-label` and
+              `title` carry the whole of what it does either way, so nothing is lost with it. */}
           <Button
             type="button"
             variant="control"
             size="auto-sm"
+            className="max-sm:size-8 max-sm:px-0"
             onClick={() => audio.skip(-SKIP)}
             aria-label={`Back ${SKIP} seconds`}
             title={`Back ${SKIP} seconds`}
           >
             <RotateCcw />
-            {SKIP}s
+            <span className="max-sm:hidden">{SKIP}s</span>
           </Button>
 
           <Button
             type="button"
             variant="control"
             size="auto-sm"
+            className="max-sm:size-8 max-sm:px-0"
             onClick={() => audio.skip(SKIP)}
             aria-label={`Forward ${SKIP} seconds`}
             title={`Forward ${SKIP} seconds`}
           >
             <RotateCw />
-            {SKIP}s
+            <span className="max-sm:hidden">{SKIP}s</span>
           </Button>
 
           {/* Speed is `playbackRate` in the browser and costs nothing — no second recording
               and no second cache entry, which is why the server always synthesises at one. */}
-          <div className="ml-auto flex items-center gap-1">
+          <div className="ml-auto flex items-center gap-1 max-sm:hidden">
             {RATES.map(value => (
               <Button
                 key={value}
@@ -453,13 +473,31 @@ export function StoryAudioBar({ audio, onClose }: { audio: StoryAudioController;
             ))}
           </div>
 
+          {/* The same three speeds on a phone, one chip instead of three: it reads the speed
+              you are at and a tap moves to the next. Three chips side by side are a hundred and
+              thirty pixels of a screen that has three hundred and sixty, and two of them are
+              always saying what you are *not* listening at. Lit whenever the speed is not 1, so
+              a bar that has been left at 0.75× says so at a glance rather than only on
+              inspection. */}
+          <Button
+            type="button"
+            variant={audio.rate === 1 ? "control" : "controlOn"}
+            size="xs"
+            className="ml-auto hidden h-8 max-sm:inline-flex"
+            onClick={() => audio.setRate(nextRate)}
+            aria-label={`Playback speed: ${audio.rate}×. Change to ${nextRate}×`}
+            title={`Playing at ${audio.rate}× — tap for ${nextRate}×`}
+          >
+            {audio.rate}×
+          </Button>
+
           {/* Set apart from the transport controls by the divider: everything to its left
               acts on the recording, and this one puts the whole thing away. */}
           <Button
             type="button"
             variant="control"
             size="icon-sm"
-            className="ml-1 border-l-0"
+            className="ml-1 border-l-0 max-sm:ml-0"
             onClick={onClose}
             aria-label="Close the player"
             title="Close the player"

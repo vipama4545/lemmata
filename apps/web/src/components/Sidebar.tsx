@@ -11,9 +11,11 @@ import {
   List,
   ListChecks,
   MessageCircle,
+  Moon,
   NotebookPen,
   Search,
   SlidersHorizontal,
+  Sun,
   Table,
   Type,
   Users,
@@ -27,10 +29,14 @@ import { dueCount, useProgress } from '../study/store';
 import { useIsAdmin } from '../admin/useAdmin';
 import { useSignedIn } from '../library/store';
 import { lang } from '../content/store';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
+  /** For the theme row at the foot, which only exists where the header has dropped it. */
+  dark: boolean;
+  onToggleTheme: () => void;
 }
 
 /**
@@ -50,7 +56,7 @@ const HEADING = 'mb-2 px-2.5 text-[11px] font-bold tracking-[0.08em] text-faint 
 // The primary navigation. On a wide screen it is a column pinned beside the content; below
 // 1024px it slides in over the page as a drawer, which is why it needs to know when the
 // route changes — a tap on a link there should close it again.
-function Sidebar({ open, onClose }: SidebarProps) {
+function Sidebar({ open, onClose, dark, onToggleTheme }: SidebarProps) {
   const location = useLocation();
   // Cards waiting is the one number worth carrying on every page: a spaced repetition deck
   // that has to be opened to find out whether it needs opening does not get opened.
@@ -157,6 +163,32 @@ function Sidebar({ open, onClose }: SidebarProps) {
             <SidebarLink to="/admin/users" icon={Users} label="Admins" />
           </SidebarSection>
         )}
+
+        {/* The two controls the header keeps for itself on anything wider than a phone.
+            `md:hidden` rather than `lg:hidden` on purpose: this band exists to hold what the
+            header dropped, and the header drops them at `md`. Between the two breakpoints this
+            is still a drawer, but the header is still showing both — a second copy there would
+            be one control in two places, which is how a theme toggle ends up disagreeing with
+            itself in a screenshot. */}
+        {/* Written out rather than wrapped in SidebarSection so that `md:hidden` takes the rule
+            and the margin with it. Hidden content inside a visible section would leave a stray
+            line across the foot of the desktop column. */}
+        <div className="mt-6 border-t border-border pt-5 md:hidden">
+          <p className={HEADING}>Settings</p>
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            className="flex w-full cursor-pointer items-center gap-2.5 rounded-sm px-2.5 py-2 text-[14.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            {dark ? <Sun className="size-[18px] shrink-0" /> : <Moon className="size-[18px] shrink-0" />}
+            <span>{dark ? 'Light mode' : 'Dark mode'}</span>
+          </button>
+          {/* Nothing at all where there is only one dictionary to read — caption included; see
+              the note on `label`. The theme row above is reason enough for the heading. */}
+          <div className="mt-1 px-2.5 py-1">
+            <LanguageSwitcher label="Dictionary" />
+          </div>
+        </div>
 
       </nav>
     </>

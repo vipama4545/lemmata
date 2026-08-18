@@ -224,9 +224,15 @@ function App() {
       <ScrollManager />
       <div className="flex min-h-screen flex-col">
         {/* The header sticks and the sidebar sticks below it, so the wordmark and the stats
-            stay visible while a long conjugation table scrolls. */}
-        <header className="sticky top-0 z-100 flex min-h-header items-center bg-(image:--header-bg) px-6 py-4 text-white shadow-pop">
-          <div className="flex w-full items-center justify-between gap-4 max-md:flex-wrap max-md:gap-2.5">
+            stay visible while a long conjugation table scrolls.
+
+            One row at every width. It used to wrap below `md` — the controls dropped to a
+            second centred line — which cost forty pixels of a phone screen on every page to
+            show two things that are not why anyone opened the app. What was wrapping now moves
+            into the drawer instead; see the `max-md:hidden` marks below and the band at the
+            foot of Sidebar.tsx that holds the other half of this. */}
+        <header className="sticky top-0 z-100 flex min-h-header items-center bg-(image:--header-bg) px-6 py-4 text-white shadow-pop max-md:min-h-0 max-md:px-3.5 max-md:py-2.5">
+          <div className="flex w-full items-center justify-between gap-4 max-md:gap-2">
             {/* Opens the sidebar as a drawer, and only exists at the widths where the
                 sidebar has stopped being a column. */}
             <Button
@@ -244,30 +250,35 @@ function App() {
                 change out from under you on every switch, and said the same thing the
                 switcher two inches to the right already says. */}
             <Link to={`/${lang()}`} className="flex items-baseline gap-3 max-md:flex-1">
-              <span className="bg-[linear-gradient(135deg,#38bdf8,#818cf8)] bg-clip-text text-[28px] font-bold tracking-[-0.01em] text-transparent">
+              <span className="bg-[linear-gradient(135deg,#38bdf8,#818cf8)] bg-clip-text text-[28px] font-bold tracking-[-0.01em] text-transparent max-md:text-[21px]">
                 Lemmata
               </span>
             </Link>
-            {/* On a narrow screen this whole group wraps to its own centred row, and the
-                stats go with it: they are ambient, and worth dropping there. */}
-            <div className="flex items-center gap-4 max-md:w-full max-md:flex-wrap max-md:justify-center max-md:gap-2">
+            {/* Below `md` this is the account and nothing else. The theme and the language are
+                settings — asked for once and then not again — and a phone header has room for
+                about three things, so they sit in the drawer where the rest of the furniture
+                is. What stays is what a tap here is actually for: who you are signed in as. */}
+            <div className="flex items-center gap-4 max-md:gap-2">
               <Button
                 variant="header"
                 size="icon"
+                className="max-md:hidden"
                 onClick={toggle}
                 title={dark ? "Switch to light mode" : "Switch to dark mode"}
                 aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
               >
                 {dark ? <Sun /> : <Moon />}
               </Button>
-              <LanguageSwitcher />
+              <div className="max-md:hidden">
+                <LanguageSwitcher />
+              </div>
               <Account />
             </div>
           </div>
         </header>
 
         <div className="flex flex-1 items-start">
-          <Sidebar open={navOpen} onClose={closeNav} />
+          <Sidebar open={navOpen} onClose={closeNav} dark={dark} onToggleTheme={toggle} />
 
           <main className="min-w-0 flex-1">
             <LangGate>

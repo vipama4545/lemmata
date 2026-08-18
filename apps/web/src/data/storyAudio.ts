@@ -40,6 +40,13 @@ export interface LineTiming {
 }
 
 export interface Timings {
+  /**
+   * The cache key this line resolved to — a hash of the text that was spoken.
+   *
+   * Passed back to `audioUrl` so that the address of the audio changes whenever the prose
+   * does. See the note there.
+   */
+  key: string;
   duration: number;
   /** Empty when the voice could not be aligned to the text; the reader then lights the line. */
   words: LineTiming[];
@@ -78,7 +85,23 @@ export async function timings(
   }
 }
 
-/** Where one line's audio is. Immutable at that URL — the key behind it is a hash of the text. */
-export function audioUrl(storyId: string, chapter: number, paragraph: number, sentence: number): string {
-  return `${root(storyId, chapter)}/${paragraph}/${sentence}/opus`;
+/**
+ * Where one line's audio is.
+ *
+ * The key from `timings` goes on the end, and it is not decoration: the path names a position
+ * in a chapter rather than the text at it, so an edited paragraph keeps every one of these
+ * addresses while changing what should sound at them. The server serves a request that names
+ * its key as immutable — which it is, a key being a hash of the text — and one that does not
+ * as `no-store`. Without the key in the URL a browser that heard the old sentence goes on
+ * playing it for a year, however promptly the server re-synthesises behind it.
+ */
+export function audioUrl(
+  storyId: string,
+  chapter: number,
+  paragraph: number,
+  sentence: number,
+  key?: string,
+): string {
+  const url = `${root(storyId, chapter)}/${paragraph}/${sentence}/opus`;
+  return key ? `${url}?v=${encodeURIComponent(key)}` : url;
 }

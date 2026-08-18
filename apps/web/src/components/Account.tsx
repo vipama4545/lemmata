@@ -55,7 +55,7 @@ function describeLinkError(code: string): string {
    surface, so the colours are white at low alpha rather than the theme's own. The slot
    holds its height while the session resolves, so the header does not jump when two
    buttons turn into a username. */
-const SLOT = 'relative flex min-h-9 items-center gap-2 max-md:min-h-0';
+const SLOT = 'relative flex min-h-9 items-center gap-2 max-md:min-h-0 max-md:gap-1.5';
 
 export default function Account() {
   const { data: session, isPending } = useSession();
@@ -153,7 +153,9 @@ export default function Account() {
           return and the menu roles are the parts that were hand-written here before. */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex max-w-50 cursor-pointer items-center gap-2 rounded-full border-2 border-white/20 bg-white/5 py-[5px] pr-2.5 pl-1.5 text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/15">
+          {/* The name truncates rather than wraps, and truncates sooner on a phone: a long one
+              would otherwise be the thing that pushes this row off the side of the screen. */}
+          <button className="flex max-w-50 cursor-pointer items-center gap-2 rounded-full border-2 border-white/20 bg-white/5 py-[5px] pr-2.5 pl-1.5 text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/15 max-md:max-w-32">
             {user.image ? (
               <img
                 className="size-6.5 shrink-0 rounded-full object-cover"
@@ -216,7 +218,12 @@ export default function Account() {
   );
 }
 
-const ACCOUNT_BUTTON = 'h-auto rounded-sm px-3.5 py-[7px] text-[13px] font-semibold whitespace-nowrap';
+/* Tighter on a phone, where this pair is now the only thing to the right of the wordmark and
+   still has to fit beside it on a 360px screen. Both stay: signing up is what the loud one is
+   for, and dropping it on the size of screen most people arrive on would drop it for most
+   people. */
+const ACCOUNT_BUTTON =
+  'h-auto rounded-sm px-3.5 py-[7px] text-[13px] font-semibold whitespace-nowrap max-md:px-2.5 max-md:py-1.5 max-md:text-[12.5px]';
 
 /**
  * What you come back to after following the confirmation link.

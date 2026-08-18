@@ -12,7 +12,7 @@
 //
 //   GET .../audio                      what the chapter is made of. Touches no model.
 //   GET .../audio/:p/:s                one line's timings. Synthesises it if it has to.
-//   GET .../audio/:p/:s/opus           that line's bytes.
+//   GET .../audio/:p/:s/opus?v=key     that line's bytes.
 //
 // And two that are about the dictionary rather than a story, because the cache underneath is
 // keyed on the text alone and does not care which screen wanted it said:
@@ -38,7 +38,14 @@ import { db, schema } from '../db/index.ts';
 import { bytes, line, speechAvailable, spokenLanguages } from './cache.ts';
 import { sentences } from './sentences.ts';
 
-/** How long a browser may keep one line's audio. They never change: the key is the text. */
+/**
+ * How long a browser may keep one line's audio.
+ *
+ * Only ever sent for a request that named the key it expected — see the `v` parameter on the
+ * opus route. A URL addressed by position alone is *not* immutable, however permanent the
+ * bytes behind a key are, because editing the prose changes which key that position resolves
+ * to while leaving the address exactly where it was.
+ */
 const IMMUTABLE = 'public, max-age=31536000, immutable';
 
 interface ChapterParams {
@@ -141,6 +148,9 @@ export function registerTtsRoutes(app: FastifyInstance): void {
    *
    * 503 rather than 404 when there is no audio: the line exists, the voice is what is
    * missing, and the difference decides whether the reader retries later or gives up.
+   *
+   * The key comes back with them because the reader needs it to name the audio: see the note
+   * on the opus route below for what an address without it cannot promise.
    */
   app.get<{ Params: LineParams }>('/api/tts/story/:storyId/:chapter/audio/:paragraph/:sentence', async (request, reply) => {
     const found = await locate(
@@ -156,6 +166,7 @@ export function registerTtsRoutes(app: FastifyInstance): void {
 
     reply.header('cache-control', 'no-store');
     return {
+      key: spoken.key,
       duration: spoken.duration,
       words: spoken.words.map((word, position) => ({
         index: found.firstWord + position,
@@ -172,11 +183,20 @@ export function registerTtsRoutes(app: FastifyInstance): void {
    * the file. It synthesises anyway when it has to, so that a URL kept from a previous visit
    * still works after the file it named was evicted.
    *
-   * Immutable, because it is: the key this resolves to is a hash of the text, so the bytes
-   * behind one URL can never change. Edited prose is a different sentence and a different
-   * URL, and the browser is never in a position to serve stale audio for new words.
+   * `v` is the key the caller was told to expect, and it is what makes the answer cacheable.
+   * The bytes behind a *key* are immutable — it is a hash of the text — but this address names
+   * a position in a chapter, and an admin fixing a typo leaves the position where it was while
+   * changing what belongs at it. Sent as immutable on the strength of the key alone, the
+   * browser would go on playing the old sentence for a year: the server re-synthesises
+   * correctly and is never asked, which is exactly how it was reported. So the promise is only
+   * made to a caller who named the key it is getting, and the reader always does — the timings
+   * it fetches one line ahead are where the key comes from. An edit changes the key, which
+   * changes the URL, which is a fetch rather than a cache hit.
+   *
+   * Anything else — an `<audio src>` kept from an older build, a URL typed by hand — is served
+   * the same bytes with `no-store`, because for that caller this address really can change.
    */
-  app.get<{ Params: LineParams }>('/api/tts/story/:storyId/:chapter/audio/:paragraph/:sentence/opus', async (request, reply) => {
+  app.get<{ Params: LineParams; Querystring: { v?: string } }>('/api/tts/story/:storyId/:chapter/audio/:paragraph/:sentence/opus', async (request, reply) => {
     const found = await locate(
       request.params.storyId,
       Number(request.params.chapter),
@@ -192,7 +212,7 @@ export function registerTtsRoutes(app: FastifyInstance): void {
     if (!audio) return reply.status(503).send({ error: 'That line could not be read back.' });
 
     reply.header('content-type', 'audio/ogg');
-    reply.header('cache-control', IMMUTABLE);
+    reply.header('cache-control', request.query.v === spoken.key ? IMMUTABLE : 'no-store');
     return reply.send(audio);
   });
 
