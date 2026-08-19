@@ -823,6 +823,44 @@ export const storyTokens = pgTable(
 // itself and `moveChapter` carries them along. The key on `story_id` still stands: deleting
 // a story takes everything with it, which is the case that would actually lose data.
 
+/**
+ * The video a story was made from, and when each of its paragraphs is spoken.
+ *
+ * A video story *is* a story — chaptered, tokenised, linked and coloured by what you know by
+ * exactly the code a pasted one is. This table is the small part that is extra: which video to
+ * embed, and the clock that drives the highlight down the page. Everything else the reader needs
+ * it already has.
+ *
+ * One row per story rather than per chapter. A subtitle track is one continuous timeline and a
+ * video is one thing to watch; chaptering one would mean deciding where a video "ends", which
+ * nothing about a video says. Import makes chapter 0 and only chapter 0.
+ *
+ * `cues` is paired with that chapter's `paragraphs` by position, because import writes one
+ * paragraph per subtitle cue — see `importVideo`. That is what makes the sync trivial: the
+ * paragraph to light is the one whose cue covers the playhead, and no alignment between two
+ * tokenisations has to hold for it to be right. It also means the two can drift if the prose is
+ * edited afterwards, which is why editing a video story's text is not offered.
+ *
+ * Stored as jsonb rather than a row per cue. The whole array is always wanted at once — the
+ * player needs the timeline before it can play anything — and a ten-minute video is a couple of
+ * hundred cues, which is a few kilobytes. A table would buy queries nobody makes.
+ */
+export const storyVideos = pgTable('story_videos', {
+  storyId: text('story_id')
+    .primaryKey()
+    .references(() => stories.id, { onDelete: 'cascade' }),
+  /** The eleven-character YouTube id, not a URL: the embed builds its own address. */
+  youtubeId: text('youtube_id').notNull(),
+  /**
+   * Where each paragraph of chapter 0 is spoken, in seconds from the start of the video.
+   *
+   * One entry per paragraph, in the same order. `end` is kept rather than derived from the next
+   * cue's `start` because subtitles have gaps in them — nobody is speaking between two lines,
+   * and lighting a paragraph through the silence after it reads as a highlight that has stuck.
+   */
+  cues: jsonb('cues').$type<{ start: number; end: number }[]>().notNull().default([]),
+});
+
 /* ----------------------------------------------------------------- quizzes */
 
 /**

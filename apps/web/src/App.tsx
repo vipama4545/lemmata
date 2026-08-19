@@ -55,6 +55,7 @@ const AdminRoutes = lazy(() => import("./admin/AdminRoutes"));
 // The reader's own stories and words. In a chunk of its own for the reason the admin screens
 // are: forms are a fair amount of code, and most visits never open one.
 const LibraryRoutes = lazy(() => import("./library/LibraryRoutes"));
+const VideoRoutes = lazy(() => import("./video/VideoRoutes"));
 
 function useTheme() {
   const [dark, setDark] = useState(() => {
@@ -361,6 +362,18 @@ function App() {
                   element={
                     <Suspense fallback={<Page />}>
                       <LibraryRoutes />
+                    </Suspense>
+                  }
+                />
+
+                {/* Videos brought in from YouTube, read as stories. Signed-in only, and its
+                    own branch rather than a corner of /library: the two hold the same kind of
+                    row underneath and are nothing like each other to use. */}
+                <Route
+                  path="/:lang/videos/*"
+                  element={
+                    <Suspense fallback={<Page />}>
+                      <VideoRoutes />
                     </Suspense>
                   }
                 />

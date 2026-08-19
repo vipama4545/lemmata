@@ -90,7 +90,19 @@ await app.register(async instance => {
   // Scoped to this plugin: let oRPC read the body itself, whatever the content type.
   instance.addContentTypeParser('*', (_request, _payload, done) => done(null, undefined));
 
-  instance.all('/rpc/*', async (request, reply) => {
+  // Eight mebibytes, where Fastify's default is one.
+  //
+  // Raised for one procedure and sized by it: `library.importVideo` accepts a whole video's
+  // subtitles in a single call, and the contract's own ceiling — five thousand cues — comes to
+  // several megabytes of JSON. The default silently made that impossible, and not at the edge:
+  // a three-hour lecture measured 0.96 MiB, which is to say it was already within a rounding
+  // error of failing. What the caller got when it did fail was "Payload Too Large", from the
+  // transport, about a limit the contract never mentioned.
+  //
+  // The size is not a licence to send anything: every procedure still validates its own input,
+  // and `importVideo` caps the cue count and the length of each. This only ensures that a
+  // payload the contract says it will accept can actually arrive.
+  instance.all('/rpc/*', { bodyLimit: 8 * 1024 * 1024 }, async (request, reply) => {
     // Resolved once here rather than inside each procedure, so a call that touches three
     // procedures still costs one session lookup.
     const headers = fromNodeHeaders(request.headers);

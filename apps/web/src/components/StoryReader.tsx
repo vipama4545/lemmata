@@ -38,7 +38,7 @@ import { chapterHref } from "../utils/story";
 import { markUnseenKnown, useProgress } from "../study/store";
 import { StoryAudioBar, useStoryAudio } from "./StoryAudio";
 import { useShelves, type Shelf } from "./StoryIndex";
-import StoryProse, { masteryCounts, storyVocabulary } from "./StoryProse";
+import StoryProse, { linkTally, masteryCounts, storyVocabulary } from "./StoryProse";
 import { lang } from "../content/store";
 
 // Only rendered for somebody who has turned editing on: an admin on a published story, or a
@@ -571,14 +571,7 @@ function ReaderToggle({ on, className, ...props }: React.ComponentProps<typeof B
 // things about the same words and showing both at once would put two colour schemes on one
 // page of text.
 function EditLegend({ story }: { story: Story }) {
-  const tally = { unresolved: 0, guessed: 0, pinned: 0, named: 0, total: 0 };
-  for (const token of story.tokens.flat()) {
-    tally.total += 1;
-    if (token.name) tally.named += 1;
-    if (!token.word && !token.name) tally.unresolved += 1;
-    else if (token.check) tally.guessed += 1;
-    if (token.via === "name" || token.via.startsWith("override")) tally.pinned += 1;
-  }
+  const tally = linkTally(story);
 
   return (
     <div className={PANEL}>

@@ -20,6 +20,7 @@ import {
   Type,
   Users,
   WalletCards,
+  MonitorPlay,
   X,
   type LucideIcon,
 } from 'lucide-react';
@@ -143,6 +144,7 @@ function Sidebar({ open, onClose, dark, onToggleTheme }: SidebarProps) {
           <SidebarSection>
             <p className={HEADING}>Yours</p>
             <SidebarLink to="/library" icon={NotebookPen} label="My library" />
+            <SidebarLink to="/videos" icon={MonitorPlay} label="My videos" />
           </SidebarSection>
         )}
 

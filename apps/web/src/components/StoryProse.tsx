@@ -347,6 +347,9 @@ export default function StoryProse({
   return (
     <>
       <div className={className}>
+        {/* Every paragraph carries its own index, in all three layouts. Nothing here reads it;
+            it is how something outside finds one — the video reader scrolls the line being
+            spoken into view, and a position in an array is the only name a paragraph has. */}
         {story.paragraphs.map((paragraph, p) => {
           const words = <>{renderParagraph(paragraph, p)}</>;
           const english = story.translation[p];
@@ -358,6 +361,7 @@ export default function StoryProse({
             return (
               <div
                 key={p}
+                data-paragraph={p}
                 className="mb-[18px] grid grid-cols-2 gap-8 border-b border-border pb-[18px] last:mb-0 last:border-b-0 last:pb-0 max-[900px]:grid-cols-1 max-[900px]:gap-2"
               >
                 <p className={cn(para, "mb-0")}>{words}</p>
@@ -372,6 +376,7 @@ export default function StoryProse({
             return (
               <div
                 key={p}
+                data-paragraph={p}
                 className="border-b border-border py-2.5 first:pt-0 last:border-b-0 last:pb-0"
               >
                 <p className={cn(para, "mb-0")}>{words}</p>
@@ -383,7 +388,7 @@ export default function StoryProse({
           }
 
           return (
-            <p className={para} key={p}>
+            <p className={para} key={p} data-paragraph={p}>
               {words}
             </p>
           );
@@ -608,6 +613,27 @@ export function storyVocabulary(story: Story | null): string[] {
     for (const token of paragraph) if (token.word) keys.add(wordKey(token.word));
   }
   return [...keys];
+}
+
+/**
+ * How the resolver did on a chapter: what it could not place, what it guessed at, what a person
+ * has since decided by hand.
+ *
+ * Here rather than in either reader because both of them show it and neither owns it. The
+ * library reader spells it out under a legend; the video reader has a narrow column and says it
+ * in one line. What must not differ between them is the arithmetic, which is the part that
+ * decides whether "12 words need a look" is true.
+ */
+export function linkTally(story: Story | null) {
+  const tally = { unresolved: 0, guessed: 0, pinned: 0, named: 0, total: 0 };
+  for (const token of story?.tokens.flat() ?? []) {
+    tally.total += 1;
+    if (token.name) tally.named += 1;
+    if (!token.word && !token.name) tally.unresolved += 1;
+    else if (token.check) tally.guessed += 1;
+    if (token.via === 'name' || token.via.startsWith('override')) tally.pinned += 1;
+  }
+  return tally;
 }
 
 /** How much of a vocabulary is known, solid, being learned, or never seen. */

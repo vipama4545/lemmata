@@ -830,6 +830,129 @@ export const libraryRouter = os.library.router({
     return { content: await mine(owner, lang) };
   }),
 
+  /* ---- videos ---- */
+
+  importVideo: os.library.importVideo.use(authed).handler(async ({ input, context }) => {
+    const owner = context.user.id;
+
+    // One paragraph per cue, in order — the pairing `story_videos.cues` depends on. A cue whose
+    // text holds no word at all is kept rather than dropped: a paragraph removed here would
+    // shift every cue after it against its prose, and "[Music]" is a line of the video whether
+    // or not it is a line of the language.
+    const paragraphs = input.cues.map(cue => cue.text);
+
+    // A cue that does not end after it begins is repaired rather than refused, and it is worth
+    // saying why there is anything to repair. Auto-generated tracks carry lines with a duration
+    // of zero, and hand-made ones occasionally carry an end before the start; the reader lights
+    // a paragraph while the playhead is inside its span, so either one is a line that is never
+    // lit — the video plays past it and the page sits still. "Until the next line starts" is
+    // what a zero-length cue means, and the last one is given a couple of seconds because there
+    // is no next line for it to run to.
+    const cues = input.cues.map((cue, at) => ({
+      start: cue.start,
+      end: cue.end > cue.start ? cue.end : (input.cues[at + 1]?.start ?? cue.start + 2),
+    }));
+
+    // Before the transaction, always. See `tagsFor`: it is a round trip to a container holding a
+    // gigabyte of models, and a lock on the stories table has no business being open across it.
+    const tags = await tagsFor(input.lang, paragraphs);
+
+    const result = await db.transaction(async tx => {
+      await assertRoom(tx, schema.stories, owner, input.lang, MAX_STORIES, 'stories');
+
+      const stem =
+        input.lang === 'ka'
+          ? slug(input.title, 'video')
+          : `${input.lang}-${slug(slugCyrillic(input.title), 'video')}`;
+      const id = await freeId(tx, 'stories', stem);
+
+      await tx.insert(schema.stories).values({
+        id,
+        lang: input.lang,
+        title: input.title,
+        titleEnglish: '',
+        level: '',
+        // Where it came from, in the field that already means that. A video story outliving its
+        // video — deleted, made private, region-locked — is still a readable story, and this is
+        // then the only thing left saying what it was.
+        source: `https://www.youtube.com/watch?v=${input.youtubeId}`,
+        note: '',
+        categoryId: null,
+        stats: NO_STATS,
+        ownerId: owner,
+      });
+
+      await tx.insert(schema.storyChapters).values({
+        storyId: id,
+        position: 0,
+        title: '',
+        titleEnglish: '',
+        stats: NO_STATS,
+        paragraphs,
+        translation: [],
+      });
+
+      // No pins to keep: the story is one statement old.
+      const report = await relink(tx, input.lang, id, 0, paragraphs, new Map(), tags, owner);
+      await recountStory(tx, id);
+
+      await tx.insert(schema.storyVideos).values({ storyId: id, youtubeId: input.youtubeId, cues });
+
+      return { id, report };
+    });
+
+    return {
+      id: result.id,
+      report: await linkResult(result.id, 0, result.report),
+      content: await mine(owner, input.lang),
+    };
+  }),
+
+  videos: os.library.videos.use(authed).handler(async ({ input, context }) => {
+    const rows = await db
+      .select({
+        storyId: schema.storyVideos.storyId,
+        youtubeId: schema.storyVideos.youtubeId,
+        title: schema.stories.title,
+        lang: schema.stories.lang,
+        stats: schema.stories.stats,
+        cues: schema.storyVideos.cues,
+      })
+      .from(schema.storyVideos)
+      .innerJoin(schema.stories, eq(schema.stories.id, schema.storyVideos.storyId))
+      // Both halves matter. The owner filter is what makes this list yours; the language filter
+      // is what keeps a Russian video off the Georgian shelf.
+      .where(and(eq(schema.stories.ownerId, context.user.id), eq(schema.stories.lang, input.lang)));
+
+    return rows.map(row => ({
+      storyId: row.storyId,
+      youtubeId: row.youtubeId,
+      title: row.title,
+      lang: row.lang,
+      paragraphs: row.cues.length,
+      coverage: Number(row.stats.coverage ?? 0),
+    }));
+  }),
+
+  video: os.library.video.use(authed).handler(async ({ input, context }) => {
+    const [row] = await db
+      .select({
+        youtubeId: schema.storyVideos.youtubeId,
+        cues: schema.storyVideos.cues,
+        ownerId: schema.stories.ownerId,
+      })
+      .from(schema.storyVideos)
+      .innerJoin(schema.stories, eq(schema.stories.id, schema.storyVideos.storyId))
+      .where(eq(schema.storyVideos.storyId, input.storyId))
+      .limit(1);
+
+    // Somebody else's, or no such story: one answer for both, so that this cannot be used to
+    // find out which. The same rule `ownStory` follows, reached without a throw because the
+    // reader asks this about every story it opens.
+    if (!row || row.ownerId !== context.user.id) return null;
+    return { youtubeId: row.youtubeId, cues: row.cues };
+  }),
+
   /* ---- your shelves ---- */
 
   saveCategory: os.library.saveCategory.use(authed).handler(async ({ input, context }) => {

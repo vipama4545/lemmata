@@ -1179,6 +1179,30 @@ export const myWordInput = wordInput.extend({
 
 export type MyWordInput = z.infer<typeof myWordInput>;
 
+/**
+ * A video story, as its index card shows it.
+ *
+ * `StorySummary` and not a shape of its own would have done, but the card wants the thumbnail
+ * and the video id is the only thing that yields one, so the two travel together. `paragraphs`
+ * is a count rather than the prose: this is a list, and the prose is a chapter fetch away.
+ */
+export interface VideoSummary {
+  storyId: string;
+  youtubeId: string;
+  title: string;
+  lang: Lang;
+  paragraphs: number;
+  /** How many of its words the resolver could place. The same figure the library card shows. */
+  coverage: number;
+}
+
+/** What the player needs before it can play: the video, and when each paragraph is spoken. */
+export interface VideoTrack {
+  youtubeId: string;
+  /** One entry per paragraph of chapter 0, in the same order. */
+  cues: { start: number; end: number }[];
+}
+
 const libraryContract = {
   /**
    * Everything of yours in one language. Empty for a signed-out visitor rather than a refusal:
@@ -1285,6 +1309,80 @@ const libraryContract = {
   deleteWord: oc
     .input(z.object({ id: z.string().min(1).max(128) }))
     .output(type<{ content: PrivateContent }>()),
+
+  /* ------------------------------------------------------------------ videos */
+
+  /**
+   * Makes a story out of a YouTube video's subtitles.
+   *
+   * The cues arrive from the browser rather than being fetched here, and that is the whole
+   * design rather than a shortcut. YouTube will not hand a caption track to a page that is not
+   * YouTube — the browser's own rules stop it — and a server that went looking for one would be
+   * doing it from a datacentre address, which is exactly what gets refused. So the reader's own
+   * browser collects them, on YouTube's own origin, in their own session, and pastes them in
+   * here. See `apps/web/src/video/bookmarklet.ts`.
+   *
+   * One cue becomes one paragraph, in order. That is what makes the sync exact and what stops
+   * it from ever being subtly wrong: nothing has to align two tokenisations, because the unit
+   * the video is timed in and the unit the reader highlights are the same unit. It makes for
+   * short paragraphs, which is what a subtitle is.
+   *
+   * Everything after this point is the ordinary story pipeline — tokenise, tag, link — so a
+   * video story arrives with word cards, coverage and every correction mechanism a pasted one
+   * has. See `saveStory`, which this is a specialised copy of.
+   */
+  importVideo: oc
+    .input(
+      z.object({
+        lang: LANG,
+        /** The eleven-character id. The browser sends it parsed; the server checks the shape. */
+        youtubeId: z
+          .string()
+          .trim()
+          .regex(/^[A-Za-z0-9_-]{11}$/u, 'That is not a YouTube video id.'),
+        title: z.string().trim().min(1).max(300),
+        /**
+         * Capped, and the cap is a real one rather than a round number: a feature-length film
+         * with dense subtitles runs to a few thousand cues, and everything past that is
+         * something other than a video anybody is going to study a line at a time.
+         */
+        cues: z
+          .array(
+            z.object({
+              start: z.number().min(0).max(86_400),
+              end: z.number().min(0).max(86_400),
+              // A cue is a line of speech, and a long one is two. A thousand characters is
+              // already far past anything a subtitle track contains; the cap is here to bound
+              // the payload rather than to describe subtitles.
+              text: z.string().trim().min(1).max(1_000),
+            }),
+          )
+          .min(1)
+          .max(5_000),
+      }),
+    )
+    .output(type<{ id: string; report: StoryLinkResult | null; content: PrivateContent }>()),
+
+  /**
+   * Your video stories, newest first — the index of the video library.
+   *
+   * Separate from `mine` rather than a field on it. That overlay is fetched at boot by every
+   * signed-in visitor whether or not they have ever opened a video, and it is laid over the
+   * shared snapshot; a list that most people's is empty does not belong in it. It also keeps
+   * the two libraries apart in the one place it matters, which is what `MyLibrary` filters on.
+   */
+  videos: oc.input(z.object({ lang: LANG })).output(type<VideoSummary[]>()),
+
+  /**
+   * One video story's timeline: what to embed, and when each paragraph is spoken.
+   *
+   * Asked for by the reader once, before anything can play. Null rather than a refusal when
+   * the story is not yours or is not a video — the same answer either way, so that this cannot
+   * be used to find out which of the two it was.
+   */
+  video: oc
+    .input(z.object({ storyId: z.string().min(1).max(128) }))
+    .output(type<VideoTrack | null>()),
 
   /** Renames a shelf of yours, or makes one. */
   saveCategory: oc
